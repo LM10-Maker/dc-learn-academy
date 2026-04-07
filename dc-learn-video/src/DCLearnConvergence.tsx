@@ -32,29 +32,6 @@ const CONNECTIONS = [
   { from: 5, to: 4, label: "When the grid can’t give you more, you generate your own.", primary: false, start: 900 },
 ];
 
-const LARGE_TERMS = [
-  { text: "PUE", color: "#D4A84B", angle: 270 },
-  { text: "F-Gas", color: "#E06060", angle: 315 },
-  { text: "CRU", color: "#4a7c59", angle: 0 },
-  { text: "EED", color: "#5B9BD5", angle: 45 },
-  { text: "Carbon Tax", color: "#fb923c", angle: 90 },
-  { text: "Grid", color: "#a78bfa", angle: 135 },
-  { text: "CRREM", color: "#e879a0", angle: 180 },
-  { text: "Fire", color: "#C75050", angle: 225 },
-];
-
-const MEDIUM_TERMS = [
-  "containment", "free cooling", "delta-T", "MIC", "VESDA", "Novec 1230", "HVO", "CDU",
-  "concurrent maintainability", "BESS", "N+1", "ATS", "redundancy", "topology", "DCIM", "BMS",
-];
-
-const SMALL_TERMS = [
-  "thermal runaway", "PDU whip", "48-hour fuel", "Icw rating", "discrimination study",
-  "Scope 2 market-based", "additionality", "€/kW", "elemental cost plan", "lifecycle cost",
-  "WAULT", "cap rate", "IS 10101", "EN 50600", "EN 61439", "CIBSE TM40", "GHG Protocol",
-  "NEAP", "SLA", "dry coolers", "chillers",
-];
-
 // ── Helpers ───────────────────────────────────────────
 const fadeIn = (f: number, start: number, dur = 15) =>
   interpolate(f, [start, start + dur], [0, 1], {
@@ -75,15 +52,15 @@ const clockPos = (
 
 const getHandAngle = (behavior: string, frame: number): number => {
   switch (behavior) {
-    case "steady": return frame * 2;
-    case "counter": return frame * -2;
+    case "steady": return (frame / 720) * 360;
+    case "counter": return -(frame / 720) * 360;
     case "stuck": return 144;
-    case "fast": return frame * 4;
-    case "accelerating": return frame * frame * 0.001;
+    case "fast": return (frame / 360) * 360;
+    case "accelerating": return (frame * frame * 0.001) / 3;
     case "frozen": return 0;
-    case "redRing": return frame * 2;
-    case "pulse": return frame * 2;
-    default: return frame * 2;
+    case "redRing": return (frame / 720) * 360;
+    case "pulse": return (frame / 720) * 360;
+    default: return (frame / 720) * 360;
   }
 };
 
@@ -278,32 +255,34 @@ export const DCLearnConvergence: React.FC = () => {
           The convergence course for data centre professionals
         </div>
 
-        {/* ZONE 1 — TOP STRIP (y=60-280, full width) */}
+        {/* ZONE 1 — TOP STRIP (y=50-250, full width) */}
         {([
-          { text: "IS 10101", x: 100, y: 80 }, { text: "redundancy", x: 350, y: 80 }, { text: "CIBSE TM40", x: 600, y: 80 }, { text: "GHG Protocol", x: 1000, y: 80 }, { text: "topology", x: 1300, y: 80 }, { text: "SLA", x: 1600, y: 80 }, { text: "dry coolers", x: 1750, y: 80 },
-          { text: "EN 50600", x: 150, y: 130 }, { text: "ATS", x: 400, y: 130 }, { text: "concurrent maintainability", x: 700, y: 130 }, { text: "NEAP", x: 1100, y: 130 }, { text: "DCIM", x: 1400, y: 130 }, { text: "BMS", x: 1700, y: 130 },
-          { text: "N+1", x: 200, y: 180 }, { text: "chillers", x: 500, y: 180 }, { text: "Scope 2 market-based", x: 900, y: 180 }, { text: "48-hour fuel", x: 1300, y: 180 }, { text: "PDU whip", x: 1650, y: 180 },
+          { text: "IS 10101", x: 80, y: 65, color: "#5B9BD5" }, { text: "redundancy", x: 350, y: 65, color: "#8DB4C8" }, { text: "CIBSE TM40", x: 620, y: 65, color: "#5B9BD5" }, { text: "GHG Protocol", x: 1000, y: 65, color: "#2dd4bf" }, { text: "topology", x: 1300, y: 65, color: "#8DB4C8" }, { text: "SLA", x: 1550, y: 65, color: "#8DB4C8" }, { text: "dry coolers", x: 1720, y: 65, color: "#5B9BD5" },
+          { text: "EN 50600", x: 120, y: 115, color: "#5B9BD5" }, { text: "ATS", x: 380, y: 115, color: "#D4A84B" }, { text: "concurrent maintainability", x: 680, y: 115, color: "#e879a0" }, { text: "NEAP", x: 1050, y: 115, color: "#4a7c59" }, { text: "DCIM", x: 1300, y: 115, color: "#8DB4C8" }, { text: "BMS", x: 1500, y: 115, color: "#8DB4C8" }, { text: "EPO", x: 1750, y: 115, color: "#C75050" },
+          { text: "N+1", x: 160, y: 165, color: "#D4A84B" }, { text: "chillers", x: 400, y: 165, color: "#5B9BD5" }, { text: "Scope 2 market-based", x: 700, y: 165, color: "#2dd4bf" }, { text: "48-hour fuel", x: 1100, y: 165, color: "#C75050" }, { text: "PDU whip", x: 1400, y: 165, color: "#D4A84B" }, { text: "EN 61439", x: 1700, y: 165, color: "#5B9BD5" },
+          { text: "delta-T", x: 100, y: 215, color: "#5B9BD5" }, { text: "BESS", x: 350, y: 215, color: "#4a7c59" }, { text: "discrimination study", x: 620, y: 215, color: "#8DB4C8" }, { text: "additionality", x: 1000, y: 215, color: "#2dd4bf" }, { text: "thermal runaway", x: 1350, y: 215, color: "#C75050" }, { text: "HV switchgear", x: 1680, y: 215, color: "#D4A84B" },
         ] as const).map((t) => (
           <span key={t.text + t.x} style={{
             position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: 13, color: "#57606a", opacity: 0.35 * wcOp,
+            fontFamily: "monospace", fontSize: 20, color: t.color, opacity: 0.55 * wcOp,
           }}>
             {t.text}
           </span>
         ))}
 
-        {/* ZONE 2 — LEFT COLUMN (x=60-380, y=320-950) */}
+        {/* ZONE 2 — LEFT COLUMN (x=40-420, y=280-950) */}
         {([
-          { text: "PUE", x: 80, y: 340, size: 20, color: "#D4A84B", op: 0.7 },
-          { text: "F-Gas", x: 60, y: 410, size: 20, color: "#E06060", op: 0.7 },
-          { text: "CRREM", x: 100, y: 480, size: 20, color: "#e879a0", op: 0.7 },
-          { text: "containment", x: 70, y: 550, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "delta-T", x: 120, y: 610, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "VESDA", x: 80, y: 670, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "HVO", x: 60, y: 730, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "WAULT", x: 100, y: 790, size: 13, color: "#57606a", op: 0.35 },
-          { text: "€/kW", x: 70, y: 840, size: 13, color: "#57606a", op: 0.35 },
-          { text: "lifecycle cost", x: 60, y: 890, size: 13, color: "#57606a", op: 0.35 },
+          { text: "PUE", x: 60, y: 300, size: 22, color: "#D4A84B", op: 0.75 },
+          { text: "F-Gas", x: 40, y: 360, size: 22, color: "#E06060", op: 0.75 },
+          { text: "CRREM", x: 80, y: 420, size: 22, color: "#e879a0", op: 0.75 },
+          { text: "containment", x: 50, y: 480, size: 20, color: "#8DB4C8", op: 0.55 },
+          { text: "delta-T", x: 100, y: 540, size: 20, color: "#5B9BD5", op: 0.55 },
+          { text: "VESDA", x: 60, y: 600, size: 20, color: "#C75050", op: 0.55 },
+          { text: "HVO", x: 40, y: 660, size: 20, color: "#4a7c59", op: 0.55 },
+          { text: "WAULT", x: 80, y: 720, size: 20, color: "#e879a0", op: 0.55 },
+          { text: "€/kW", x: 50, y: 780, size: 20, color: "#fb923c", op: 0.55 },
+          { text: "lifecycle cost", x: 40, y: 840, size: 20, color: "#8DB4C8", op: 0.55 },
+          { text: "Icw rating", x: 70, y: 900, size: 20, color: "#D4A84B", op: 0.55 },
         ] as const).map((t) => (
           <span key={t.text} style={{
             position: "absolute", left: t.x, top: t.y,
@@ -313,19 +292,19 @@ export const DCLearnConvergence: React.FC = () => {
           </span>
         ))}
 
-        {/* ZONE 3 — RIGHT COLUMN (x=1540-1860, y=320-950) */}
+        {/* ZONE 3 — RIGHT COLUMN (x=1500-1880, y=280-950) */}
         {([
-          { text: "CRU", x: 1600, y: 340, size: 20, color: "#4a7c59", op: 0.7 },
-          { text: "EED", x: 1700, y: 410, size: 20, color: "#5B9BD5", op: 0.7 },
-          { text: "Carbon Tax", x: 1560, y: 480, size: 20, color: "#fb923c", op: 0.7 },
-          { text: "Grid", x: 1650, y: 550, size: 20, color: "#a78bfa", op: 0.7 },
-          { text: "free cooling", x: 1580, y: 610, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "MIC", x: 1700, y: 670, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "Novec 1230", x: 1560, y: 730, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "CDU", x: 1700, y: 790, size: 14, color: "#8b949e", op: 0.5 },
-          { text: "cap rate", x: 1580, y: 840, size: 13, color: "#57606a", op: 0.35 },
-          { text: "Icw rating", x: 1600, y: 890, size: 13, color: "#57606a", op: 0.35 },
-          { text: "thermal runaway", x: 1560, y: 940, size: 13, color: "#57606a", op: 0.35 },
+          { text: "CRU", x: 1600, y: 300, size: 22, color: "#4a7c59", op: 0.75 },
+          { text: "EED", x: 1720, y: 360, size: 22, color: "#5B9BD5", op: 0.75 },
+          { text: "Carbon Tax", x: 1540, y: 420, size: 22, color: "#fb923c", op: 0.75 },
+          { text: "Grid", x: 1680, y: 480, size: 22, color: "#a78bfa", op: 0.75 },
+          { text: "free cooling", x: 1560, y: 540, size: 20, color: "#5B9BD5", op: 0.55 },
+          { text: "MIC", x: 1720, y: 600, size: 20, color: "#D4A84B", op: 0.55 },
+          { text: "Novec 1230", x: 1540, y: 660, size: 20, color: "#C75050", op: 0.55 },
+          { text: "CDU", x: 1700, y: 720, size: 20, color: "#5B9BD5", op: 0.55 },
+          { text: "cap rate", x: 1560, y: 780, size: 20, color: "#fb923c", op: 0.55 },
+          { text: "elemental cost plan", x: 1520, y: 840, size: 20, color: "#8DB4C8", op: 0.55 },
+          { text: "Fire", x: 1680, y: 900, size: 22, color: "#C75050", op: 0.75 },
         ] as const).map((t) => (
           <span key={t.text} style={{
             position: "absolute", left: t.x, top: t.y,
@@ -335,15 +314,20 @@ export const DCLearnConvergence: React.FC = () => {
           </span>
         ))}
 
-        {/* ZONE 4 — BOTTOM STRIP (below tagline, centre) */}
+        {/* ZONE 4 — BOTTOM (x=450-1450, y=680-780) */}
         {([
-          { text: "discrimination study", x: 550, y: 720, size: 13, color: "#57606a", op: 0.35 },
-          { text: "additionality", x: 900, y: 720, size: 13, color: "#57606a", op: 0.35 },
-          { text: "Fire", x: 1200, y: 720, size: 18, color: "#C75050", op: 0.6 },
+          { text: "discrimination study", x: 480, y: 700, color: "#8DB4C8" },
+          { text: "additionality", x: 780, y: 700, color: "#2dd4bf" },
+          { text: "GHG Protocol", x: 1050, y: 700, color: "#2dd4bf" },
+          { text: "PDU", x: 1300, y: 700, color: "#D4A84B" },
+          { text: "Scope 2", x: 480, y: 750, color: "#2dd4bf" },
+          { text: "commissioning", x: 750, y: 750, color: "#4a7c59" },
+          { text: "48-hour fuel", x: 1050, y: 750, color: "#C75050" },
+          { text: "UPS", x: 1300, y: 750, color: "#D4A84B" },
         ] as const).map((t) => (
-          <span key={t.text} style={{
+          <span key={t.text + t.x} style={{
             position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
+            fontFamily: "monospace", fontSize: 20, color: t.color, opacity: 0.55 * wcOp,
           }}>
             {t.text}
           </span>
@@ -415,10 +399,6 @@ export const DCLearnConvergence: React.FC = () => {
           {frame >= 885 && frame < 1080 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
         </div>
 
-        {/* Dublin at y=580 */}
-        <div style={{ position: "absolute", left: "50%", top: 580, transform: "translateX(-50%)", fontFamily: "monospace", color: "#3d444d", fontSize: 12 }}>
-          Dublin
-        </div>
 
         {/* 4B setup text — fades in at 870, out at 1050-1080 */}
         {frame >= 870 && frame < 1080 && (
@@ -467,8 +447,8 @@ export const DCLearnConvergence: React.FC = () => {
             // Ring color for CRREM
             const ringColor = clock.behavior === "redRing" && frame > 600 ? "#E06060" : clock.color;
 
-            // Pulse for Fire Suppression
-            const pulseOp = clock.behavior === "pulse" ? 0.5 + 0.5 * Math.sin(frame * 0.15) : 1;
+            // No pulse blink — clocks stay fully visible
+            const pulseOp = 1;
 
             // Label position
             const isTop = clock.angle >= 225 || clock.angle <= 315 && clock.angle >= 225;
@@ -492,7 +472,7 @@ export const DCLearnConvergence: React.FC = () => {
                   <text x={labelX} y={labelY} textAnchor={textAnchor} fill={clock.color} fontFamily="monospace" fontSize={16} fontWeight="bold">
                     {clock.name}
                   </text>
-                  <text x={labelX} y={labelY + 16} textAnchor={textAnchor} fill={clock.color} fontFamily="monospace" fontSize={13} opacity={clock.behavior === "pulse" ? pulseOp : 0.8}>
+                  <text x={labelX} y={labelY + 16} textAnchor={textAnchor} fill={clock.color} fontFamily="monospace" fontSize={13} opacity={0.8}>
                     {clock.stat}
                   </text>
                 </g>
