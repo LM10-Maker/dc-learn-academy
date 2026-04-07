@@ -385,9 +385,13 @@ export const DCLearnConvergence: React.FC = () => {
           Clonshaugh Data Centre
         </div>
 
-        {/* Stats at y=555 */}
-        <div style={{ position: "absolute", left: "50%", top: 555, transform: "translateX(-50%)", fontFamily: "monospace", color: "#57606a", fontSize: 13, whiteSpace: "nowrap" }}>
-          400 racks · 2.4 MW · PUE 1.50 · Built 2013
+        {/* Stats at y=530 — text and colour change at frame 900 */}
+        <div style={{
+          position: "absolute", left: "50%", top: 530, transform: "translateX(-50%)",
+          fontFamily: "monospace", fontSize: 13, whiteSpace: "nowrap",
+          color: frame >= 900 ? interpolateColors(fadeIn(frame, 900), [0, 1], ["#57606a", "#4a7c59"]) : "#57606a",
+        }}>
+          {frame >= 900 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
         </div>
 
         {/* Dublin at y=580 */}
@@ -398,10 +402,10 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Building green text (4B) — appears at frame 900 */}
         {frame >= 900 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 610, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#4a7c59", fontSize: 16, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 632, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#57606a", fontSize: 12, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
