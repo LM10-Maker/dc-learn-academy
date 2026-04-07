@@ -215,14 +215,14 @@ export const DCLearnConvergence: React.FC = () => {
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
         {/* PHASE 1: CTA text */}
         <div style={{
-          position: "absolute", left: "50%", top: 440, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 340, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1440),
           fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
         }}>
           Three chapters. Three modules.
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 520, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 420, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1500),
           fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
         }}>
@@ -231,7 +231,7 @@ export const DCLearnConvergence: React.FC = () => {
 
         {/* PHASE 2: Logo + branding */}
         <div style={{
-          position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 500, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1560),
           width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
           border: "2px solid #4a7c59",
@@ -241,55 +241,48 @@ export const DCLearnConvergence: React.FC = () => {
           <Img src={staticFile("logo_only.png")} style={{ width: 120, height: 120, objectFit: "cover" }} />
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 730, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1590),
           fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 765, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 655, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1605),
           fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>
           The convergence course for data centre professionals
         </div>
 
-        {/* ZONE 1 — TOP STRIP (y=50-250, full width) */}
+        {/* TOP ZONE (y=40-240, full width) — 18px #8b949e 0.45 */}
         {([
-          { text: "IS 10101", x: 80, y: 65, color: "#5B9BD5" }, { text: "redundancy", x: 350, y: 65, color: "#8DB4C8" }, { text: "CIBSE TM40", x: 620, y: 65, color: "#5B9BD5" }, { text: "GHG Protocol", x: 1000, y: 65, color: "#2dd4bf" }, { text: "topology", x: 1300, y: 65, color: "#8DB4C8" }, { text: "SLA", x: 1550, y: 65, color: "#8DB4C8" }, { text: "dry coolers", x: 1720, y: 65, color: "#5B9BD5" },
-          { text: "EN 50600", x: 120, y: 115, color: "#5B9BD5" }, { text: "ATS", x: 380, y: 115, color: "#D4A84B" }, { text: "concurrent maintainability", x: 680, y: 115, color: "#e879a0" }, { text: "NEAP", x: 1050, y: 115, color: "#4a7c59" }, { text: "DCIM", x: 1300, y: 115, color: "#8DB4C8" }, { text: "BMS", x: 1500, y: 115, color: "#8DB4C8" }, { text: "EPO", x: 1750, y: 115, color: "#C75050" },
-          { text: "N+1", x: 160, y: 165, color: "#D4A84B" }, { text: "chillers", x: 400, y: 165, color: "#5B9BD5" }, { text: "Scope 2 market-based", x: 700, y: 165, color: "#2dd4bf" }, { text: "48-hour fuel", x: 1100, y: 165, color: "#C75050" }, { text: "PDU whip", x: 1400, y: 165, color: "#D4A84B" }, { text: "EN 61439", x: 1700, y: 165, color: "#5B9BD5" },
-          { text: "delta-T", x: 100, y: 215, color: "#5B9BD5" }, { text: "BESS", x: 350, y: 215, color: "#4a7c59" }, { text: "discrimination study", x: 620, y: 215, color: "#8DB4C8" }, { text: "additionality", x: 1000, y: 215, color: "#2dd4bf" }, { text: "thermal runaway", x: 1350, y: 215, color: "#C75050" }, { text: "HV switchgear", x: 1680, y: 215, color: "#D4A84B" },
+          { text: "IS 10101", x: 80, y: 50 }, { text: "redundancy", x: 320, y: 50 }, { text: "CIBSE TM40", x: 560, y: 50 }, { text: "GHG Protocol", x: 820, y: 50 }, { text: "topology", x: 1100, y: 50 }, { text: "SLA", x: 1340, y: 50 }, { text: "dry coolers", x: 1560, y: 50 }, { text: "EPO", x: 1800, y: 50 },
+          { text: "EN 50600", x: 140, y: 100 }, { text: "ATS", x: 380, y: 100 }, { text: "concurrent maintainability", x: 680, y: 100 }, { text: "NEAP", x: 1000, y: 100 }, { text: "DCIM", x: 1250, y: 100 }, { text: "BMS", x: 1480, y: 100 }, { text: "EN 61439", x: 1720, y: 100 },
+          { text: "N+1", x: 100, y: 150 }, { text: "chillers", x: 340, y: 150 }, { text: "Scope 2 market-based", x: 620, y: 150 }, { text: "additionality", x: 940, y: 150 }, { text: "48-hour fuel", x: 1200, y: 150 }, { text: "PDU whip", x: 1450, y: 150 }, { text: "HV switchgear", x: 1700, y: 150 },
+          { text: "delta-T", x: 160, y: 200 }, { text: "BESS", x: 400, y: 200 }, { text: "discrimination study", x: 660, y: 200 }, { text: "thermal runaway", x: 980, y: 200 }, { text: "ASHRAE", x: 1280, y: 200 }, { text: "hot aisle", x: 1520, y: 200 }, { text: "witness testing", x: 1780, y: 200 },
         ] as const).map((t) => (
           <span key={t.text + t.x} style={{
             position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: 20, color: t.color, opacity: 0.55 * wcOp,
+            fontFamily: "monospace", fontSize: 18, color: "#8b949e", opacity: 0.45 * wcOp,
           }}>
             {t.text}
           </span>
         ))}
 
-        {/* ZONE 2 — LEFT COLUMN (x=40-420, y=280-950) */}
+        {/* LEFT COLUMN (x=40-380, y=280-950) */}
         {([
-          { text: "PUE", x: 60, y: 300, size: 22, color: "#D4A84B", op: 0.75 },
-          { text: "2N+1", x: 200, y: 330, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "F-Gas", x: 40, y: 360, size: 22, color: "#E06060", op: 0.75 },
-          { text: "fault tolerance", x: 180, y: 390, size: 20, color: "#e879a0", op: 0.55 },
-          { text: "CRREM", x: 80, y: 420, size: 22, color: "#e879a0", op: 0.75 },
-          { text: "static transfer", x: 220, y: 450, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "containment", x: 50, y: 480, size: 20, color: "#8DB4C8", op: 0.55 },
-          { text: "busway", x: 250, y: 510, size: 20, color: "#8DB4C8", op: 0.55 },
-          { text: "delta-T", x: 100, y: 540, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "rack PDU", x: 200, y: 570, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "VESDA", x: 60, y: 600, size: 20, color: "#C75050", op: 0.55 },
-          { text: "ASHRAE", x: 280, y: 630, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "HVO", x: 40, y: 660, size: 20, color: "#4a7c59", op: 0.55 },
-          { text: "hot aisle", x: 220, y: 690, size: 20, color: "#C75050", op: 0.55 },
-          { text: "WAULT", x: 80, y: 720, size: 20, color: "#e879a0", op: 0.55 },
-          { text: "€/kW", x: 50, y: 780, size: 20, color: "#fb923c", op: 0.55 },
-          { text: "lifecycle cost", x: 40, y: 840, size: 20, color: "#8DB4C8", op: 0.55 },
-          { text: "Icw rating", x: 70, y: 900, size: 20, color: "#D4A84B", op: 0.55 },
+          { text: "PUE", x: 60, y: 290, size: 22, color: "#D4A84B", op: 0.7 },
+          { text: "F-Gas", x: 40, y: 350, size: 22, color: "#E06060", op: 0.7 },
+          { text: "CRREM", x: 80, y: 410, size: 22, color: "#e879a0", op: 0.7 },
+          { text: "2N+1", x: 50, y: 470, size: 20, color: "#D4A84B", op: 0.55 },
+          { text: "fault tolerance", x: 40, y: 530, size: 20, color: "#8DB4C8", op: 0.55 },
+          { text: "containment", x: 60, y: 590, size: 20, color: "#5B9BD5", op: 0.55 },
+          { text: "VESDA", x: 80, y: 650, size: 20, color: "#C75050", op: 0.55 },
+          { text: "busway", x: 50, y: 710, size: 20, color: "#D4A84B", op: 0.55 },
+          { text: "WAULT", x: 40, y: 770, size: 20, color: "#e879a0", op: 0.55 },
+          { text: "€/kW", x: 70, y: 830, size: 20, color: "#fb923c", op: 0.55 },
+          { text: "lifecycle cost", x: 40, y: 890, size: 20, color: "#8DB4C8", op: 0.55 },
         ] as const).map((t) => (
           <span key={t.text + t.x} style={{
             position: "absolute", left: t.x, top: t.y,
@@ -299,26 +292,19 @@ export const DCLearnConvergence: React.FC = () => {
           </span>
         ))}
 
-        {/* ZONE 3 — RIGHT COLUMN (x=1100-1880, y=280-950) */}
+        {/* RIGHT COLUMN (x=1540-1880, y=280-950) */}
         {([
-          { text: "CRU", x: 1600, y: 300, size: 22, color: "#4a7c59", op: 0.75 },
-          { text: "dual feed", x: 1150, y: 330, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "EED", x: 1720, y: 360, size: 22, color: "#5B9BD5", op: 0.75 },
-          { text: "power quality", x: 1120, y: 390, size: 20, color: "#8DB4C8", op: 0.55 },
-          { text: "Carbon Tax", x: 1540, y: 420, size: 22, color: "#fb923c", op: 0.75 },
-          { text: "HV protection", x: 1180, y: 450, size: 20, color: "#C75050", op: 0.55 },
-          { text: "Grid", x: 1680, y: 480, size: 22, color: "#a78bfa", op: 0.75 },
-          { text: "chilled water", x: 1140, y: 510, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "free cooling", x: 1560, y: 540, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "condenser", x: 1200, y: 570, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "MIC", x: 1720, y: 600, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "Li-ion", x: 1160, y: 630, size: 20, color: "#fb923c", op: 0.55 },
-          { text: "Novec 1230", x: 1540, y: 660, size: 20, color: "#C75050", op: 0.55 },
-          { text: "EPA licence", x: 1120, y: 690, size: 20, color: "#4a7c59", op: 0.55 },
-          { text: "CDU", x: 1700, y: 720, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "cap rate", x: 1560, y: 780, size: 20, color: "#fb923c", op: 0.55 },
-          { text: "elemental cost plan", x: 1520, y: 840, size: 20, color: "#8DB4C8", op: 0.55 },
-          { text: "Fire", x: 1680, y: 900, size: 22, color: "#C75050", op: 0.75 },
+          { text: "CRU", x: 1600, y: 290, size: 22, color: "#4a7c59", op: 0.7 },
+          { text: "EED", x: 1720, y: 350, size: 22, color: "#5B9BD5", op: 0.7 },
+          { text: "Carbon Tax", x: 1560, y: 410, size: 22, color: "#fb923c", op: 0.7 },
+          { text: "Grid", x: 1680, y: 470, size: 22, color: "#a78bfa", op: 0.7 },
+          { text: "dual feed", x: 1560, y: 530, size: 20, color: "#D4A84B", op: 0.55 },
+          { text: "free cooling", x: 1580, y: 590, size: 20, color: "#5B9BD5", op: 0.55 },
+          { text: "chilled water", x: 1560, y: 650, size: 20, color: "#5B9BD5", op: 0.55 },
+          { text: "MIC", x: 1700, y: 710, size: 20, color: "#D4A84B", op: 0.55 },
+          { text: "Novec 1230", x: 1560, y: 770, size: 20, color: "#C75050", op: 0.55 },
+          { text: "cap rate", x: 1600, y: 830, size: 20, color: "#fb923c", op: 0.55 },
+          { text: "Icw rating", x: 1580, y: 890, size: 20, color: "#D4A84B", op: 0.55 },
         ] as const).map((t) => (
           <span key={t.text + t.x} style={{
             position: "absolute", left: t.x, top: t.y,
@@ -328,26 +314,26 @@ export const DCLearnConvergence: React.FC = () => {
           </span>
         ))}
 
-        {/* ZONE 4 — BOTTOM (x=450-1450, y=760-940) */}
+        {/* BOTTOM ZONE (x=400-1520, y=720-960) — 18px #8b949e 0.45 */}
         {([
-          { text: "discrimination study", x: 480, y: 760, color: "#8DB4C8" },
-          { text: "additionality", x: 780, y: 760, color: "#2dd4bf" },
-          { text: "GHG Protocol", x: 1050, y: 760, color: "#2dd4bf" },
-          { text: "PDU", x: 1300, y: 760, color: "#D4A84B" },
-          { text: "Scope 2", x: 480, y: 810, color: "#2dd4bf" },
-          { text: "commissioning", x: 750, y: 810, color: "#4a7c59" },
-          { text: "48-hour fuel", x: 1050, y: 810, color: "#C75050" },
-          { text: "UPS", x: 1300, y: 810, color: "#D4A84B" },
-          { text: "server PSU", x: 480, y: 840, color: "#D4A84B" },
-          { text: "heat rejection", x: 720, y: 840, color: "#C75050" },
-          { text: "uptime tier", x: 1000, y: 840, color: "#e879a0" },
-          { text: "PPA", x: 1250, y: 840, color: "#4a7c59" },
-          { text: "witness testing", x: 550, y: 890, color: "#8DB4C8" },
-          { text: "point-to-point", x: 850, y: 890, color: "#5B9BD5" },
+          { text: "static transfer", x: 440, y: 740, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "HVO", x: 680, y: 740, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "condenser", x: 920, y: 740, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "Li-ion", x: 1160, y: 740, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "EPA licence", x: 1380, y: 740, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "server PSU", x: 480, y: 800, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "rack PDU", x: 720, y: 800, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "heat rejection", x: 980, y: 800, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "PPA", x: 1220, y: 800, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "Fire", x: 1400, y: 800, size: 20, color: "#C75050", op: 0.6 },
+          { text: "uptime tier", x: 520, y: 860, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "commissioning", x: 780, y: 860, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "point-to-point", x: 1060, y: 860, size: 18, color: "#8b949e", op: 0.45 },
+          { text: "Scope 2", x: 1320, y: 860, size: 18, color: "#8b949e", op: 0.45 },
         ] as const).map((t) => (
           <span key={t.text + t.x} style={{
             position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: 20, color: t.color, opacity: 0.55 * wcOp,
+            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
           }}>
             {t.text}
           </span>
