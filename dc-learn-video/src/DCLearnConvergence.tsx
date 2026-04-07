@@ -92,16 +92,9 @@ export const DCLearnConvergence: React.FC = () => {
   const frame = useCurrentFrame();
   const { width, height } = useVideoConfig();
 
-  const cx = width / 2;
-  const cy = height * 0.37;
-  const rx = Math.min(width * 0.198, 380);
-  const ry = Math.min(height * 0.24, 260);
-
-  // Building dimensions
-  const bw = 260;
-  const bh = 100;
-  const bx = cx - bw / 2;
-  const by = cy - bh / 2;
+  const cx = 960;
+  const cy = 520;
+  const ringRadius = 420;
 
   // Building color transition (870-930)
   const greenT = interpolate(frame, [870, 930], [0, 1], {
@@ -128,7 +121,7 @@ export const DCLearnConvergence: React.FC = () => {
   }, null);
 
   // Clock positions array for connections
-  const clockPositions = CLOCKS.map((c) => clockPos(c.angle, cx, cy, rx, ry));
+  const clockPositions = CLOCKS.map((c) => clockPos(c.angle, cx, cy, ringRadius, ringRadius));
 
   // Bezier that avoids center
   const connPath = (fromIdx: number, toIdx: number) => {
@@ -192,8 +185,14 @@ export const DCLearnConvergence: React.FC = () => {
           <div style={{ opacity: fadeIn(frame, 1440), fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59", marginTop: 12 }}>
             Free.
           </div>
-          <div style={{ opacity: fadeIn(frame, 1500), marginTop: 24, width: 100, height: 100, borderRadius: "50%", border: "2px solid #4a7c59", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Img src={staticFile("logo_only.png")} style={{ width: 80 }} />
+          <div style={{
+            opacity: fadeIn(frame, 1500), marginTop: 24,
+            width: 80, height: 80, borderRadius: "50%", overflow: "hidden",
+            border: "2px solid #4a7c59",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            background: "#0a0e14",
+          }}>
+            <Img src={staticFile("logo_only.png")} style={{ width: 100, height: 100, objectFit: "cover" }} />
           </div>
           <div style={{ opacity: fadeIn(frame, 1530), fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59", marginTop: 12 }}>
             DC-LEARN
@@ -244,24 +243,27 @@ export const DCLearnConvergence: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
       {/* Scene 1: Opening */}
-      <div style={{ opacity: openingOpacity, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        {/* Logo */}
-        <div style={{ marginTop: height * 0.06, width: 80, height: 80, borderRadius: "50%", border: "2px solid #4a7c59", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <Img src={staticFile("logo_only.png")} style={{ width: 64 }} />
-        </div>
-        <div style={{ fontFamily: "monospace", color: "#4a7c59", fontSize: 14, letterSpacing: 6, marginTop: 10, textTransform: "uppercase" }}>
-          Clonshaugh Data Centre
+      <div style={{ opacity: openingOpacity, position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+        {/* Logo at y=390 (centred) */}
+        <div style={{
+          position: "absolute", left: "50%", top: 390, transform: "translate(-50%, -50%)",
+          width: 80, height: 80, borderRadius: "50%", overflow: "hidden",
+          border: "2px solid #4a7c59",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "#0a0e14",
+        }}>
+          <Img src={staticFile("logo_only.png")} style={{ width: 100, height: 100, objectFit: "cover" }} />
         </div>
 
-        {/* Building SVG */}
-        <svg width={bw + 20} height={bh + 30} viewBox={(bx - 10) + " " + (by - 10) + " " + (bw + 20) + " " + (bh + 30)} style={{ marginTop: 16 }}>
-          <rect x={bx} y={by} width={bw} height={bh} fill="none" stroke={outlineStroke} strokeWidth={2} rx={4} />
+        {/* Building racks at y=460 */}
+        <svg width={160} height={70} viewBox="0 0 160 70" style={{ position: "absolute", left: cx - 80, top: 460 }}>
+          <rect x={10} y={10} width={140} height={50} fill="none" stroke={outlineStroke} strokeWidth={2} rx={4} />
           {[0, 1, 2, 3, 4].map((i) => {
-            const rw = 40;
-            const rh = 70;
-            const gap = (bw - 5 * rw) / 6;
-            const rx2 = bx + gap + i * (rw + gap);
-            const ry2 = by + (bh - rh) / 2;
+            const rw = 20;
+            const rh = 36;
+            const gap = (140 - 5 * rw) / 6;
+            const rx2 = 10 + gap + i * (rw + gap);
+            const ry2 = 10 + (50 - rh) / 2;
             return (
               <React.Fragment key={i}>
                 <rect x={rx2} y={ry2} width={rw} height={rh} fill={rackFill} stroke={rackStroke} strokeWidth={1.5} rx={2} />
@@ -271,25 +273,34 @@ export const DCLearnConvergence: React.FC = () => {
               </React.Fragment>
             );
           })}
-          <line x1={bx} y1={by + bh} x2={bx + bw} y2={by + bh} stroke={outlineStroke} strokeWidth={2} />
-          {/* Green glow */}
+          <line x1={10} y1={60} x2={150} y2={60} stroke={outlineStroke} strokeWidth={2} />
           {greenT > 0 && (
-            <rect x={bx - 4} y={by - 4} width={bw + 8} height={bh + 8} fill="none" stroke="#4a7c59" strokeWidth={4} rx={6} opacity={0.15 * greenT} />
+            <rect x={6} y={6} width={148} height={58} fill="none" stroke="#4a7c59" strokeWidth={4} rx={6} opacity={0.15 * greenT} />
           )}
         </svg>
 
-        <div style={{ fontFamily: "monospace", color: "#57606a", fontSize: 13, marginTop: 8 }}>
+        {/* "CLONSHAUGH DATA CENTRE" at y=530 */}
+        <div style={{ position: "absolute", left: "50%", top: 530, transform: "translateX(-50%)", fontFamily: "monospace", color: "#4a7c59", fontSize: 14, letterSpacing: 6, textTransform: "uppercase", whiteSpace: "nowrap" }}>
+          Clonshaugh Data Centre
+        </div>
+
+        {/* Stats at y=555 */}
+        <div style={{ position: "absolute", left: "50%", top: 555, transform: "translateX(-50%)", fontFamily: "monospace", color: "#57606a", fontSize: 13, whiteSpace: "nowrap" }}>
           400 racks · 2.4 MW · PUE 1.50 · Built 2013
         </div>
-        <div style={{ fontFamily: "monospace", color: "#3d444d", fontSize: 12, marginTop: 4 }}>Dublin</div>
+
+        {/* Dublin at y=580 */}
+        <div style={{ position: "absolute", left: "50%", top: 580, transform: "translateX(-50%)", fontFamily: "monospace", color: "#3d444d", fontSize: 12 }}>
+          Dublin
+        </div>
 
         {/* Building green text (4B) */}
         {frame >= 870 && (
           <>
-            <div style={{ opacity: fadeIn(frame, 890), fontFamily: "monospace", color: "#4a7c59", fontSize: 14, fontWeight: "bold", marginTop: 12 }}>
+            <div style={{ position: "absolute", left: "50%", top: 605, transform: "translateX(-50%)", opacity: fadeIn(frame, 890), fontFamily: "monospace", color: "#4a7c59", fontSize: 14, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#57606a", fontSize: 11, marginTop: 4 }}>
+            <div style={{ position: "absolute", left: "50%", top: 625, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#57606a", fontSize: 11, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
