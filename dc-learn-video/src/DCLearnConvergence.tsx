@@ -230,33 +230,61 @@ export const DCLearnConvergence: React.FC = () => {
     );
   }
 
-  // ── SCENE 7: END SCREEN — holds until end ──
+  // ── SCENE 7: END SCREEN — firefly word cloud ──
   if (scene7) {
-    const logoCY = 360; // logo centre y for word cloud ring
-    const cloudR = 300; // large term ring radius
+    // Firefly terms: left column (x=60-300) and right column (x=660-900)
+    const fireflyTerms: { text: string; x: number; y: number; size: number; color: string; glowStart: number }[] = [
+      // Left column — staggered y from 100 to 900
+      { text: "PUE", x: 180, y: 120, size: 15, color: "#D4A84B", glowStart: 1620 },
+      { text: "F-Gas", x: 100, y: 210, size: 15, color: "#E06060", glowStart: 1635 },
+      { text: "containment", x: 200, y: 300, size: 12, color: "#8b949e", glowStart: 1650 },
+      { text: "delta-T", x: 120, y: 390, size: 12, color: "#8b949e", glowStart: 1665 },
+      { text: "VESDA", x: 240, y: 470, size: 12, color: "#8b949e", glowStart: 1680 },
+      { text: "HVO", x: 100, y: 550, size: 12, color: "#8b949e", glowStart: 1695 },
+      { text: "N+1", x: 220, y: 630, size: 12, color: "#8b949e", glowStart: 1710 },
+      { text: "WAULT", x: 140, y: 710, size: 10, color: "#57606a", glowStart: 1725 },
+      { text: "IS 10101", x: 260, y: 780, size: 10, color: "#57606a", glowStart: 1740 },
+      { text: "lifecycle cost", x: 120, y: 850, size: 10, color: "#57606a", glowStart: 1755 },
+      { text: "€/kW", x: 240, y: 160, size: 10, color: "#57606a", glowStart: 1650 },
+      { text: "Scope 2 market-based", x: 80, y: 920, size: 10, color: "#57606a", glowStart: 1665 },
+      { text: "elemental cost plan", x: 200, y: 500, size: 10, color: "#57606a", glowStart: 1680 },
+      // Right column — staggered y from 100 to 900
+      { text: "CRU", x: 780, y: 120, size: 15, color: "#4a7c59", glowStart: 1620 },
+      { text: "EED", x: 860, y: 210, size: 15, color: "#5B9BD5", glowStart: 1635 },
+      { text: "free cooling", x: 720, y: 300, size: 12, color: "#8b949e", glowStart: 1650 },
+      { text: "MIC", x: 840, y: 390, size: 12, color: "#8b949e", glowStart: 1665 },
+      { text: "Novec 1230", x: 700, y: 470, size: 12, color: "#8b949e", glowStart: 1680 },
+      { text: "CDU", x: 860, y: 550, size: 12, color: "#8b949e", glowStart: 1695 },
+      { text: "BESS", x: 740, y: 630, size: 12, color: "#8b949e", glowStart: 1710 },
+      { text: "DCIM", x: 820, y: 710, size: 12, color: "#8b949e", glowStart: 1725 },
+      { text: "EN 50600", x: 700, y: 780, size: 10, color: "#57606a", glowStart: 1740 },
+      { text: "Icw rating", x: 840, y: 850, size: 10, color: "#57606a", glowStart: 1755 },
+      { text: "cap rate", x: 720, y: 160, size: 10, color: "#57606a", glowStart: 1650 },
+      { text: "thermal runaway", x: 880, y: 920, size: 10, color: "#57606a", glowStart: 1665 },
+      { text: "discrimination study", x: 760, y: 500, size: 10, color: "#57606a", glowStart: 1680 },
+    ];
+
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
-        {/* "Three chapters. Three modules." */}
+        {/* PHASE 1: CTA text */}
         <div style={{
-          position: "absolute", left: "50%", top: 200, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 440, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1440),
           fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
         }}>
           Three chapters. Three modules.
         </div>
-
-        {/* "Free." */}
         <div style={{
-          position: "absolute", left: "50%", top: 280, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 520, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1500),
           fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
         }}>
           Free.
         </div>
 
-        {/* Logo — 100px circular clip */}
+        {/* PHASE 2: Logo + branding */}
         <div style={{
-          position: "absolute", left: "50%", top: logoCY, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1560),
           width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
           border: "2px solid #4a7c59",
@@ -265,73 +293,40 @@ export const DCLearnConvergence: React.FC = () => {
         }}>
           <Img src={staticFile("logo_only.png")} style={{ width: 120, height: 120, objectFit: "cover" }} />
         </div>
-
-        {/* DC-LEARN */}
         <div style={{
-          position: "absolute", left: "50%", top: 470, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 730, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1590),
           fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
         </div>
-
-        {/* Tagline */}
         <div style={{
-          position: "absolute", left: "50%", top: 505, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 765, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1605),
           fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>
           The convergence course for data centre professionals
         </div>
 
-        {/* Word cloud — rings centred on logo, constrained to y=180-950 */}
-        <div style={{ opacity: fadeIn(frame, 1620), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
-          {/* Large coloured terms at radius 300 */}
-          {LARGE_TERMS.map((t) => {
-            const pos = clockPos(t.angle, cx, logoCY, cloudR, cloudR);
-            // Clamp to word cloud zone (y 180-950)
-            const clampedY = Math.max(300, Math.min(950, pos.y));
-            return (
-              <span key={t.text} style={{
-                position: "absolute", left: pos.x, top: clampedY,
-                transform: "translate(-50%,-50%)",
-                fontFamily: "monospace", fontSize: 16, color: t.color, opacity: 0.7,
-              }}>
-                {t.text}
-              </span>
-            );
-          })}
-          {/* Medium white terms */}
-          {MEDIUM_TERMS.map((t, i) => {
-            const a = (i / MEDIUM_TERMS.length) * 360 + 11;
-            const pos = clockPos(a, cx, logoCY, cloudR + 80, cloudR + 80);
-            const clampedY = Math.max(300, Math.min(950, pos.y));
-            return (
-              <span key={t} style={{
-                position: "absolute", left: pos.x, top: clampedY,
-                transform: "translate(-50%,-50%)",
-                fontFamily: "monospace", fontSize: 12, color: "white", opacity: 0.5,
-              }}>
-                {t}
-              </span>
-            );
-          })}
-          {/* Small dim terms */}
-          {SMALL_TERMS.map((t, i) => {
-            const a = (i / SMALL_TERMS.length) * 360 + 7;
-            const pos = clockPos(a, cx, logoCY, cloudR + 200, cloudR + 200);
-            const clampedY = Math.max(300, Math.min(950, pos.y));
-            return (
-              <span key={t} style={{
-                position: "absolute", left: pos.x, top: clampedY,
-                transform: "translate(-50%,-50%)",
-                fontFamily: "monospace", fontSize: 10, color: "white", opacity: 0.28,
-              }}>
-                {t}
-              </span>
-            );
-          })}
-        </div>
+        {/* PHASE 3: Firefly word cloud — left and right margins only */}
+        {fireflyTerms.map((t) => {
+          if (frame < t.glowStart) return null;
+          const elapsed = frame - t.glowStart;
+          // Glow cycle: 0→0.6 over 10 frames, hold 5, then 0.6→0.08 over 15 frames
+          const glowUp = interpolate(elapsed, [0, 10], [0, 0.6], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          const glowDown = interpolate(elapsed, [15, 30], [0.6, 0.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          const op = elapsed < 15 ? glowUp : glowDown;
+          return (
+            <span key={t.text} style={{
+              position: "absolute", left: t.x, top: t.y,
+              transform: "translate(-50%,-50%)",
+              fontFamily: "monospace", fontSize: t.size, color: t.color,
+              opacity: op,
+            }}>
+              {t.text}
+            </span>
+          );
+        })}
 
         {/* legacybe.ie */}
         <div style={{
