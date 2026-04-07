@@ -102,13 +102,13 @@ export const DCLearnConvergence: React.FC = () => {
     extrapolateRight: "clamp",
   });
   const rackStroke = interpolateColors(greenT, [0, 1], ["#3d444d", "#4a7c59"]);
-  const rackFill = interpolateColors(greenT, [0, 1], ["#1c2128", "#1a3d24"]);
+  const rackFill = interpolateColors(greenT, [0, 1], ["#1c2128", "rgba(74,124,89,0.15)"]);
   const outlineStroke = interpolateColors(greenT, [0, 1], ["#3d444d", "#4a7c59"]);
 
   // Scene visibility
   const openingOpacity = fadeIn(frame, 15, 30);
   const clocksVisible = frame >= 90;
-  const insightOverlay = frame >= 930 && frame < 1140 ? fadeIn(frame, 930, 15) : 0;
+  const insightOverlay = frame >= 930 && frame < 1140 ? fadeIn(frame, 930, 20) : 0;
   const clockDim = frame >= 930 ? 0.15 : 1;
   const scene6 = frame >= 1140 && frame < 1380;
   const scene7 = frame >= 1380;
@@ -158,98 +158,183 @@ export const DCLearnConvergence: React.FC = () => {
   if (scene6) {
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", gap: 16 }}>
-          <div style={{ opacity: fadeIn(frame, 1140), fontFamily: "monospace", color: "#4a7c59", fontSize: 14, textTransform: "uppercase", letterSpacing: 8 }}>
-            DC-LEARN
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1158), fontFamily: "Georgia, serif", color: "white", fontSize: 46, textAlign: "center", maxWidth: "80%", lineHeight: 1.2, marginTop: 16 }}>
-            The only learning resource that shows how they connect.
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1230), display: "flex", gap: 80, marginTop: 40 }}>
-            {[["15", "CHAPTERS", true], ["16", "MODULES", false], ["5", "PERSONAS", false]].map(([num, label, hasSub]) => (
-              <div key={label as string} style={{ textAlign: "center" }}>
-                <div style={{ fontFamily: "Georgia, serif", fontSize: 52, color: "white" }}>{num as string}</div>
-                <div style={{ fontFamily: "monospace", fontSize: 11, color: "#57606a", letterSpacing: 2 }}>{label as string}</div>
-                {hasSub && (
-                  <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 14, color: "#8b949e", marginTop: 6 }}>
-                    The Data Centre Clock
+        {/* DC-LEARN label */}
+        <div style={{
+          position: "absolute", left: "50%", top: 340, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1140),
+          fontFamily: "monospace", color: "#4a7c59", fontSize: 14,
+          textTransform: "uppercase", letterSpacing: 4,
+        }}>
+          DC-LEARN
+        </div>
+
+        {/* Headline */}
+        <div style={{
+          position: "absolute", left: "50%", top: 410, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1160, 18),
+          fontFamily: "Georgia, serif", fontSize: 46, color: "white",
+          textAlign: "center", maxWidth: 900, lineHeight: 1.2,
+        }}>
+          The only learning resource that shows how they connect.
+        </div>
+
+        {/* Three stat columns */}
+        <div style={{
+          position: "absolute", left: "50%", top: 500, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1230),
+          display: "flex", alignItems: "flex-start", gap: 0,
+        }}>
+          {([
+            { num: "15", label: "CHAPTERS", sub: "The Data Centre Clock" },
+            { num: "16", label: "MODULES", sub: null },
+            { num: "5", label: "PERSONAS", sub: null },
+          ] as const).map((col, i) => (
+            <React.Fragment key={col.label}>
+              {i > 0 && (
+                <div style={{ width: 1, height: 70, backgroundColor: "#1c2128", margin: "0 40px" }} />
+              )}
+              <div style={{ textAlign: "center", minWidth: 80 }}>
+                <div style={{ fontFamily: "Georgia, serif", fontSize: 52, color: "white" }}>{col.num}</div>
+                <div style={{ fontFamily: "monospace", fontSize: 11, color: "#57606a", letterSpacing: 2 }}>{col.label}</div>
+                {col.sub && (
+                  <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 13, color: "#8b949e", marginTop: 6 }}>
+                    {col.sub}
                   </div>
                 )}
               </div>
-            ))}
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1290), fontFamily: "monospace", fontSize: 15, color: "#8b949e", marginTop: 32 }}>
-            Story teaches the why. Modules teach the how.
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1335), fontFamily: "monospace", fontSize: 15, color: "#8b949e", marginTop: 8 }}>
-            Irish standards. Irish grid. Irish deadlines.
-          </div>
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Bottom lines */}
+        <div style={{
+          position: "absolute", left: "50%", top: 600, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1290),
+          fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
+        }}>
+          Story teaches the why. Modules teach the how.
+        </div>
+        <div style={{
+          position: "absolute", left: "50%", top: 625, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1335),
+          fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
+        }}>
+          Irish standards. Irish grid. Irish deadlines.
         </div>
       </AbsoluteFill>
     );
   }
 
-  // ── SCENE 7: END SCREEN ──
+  // ── SCENE 7: END SCREEN — holds until end ──
   if (scene7) {
-    const cloudRadius = 200;
+    const logoCY = 360; // logo centre y for word cloud ring
+    const cloudR = 300; // large term ring radius
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", position: "relative" }}>
-          <div style={{ opacity: fadeIn(frame, 1380), fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center" }}>
-            Three chapters. Three modules.
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1440), fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59", marginTop: 12 }}>
-            Free.
-          </div>
-          <div style={{
-            opacity: fadeIn(frame, 1500), marginTop: 24,
-            width: 80, height: 80, borderRadius: "50%", overflow: "hidden",
-            border: "2px solid #4a7c59",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            background: "#0a0e14",
-          }}>
-            <Img src={staticFile("logo_only.png")} style={{ width: 100, height: 100, objectFit: "cover" }} />
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1530), fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59", marginTop: 12 }}>
-            DC-LEARN
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1545), fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e", marginTop: 8 }}>
-            The convergence course for data centre professionals
-          </div>
+        {/* "Three chapters. Three modules." */}
+        <div style={{
+          position: "absolute", left: "50%", top: 200, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1380),
+          fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
+        }}>
+          Three chapters. Three modules.
+        </div>
 
-          {/* Word cloud */}
-          <div style={{ opacity: fadeIn(frame, 1560), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
-            {LARGE_TERMS.map((t, i) => {
-              const pos = clockPos(t.angle, cx, height / 2, cloudRadius + 60, cloudRadius + 20);
-              return (
-                <span key={t.text} style={{ position: "absolute", left: pos.x, top: pos.y, transform: "translate(-50%,-50%)", fontFamily: "monospace", fontSize: 18, color: t.color, opacity: 0.9 }}>
-                  {t.text}
-                </span>
-              );
-            })}
-            {MEDIUM_TERMS.map((t, i) => {
-              const a = (i / MEDIUM_TERMS.length) * 360 + 11;
-              const pos = clockPos(a, cx, height / 2, cloudRadius + 140, cloudRadius + 100);
-              return (
-                <span key={t} style={{ position: "absolute", left: pos.x, top: pos.y, transform: "translate(-50%,-50%)", fontFamily: "monospace", fontSize: 13, color: "white", opacity: 0.55 }}>
-                  {t}
-                </span>
-              );
-            })}
-            {SMALL_TERMS.map((t, i) => {
-              const a = (i / SMALL_TERMS.length) * 360 + 7;
-              const pos = clockPos(a, cx, height / 2, cloudRadius + 240, cloudRadius + 180);
-              return (
-                <span key={t} style={{ position: "absolute", left: pos.x, top: pos.y, transform: "translate(-50%,-50%)", fontFamily: "monospace", fontSize: 10, color: "white", opacity: 0.3 }}>
-                  {t}
-                </span>
-              );
-            })}
-          </div>
+        {/* "Free." */}
+        <div style={{
+          position: "absolute", left: "50%", top: 280, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1440),
+          fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
+        }}>
+          Free.
+        </div>
 
-          <div style={{ opacity: fadeIn(frame, 1590), position: "absolute", bottom: 40, fontFamily: "monospace", fontSize: 12, color: "#4a7c59" }}>
-            legacybe.ie
-          </div>
+        {/* Logo — 100px circular clip */}
+        <div style={{
+          position: "absolute", left: "50%", top: logoCY, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1500),
+          width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
+          border: "2px solid #4a7c59",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          background: "#0a0e14",
+        }}>
+          <Img src={staticFile("logo_only.png")} style={{ width: 120, height: 120, objectFit: "cover" }} />
+        </div>
+
+        {/* DC-LEARN */}
+        <div style={{
+          position: "absolute", left: "50%", top: 470, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1530),
+          fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
+        }}>
+          DC-LEARN
+        </div>
+
+        {/* Tagline */}
+        <div style={{
+          position: "absolute", left: "50%", top: 505, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1545),
+          fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
+        }}>
+          The convergence course for data centre professionals
+        </div>
+
+        {/* Word cloud — rings centred on logo, constrained to y=180-950 */}
+        <div style={{ opacity: fadeIn(frame, 1560), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+          {/* Large coloured terms at radius 300 */}
+          {LARGE_TERMS.map((t) => {
+            const pos = clockPos(t.angle, cx, logoCY, cloudR, cloudR);
+            // Clamp to word cloud zone (y 180-950)
+            const clampedY = Math.max(180, Math.min(950, pos.y));
+            return (
+              <span key={t.text} style={{
+                position: "absolute", left: pos.x, top: clampedY,
+                transform: "translate(-50%,-50%)",
+                fontFamily: "monospace", fontSize: 16, color: t.color, opacity: 0.7,
+              }}>
+                {t.text}
+              </span>
+            );
+          })}
+          {/* Medium white terms */}
+          {MEDIUM_TERMS.map((t, i) => {
+            const a = (i / MEDIUM_TERMS.length) * 360 + 11;
+            const pos = clockPos(a, cx, logoCY, cloudR + 80, cloudR + 80);
+            const clampedY = Math.max(180, Math.min(950, pos.y));
+            return (
+              <span key={t} style={{
+                position: "absolute", left: pos.x, top: clampedY,
+                transform: "translate(-50%,-50%)",
+                fontFamily: "monospace", fontSize: 12, color: "white", opacity: 0.5,
+              }}>
+                {t}
+              </span>
+            );
+          })}
+          {/* Small dim terms */}
+          {SMALL_TERMS.map((t, i) => {
+            const a = (i / SMALL_TERMS.length) * 360 + 7;
+            const pos = clockPos(a, cx, logoCY, cloudR + 200, cloudR + 200);
+            const clampedY = Math.max(180, Math.min(950, pos.y));
+            return (
+              <span key={t} style={{
+                position: "absolute", left: pos.x, top: clampedY,
+                transform: "translate(-50%,-50%)",
+                fontFamily: "monospace", fontSize: 10, color: "white", opacity: 0.28,
+              }}>
+                {t}
+              </span>
+            );
+          })}
+        </div>
+
+        {/* legacybe.ie */}
+        <div style={{
+          position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1590),
+          fontFamily: "monospace", fontSize: 12, color: "#4a7c59",
+        }}>
+          legacybe.ie
         </div>
       </AbsoluteFill>
     );
@@ -310,13 +395,13 @@ export const DCLearnConvergence: React.FC = () => {
           Dublin
         </div>
 
-        {/* Building green text (4B) */}
-        {frame >= 870 && (
+        {/* Building green text (4B) — appears at frame 900 */}
+        {frame >= 900 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 605, transform: "translateX(-50%)", opacity: fadeIn(frame, 890), fontFamily: "monospace", color: "#4a7c59", fontSize: 14, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 610, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#4a7c59", fontSize: 16, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 625, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#57606a", fontSize: 11, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 632, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#57606a", fontSize: 12, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
@@ -432,21 +517,43 @@ export const DCLearnConvergence: React.FC = () => {
         </div>
       )}
 
-      {/* Scene 5: Insight overlay */}
+      {/* Scene 5: Insight overlay — absolute positioned, translateY entrance */}
       {insightOverlay > 0 && (
-        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.88 * insightOverlay) + ")", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 24 }}>
-          <div style={{ opacity: fadeIn(frame, 930), fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 44, color: "white", textAlign: "center", maxWidth: "80%" }}>
-            They weren’t designed by the same people.
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1005), fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 44, color: "white", textAlign: "center", maxWidth: "80%" }}>
-            They weren’t drafted in the same year.
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1080), fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 48, color: "#4a7c59", textAlign: "center", maxWidth: "80%" }}>
-            But they all land on the same building, in the same decade.
-          </div>
-          <div style={{ opacity: fadeIn(frame, 1110), fontFamily: "monospace", fontSize: 13, color: "#57606a", textTransform: "uppercase", textAlign: "center", maxWidth: "80%", marginTop: 16 }}>
-            Nobody coordinated them. But the deadlines coordinated themselves.
-          </div>
+        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.88 * insightOverlay) + ")" }}>
+          {[
+            { text: "They weren’t designed by the same people.", start: 945, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
+            { text: "They weren’t drafted in the same year.", start: 1020, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
+            { text: "But they all land on the same building, in the same decade.", start: 1080, y: 530, size: 48, color: "#4a7c59", font: "Georgia, serif", style: "italic" as const },
+          ].map((line) => {
+            const op = fadeIn(frame, line.start);
+            const ty = interpolate(frame, [line.start, line.start + 15], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+            return (
+              <div key={line.start} style={{
+                position: "absolute", left: "50%", top: line.y,
+                transform: "translate(-50%, " + ty + "px)",
+                opacity: op, fontFamily: line.font, fontStyle: line.style,
+                fontSize: line.size, color: line.color,
+                textAlign: "center", maxWidth: "80%", whiteSpace: "nowrap",
+              }}>
+                {line.text}
+              </div>
+            );
+          })}
+          {(() => {
+            const op4 = fadeIn(frame, 1110);
+            const ty4 = interpolate(frame, [1110, 1125], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+            return (
+              <div style={{
+                position: "absolute", left: "50%", top: 590,
+                transform: "translate(-50%, " + ty4 + "px)",
+                opacity: op4, fontFamily: "monospace", fontSize: 14, color: "#57606a",
+                textTransform: "uppercase", letterSpacing: 2,
+                textAlign: "center", maxWidth: "80%", whiteSpace: "nowrap",
+              }}>
+                Nobody coordinated them. But the deadlines coordinated themselves.
+              </div>
+            );
+          })()}
         </div>
       )}
     </AbsoluteFill>
