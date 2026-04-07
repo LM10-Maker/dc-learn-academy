@@ -109,7 +109,7 @@ export const DCLearnConvergence: React.FC = () => {
   const openingOpacity = fadeIn(frame, 15, 30);
   const clocksVisible = frame >= 90;
   const insightOverlay = frame >= 930 && frame < 1140 ? fadeIn(frame, 930, 20) : 0;
-  const clockDim = frame >= 930 ? 0.15 : 1;
+  const clockDim = frame >= 945 ? 0 : frame >= 930 ? 0.15 : 1;
   const scene6 = frame >= 1140 && frame < 1380;
   const scene7 = frame >= 1380;
 
@@ -160,7 +160,7 @@ export const DCLearnConvergence: React.FC = () => {
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
         {/* DC-LEARN label */}
         <div style={{
-          position: "absolute", left: "50%", top: 340, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 250, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1140),
           fontFamily: "monospace", color: "#4a7c59", fontSize: 14,
           textTransform: "uppercase", letterSpacing: 4,
@@ -170,7 +170,7 @@ export const DCLearnConvergence: React.FC = () => {
 
         {/* Headline */}
         <div style={{
-          position: "absolute", left: "50%", top: 410, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 350, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1160, 18),
           fontFamily: "Georgia, serif", fontSize: 46, color: "white",
           textAlign: "center", maxWidth: 900, lineHeight: 1.2,
@@ -180,7 +180,7 @@ export const DCLearnConvergence: React.FC = () => {
 
         {/* Three stat columns */}
         <div style={{
-          position: "absolute", left: "50%", top: 500, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 480, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1230),
           display: "flex", alignItems: "flex-start", gap: 0,
         }}>
@@ -215,7 +215,7 @@ export const DCLearnConvergence: React.FC = () => {
           Story teaches the why. Modules teach the how.
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 625, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 640, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1335),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
@@ -285,7 +285,7 @@ export const DCLearnConvergence: React.FC = () => {
           {LARGE_TERMS.map((t) => {
             const pos = clockPos(t.angle, cx, logoCY, cloudR, cloudR);
             // Clamp to word cloud zone (y 180-950)
-            const clampedY = Math.max(180, Math.min(950, pos.y));
+            const clampedY = Math.max(300, Math.min(950, pos.y));
             return (
               <span key={t.text} style={{
                 position: "absolute", left: pos.x, top: clampedY,
@@ -300,7 +300,7 @@ export const DCLearnConvergence: React.FC = () => {
           {MEDIUM_TERMS.map((t, i) => {
             const a = (i / MEDIUM_TERMS.length) * 360 + 11;
             const pos = clockPos(a, cx, logoCY, cloudR + 80, cloudR + 80);
-            const clampedY = Math.max(180, Math.min(950, pos.y));
+            const clampedY = Math.max(300, Math.min(950, pos.y));
             return (
               <span key={t} style={{
                 position: "absolute", left: pos.x, top: clampedY,
@@ -315,7 +315,7 @@ export const DCLearnConvergence: React.FC = () => {
           {SMALL_TERMS.map((t, i) => {
             const a = (i / SMALL_TERMS.length) * 360 + 7;
             const pos = clockPos(a, cx, logoCY, cloudR + 200, cloudR + 200);
-            const clampedY = Math.max(180, Math.min(950, pos.y));
+            const clampedY = Math.max(300, Math.min(950, pos.y));
             return (
               <span key={t} style={{
                 position: "absolute", left: pos.x, top: clampedY,
@@ -472,15 +472,16 @@ export const DCLearnConvergence: React.FC = () => {
           {CONNECTIONS.map((conn, i) => {
             if (frame < conn.start) return null;
             const isActive = activeConn === i;
-            const lineOpacity = isActive ? 0.7 : 0.2;
+            const lineOpacity = isActive ? 0.7 : 0.15;
             const path = connPath(conn.from, conn.to);
+            const lineColor = CLOCKS[conn.from].color;
             return (
               <path
                 key={i}
                 d={path}
                 fill="none"
-                stroke="#c9d1d9"
-                strokeWidth={isActive ? 2.5 : 1}
+                stroke={lineColor}
+                strokeWidth={isActive ? 2 : 1.5}
                 opacity={lineOpacity}
                 strokeDasharray="8 6"
                 strokeDashoffset={-(frame * 1.2)}
@@ -490,10 +491,10 @@ export const DCLearnConvergence: React.FC = () => {
         </svg>
       )}
 
-      {/* Connection label — pill at y=980, one at a time */}
+      {/* Connection label — pill at y=630, inside clock ring */}
       {activeConn !== null && frame < 930 && (
         <div style={{
-          position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 630, transform: "translate(-50%, -50%)",
           backgroundColor: "#0a0e14",
           border: "1px solid " + CLOCKS[CONNECTIONS[activeConn].from].color + "4d",
           padding: "10px 24px", borderRadius: 8,
@@ -508,9 +509,9 @@ export const DCLearnConvergence: React.FC = () => {
         </div>
       )}
 
-      {/* Scene 3 overlay text */}
+      {/* Scene 3 overlay text — at y=620 between building and bottom clocks */}
       {frame >= 300 && frame < 360 && (
-        <div style={{ position: "absolute", bottom: 80, left: "50%", transform: "translateX(-50%)", opacity: fadeIn(frame, 300) }}>
+        <div style={{ position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)", opacity: fadeIn(frame, 300) }}>
           <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 36, color: "rgba(255,255,255,0.7)", textAlign: "center", whiteSpace: "nowrap" }}>
             Eight regulations. One building. All ticking.
           </div>
@@ -519,7 +520,7 @@ export const DCLearnConvergence: React.FC = () => {
 
       {/* Scene 5: Insight overlay — absolute positioned, translateY entrance */}
       {insightOverlay > 0 && (
-        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.88 * insightOverlay) + ")" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.97 * insightOverlay) + ")" }}>
           {[
             { text: "They weren’t designed by the same people.", start: 945, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
             { text: "They weren’t drafted in the same year.", start: 1020, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
