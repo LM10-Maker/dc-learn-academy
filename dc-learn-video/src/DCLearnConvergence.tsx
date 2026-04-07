@@ -123,19 +123,35 @@ export const DCLearnConvergence: React.FC = () => {
   // Clock positions array for connections
   const clockPositions = CLOCKS.map((c) => clockPos(c.angle, cx, cy, ringRadius, ringRadius));
 
-  // Bezier that avoids center
+  // Bezier that avoids building centre, starts/ends at clock perimeter
   const connPath = (fromIdx: number, toIdx: number) => {
     const p1 = clockPositions[fromIdx];
     const p2 = clockPositions[toIdx];
-    const mx = (p1.x + p2.x) / 2;
-    const my = (p1.y + p2.y) / 2;
-    const dx = mx - cx;
-    const dy = my - cy;
-    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-    const offset = 120;
-    const cpx = mx + (dx / dist) * offset;
-    const cpy = my + (dy / dist) * offset;
-    return "M " + p1.x + " " + p1.y + " Q " + cpx + " " + cpy + " " + p2.x + " " + p2.y;
+
+    // FIX 6: offset start/end to clock perimeter (36px radius)
+    const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+    const perimR = 36;
+    const sx = p1.x + Math.cos(angle) * perimR;
+    const sy = p1.y + Math.sin(angle) * perimR;
+    const ex = p2.x - Math.cos(angle) * perimR;
+    const ey = p2.y - Math.sin(angle) * perimR;
+
+    // FIX 7: control point perpendicular to line, pushed AWAY from building centre
+    const mx = (sx + ex) / 2;
+    const my = (sy + ey) / 2;
+    const perpX = -(p2.y - p1.y);
+    const perpY = p2.x - p1.x;
+    const perpLen = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
+    const npx = perpX / perpLen;
+    const npy = perpY / perpLen;
+    // pick the perpendicular direction that moves AWAY from (cx, cy)
+    const d1 = (mx + npx * 150 - cx) ** 2 + (my + npy * 150 - cy) ** 2;
+    const d2 = (mx - npx * 150 - cx) ** 2 + (my - npy * 150 - cy) ** 2;
+    const sign = d1 >= d2 ? 1 : -1;
+    const cpx = mx + npx * 150 * sign;
+    const cpy = my + npy * 150 * sign;
+
+    return "M " + sx + " " + sy + " Q " + cpx + " " + cpy + " " + ex + " " + ey;
   };
 
   // ── SCENE 6: COURSE REVEAL ──
@@ -365,25 +381,43 @@ export const DCLearnConvergence: React.FC = () => {
         </svg>
       )}
 
-      {/* Connections SVG */}
+      {/* Connections SVG — dashed, animated, perimeter-to-perimeter */}
       {frame >= 360 && frame < 930 && (
         <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
           {CONNECTIONS.map((conn, i) => {
             if (frame < conn.start) return null;
             const isActive = activeConn === i;
-            const lineOpacity = isActive ? 1 : 0.25;
+            const lineOpacity = isActive ? 0.7 : 0.2;
             const path = connPath(conn.from, conn.to);
             return (
-              <path key={i} d={path} fill="none" stroke="#c9d1d9" strokeWidth={isActive ? 2 : 1} opacity={lineOpacity} />
+              <path
+                key={i}
+                d={path}
+                fill="none"
+                stroke="#c9d1d9"
+                strokeWidth={isActive ? 2.5 : 1}
+                opacity={lineOpacity}
+                strokeDasharray="8 6"
+                strokeDashoffset={-(frame * 1.2)}
+              />
             );
           })}
         </svg>
       )}
 
-      {/* Connection label */}
+      {/* Connection label — pill at y=980, one at a time */}
       {activeConn !== null && frame < 930 && (
-        <div style={{ position: "absolute", bottom: 80, left: "50%", transform: "translateX(-50%)", backgroundColor: "rgba(10,14,20,0.85)", padding: "8px 16px", borderRadius: 20 }}>
-          <div style={{ fontFamily: "monospace", fontStyle: "italic", fontSize: CONNECTIONS[activeConn].primary ? 15 : 13, color: "#c9d1d9", textAlign: "center", whiteSpace: "nowrap" }}>
+        <div style={{
+          position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
+          backgroundColor: "#0a0e14",
+          border: "1px solid " + CLOCKS[CONNECTIONS[activeConn].from].color + "4d",
+          padding: "10px 24px", borderRadius: 8,
+        }}>
+          <div style={{
+            fontFamily: "monospace", fontStyle: "italic",
+            fontSize: CONNECTIONS[activeConn].primary ? 18 : 15,
+            color: "#c9d1d9", textAlign: "center", whiteSpace: "nowrap",
+          }}>
             {CONNECTIONS[activeConn].label}
           </div>
         </div>
