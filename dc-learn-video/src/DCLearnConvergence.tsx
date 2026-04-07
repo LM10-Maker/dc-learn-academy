@@ -115,8 +115,8 @@ export const DCLearnConvergence: React.FC = () => {
   const clocksVisible = frame >= 90;
   const insightOverlay = frame >= 1080 && frame < 1290 ? fadeIn(frame, 1080, 20) : 0;
   const clockDim = frame >= 1095 ? 0 : frame >= 1080 ? 0.15 : 1;
-  const scene6 = frame >= 1290 && frame < 1530;
-  const scene7 = frame >= 1530;
+  const scene6 = frame >= 1290 && frame < 1440;
+  const scene7 = frame >= 1440;
 
   // Connection label: which is active
   const activeConn = CONNECTIONS.reduce<number | null>((acc, c, i) => {
@@ -176,7 +176,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Headline */}
         <div style={{
           position: "absolute", left: "50%", top: 350, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1310, 18),
+          opacity: fadeIn(frame, 1305, 18),
           fontFamily: "Georgia, serif", fontSize: 46, color: "white",
           textAlign: "center", maxWidth: 900, lineHeight: 1.2,
         }}>
@@ -186,7 +186,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Three stat columns */}
         <div style={{
           position: "absolute", left: "50%", top: 480, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1380),
+          opacity: fadeIn(frame, 1350),
           display: "flex", alignItems: "flex-start", gap: 0,
         }}>
           {([
@@ -214,14 +214,14 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Bottom lines */}
         <div style={{
           position: "absolute", left: "50%", top: 600, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1440),
+          opacity: fadeIn(frame, 1395),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Story teaches the why. Modules teach the how.
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 640, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1485),
+          opacity: fadeIn(frame, 1410),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Irish standards. Irish grid. Irish deadlines.
@@ -239,7 +239,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* "Three chapters. Three modules." */}
         <div style={{
           position: "absolute", left: "50%", top: 200, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1530),
+          opacity: fadeIn(frame, 1440),
           fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
         }}>
           Three chapters. Three modules.
@@ -248,7 +248,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* "Free." */}
         <div style={{
           position: "absolute", left: "50%", top: 280, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1590),
+          opacity: fadeIn(frame, 1500),
           fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
         }}>
           Free.
@@ -257,7 +257,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Logo — 100px circular clip */}
         <div style={{
           position: "absolute", left: "50%", top: logoCY, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1650),
+          opacity: fadeIn(frame, 1560),
           width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
           border: "2px solid #4a7c59",
           display: "flex", alignItems: "center", justifyContent: "center",
@@ -269,7 +269,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* DC-LEARN */}
         <div style={{
           position: "absolute", left: "50%", top: 470, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1680),
+          opacity: fadeIn(frame, 1590),
           fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
@@ -278,14 +278,14 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Tagline */}
         <div style={{
           position: "absolute", left: "50%", top: 505, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1695),
+          opacity: fadeIn(frame, 1605),
           fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>
           The convergence course for data centre professionals
         </div>
 
         {/* Word cloud — rings centred on logo, constrained to y=180-950 */}
-        <div style={{ opacity: fadeIn(frame, 1710), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+        <div style={{ opacity: fadeIn(frame, 1620), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
           {/* Large coloured terms at radius 300 */}
           {LARGE_TERMS.map((t) => {
             const pos = clockPos(t.angle, cx, logoCY, cloudR, cloudR);
@@ -336,7 +336,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* legacybe.ie */}
         <div style={{
           position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1740),
+          opacity: fadeIn(frame, 1650),
           fontFamily: "monospace", fontSize: 12, color: "#4a7c59",
         }}>
           legacybe.ie
