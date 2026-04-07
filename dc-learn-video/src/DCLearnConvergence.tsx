@@ -423,7 +423,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* 4B setup text — fades in at 870, out at 1050-1080 */}
         {frame >= 870 && frame < 1080 && (
           <div style={{
-            position: "absolute", left: "50%", top: 420, transform: "translateX(-50%)",
+            position: "absolute", left: "50%", top: 445, transform: "translateX(-50%)",
             opacity: fadeIn(frame, 870) * (1 - fadeIn(frame, 1050, 30)),
             fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 18, color: "#8b949e", whiteSpace: "nowrap",
           }}>
@@ -528,7 +528,7 @@ export const DCLearnConvergence: React.FC = () => {
       )}
 
       {/* Connection label — pill at y=630, inside clock ring */}
-      {activeConn !== null && frame < 1050 && (
+      {activeConn !== null && frame < 870 && (
         <div style={{
           position: "absolute", left: "50%", top: 630, transform: "translate(-50%, -50%)",
           backgroundColor: "#0a0e14",
