@@ -96,11 +96,16 @@ export const DCLearnConvergence: React.FC = () => {
   const cy = 520;
   const ringRadius = 420;
 
-  // Building color transition (870-930)
-  const greenT = interpolate(frame, [870, 930], [0, 1], {
+  // Building color transition: ramp up 885-920, hold 920-1050, ramp down 1050-1080
+  const greenUp = interpolate(frame, [885, 920], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
+  const greenDown = interpolate(frame, [1050, 1080], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const greenT = Math.min(greenUp, greenDown);
   const rackStroke = interpolateColors(greenT, [0, 1], ["#3d444d", "#4a7c59"]);
   const rackFill = interpolateColors(greenT, [0, 1], ["#1c2128", "rgba(74,124,89,0.15)"]);
   const outlineStroke = interpolateColors(greenT, [0, 1], ["#3d444d", "#4a7c59"]);
@@ -108,10 +113,10 @@ export const DCLearnConvergence: React.FC = () => {
   // Scene visibility
   const openingOpacity = fadeIn(frame, 15, 30);
   const clocksVisible = frame >= 90;
-  const insightOverlay = frame >= 930 && frame < 1140 ? fadeIn(frame, 930, 20) : 0;
-  const clockDim = frame >= 945 ? 0 : frame >= 930 ? 0.15 : 1;
-  const scene6 = frame >= 1140 && frame < 1380;
-  const scene7 = frame >= 1380;
+  const insightOverlay = frame >= 1080 && frame < 1290 ? fadeIn(frame, 1080, 20) : 0;
+  const clockDim = frame >= 1095 ? 0 : frame >= 1080 ? 0.15 : 1;
+  const scene6 = frame >= 1290 && frame < 1530;
+  const scene7 = frame >= 1530;
 
   // Connection label: which is active
   const activeConn = CONNECTIONS.reduce<number | null>((acc, c, i) => {
@@ -161,7 +166,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* DC-LEARN label */}
         <div style={{
           position: "absolute", left: "50%", top: 250, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1140),
+          opacity: fadeIn(frame, 1290),
           fontFamily: "monospace", color: "#4a7c59", fontSize: 14,
           textTransform: "uppercase", letterSpacing: 4,
         }}>
@@ -171,7 +176,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Headline */}
         <div style={{
           position: "absolute", left: "50%", top: 350, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1160, 18),
+          opacity: fadeIn(frame, 1310, 18),
           fontFamily: "Georgia, serif", fontSize: 46, color: "white",
           textAlign: "center", maxWidth: 900, lineHeight: 1.2,
         }}>
@@ -181,7 +186,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Three stat columns */}
         <div style={{
           position: "absolute", left: "50%", top: 480, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1230),
+          opacity: fadeIn(frame, 1380),
           display: "flex", alignItems: "flex-start", gap: 0,
         }}>
           {([
@@ -209,14 +214,14 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Bottom lines */}
         <div style={{
           position: "absolute", left: "50%", top: 600, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1290),
+          opacity: fadeIn(frame, 1440),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Story teaches the why. Modules teach the how.
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 640, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1335),
+          opacity: fadeIn(frame, 1485),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Irish standards. Irish grid. Irish deadlines.
@@ -234,7 +239,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* "Three chapters. Three modules." */}
         <div style={{
           position: "absolute", left: "50%", top: 200, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1380),
+          opacity: fadeIn(frame, 1530),
           fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
         }}>
           Three chapters. Three modules.
@@ -243,7 +248,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* "Free." */}
         <div style={{
           position: "absolute", left: "50%", top: 280, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1440),
+          opacity: fadeIn(frame, 1590),
           fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
         }}>
           Free.
@@ -252,7 +257,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Logo — 100px circular clip */}
         <div style={{
           position: "absolute", left: "50%", top: logoCY, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1500),
+          opacity: fadeIn(frame, 1650),
           width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
           border: "2px solid #4a7c59",
           display: "flex", alignItems: "center", justifyContent: "center",
@@ -264,7 +269,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* DC-LEARN */}
         <div style={{
           position: "absolute", left: "50%", top: 470, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1530),
+          opacity: fadeIn(frame, 1680),
           fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
@@ -273,14 +278,14 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Tagline */}
         <div style={{
           position: "absolute", left: "50%", top: 505, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1545),
+          opacity: fadeIn(frame, 1695),
           fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>
           The convergence course for data centre professionals
         </div>
 
         {/* Word cloud — rings centred on logo, constrained to y=180-950 */}
-        <div style={{ opacity: fadeIn(frame, 1560), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
+        <div style={{ opacity: fadeIn(frame, 1710), position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
           {/* Large coloured terms at radius 300 */}
           {LARGE_TERMS.map((t) => {
             const pos = clockPos(t.angle, cx, logoCY, cloudR, cloudR);
@@ -331,7 +336,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* legacybe.ie */}
         <div style={{
           position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1590),
+          opacity: fadeIn(frame, 1740),
           fontFamily: "monospace", fontSize: 12, color: "#4a7c59",
         }}>
           legacybe.ie
@@ -385,13 +390,13 @@ export const DCLearnConvergence: React.FC = () => {
           Clonshaugh Data Centre
         </div>
 
-        {/* Stats at y=555 — text and colour change at frame 900 */}
+        {/* Stats at y=555 — text and colour change during green (885-1080) */}
         <div style={{
           position: "absolute", left: "50%", top: 555, transform: "translateX(-50%)",
           fontFamily: "monospace", fontSize: 13, whiteSpace: "nowrap",
-          color: frame >= 900 ? interpolateColors(fadeIn(frame, 900), [0, 1], ["#57606a", "#4a7c59"]) : "#57606a",
+          color: interpolateColors(greenT, [0, 1], ["#57606a", "#4a7c59"]),
         }}>
-          {frame >= 900 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
+          {frame >= 885 && frame < 1080 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
         </div>
 
         {/* Dublin at y=580 */}
@@ -399,13 +404,24 @@ export const DCLearnConvergence: React.FC = () => {
           Dublin
         </div>
 
-        {/* Building green text (4B) — appears at frame 900 */}
-        {frame >= 900 && (
+        {/* 4B setup text — fades in at 870, out at 1050-1080 */}
+        {frame >= 870 && frame < 1080 && (
+          <div style={{
+            position: "absolute", left: "50%", top: 420, transform: "translateX(-50%)",
+            opacity: fadeIn(frame, 870) * (1 - fadeIn(frame, 1050, 30)),
+            fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 18, color: "#8b949e", whiteSpace: "nowrap",
+          }}>
+            When you understand the connections...
+          </div>
+        )}
+
+        {/* Building green text (4B) — visible during green hold, fades out 1050-1080 */}
+        {frame >= 920 && frame < 1080 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 920) * (1 - fadeIn(frame, 1050, 30)), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 900), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 920) * (1 - fadeIn(frame, 1050, 30)), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
@@ -471,7 +487,7 @@ export const DCLearnConvergence: React.FC = () => {
       )}
 
       {/* Connections SVG — dashed, animated, perimeter-to-perimeter */}
-      {frame >= 360 && frame < 930 && (
+      {frame >= 360 && frame < 1050 && (
         <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
           {CONNECTIONS.map((conn, i) => {
             if (frame < conn.start) return null;
@@ -496,7 +512,7 @@ export const DCLearnConvergence: React.FC = () => {
       )}
 
       {/* Connection label — pill at y=630, inside clock ring */}
-      {activeConn !== null && frame < 930 && (
+      {activeConn !== null && frame < 1050 && (
         <div style={{
           position: "absolute", left: "50%", top: 630, transform: "translate(-50%, -50%)",
           backgroundColor: "#0a0e14",
@@ -526,9 +542,9 @@ export const DCLearnConvergence: React.FC = () => {
       {insightOverlay > 0 && (
         <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.97 * insightOverlay) + ")" }}>
           {[
-            { text: "They weren’t designed by the same people.", start: 945, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
-            { text: "They weren’t drafted in the same year.", start: 1020, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
-            { text: "But they all land on the same building, in the same decade.", start: 1080, y: 530, size: 48, color: "#4a7c59", font: "Georgia, serif", style: "italic" as const },
+            { text: "They weren’t designed by the same people.", start: 1095, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
+            { text: "They weren’t drafted in the same year.", start: 1170, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
+            { text: "But they all land on the same building, in the same decade.", start: 1230, y: 530, size: 48, color: "#4a7c59", font: "Georgia, serif", style: "italic" as const },
           ].map((line) => {
             const op = fadeIn(frame, line.start);
             const ty = interpolate(frame, [line.start, line.start + 15], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -545,8 +561,8 @@ export const DCLearnConvergence: React.FC = () => {
             );
           })}
           {(() => {
-            const op4 = fadeIn(frame, 1110);
-            const ty4 = interpolate(frame, [1110, 1125], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+            const op4 = fadeIn(frame, 1260);
+            const ty4 = interpolate(frame, [1260, 1275], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
             return (
               <div style={{
                 position: "absolute", left: "50%", top: 590,
