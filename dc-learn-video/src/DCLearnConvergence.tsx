@@ -385,9 +385,9 @@ export const DCLearnConvergence: React.FC = () => {
           Clonshaugh Data Centre
         </div>
 
-        {/* Stats at y=530 — text and colour change at frame 900 */}
+        {/* Stats at y=555 — text and colour change at frame 900 */}
         <div style={{
-          position: "absolute", left: "50%", top: 530, transform: "translateX(-50%)",
+          position: "absolute", left: "50%", top: 555, transform: "translateX(-50%)",
           fontFamily: "monospace", fontSize: 13, whiteSpace: "nowrap",
           color: frame >= 900 ? interpolateColors(fadeIn(frame, 900), [0, 1], ["#57606a", "#4a7c59"]) : "#57606a",
         }}>
