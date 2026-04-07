@@ -230,39 +230,9 @@ export const DCLearnConvergence: React.FC = () => {
     );
   }
 
-  // ── SCENE 7: END SCREEN — firefly word cloud ──
+  // ── SCENE 7: END SCREEN — static word cloud in four zones ──
   if (scene7) {
-    // Firefly terms: left column (x=60-300) and right column (x=660-900)
-    const fireflyTerms: { text: string; x: number; y: number; size: number; color: string; glowStart: number }[] = [
-      // Left column — staggered y from 100 to 900
-      { text: "PUE", x: 180, y: 120, size: 15, color: "#D4A84B", glowStart: 1620 },
-      { text: "F-Gas", x: 100, y: 210, size: 15, color: "#E06060", glowStart: 1635 },
-      { text: "containment", x: 200, y: 300, size: 12, color: "#8b949e", glowStart: 1650 },
-      { text: "delta-T", x: 120, y: 390, size: 12, color: "#8b949e", glowStart: 1665 },
-      { text: "VESDA", x: 240, y: 470, size: 12, color: "#8b949e", glowStart: 1680 },
-      { text: "HVO", x: 100, y: 550, size: 12, color: "#8b949e", glowStart: 1695 },
-      { text: "N+1", x: 220, y: 630, size: 12, color: "#8b949e", glowStart: 1710 },
-      { text: "WAULT", x: 140, y: 710, size: 10, color: "#57606a", glowStart: 1725 },
-      { text: "IS 10101", x: 260, y: 780, size: 10, color: "#57606a", glowStart: 1740 },
-      { text: "lifecycle cost", x: 120, y: 850, size: 10, color: "#57606a", glowStart: 1755 },
-      { text: "€/kW", x: 240, y: 160, size: 10, color: "#57606a", glowStart: 1650 },
-      { text: "Scope 2 market-based", x: 80, y: 920, size: 10, color: "#57606a", glowStart: 1665 },
-      { text: "elemental cost plan", x: 200, y: 500, size: 10, color: "#57606a", glowStart: 1680 },
-      // Right column — staggered y from 100 to 900
-      { text: "CRU", x: 780, y: 120, size: 15, color: "#4a7c59", glowStart: 1620 },
-      { text: "EED", x: 860, y: 210, size: 15, color: "#5B9BD5", glowStart: 1635 },
-      { text: "free cooling", x: 720, y: 300, size: 12, color: "#8b949e", glowStart: 1650 },
-      { text: "MIC", x: 840, y: 390, size: 12, color: "#8b949e", glowStart: 1665 },
-      { text: "Novec 1230", x: 700, y: 470, size: 12, color: "#8b949e", glowStart: 1680 },
-      { text: "CDU", x: 860, y: 550, size: 12, color: "#8b949e", glowStart: 1695 },
-      { text: "BESS", x: 740, y: 630, size: 12, color: "#8b949e", glowStart: 1710 },
-      { text: "DCIM", x: 820, y: 710, size: 12, color: "#8b949e", glowStart: 1725 },
-      { text: "EN 50600", x: 700, y: 780, size: 10, color: "#57606a", glowStart: 1740 },
-      { text: "Icw rating", x: 840, y: 850, size: 10, color: "#57606a", glowStart: 1755 },
-      { text: "cap rate", x: 720, y: 160, size: 10, color: "#57606a", glowStart: 1650 },
-      { text: "thermal runaway", x: 880, y: 920, size: 10, color: "#57606a", glowStart: 1665 },
-      { text: "discrimination study", x: 760, y: 500, size: 10, color: "#57606a", glowStart: 1680 },
-    ];
+    const wcOp = fadeIn(frame, 1620, 30); // word cloud fade-in
 
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
@@ -308,25 +278,76 @@ export const DCLearnConvergence: React.FC = () => {
           The convergence course for data centre professionals
         </div>
 
-        {/* PHASE 3: Firefly word cloud — left and right margins only */}
-        {fireflyTerms.map((t) => {
-          if (frame < t.glowStart) return null;
-          const elapsed = frame - t.glowStart;
-          // Glow cycle: 0→0.6 over 10 frames, hold 5, then 0.6→0.08 over 15 frames
-          const glowUp = interpolate(elapsed, [0, 10], [0, 0.6], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-          const glowDown = interpolate(elapsed, [15, 30], [0.6, 0.08], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-          const op = elapsed < 15 ? glowUp : glowDown;
-          return (
-            <span key={t.text} style={{
-              position: "absolute", left: t.x, top: t.y,
-              transform: "translate(-50%,-50%)",
-              fontFamily: "monospace", fontSize: t.size, color: t.color,
-              opacity: op,
-            }}>
-              {t.text}
-            </span>
-          );
-        })}
+        {/* ZONE 1 — TOP STRIP (y=60-280, full width) */}
+        {([
+          { text: "IS 10101", x: 100, y: 80 }, { text: "redundancy", x: 350, y: 80 }, { text: "CIBSE TM40", x: 600, y: 80 }, { text: "GHG Protocol", x: 1000, y: 80 }, { text: "topology", x: 1300, y: 80 }, { text: "SLA", x: 1600, y: 80 }, { text: "dry coolers", x: 1750, y: 80 },
+          { text: "EN 50600", x: 150, y: 130 }, { text: "ATS", x: 400, y: 130 }, { text: "concurrent maintainability", x: 700, y: 130 }, { text: "NEAP", x: 1100, y: 130 }, { text: "DCIM", x: 1400, y: 130 }, { text: "BMS", x: 1700, y: 130 },
+          { text: "N+1", x: 200, y: 180 }, { text: "chillers", x: 500, y: 180 }, { text: "Scope 2 market-based", x: 900, y: 180 }, { text: "48-hour fuel", x: 1300, y: 180 }, { text: "PDU whip", x: 1650, y: 180 },
+        ] as const).map((t) => (
+          <span key={t.text + t.x} style={{
+            position: "absolute", left: t.x, top: t.y,
+            fontFamily: "monospace", fontSize: 13, color: "#57606a", opacity: 0.35 * wcOp,
+          }}>
+            {t.text}
+          </span>
+        ))}
+
+        {/* ZONE 2 — LEFT COLUMN (x=60-380, y=320-950) */}
+        {([
+          { text: "PUE", x: 80, y: 340, size: 20, color: "#D4A84B", op: 0.7 },
+          { text: "F-Gas", x: 60, y: 410, size: 20, color: "#E06060", op: 0.7 },
+          { text: "CRREM", x: 100, y: 480, size: 20, color: "#e879a0", op: 0.7 },
+          { text: "containment", x: 70, y: 550, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "delta-T", x: 120, y: 610, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "VESDA", x: 80, y: 670, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "HVO", x: 60, y: 730, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "WAULT", x: 100, y: 790, size: 13, color: "#57606a", op: 0.35 },
+          { text: "€/kW", x: 70, y: 840, size: 13, color: "#57606a", op: 0.35 },
+          { text: "lifecycle cost", x: 60, y: 890, size: 13, color: "#57606a", op: 0.35 },
+        ] as const).map((t) => (
+          <span key={t.text} style={{
+            position: "absolute", left: t.x, top: t.y,
+            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
+          }}>
+            {t.text}
+          </span>
+        ))}
+
+        {/* ZONE 3 — RIGHT COLUMN (x=1540-1860, y=320-950) */}
+        {([
+          { text: "CRU", x: 1600, y: 340, size: 20, color: "#4a7c59", op: 0.7 },
+          { text: "EED", x: 1700, y: 410, size: 20, color: "#5B9BD5", op: 0.7 },
+          { text: "Carbon Tax", x: 1560, y: 480, size: 20, color: "#fb923c", op: 0.7 },
+          { text: "Grid", x: 1650, y: 550, size: 20, color: "#a78bfa", op: 0.7 },
+          { text: "free cooling", x: 1580, y: 610, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "MIC", x: 1700, y: 670, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "Novec 1230", x: 1560, y: 730, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "CDU", x: 1700, y: 790, size: 14, color: "#8b949e", op: 0.5 },
+          { text: "cap rate", x: 1580, y: 840, size: 13, color: "#57606a", op: 0.35 },
+          { text: "Icw rating", x: 1600, y: 890, size: 13, color: "#57606a", op: 0.35 },
+          { text: "thermal runaway", x: 1560, y: 940, size: 13, color: "#57606a", op: 0.35 },
+        ] as const).map((t) => (
+          <span key={t.text} style={{
+            position: "absolute", left: t.x, top: t.y,
+            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
+          }}>
+            {t.text}
+          </span>
+        ))}
+
+        {/* ZONE 4 — BOTTOM STRIP (below tagline, centre) */}
+        {([
+          { text: "discrimination study", x: 550, y: 720, size: 13, color: "#57606a", op: 0.35 },
+          { text: "additionality", x: 900, y: 720, size: 13, color: "#57606a", op: 0.35 },
+          { text: "Fire", x: 1200, y: 720, size: 18, color: "#C75050", op: 0.6 },
+        ] as const).map((t) => (
+          <span key={t.text} style={{
+            position: "absolute", left: t.x, top: t.y,
+            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
+          }}>
+            {t.text}
+          </span>
+        ))}
 
         {/* legacybe.ie */}
         <div style={{
