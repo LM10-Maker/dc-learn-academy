@@ -8,7 +8,7 @@
 <meta name="dcterms.rights" content="Proprietary. Reproduction prohibited without licence.">
 <meta name="dcterms.rightsHolder" content="Legacy Business Engineers Ltd">
 <meta name="robots" content="index, follow">
-<title>DC-LEARN-015 v2.4.7 | CRU Readiness & Energy Transition | Legacy Business Engineers</title>
+<title>DC-LEARN-015 v2.4.8 | CRU Readiness & Energy Transition | Legacy Business Engineers</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -143,7 +143,7 @@ window.onerror = function(msg, src, line, col, err) {
   if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
     el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
       + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error</h2>'
-      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-LEARN-015 v2.4.7</strong> failed to load.</p>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-LEARN-015 v2.4.8</strong> failed to load.</p>'
       + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
       + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
       + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
@@ -165,7 +165,7 @@ window.onerror = function(msg, src, line, col, err) {
 const TOOL_ID = "DC-LEARN-015";
 // Safe storage wrapper — handles file:// protocol where localStorage may be blocked
 const safeStore=(function(){var s;try{s=window.localStorage;}catch(e){s=null;}return{get:function(k){try{return s?s.getItem(k):null;}catch(e){return null;}},set:function(k,v){try{if(s)s.setItem(k,v);}catch(e){}},remove:function(k){try{if(s)s.removeItem(k);}catch(e){}}};})();
-const TOOL_VERSION = "2.4.7";
+const TOOL_VERSION = "2.4.8";
 const LICENCE_HOLDER = "Legacy Business Engineers Ltd";
 const CONTENT_HASH = "LBE-DC-LEARN-015-2026Q1";
 // Fictional reference facility — Clonshaugh, Dublin. Engineering values for teaching only.
@@ -692,7 +692,7 @@ class ErrorBoundary extends React.Component {
   render(){
     if(this.state.hasError) return React.createElement('div',{style:{maxWidth:700,margin:'60px auto',padding:24,border:'2px solid #dc2626',borderRadius:12,background:'#fef2f2',fontFamily:'system-ui'}},
       React.createElement('h2',{style:{color:'#dc2626'}},'⚠️ Runtime Error'),
-      React.createElement('p',null,'DC-LEARN-015 v2.4.7 · CRU Readiness & Energy Transition'),
+      React.createElement('p',null,'DC-LEARN-015 v2.4.8 · CRU Readiness & Energy Transition'),
       React.createElement('pre',{style:{fontSize:12,background:'#1f2937',color:'#f87171',padding:12,borderRadius:8,overflow:'auto',whiteSpace:'pre-wrap'}},String(this.state.error)),
       React.createElement('p',{style:{color:'#6b7280',fontSize:13,marginTop:8}},'Copy this error and send to LM.')
     );
@@ -2316,8 +2316,299 @@ function BibliographyPanel(){
   );
 }
 
+/* ─── DC-LEARN AUTH COMPONENT v1.0 ───────────────────────────────────────
+   Drop this block into each module HTML file, inside the <script type="text/babel"> block,
+   immediately BEFORE function App().
+
+   FREE modules (DC-LEARN-000, 001, 002): set IS_FREE_MODULE = true
+   PAID modules (DC-LEARN-003 to 015):    set IS_FREE_MODULE = false
+
+   The component:
+   - Checks Supabase session on load
+   - Queries learner_tiers for paid status
+   - Free modules: always open, shows login button in header if not logged in
+   - Paid modules: locked overlay if not logged in or free tier
+   - Login via email magic link (no password to forget)
+   - Session cached in localStorage for speed
+   ─────────────────────────────────────────────────────────────────────── */
+
+const IS_FREE_MODULE = false; // SET TO true FOR DC-LEARN-000, 001, 002
+
+/* ── Auth State Manager ── */
+const dcAuth = {
+  _session: null,
+  _tier: null,
+
+  async init() {
+    if (!supa) return;
+    // Check cached session
+    try {
+      const { data: { session } } = await supa.auth.getSession();
+      this._session = session;
+      if (session) {
+        await this._loadTier(session.user.id);
+      }
+    } catch(e) {
+      console.warn('Auth init failed:', e);
+    }
+    // Listen for auth changes
+    supa.auth.onAuthStateChange(async (_event, session) => {
+      this._session = session;
+      this._tier = null;
+      if (session) await this._loadTier(session.user.id);
+    });
+  },
+
+  async _loadTier(userId) {
+    try {
+      const { data } = await supa
+        .from('learner_tiers')
+        .select('tier')
+        .eq('user_id', userId)
+        .single();
+      this._tier = data?.tier || 'free';
+    } catch(e) {
+      this._tier = 'free';
+    }
+  },
+
+  isLoggedIn() { return !!this._session; },
+  isPaid() { return this._tier === 'founding' || this._tier === 'professional'; },
+  hasAccess() { return IS_FREE_MODULE || this.isPaid(); },
+  userEmail() { return this._session?.user?.email || null; },
+
+  async sendMagicLink(email) {
+    if (!supa) return { error: 'Not connected' };
+    const { error } = await supa.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.href }
+    });
+    return { error };
+  },
+
+  async signOut() {
+    if (!supa) return;
+    await supa.auth.signOut();
+    window.location.reload();
+  }
+};
+
+/* ── Auth Header Button ── */
+function AuthButton({ authState, onAuthChange }) {
+  const [showLogin, setShowLogin] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [sent, setSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const handleSend = async () => {
+    if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
+    setLoading(true); setError('');
+    const { error: err } = await dcAuth.sendMagicLink(email);
+    setLoading(false);
+    if (err) { setError('Could not send link. Try again.'); }
+    else { setSent(true); }
+  };
+
+  if (authState.loggedIn) {
+    return (
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--text-muted)'}}>
+          {authState.email}
+        </span>
+        <button onClick={()=>dcAuth.signOut()}
+          style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--text-dim)',
+          background:'transparent',border:'1px solid var(--border)',borderRadius:4,
+          padding:'3px 8px',cursor:'pointer'}}>
+          Sign out
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{position:'relative'}}>
+      <button onClick={()=>setShowLogin(v=>!v)}
+        style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--accent)',
+        background:'transparent',border:'1px solid var(--accent)',borderRadius:4,
+        padding:'3px 10px',cursor:'pointer'}}>
+        Sign in
+      </button>
+      {showLogin && (
+        <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,
+          background:'var(--surface)',border:'1px solid var(--border)',
+          borderRadius:8,padding:16,zIndex:999,minWidth:280,
+          boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
+          {!sent ? (
+            <>
+              <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:10,lineHeight:1.5}}>
+                Enter your email — we'll send a sign-in link.<br/>
+                <span style={{fontSize:11,color:'var(--text-muted)'}}>No password needed.</span>
+              </div>
+              <input type="email" value={email}
+                onChange={e=>{setEmail(e.target.value);setError('');}}
+                onKeyDown={e=>e.key==='Enter'&&handleSend()}
+                placeholder="your@email.com"
+                style={{width:'100%',padding:'8px 10px',fontSize:13,
+                background:'var(--panel)',border:'1px solid var(--border)',
+                borderRadius:6,color:'var(--text-bright)',marginBottom:8,
+                fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
+              {error && <div style={{fontSize:11,color:'var(--error)',marginBottom:6}}>{error}</div>}
+              <button onClick={handleSend} disabled={loading}
+                style={{width:'100%',padding:'8px',fontSize:13,fontWeight:600,
+                background:'var(--lbe-green)',color:'#fff',border:'none',
+                borderRadius:6,cursor:'pointer',opacity:loading?0.7:1}}>
+                {loading ? 'Sending…' : 'Send sign-in link'}
+              </button>
+            </>
+          ) : (
+            <div style={{textAlign:'center',padding:'8px 0'}}>
+              <div style={{fontSize:22,marginBottom:8}}>✓</div>
+              <div style={{fontSize:13,color:'var(--text-bright)',fontWeight:600,marginBottom:4}}>
+                Check your email
+              </div>
+              <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.5}}>
+                We sent a sign-in link to<br/><strong>{email}</strong>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ── Locked Module Overlay (paid modules only) ── */
+function LockedOverlay() {
+  const [email, setEmail] = React.useState('');
+  const [sent, setSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const handleSend = async () => {
+    if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
+    setLoading(true); setError('');
+    const { error: err } = await dcAuth.sendMagicLink(email);
+    setLoading(false);
+    if (err) { setError('Could not send link. Try again.'); }
+    else { setSent(true); }
+  };
+
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:9999,
+      background:'rgba(13,17,23,0.97)',
+      display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+      padding:24}}>
+      <div style={{maxWidth:480,width:'100%',textAlign:'center'}}>
+        <img src={LOGO_SRC} alt="LBE" style={{width:56,height:56,borderRadius:'50%',marginBottom:20}}/>
+        <div style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'var(--lbe-green)',
+          letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12}}>
+          DC Learning Series — {TOOL_ID}
+        </div>
+        <h2 style={{fontSize:22,fontWeight:700,color:'var(--text-bright)',marginBottom:8,lineHeight:1.3}}>
+          This module is part of the full DC-LEARN course
+        </h2>
+        <p style={{fontSize:14,color:'var(--text-dim)',lineHeight:1.6,marginBottom:24}}>
+          Modules 000–002 are free. Sign in below if you've already purchased access,
+          or visit legacybe.ie to get the full 16-module series.
+        </p>
+
+        <div style={{background:'var(--surface)',border:'1px solid var(--border)',
+          borderRadius:12,padding:24,marginBottom:20}}>
+          {!sent ? (
+            <>
+              <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:12}}>
+                Already have access? Enter your email for a sign-in link.
+              </div>
+              <input type="email" value={email}
+                onChange={e=>{setEmail(e.target.value);setError('');}}
+                onKeyDown={e=>e.key==='Enter'&&handleSend()}
+                placeholder="your@email.com"
+                style={{width:'100%',padding:'10px 12px',fontSize:14,
+                background:'var(--panel)',border:'1px solid var(--border)',
+                borderRadius:8,color:'var(--text-bright)',marginBottom:10,
+                fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
+              {error && <div style={{fontSize:12,color:'var(--error)',marginBottom:8}}>{error}</div>}
+              <button onClick={handleSend} disabled={loading}
+                style={{width:'100%',padding:'10px',fontSize:14,fontWeight:600,
+                background:'var(--lbe-green)',color:'#fff',border:'none',
+                borderRadius:8,cursor:'pointer',opacity:loading?0.7:1,marginBottom:8}}>
+                {loading ? 'Sending…' : 'Send sign-in link'}
+              </button>
+            </>
+          ) : (
+            <div style={{padding:'8px 0',textAlign:'center'}}>
+              <div style={{fontSize:28,marginBottom:10}}>✓</div>
+              <div style={{fontSize:14,color:'var(--text-bright)',fontWeight:600,marginBottom:6}}>
+                Check your email
+              </div>
+              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.5}}>
+                Sign-in link sent to <strong style={{color:'var(--text-bright)'}}>{email}</strong>.<br/>
+                Click the link to access this module.
+              </div>
+            </div>
+          )}
+        </div>
+
+        <a href="https://legacybe.ie/dc-learn-data-ce--siness-engineers/"
+          target="_blank" rel="noopener"
+          style={{display:'block',padding:'12px',fontSize:14,fontWeight:600,
+          color:'var(--accent)',border:'1px solid var(--accent)',borderRadius:8,
+          textDecoration:'none',marginBottom:12}}>
+          Get full access — from €995 →
+        </a>
+        <a href="./dc-learn-000.html"
+          style={{fontSize:12,color:'var(--text-muted)',textDecoration:'none'}}>
+          ← Back to free modules (000–002)
+        </a>
+      </div>
+    </div>
+  );
+}
+
+/* ── Auth Hook for App() ── */
+function useAuth() {
+  const [authState, setAuthState] = React.useState({
+    loading: true,
+    loggedIn: false,
+    hasAccess: IS_FREE_MODULE,
+    email: null
+  });
+
+  React.useEffect(()=>{
+    dcAuth.init().then(()=>{
+      setAuthState({
+        loading: false,
+        loggedIn: dcAuth.isLoggedIn(),
+        hasAccess: dcAuth.hasAccess(),
+        email: dcAuth.userEmail()
+      });
+    });
+
+    if (supa) {
+      supa.auth.onAuthStateChange(async ()=>{
+        // Small delay to let tier load
+        setTimeout(()=>{
+          setAuthState({
+            loading: false,
+            loggedIn: dcAuth.isLoggedIn(),
+            hasAccess: dcAuth.hasAccess(),
+            email: dcAuth.userEmail()
+          });
+        }, 500);
+      });
+    }
+  },[]);
+
+  return authState;
+}
+
+/* ── END AUTH COMPONENT ── */
+/* ─────────────────────────────────────────────────────────────────────── */
+
 function App(){
   const [activeTab,setActiveTab]=useState('chain');
+  const authState = useAuth();
   const [selectedLevel,setSelectedLevel]=useState(0);
   const [progress,setProgress]=useState(()=>{try{const s=safeStore.get('dc015_progress');return s?JSON.parse(s):{};}catch(e){return{};}});
   React.useEffect(()=>{try{safeStore.set('dc015_progress',JSON.stringify(progress));}catch(e){}},[progress]);
@@ -2347,6 +2638,7 @@ function App(){
 
   return (
     <div>
+      {!IS_FREE_MODULE && !authState.hasAccess && !authState.loading && <LockedOverlay/>}
       <div id="lbe-audience-bar" className="no-print" style={{background:'linear-gradient(135deg,#1a1a1a,#2a2a2a)',padding:'8px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
         <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'#78a840'}}>AUDIENCE: Data Centre Professionals — Operators, Engineers, Fund Managers, ESG Analysts, Cost Managers, ESG Analysts, Cost Managers</span>
         <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'#78a840'}}>DC LEARNING SERIES</span>
@@ -2354,7 +2646,10 @@ function App(){
       <header>
         <img src={LOGO_SRC} alt="LBE Logo" style={{borderRadius:'50%',overflow:'hidden'}} />
         <div><h1>CRU Readiness & Energy Transition</h1><div className="sub">{TOOL_ID} v{TOOL_VERSION} · DC Learning Series · Legacy Business Engineers Ltd</div><div className="sub" style={{marginTop:4,fontSize:11,opacity:0.7}}>Fictional reference facility — 9 levels from CRU registration to energy transition planning</div></div>
-        <button className="theme-toggle" onClick={toggleTheme}>{theme==='dark'?'☀️ Light':'🌙 Dark'}</button>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <AuthButton authState={authState} onAuthChange={()=>{}}/>
+          <button className="theme-toggle" onClick={toggleTheme}>{theme==='dark'?'☀️ Light':'🌙 Dark'}</button>
+        </div>
       </header>
       <div className="main">
         <div className="tab-row no-print" role="tablist">
