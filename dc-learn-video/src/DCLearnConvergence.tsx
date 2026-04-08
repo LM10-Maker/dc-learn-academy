@@ -8,6 +8,17 @@ import {
   staticFile,
   interpolateColors,
 } from "remotion";
+import "@fontsource/playfair-display/400.css";
+import "@fontsource/playfair-display/400-italic.css";
+import "@fontsource/playfair-display/700.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/400-italic.css";
+import "@fontsource/ibm-plex-mono/700.css";
+import "@fontsource/ibm-plex-sans/400.css";
+
+const playfair = { fontFamily: "'Playfair Display'" };
+const plexMono = { fontFamily: "'IBM Plex Mono'" };
+const plexSans = { fontFamily: "'IBM Plex Sans'" };
 
 // ── Data ──────────────────────────────────────────────
 const CLOCKS = [
@@ -50,17 +61,17 @@ const clockPos = (
   return { x: cx + rx * Math.cos(rad), y: cy + ry * Math.sin(rad) };
 };
 
-const getHandAngle = (behavior: string, frame: number): number => {
+const getHandAngle = (behavior: string, elapsed: number): number => {
   switch (behavior) {
-    case "steady": return (frame / 720) * 360;
-    case "counter": return -(frame / 720) * 360;
+    case "steady": return (elapsed / 720) * 360;
+    case "counter": return -(elapsed / 720) * 360;
     case "stuck": return 144;
-    case "fast": return (frame / 360) * 360;
-    case "accelerating": return (frame * frame * 0.001) / 3;
+    case "fast": return (elapsed / 240) * 360;
+    case "accelerating": return (elapsed / 720) * 360 * (1 + elapsed / 1500);
     case "frozen": return 0;
-    case "redRing": return (frame / 720) * 360;
-    case "pulse": return (frame / 720) * 360;
-    default: return (frame / 720) * 360;
+    case "redRing": return (elapsed / 720) * 360;
+    case "pulse": return (elapsed / 720) * 360;
+    default: return (elapsed / 720) * 360;
   }
 };
 
@@ -104,12 +115,12 @@ export const DCLearnConvergence: React.FC = () => {
   // Clock positions array for connections
   const clockPositions = CLOCKS.map((c) => clockPos(c.angle, cx, cy, ringRadius, ringRadius));
 
-  // Bezier that avoids building centre, starts/ends at clock perimeter
+  // Bezier that arcs CLEARLY around the building — no path within 200px of centre
   const connPath = (fromIdx: number, toIdx: number) => {
     const p1 = clockPositions[fromIdx];
     const p2 = clockPositions[toIdx];
 
-    // FIX 6: offset start/end to clock perimeter (36px radius)
+    // Offset start/end to clock perimeter (36px radius)
     const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
     const perimR = 36;
     const sx = p1.x + Math.cos(angle) * perimR;
@@ -117,20 +128,35 @@ export const DCLearnConvergence: React.FC = () => {
     const ex = p2.x - Math.cos(angle) * perimR;
     const ey = p2.y - Math.sin(angle) * perimR;
 
-    // FIX 7: control point perpendicular to line, pushed AWAY from building centre
-    const mx = (sx + ex) / 2;
-    const my = (sy + ey) / 2;
-    const perpX = -(p2.y - p1.y);
-    const perpY = p2.x - p1.x;
-    const perpLen = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
-    const npx = perpX / perpLen;
-    const npy = perpY / perpLen;
-    // pick the perpendicular direction that moves AWAY from (cx, cy)
-    const d1 = (mx + npx * 150 - cx) ** 2 + (my + npy * 150 - cy) ** 2;
-    const d2 = (mx - npx * 150 - cx) ** 2 + (my - npy * 150 - cy) ** 2;
-    const sign = d1 >= d2 ? 1 : -1;
-    const cpx = mx + npx * 150 * sign;
-    const cpy = my + npy * 150 * sign;
+    // Midpoint between the two clocks
+    const midX = (p1.x + p2.x) / 2;
+    const midY = (p1.y + p2.y) / 2;
+
+    // Direction from building centre to midpoint
+    const dirX = midX - cx;
+    const dirY = midY - cy;
+    const dist = Math.sqrt(dirX * dirX + dirY * dirY) || 1;
+
+    let cpx: number, cpy: number;
+
+    if (dist < 80) {
+      // Opposite-side clocks: midpoint near building centre — use perpendicular offset
+      const perpX = -(p2.y - p1.y);
+      const perpY = p2.x - p1.x;
+      const perpLen = Math.sqrt(perpX * perpX + perpY * perpY) || 1;
+      const npx = perpX / perpLen;
+      const npy = perpY / perpLen;
+      // Pick perpendicular direction AWAY from centre
+      const d1 = (midX + npx * 300 - cx) ** 2 + (midY + npy * 300 - cy) ** 2;
+      const d2 = (midX - npx * 300 - cx) ** 2 + (midY - npy * 300 - cy) ** 2;
+      const sign = d1 >= d2 ? 1 : -1;
+      cpx = midX + npx * 300 * sign;
+      cpy = midY + npy * 300 * sign;
+    } else {
+      // Same-side or adjacent clocks: push control point AWAY from building centre by 250px
+      cpx = midX + (dirX / dist) * 250;
+      cpy = midY + (dirY / dist) * 250;
+    }
 
     return "M " + sx + " " + sy + " Q " + cpx + " " + cpy + " " + ex + " " + ey;
   };
@@ -143,7 +169,7 @@ export const DCLearnConvergence: React.FC = () => {
         <div style={{
           position: "absolute", left: "50%", top: 250, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1565),
-          fontFamily: "monospace", color: "#4a7c59", fontSize: 22,
+          fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 22,
           textTransform: "uppercase", letterSpacing: 4,
         }}>
           DC-LEARN
@@ -153,7 +179,7 @@ export const DCLearnConvergence: React.FC = () => {
         <div style={{
           position: "absolute", left: "50%", top: 350, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1580, 18),
-          fontFamily: "Georgia, serif", fontSize: 46, color: "white",
+          fontFamily: playfair.fontFamily, fontSize: 46, color: "white",
           textAlign: "center", maxWidth: 900, lineHeight: 1.2,
         }}>
           The only learning resource that shows how they connect.
@@ -175,10 +201,10 @@ export const DCLearnConvergence: React.FC = () => {
                 <div style={{ width: 1, height: 70, backgroundColor: "#1c2128", margin: "0 40px" }} />
               )}
               <div style={{ textAlign: "center", minWidth: 80 }}>
-                <div style={{ fontFamily: "Georgia, serif", fontSize: 52, color: "white" }}>{col.num}</div>
-                <div style={{ fontFamily: "monospace", fontSize: 11, color: "#57606a", letterSpacing: 2 }}>{col.label}</div>
+                <div style={{ fontFamily: playfair.fontFamily, fontSize: 52, color: "white" }}>{col.num}</div>
+                <div style={{ fontFamily: plexMono.fontFamily, fontSize: 11, color: "#57606a", letterSpacing: 2 }}>{col.label}</div>
                 {col.sub && (
-                  <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 13, color: "#8b949e", marginTop: 6 }}>
+                  <div style={{ fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 13, color: "#8b949e", marginTop: 6 }}>
                     {col.sub}
                   </div>
                 )}
@@ -191,14 +217,14 @@ export const DCLearnConvergence: React.FC = () => {
         <div style={{
           position: "absolute", left: "50%", top: 600, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1635),
-          fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
+          fontFamily: plexMono.fontFamily, fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Story teaches the why. Modules teach the how.
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 640, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1650),
-          fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
+          fontFamily: plexMono.fontFamily, fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Irish standards. Irish grid. Irish deadlines.
         </div>
@@ -213,14 +239,14 @@ export const DCLearnConvergence: React.FC = () => {
         <div style={{
           position: "absolute", left: "50%", top: 340, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1685),
-          fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
+          fontFamily: playfair.fontFamily, fontSize: 48, color: "white", textAlign: "center",
         }}>
           Three chapters. Three modules.
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 420, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1705),
-          fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
+          fontFamily: playfair.fontFamily, fontSize: 68, color: "#4a7c59",
         }}>
           Free.
         </div>
@@ -237,21 +263,21 @@ export const DCLearnConvergence: React.FC = () => {
         <div style={{
           position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1745),
-          fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
+          fontFamily: playfair.fontFamily, fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 660, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1760),
-          fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
+          fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>
           The convergence course for data centre professionals
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1775),
-          fontFamily: "monospace", fontSize: 12, color: "#4a7c59",
+          fontFamily: plexMono.fontFamily, fontSize: 12, color: "#4a7c59",
         }}>
           legacybe.ie
         </div>
@@ -300,14 +326,14 @@ export const DCLearnConvergence: React.FC = () => {
         </svg>
 
         {/* "CLONSHAUGH DATA CENTRE" at y=530 */}
-        <div style={{ position: "absolute", left: "50%", top: 530, transform: "translateX(-50%)", fontFamily: "monospace", color: "#4a7c59", fontSize: 14, letterSpacing: 6, textTransform: "uppercase", whiteSpace: "nowrap" }}>
+        <div style={{ position: "absolute", left: "50%", top: 530, transform: "translateX(-50%)", fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 14, letterSpacing: 6, textTransform: "uppercase", whiteSpace: "nowrap" }}>
           Clonshaugh Data Centre
         </div>
 
         {/* Stats at y=555 — text and colour change during green (885-1080) */}
         <div style={{
           position: "absolute", left: "50%", top: 555, transform: "translateX(-50%)",
-          fontFamily: "monospace", fontSize: 13, whiteSpace: "nowrap",
+          fontFamily: plexMono.fontFamily, fontSize: 13, whiteSpace: "nowrap",
           color: interpolateColors(greenT, [0, 1], ["#57606a", "#4a7c59"]),
         }}>
           {frame >= 1150 && frame < 1330 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
@@ -322,14 +348,14 @@ export const DCLearnConvergence: React.FC = () => {
               <div style={{
                 position: "absolute", left: "50%", top: 446, transform: "translateX(-50%)",
                 opacity: setupOp * 0.3,
-                fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 24, color: "#4a7c59", whiteSpace: "nowrap",
+                fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 24, color: "#4a7c59", whiteSpace: "nowrap",
               }}>
                 When you understand the connections...
               </div>
               <div style={{
                 position: "absolute", left: "50%", top: 445, transform: "translateX(-50%)",
                 opacity: setupOp,
-                fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 24, color: "#ffffff", whiteSpace: "nowrap",
+                fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 24, color: "#ffffff", whiteSpace: "nowrap",
               }}>
                 When you understand the connections...
               </div>
@@ -340,10 +366,10 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Building green text (4B) — visible during green hold, fades out 1300-1330 */}
         {frame >= 1180 && frame < 1330 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: plexMono.fontFamily, color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
@@ -353,7 +379,7 @@ export const DCLearnConvergence: React.FC = () => {
           <div style={{
             position: "absolute", left: "50%", top: 620, transform: "translateX(-50%)",
             opacity: fadeIn(frame, 1330) * (1 - fadeIn(frame, 1375, 15)),
-            fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 18, color: "#8b949e", whiteSpace: "nowrap",
+            fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 18, color: "#8b949e", whiteSpace: "nowrap",
           }}>
             Retrofit starts with understanding.
           </div>
@@ -368,9 +394,16 @@ export const DCLearnConvergence: React.FC = () => {
             const opacity = fadeIn(frame, appearFrame, 12);
             if (opacity <= 0) return null;
             const pos = clockPositions[i];
-            const handAngle = getHandAngle(clock.behavior, frame - appearFrame);
-            const r = 32;
-            const handLen = 22;
+            const elapsed = Math.max(0, frame - appearFrame);
+            const handAngle = getHandAngle(clock.behavior, elapsed);
+            const baseR = 32;
+
+            // F-Gas: ring shrinks from 36 to 30 over the video (supply depleting)
+            const r = clock.behavior === "counter"
+              ? interpolate(frame, [0, 1800], [36, 30], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })
+              : baseR;
+
+            const handLen = r * 0.69;
             const hx = handLen * Math.cos(((handAngle - 90) * Math.PI) / 180);
             const hy = handLen * Math.sin(((handAngle - 90) * Math.PI) / 180);
 
@@ -380,14 +413,37 @@ export const DCLearnConvergence: React.FC = () => {
               extrapolateRight: "clamp",
             });
 
-            // Ring color for CRREM
-            const ringColor = clock.behavior === "redRing" && frame > 600 ? "#E06060" : clock.color;
+            // Ring color — behaviour-specific
+            let ringColor = clock.color;
+            let ringStrokeOpacity = 1;
+            let statOpacity = 0.8;
 
-            // No pulse blink — clocks stay fully visible
-            const pulseOp = 1;
+            // CRU Stuck: red pulse on ring every 60 frames
+            if (clock.behavior === "stuck") {
+              const cycle = elapsed % 60;
+              const flash = cycle < 8 ? interpolate(cycle, [0, 4, 8], [0, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }) : 0;
+              ringColor = interpolateColors(flash, [0, 1], ["#4a7c59", "#ff4444"]);
+            }
+
+            // Grid Constraints Frozen: dimmer ring
+            if (clock.behavior === "frozen") {
+              ringStrokeOpacity = 0.5;
+            }
+
+            // CRREM Misalignment: threshold flash when hand crosses 270°
+            if (clock.behavior === "redRing") {
+              const normAngle = ((handAngle % 360) + 360) % 360;
+              const crossedThreshold = normAngle >= 250 && normAngle <= 310;
+              ringColor = crossedThreshold ? "#ff0000" : clock.color;
+            }
+
+            // Fire Suppression: stat text pulses in brightness (45-frame cycle)
+            if (clock.behavior === "pulse") {
+              const pulseCycle = (elapsed % 45) / 45;
+              statOpacity = 0.4 + 0.6 * (0.5 + 0.5 * Math.sin(pulseCycle * Math.PI * 2));
+            }
 
             // Label position
-            const isTop = clock.angle >= 225 || clock.angle <= 315 && clock.angle >= 225;
             const isBottom = clock.angle >= 45 && clock.angle <= 135;
             const isLeft = clock.angle === 180;
             const isRight = clock.angle === 0;
@@ -401,14 +457,14 @@ export const DCLearnConvergence: React.FC = () => {
 
             return (
               <g key={i} opacity={opacity}>
-                <circle cx={pos.x} cy={pos.y} r={r} fill="rgba(10,14,20,0.7)" stroke={ringColor} strokeWidth={2.5} />
+                <circle cx={pos.x} cy={pos.y} r={r} fill="rgba(10,14,20,0.7)" stroke={ringColor} strokeWidth={2.5} opacity={ringStrokeOpacity} />
                 <line x1={pos.x} y1={pos.y} x2={pos.x + hx} y2={pos.y + hy} stroke={clock.color} strokeWidth={2} strokeLinecap="round" />
                 <circle cx={pos.x} cy={pos.y} r={3} fill={clock.color} />
                 <g style={{ transformOrigin: labelX + "px " + labelY + "px", transform: "scale(" + textScale + ")" }}>
-                  <text x={labelX} y={labelY} textAnchor={textAnchor} fill={clock.color} fontFamily="monospace" fontSize={16} fontWeight="bold">
+                  <text x={labelX} y={labelY} textAnchor={textAnchor} fill={clock.color} fontFamily={plexMono.fontFamily} fontSize={16} fontWeight="bold">
                     {clock.name}
                   </text>
-                  <text x={labelX} y={labelY + 16} textAnchor={textAnchor} fill={clock.color} fontFamily="monospace" fontSize={13} opacity={0.8}>
+                  <text x={labelX} y={labelY + 16} textAnchor={textAnchor} fill={clock.color} fontFamily={plexMono.fontFamily} fontSize={13} opacity={statOpacity}>
                     {clock.stat}
                   </text>
                 </g>
@@ -452,7 +508,7 @@ export const DCLearnConvergence: React.FC = () => {
           padding: "10px 24px", borderRadius: 8,
         }}>
           <div style={{
-            fontFamily: "monospace", fontStyle: "italic",
+            fontFamily: plexMono.fontFamily, fontStyle: "italic",
             fontSize: 18,
             color: "#c9d1d9", textAlign: "center", whiteSpace: "nowrap",
           }}>
@@ -464,7 +520,7 @@ export const DCLearnConvergence: React.FC = () => {
       {/* Scene 3 overlay text — at y=620 between building and bottom clocks */}
       {frame >= 300 && frame < 360 && (
         <div style={{ position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)", opacity: fadeIn(frame, 300) }}>
-          <div style={{ fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 36, color: "rgba(255,255,255,0.7)", textAlign: "center", whiteSpace: "nowrap" }}>
+          <div style={{ fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 36, color: "rgba(255,255,255,0.7)", textAlign: "center", whiteSpace: "nowrap" }}>
             Eight regulations. One building. All ticking.
           </div>
         </div>
@@ -474,9 +530,9 @@ export const DCLearnConvergence: React.FC = () => {
       {insightOverlay > 0 && (
         <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.97 * insightOverlay) + ")" }}>
           {[
-            { text: "They weren’t designed by the same people.", start: 1400, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
-            { text: "They weren’t drafted in the same year.", start: 1440, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
-            { text: "But they all land on the same building, in the same decade.", start: 1480, y: 530, size: 48, color: "#4a7c59", font: "Georgia, serif", style: "italic" as const },
+            { text: "They weren’t designed by the same people.", start: 1400, y: 400, size: 44, color: "white", font: playfair.fontFamily, style: "italic" as const },
+            { text: "They weren’t drafted in the same year.", start: 1440, y: 460, size: 44, color: "white", font: playfair.fontFamily, style: "italic" as const },
+            { text: "But they all land on the same building, in the same decade.", start: 1480, y: 530, size: 48, color: "#4a7c59", font: playfair.fontFamily, style: "italic" as const },
           ].map((line) => {
             const op = fadeIn(frame, line.start);
             const ty = interpolate(frame, [line.start, line.start + 15], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -499,7 +555,7 @@ export const DCLearnConvergence: React.FC = () => {
               <div style={{
                 position: "absolute", left: "50%", top: 590,
                 transform: "translate(-50%, " + ty4 + "px)",
-                opacity: op4, fontFamily: "monospace", fontSize: 20, color: "#8b949e",
+                opacity: op4, fontFamily: plexMono.fontFamily, fontSize: 20, color: "#8b949e",
                 textTransform: "uppercase", letterSpacing: 2,
                 textAlign: "center", maxWidth: "80%", whiteSpace: "nowrap",
               }}>
