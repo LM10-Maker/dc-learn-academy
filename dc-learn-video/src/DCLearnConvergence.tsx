@@ -314,9 +314,9 @@ export const DCLearnConvergence: React.FC = () => {
         </div>
 
 
-        {/* 4B setup text — fades in at 990, out at 1190-1220, prominent */}
-        {frame >= 990 && frame < 1220 && (() => {
-          const setupOp = fadeIn(frame, 990) * (1 - fadeIn(frame, 1190, 30));
+        {/* 4B setup text — fades in at 1010, out at 1190-1220, prominent */}
+        {frame >= 1010 && frame < 1220 && (() => {
+          const setupOp = fadeIn(frame, 1010) * (1 - fadeIn(frame, 1190, 30));
           return (
             <>
               <div style={{
@@ -338,12 +338,12 @@ export const DCLearnConvergence: React.FC = () => {
         })()}
 
         {/* Building green text (4B) — visible during green hold, fades out 1190-1220 */}
-        {frame >= 1020 && frame < 1220 && (
+        {frame >= 1030 && frame < 1220 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 1020) * (1 - fadeIn(frame, 1190, 30)), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 1030) * (1 - fadeIn(frame, 1190, 30)), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 1020) * (1 - fadeIn(frame, 1190, 30)), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 1030) * (1 - fadeIn(frame, 1190, 30)), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
@@ -443,8 +443,8 @@ export const DCLearnConvergence: React.FC = () => {
         </svg>
       )}
 
-      {/* Connection label — pill at y=630, all 18px monospace italic */}
-      {activeConn !== null && (
+      {/* Connection label — pill at y=630, all 18px monospace italic, hidden from frame 1000 */}
+      {activeConn !== null && frame < 1000 && (
         <div style={{
           position: "absolute", left: "50%", top: 630, transform: "translate(-50%, -50%)",
           backgroundColor: "#0a0e14",
