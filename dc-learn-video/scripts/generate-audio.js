@@ -68,53 +68,9 @@ tickFrames.forEach((frame, i) => {
 });
 
 // ═══════════════════════════════════════════════════════════
-// SCENE 3: LAYERED TICKING (frames 300–360)
-// 3 layers at slightly different rates, overall amp 0.25
+// FRAMES 270–1080: SILENCE
+// All ticking and connection tones removed.
 // ═══════════════════════════════════════════════════════════
-// Layer 1: 600Hz every 30 frames
-for (let f = 300; f < 360; f += 30) {
-  addTone(f, 600, 100, 0.25, 30);
-}
-// Layer 2: 700Hz every 33 frames
-for (let f = 300; f < 360; f += 33) {
-  addTone(f, 700, 100, 0.25, 30);
-}
-// Layer 3: 500Hz every 27 frames
-for (let f = 300; f < 360; f += 27) {
-  addTone(f, 500, 100, 0.25, 30);
-}
-
-// ═══════════════════════════════════════════════════════════
-// SCENE 4: TICKING FADES OUT (360–390), CONNECTIONS (360–990)
-// ═══════════════════════════════════════════════════════════
-
-// Ticking fade-out: continue the 3 layers into 360-390 with decreasing amplitude
-for (let f = 360; f < 390; f += 30) {
-  addTone(f, 600, 100, 0.25 * (1 - (f - 360) / 30), 30);
-}
-for (let f = 363; f < 390; f += 33) {
-  addTone(f, 700, 100, 0.25 * (1 - (f - 360) / 30), 30);
-}
-for (let f = 360; f < 390; f += 27) {
-  addTone(f, 500, 100, 0.25 * (1 - (f - 360) / 30), 30);
-}
-
-// Connection tones: soft low "thum" — same base freq with slight variation
-// 200ms, decay factor 3, plus 2nd harmonic for warmth
-const connections = [
-  { frame: 360, freq: 170 },
-  { frame: 450, freq: 185 },
-  { frame: 540, freq: 175 },
-  { frame: 630, freq: 190 },
-  { frame: 720, freq: 180 },
-  { frame: 810, freq: 170 },
-  { frame: 900, freq: 185 },
-  { frame: 990, freq: 195 },
-];
-connections.forEach(({ frame, freq }) => {
-  addTone(frame, freq, 200, 0.15, 3);       // fundamental
-  addTone(frame, freq * 2, 200, 0.05, 3);   // 2nd harmonic for warmth
-});
 
 // ═══════════════════════════════════════════════════════════
 // SCENE 4B: GREEN BUILDING CHORD (frames 1120–1330)
