@@ -7,6 +7,7 @@ import {
   Img,
   staticFile,
   interpolateColors,
+  Audio,
 } from "remotion";
 import "@fontsource/playfair-display/400.css";
 import "@fontsource/playfair-display/400-italic.css";
@@ -161,10 +162,14 @@ export const DCLearnConvergence: React.FC = () => {
     return "M " + sx + " " + sy + " Q " + cpx + " " + cpy + " " + ex + " " + ey;
   };
 
+  // ── Audio track — always rendered ──
+  const audioTrack = <Audio src={staticFile("audio-master.wav")} />;
+
   // ── SCENE 6: COURSE REVEAL ──
   if (scene6) {
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
+        {audioTrack}
         {/* DC-LEARN label */}
         <div style={{
           position: "absolute", left: "50%", top: 250, transform: "translate(-50%, -50%)",
@@ -236,6 +241,7 @@ export const DCLearnConvergence: React.FC = () => {
   if (scene7) {
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
+        {audioTrack}
         <div style={{
           position: "absolute", left: "50%", top: 340, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1685),
@@ -288,6 +294,7 @@ export const DCLearnConvergence: React.FC = () => {
   // ── SCENES 1–5 ──
   return (
     <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
+      {audioTrack}
       {/* Scene 1: Opening */}
       <div style={{ opacity: openingOpacity, position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
         {/* Logo at y=390 (centred) */}

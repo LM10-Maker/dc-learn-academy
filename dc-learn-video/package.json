@@ -17,6 +17,7 @@
     "@fontsource/playfair-display": "^5.2.8",
     "@remotion/cli": "^4.0.446",
     "@remotion/google-fonts": "^4.0.446",
+    "@remotion/media-utils": "^4.0.446",
     "@remotion/renderer": "^4.0.446",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
