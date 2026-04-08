@@ -309,7 +309,7 @@ export const DCLearnConvergence: React.FC = () => {
         </div>
 
         {/* Building racks at y=460 */}
-        <svg width={160} height={70} viewBox="0 0 160 70" style={{ position: "absolute", left: cx - 80, top: 460 }}>
+        <svg width={160} height={70} viewBox="0 0 160 70" style={{ position: "absolute", left: cx - 80, top: 480 }}>
           <rect x={10} y={10} width={140} height={50} fill="none" stroke={outlineStroke} strokeWidth={2} rx={4} />
           {[0, 1, 2, 3, 4].map((i) => {
             const rw = 20;
@@ -333,13 +333,13 @@ export const DCLearnConvergence: React.FC = () => {
         </svg>
 
         {/* "CLONSHAUGH DATA CENTRE" at y=530 */}
-        <div style={{ position: "absolute", left: "50%", top: 530, transform: "translateX(-50%)", fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 14, letterSpacing: 6, textTransform: "uppercase", whiteSpace: "nowrap" }}>
+        <div style={{ position: "absolute", left: "50%", top: 550, transform: "translateX(-50%)", fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 14, letterSpacing: 6, textTransform: "uppercase", whiteSpace: "nowrap" }}>
           Clonshaugh Data Centre
         </div>
 
         {/* Stats at y=555 — text and colour change during green (885-1080) */}
         <div style={{
-          position: "absolute", left: "50%", top: 555, transform: "translateX(-50%)",
+          position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)",
           fontFamily: plexMono.fontFamily, fontSize: 13, whiteSpace: "nowrap",
           color: interpolateColors(greenT, [0, 1], ["#57606a", "#4a7c59"]),
         }}>
@@ -353,14 +353,14 @@ export const DCLearnConvergence: React.FC = () => {
           return (
             <>
               <div style={{
-                position: "absolute", left: "50%", top: 446, transform: "translateX(-50%)",
+                position: "absolute", left: "50%", top: 455, transform: "translate(-50%, -50%)",
                 opacity: setupOp * 0.3,
                 fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 24, color: "#4a7c59", whiteSpace: "nowrap",
               }}>
                 When you understand the connections...
               </div>
               <div style={{
-                position: "absolute", left: "50%", top: 445, transform: "translateX(-50%)",
+                position: "absolute", left: "50%", top: 455, transform: "translate(-50%, -50%)",
                 opacity: setupOp,
                 fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 24, color: "#ffffff", whiteSpace: "nowrap",
               }}>
@@ -373,10 +373,10 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Building green text (4B) — visible during green hold, fades out 1300-1330 */}
         {frame >= 1180 && frame < 1330 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 595, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: plexMono.fontFamily, color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: plexMono.fontFamily, color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 620, transform: "translateX(-50%)", opacity: fadeIn(frame, 1180) * (1 - fadeIn(frame, 1300, 30)), fontFamily: plexMono.fontFamily, color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
@@ -384,7 +384,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Grey hold text — "Retrofit starts with understanding." at frame 1330 */}
         {frame >= 1330 && frame < 1390 && (
           <div style={{
-            position: "absolute", left: "50%", top: 620, transform: "translateX(-50%)",
+            position: "absolute", left: "50%", top: 640, transform: "translateX(-50%)",
             opacity: fadeIn(frame, 1330) * (1 - fadeIn(frame, 1375, 15)),
             fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 18, color: "#8b949e", whiteSpace: "nowrap",
           }}>
