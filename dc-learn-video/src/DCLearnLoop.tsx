@@ -1,5 +1,11 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate, Img, staticFile } from "remotion";
+import "@fontsource/playfair-display/400.css";
+import "@fontsource/playfair-display/400-italic.css";
+import "@fontsource/ibm-plex-mono/400.css";
+
+const playfair = { fontFamily: "'Playfair Display'" };
+const plexMono = { fontFamily: "'IBM Plex Mono'" };
 
 export const DCLearnLoop: React.FC = () => {
   const frame = useCurrentFrame();
@@ -41,7 +47,7 @@ export const DCLearnLoop: React.FC = () => {
         <div
           style={{
             opacity: textOpacity,
-            fontFamily: "monospace",
+            fontFamily: plexMono.fontFamily,
             color: "#4a7c59",
             fontSize: 24,
             letterSpacing: 6,
@@ -53,7 +59,7 @@ export const DCLearnLoop: React.FC = () => {
         <div
           style={{
             opacity: textOpacity,
-            fontFamily: "Georgia, serif",
+            fontFamily: playfair.fontFamily,
             fontStyle: "italic",
             color: "#8b949e",
             fontSize: 16,
