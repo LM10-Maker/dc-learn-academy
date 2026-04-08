@@ -73,12 +73,12 @@ export const DCLearnConvergence: React.FC = () => {
   const cy = 520;
   const ringRadius = 420;
 
-  // Building color transition: ramp up 885-920, hold 920-1050, ramp down 1050-1080
+  // Building color transition: ramp up 885-920, hold 920-1110, ramp down 1110-1140
   const greenUp = interpolate(frame, [885, 920], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const greenDown = interpolate(frame, [1050, 1080], [1, 0], {
+  const greenDown = interpolate(frame, [1110, 1140], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -90,10 +90,10 @@ export const DCLearnConvergence: React.FC = () => {
   // Scene visibility
   const openingOpacity = fadeIn(frame, 15, 30);
   const clocksVisible = frame >= 90;
-  const insightOverlay = frame >= 1080 && frame < 1290 ? fadeIn(frame, 1080, 20) : 0;
-  const clockDim = frame >= 1095 ? 0 : frame >= 1080 ? 0.15 : 1;
-  const scene6 = frame >= 1290 && frame < 1440;
-  const scene7 = frame >= 1440;
+  const insightOverlay = frame >= 1140 && frame < 1350 ? fadeIn(frame, 1140, 20) : 0;
+  const clockDim = frame >= 1155 ? 0 : frame >= 1140 ? 0.15 : 1;
+  const scene6 = frame >= 1350 && frame < 1500;
+  const scene7 = frame >= 1500;
 
   // Connection label: which is active
   const activeConn = CONNECTIONS.reduce<number | null>((acc, c, i) => {
@@ -143,7 +143,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* DC-LEARN label */}
         <div style={{
           position: "absolute", left: "50%", top: 250, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1290),
+          opacity: fadeIn(frame, 1350),
           fontFamily: "monospace", color: "#4a7c59", fontSize: 14,
           textTransform: "uppercase", letterSpacing: 4,
         }}>
@@ -153,7 +153,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Headline */}
         <div style={{
           position: "absolute", left: "50%", top: 350, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1305, 18),
+          opacity: fadeIn(frame, 1365, 18),
           fontFamily: "Georgia, serif", fontSize: 46, color: "white",
           textAlign: "center", maxWidth: 900, lineHeight: 1.2,
         }}>
@@ -163,7 +163,7 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Three stat columns */}
         <div style={{
           position: "absolute", left: "50%", top: 480, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1350),
+          opacity: fadeIn(frame, 1410),
           display: "flex", alignItems: "flex-start", gap: 0,
         }}>
           {([
@@ -191,14 +191,14 @@ export const DCLearnConvergence: React.FC = () => {
         {/* Bottom lines */}
         <div style={{
           position: "absolute", left: "50%", top: 600, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1395),
+          opacity: fadeIn(frame, 1455),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Story teaches the why. Modules teach the how.
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 640, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1410),
+          opacity: fadeIn(frame, 1470),
           fontFamily: "monospace", fontSize: 15, color: "#8b949e", textAlign: "center",
         }}>
           Irish standards. Irish grid. Irish deadlines.
@@ -207,32 +207,27 @@ export const DCLearnConvergence: React.FC = () => {
     );
   }
 
-  // ── SCENE 7: END SCREEN — static word cloud in four zones ──
+  // ── SCENE 7: END SCREEN — clean, six elements only ──
   if (scene7) {
-    const wcOp = fadeIn(frame, 1620, 30); // word cloud fade-in
-
     return (
       <AbsoluteFill style={{ backgroundColor: "#0a0e14" }}>
-        {/* PHASE 1: CTA text */}
         <div style={{
           position: "absolute", left: "50%", top: 340, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1440),
+          opacity: fadeIn(frame, 1500),
           fontFamily: "Georgia, serif", fontSize: 48, color: "white", textAlign: "center",
         }}>
           Three chapters. Three modules.
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 420, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1500),
+          opacity: fadeIn(frame, 1560),
           fontFamily: "Georgia, serif", fontSize: 68, color: "#4a7c59",
         }}>
           Free.
         </div>
-
-        {/* PHASE 2: Logo + branding */}
         <div style={{
           position: "absolute", left: "50%", top: 500, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1560),
+          opacity: fadeIn(frame, 1620),
           width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
           border: "2px solid #4a7c59",
           display: "flex", alignItems: "center", justifyContent: "center",
@@ -242,107 +237,21 @@ export const DCLearnConvergence: React.FC = () => {
         </div>
         <div style={{
           position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1590),
+          opacity: fadeIn(frame, 1650),
           fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 655, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1605),
+          position: "absolute", left: "50%", top: 660, transform: "translate(-50%, -50%)",
+          opacity: fadeIn(frame, 1665),
           fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>
           The convergence course for data centre professionals
         </div>
-
-        {/* TOP ZONE (y=40-240, full width) — 18px #8b949e 0.45 */}
-        {([
-          { text: "IS 10101", x: 80, y: 50 }, { text: "redundancy", x: 320, y: 50 }, { text: "CIBSE TM40", x: 560, y: 50 }, { text: "GHG Protocol", x: 820, y: 50 }, { text: "topology", x: 1100, y: 50 }, { text: "SLA", x: 1340, y: 50 }, { text: "dry coolers", x: 1560, y: 50 }, { text: "EPO", x: 1800, y: 50 },
-          { text: "EN 50600", x: 140, y: 100 }, { text: "ATS", x: 380, y: 100 }, { text: "concurrent maintainability", x: 680, y: 100 }, { text: "NEAP", x: 1000, y: 100 }, { text: "DCIM", x: 1250, y: 100 }, { text: "BMS", x: 1480, y: 100 }, { text: "EN 61439", x: 1720, y: 100 },
-          { text: "N+1", x: 100, y: 150 }, { text: "chillers", x: 340, y: 150 }, { text: "Scope 2 market-based", x: 620, y: 150 }, { text: "additionality", x: 940, y: 150 }, { text: "48-hour fuel", x: 1200, y: 150 }, { text: "PDU whip", x: 1450, y: 150 }, { text: "HV switchgear", x: 1700, y: 150 },
-          { text: "delta-T", x: 160, y: 200 }, { text: "BESS", x: 400, y: 200 }, { text: "discrimination study", x: 660, y: 200 }, { text: "thermal runaway", x: 980, y: 200 }, { text: "ASHRAE", x: 1280, y: 200 }, { text: "hot aisle", x: 1520, y: 200 }, { text: "witness testing", x: 1780, y: 200 },
-        ] as const).map((t) => (
-          <span key={t.text + t.x} style={{
-            position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: 18, color: "#8b949e", opacity: 0.45 * wcOp,
-          }}>
-            {t.text}
-          </span>
-        ))}
-
-        {/* LEFT COLUMN (x=40-380, y=280-950) */}
-        {([
-          { text: "PUE", x: 60, y: 290, size: 22, color: "#D4A84B", op: 0.7 },
-          { text: "F-Gas", x: 40, y: 350, size: 22, color: "#E06060", op: 0.7 },
-          { text: "CRREM", x: 80, y: 410, size: 22, color: "#e879a0", op: 0.7 },
-          { text: "2N+1", x: 50, y: 470, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "fault tolerance", x: 40, y: 530, size: 20, color: "#8DB4C8", op: 0.55 },
-          { text: "containment", x: 60, y: 590, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "VESDA", x: 80, y: 650, size: 20, color: "#C75050", op: 0.55 },
-          { text: "busway", x: 50, y: 710, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "WAULT", x: 40, y: 770, size: 20, color: "#e879a0", op: 0.55 },
-          { text: "€/kW", x: 70, y: 830, size: 20, color: "#fb923c", op: 0.55 },
-          { text: "lifecycle cost", x: 40, y: 890, size: 20, color: "#8DB4C8", op: 0.55 },
-        ] as const).map((t) => (
-          <span key={t.text + t.x} style={{
-            position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
-          }}>
-            {t.text}
-          </span>
-        ))}
-
-        {/* RIGHT COLUMN (x=1540-1880, y=280-950) */}
-        {([
-          { text: "CRU", x: 1600, y: 290, size: 22, color: "#4a7c59", op: 0.7 },
-          { text: "EED", x: 1720, y: 350, size: 22, color: "#5B9BD5", op: 0.7 },
-          { text: "Carbon Tax", x: 1560, y: 410, size: 22, color: "#fb923c", op: 0.7 },
-          { text: "Grid", x: 1680, y: 470, size: 22, color: "#a78bfa", op: 0.7 },
-          { text: "dual feed", x: 1560, y: 530, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "free cooling", x: 1580, y: 590, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "chilled water", x: 1560, y: 650, size: 20, color: "#5B9BD5", op: 0.55 },
-          { text: "MIC", x: 1700, y: 710, size: 20, color: "#D4A84B", op: 0.55 },
-          { text: "Novec 1230", x: 1560, y: 770, size: 20, color: "#C75050", op: 0.55 },
-          { text: "cap rate", x: 1600, y: 830, size: 20, color: "#fb923c", op: 0.55 },
-          { text: "Icw rating", x: 1580, y: 890, size: 20, color: "#D4A84B", op: 0.55 },
-        ] as const).map((t) => (
-          <span key={t.text + t.x} style={{
-            position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
-          }}>
-            {t.text}
-          </span>
-        ))}
-
-        {/* BOTTOM ZONE (x=400-1520, y=720-960) — 18px #8b949e 0.45 */}
-        {([
-          { text: "static transfer", x: 440, y: 740, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "HVO", x: 680, y: 740, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "condenser", x: 920, y: 740, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "Li-ion", x: 1160, y: 740, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "EPA licence", x: 1380, y: 740, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "server PSU", x: 480, y: 800, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "rack PDU", x: 720, y: 800, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "heat rejection", x: 980, y: 800, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "PPA", x: 1220, y: 800, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "Fire", x: 1400, y: 800, size: 20, color: "#C75050", op: 0.6 },
-          { text: "uptime tier", x: 520, y: 860, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "commissioning", x: 780, y: 860, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "point-to-point", x: 1060, y: 860, size: 18, color: "#8b949e", op: 0.45 },
-          { text: "Scope 2", x: 1320, y: 860, size: 18, color: "#8b949e", op: 0.45 },
-        ] as const).map((t) => (
-          <span key={t.text + t.x} style={{
-            position: "absolute", left: t.x, top: t.y,
-            fontFamily: "monospace", fontSize: t.size, color: t.color, opacity: t.op * wcOp,
-          }}>
-            {t.text}
-          </span>
-        ))}
-
-        {/* legacybe.ie */}
         <div style={{
           position: "absolute", left: "50%", top: 980, transform: "translate(-50%, -50%)",
-          opacity: fadeIn(frame, 1650),
+          opacity: fadeIn(frame, 1710),
           fontFamily: "monospace", fontSize: 12, color: "#4a7c59",
         }}>
           legacybe.ie
@@ -402,28 +311,28 @@ export const DCLearnConvergence: React.FC = () => {
           fontFamily: "monospace", fontSize: 13, whiteSpace: "nowrap",
           color: interpolateColors(greenT, [0, 1], ["#57606a", "#4a7c59"]),
         }}>
-          {frame >= 885 && frame < 1080 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
+          {frame >= 885 && frame < 1140 ? "400 racks · 2.4 MW · PUE 1.30 · Retrofitting" : "400 racks · 2.4 MW · PUE 1.50 · Built 2013"}
         </div>
 
 
-        {/* 4B setup text — fades in at 870, out at 1050-1080 */}
-        {frame >= 870 && frame < 1080 && (
+        {/* 4B setup text — fades in at 870, out at 1110-1140 */}
+        {frame >= 870 && frame < 1140 && (
           <div style={{
             position: "absolute", left: "50%", top: 445, transform: "translateX(-50%)",
-            opacity: fadeIn(frame, 870) * (1 - fadeIn(frame, 1050, 30)),
+            opacity: fadeIn(frame, 870) * (1 - fadeIn(frame, 1110, 30)),
             fontFamily: "Georgia, serif", fontStyle: "italic", fontSize: 18, color: "#8b949e", whiteSpace: "nowrap",
           }}>
             When you understand the connections...
           </div>
         )}
 
-        {/* Building green text (4B) — visible during green hold, fades out 1050-1080 */}
-        {frame >= 920 && frame < 1080 && (
+        {/* Building green text (4B) — visible during green hold, fades out 1110-1140 */}
+        {frame >= 920 && frame < 1140 && (
           <>
-            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 920) * (1 - fadeIn(frame, 1050, 30)), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 575, transform: "translateX(-50%)", opacity: fadeIn(frame, 920) * (1 - fadeIn(frame, 1110, 30)), fontFamily: "monospace", color: "#4a7c59", fontSize: 20, fontWeight: "bold", whiteSpace: "nowrap" }}>
               Understood. Aligned. Ahead of the clock.
             </div>
-            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 920) * (1 - fadeIn(frame, 1050, 30)), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
+            <div style={{ position: "absolute", left: "50%", top: 600, transform: "translateX(-50%)", opacity: fadeIn(frame, 920) * (1 - fadeIn(frame, 1110, 30)), fontFamily: "monospace", color: "#8b949e", fontSize: 14, whiteSpace: "nowrap" }}>
               The building that understands what’s coming.
             </div>
           </>
@@ -489,7 +398,7 @@ export const DCLearnConvergence: React.FC = () => {
       )}
 
       {/* Connections SVG — dashed, animated, perimeter-to-perimeter */}
-      {frame >= 360 && frame < 1050 && (
+      {frame >= 360 && frame < 1110 && (
         <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}>
           {CONNECTIONS.map((conn, i) => {
             if (frame < conn.start) return null;
@@ -544,9 +453,9 @@ export const DCLearnConvergence: React.FC = () => {
       {insightOverlay > 0 && (
         <div style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(10,14,20," + (0.97 * insightOverlay) + ")" }}>
           {[
-            { text: "They weren’t designed by the same people.", start: 1095, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
-            { text: "They weren’t drafted in the same year.", start: 1170, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
-            { text: "But they all land on the same building, in the same decade.", start: 1230, y: 530, size: 48, color: "#4a7c59", font: "Georgia, serif", style: "italic" as const },
+            { text: "They weren’t designed by the same people.", start: 1155, y: 400, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
+            { text: "They weren’t drafted in the same year.", start: 1230, y: 460, size: 44, color: "white", font: "Georgia, serif", style: "italic" as const },
+            { text: "But they all land on the same building, in the same decade.", start: 1290, y: 530, size: 48, color: "#4a7c59", font: "Georgia, serif", style: "italic" as const },
           ].map((line) => {
             const op = fadeIn(frame, line.start);
             const ty = interpolate(frame, [line.start, line.start + 15], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
@@ -563,8 +472,8 @@ export const DCLearnConvergence: React.FC = () => {
             );
           })}
           {(() => {
-            const op4 = fadeIn(frame, 1260);
-            const ty4 = interpolate(frame, [1260, 1275], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+            const op4 = fadeIn(frame, 1320);
+            const ty4 = interpolate(frame, [1320, 1335], [12, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
             return (
               <div style={{
                 position: "absolute", left: "50%", top: 590,
