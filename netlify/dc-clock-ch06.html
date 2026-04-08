@@ -1,0 +1,185 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">The Wire to the World</h2>
+
+<p style="margin-bottom:14px">Mark had brought the connection agreement.</p>
+
+<p style="margin-bottom:14px">Not a copy — the original, in a clear plastic sleeve, the same document Ann had seen framed on the wall of the electrical intake room on her first visit. She hadn't asked him to bring it. He'd taken it down because it was, in his assessment, the single most important piece of paper in the building, and nobody had read it properly since 2013.</p>
+
+<p style="margin-bottom:14px">He laid it on the conference room table. The whiteboard still had Tom's arithmetic from the PUE meeting — nobody had wiped it, and it had become a kind of permanent installation, like the calendar on the wall that Sarah was building. Sarah was at Clonshaugh that day, but in the BMS room with Declan — she'd asked for a walkthrough of the monitoring architecture before she started mapping the EED requirements. Neither of them was needed for a conversation about the connection agreement. That was Ann's territory now.</p>
+
+<p style="margin-bottom:14px">Ann looked at the document. Maximum Import Capacity: 5 MVA. Voltage: 10 kV. Connection type: ESB Networks medium voltage distribution. Issued: 2013.</p>
+
+<p style="margin-bottom:14px">"Five MVA," she said. "We talked about this on the first day."</p>
+
+<p style="margin-bottom:14px">"We did," Mark said. "And at the time, it was context. Today it's a constraint."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 1:</strong> <em>"A connection agreement is not a receipt. It is a contract between the building and the grid. When the building changes, the contract needs to change with it — and the grid doesn't move fast."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Tom was at the end of the table with his calculator and a notepad. He had been quiet since the PUE meeting, working through the numbers that session had produced, turning them into the kind of phased investment structure that boards understood. But today's meeting wasn't about cooling. It was about power. And power, in a data centre, started with the wire.</p>
+
+<p style="margin-bottom:14px">Mark stood at the whiteboard. He drew a single line across the top — the ESB 10 kV cable — and wrote 5 MVA above it.</p>
+
+<p style="margin-bottom:14px">"This is the pipe," he said. "Everything in this building, every watt, comes through this line. 5 MVA is the maximum the connection allows. Our current demand—" He wrote the number below.</p>
+
+<p style="margin-bottom:14px"><strong>Current: 3,600 kW at PUE 1.50 ≈ 4.0 MVA</strong></p>
+
+<p style="margin-bottom:14px">"We're at eighty percent of MIC," he said. "That sounds like headroom. It isn't. ESB Networks will typically flag any connection that consistently draws above seventy-five percent of MIC. We're already in that zone."</p>
+
+<p style="margin-bottom:14px">Ann looked at the numbers. "And if we densify?"</p>
+
+<p style="margin-bottom:14px">Mark had done this calculation before the meeting. He wrote it out.</p>
+
+<p style="margin-bottom:14px"><strong>Target: 400 racks × 20 kW = 8,000 kW IT</strong> <strong>At PUE 1.30: 8,000 × 1.30 = 10,400 kW ≈ 11.6 MVA</strong></p>
+
+<p style="margin-bottom:14px">He underlined 11.6 MVA and drew an arrow back to the 5 MVA at the top.</p>
+
+<p style="margin-bottom:14px">Tom put his calculator down. Not because he'd finished the calculation — because the calculation had finished itself. 11.6 MVA against a 5 MVA pipe. The building's ambition was more than twice its connection.</p>
+
+<p style="margin-bottom:14px">"That's not a cooling problem," Tom said. "That's a grid problem."</p>
+
+<p style="margin-bottom:14px">"It's both," Mark said. "But the grid problem comes first. You can design the most efficient cooling system in Ireland and it doesn't matter if you can't get the power into the building."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 2:</strong> <em>"You can have the best cooling system in Ireland. You can have the most efficient PUE in Dublin. But if the wire from the grid can't carry the load, none of it matters. The connection is upstream of everything."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Ann had a question she'd been carrying since the first walk. She'd written it in her notebook on day one and circled it: <em>What happens when we need more power?</em></p>
+
+<p style="margin-bottom:14px">"Walk me through it," she said. "What does a connection upgrade look like?"</p>
+
+<p style="margin-bottom:14px">Mark took his time. This was not a simple answer, and he was careful with answers that had timelines attached to them, because timelines in Irish grid connections were the kind of thing that turned investment plans into investment problems.</p>
+
+<p style="margin-bottom:14px">"Step one: pre-application enquiry to ESB Networks. You tell them what you want — how much additional capacity, at what voltage, at what location. They tell you whether it's feasible on the existing network." He wrote on the whiteboard as he spoke.</p>
+
+<p style="margin-bottom:14px"><strong>1. Pre-application → feasibility (8–12 weeks)</strong> <strong>2. Formal application → technical assessment (12–16 weeks)</strong> <strong>3. ESB Networks design → connection offer (6–12 months)</strong> <strong>4. Customer acceptance → build programme (12–24 months)</strong></p>
+
+<p style="margin-bottom:14px">"Total timeline from enquiry to energisation: eighteen months to three years. Depending on grid zone capacity, transformer availability, and whether the network needs reinforcement upstream of your connection point."</p>
+
+<p style="margin-bottom:14px">Ann counted the stages. Four stages. Eighteen months minimum. Three years possible.</p>
+
+<p style="margin-bottom:14px">"And that's for staying on 10 kV?"</p>
+
+<p style="margin-bottom:14px">Mark shook his head. "At 11.6 MVA, you're above the 10 kV threshold. ESB Networks medium voltage distribution goes up to about 5 MVA on a standard connection. Above that, you're looking at 38 kV — a dedicated high voltage substation on site, with ESB Networks still as the distribution system operator. Your own HV switchgear, your own transformer, your own protection equipment."</p>
+
+<p style="margin-bottom:14px">Tom wrote a number on his notepad and circled it. Ann leaned over. She couldn't read Tom's handwriting, but she could read the number of digits.</p>
+
+<p style="margin-bottom:14px">"How much?" she said.</p>
+
+<p style="margin-bottom:14px">"For a 38 kV substation with dual transformer, protection equipment, civils, and the ESB connection works?" Mark paused. "One and a half to three million euro, depending on scope. Plus the ESB connection charge, which is separate and can be three hundred thousand to over a million depending on network reinforcement."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 3:</strong> <em>"Grid capacity is earned, not inherited. A connection issued in 2013 does not guarantee capacity in 2026. The building changed. The grid didn't change with it."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Tom had stopped writing. He was looking at the whiteboard — the timeline, the costs, the gap between 5 MVA and 11.6 MVA — and doing what quantity surveyors do when the numbers don't fit the programme: recalculating the programme.</p>
+
+<p style="margin-bottom:14px">"The cooling retrofit," he said. "We priced that at under a million, payback in twelve to eighteen months. This" — he pointed at the grid numbers — "is three to four million with a three-year timeline. Is that before or after the cooling?"</p>
+
+<p style="margin-bottom:14px">Mark turned to face him. "Before. Or more precisely, in parallel. The cooling retrofit reduces overhead — it gets PUE from 1.50 toward 1.30. That saves money and carbon, but it doesn't change the IT load. The density increase changes the IT load. If you're going from 6 kilowatts per rack to 20 kilowatts per rack, the cooling retrofit and the grid upgrade have to run concurrently. The cooling retrofit starts now and delivers in twelve to eighteen months. The grid application starts now and delivers in eighteen to thirty-six months. The grid is the longer programme."</p>
+
+<p style="margin-bottom:14px">"So the grid application starts now," Ann said.</p>
+
+<p style="margin-bottom:14px">"It starts now," Mark said. "Not after the cooling is done. Not after the board approves Phase 3. Now. Because the grid timeline is the longest single item in the entire programme, and it is on the critical path for densification."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 4:</strong> <em>"The grid timeline is the longest single item in the entire programme. Everything else — cooling, PUE, containment, free cooling — fits inside it. The grid is the critical path."</em></blockquote>
+
+<p style="margin-bottom:14px">Ann looked at the connection agreement on the table. 2013. The year the building was commissioned. Thirteen years ago. The building had changed — new tenants, new load profiles, new ambitions. The connection hadn't changed at all.</p>
+
+<p style="margin-bottom:14px">"Has anyone reviewed this since it was issued?" she asked.</p>
+
+<p style="margin-bottom:14px">Declan, who had been sitting at the back of the room with his coffee, said: "No."</p>
+
+<p style="margin-bottom:14px">It was the shortest answer he'd given in five chapters of meetings, and it was the most honest. Nobody had reviewed the connection agreement since 2013. Nobody had checked whether the MIC was still appropriate, whether the demand profile had shifted, whether the network upstream had changed. The connection had been taken for granted — like the transformer, like the fuel contract, like the belt and the braces.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 5:</strong> <em>"Nobody had reviewed the connection agreement since 2013. The building had changed every year since then — new tenants, new load, new ambitions. The wire hadn't changed at all."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Mark capped the marker. He looked at the whiteboard — two meetings' worth of numbers, from PUE to grid capacity, from Tom's NPV to the 38 kV cost estimate. The whiteboard was becoming a map of the building's future, drawn in dry-erase marker by five people who each saw a different piece of it.</p>
+
+<p style="margin-bottom:14px">He turned to the room. "I'm going to write all of this up. The cooling survey, the PUE gap analysis, the generator endurance question, the grid connection recommendation. Formal report. You'll have it in two weeks."</p>
+
+<p style="margin-bottom:14px">Ann nodded. "And then?"</p>
+
+<p style="margin-bottom:14px">"And then you read it. You decide what you want to do — the phased cooling retrofit, the grid application, the 48-hour island test, the metering. You build a programme. And when you have a scope of works, you call me and I'll price it."</p>
+
+<p style="margin-bottom:14px">The room was quiet for a moment. Mark was leaving. Not dramatically — he wasn't walking out. He was finishing a phase of work and moving to the next. He had another project starting next week. A different facility, a different client, a different set of problems that required the same precision and the same questions. This was how consulting worked. You arrived, you observed, you diagnosed, you reported, and then you left — because the client needed time to read, to decide, and to commit. An engineer who stayed too long became a dependency. An engineer who left at the right time became a resource.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 6:</strong> <em>"An engineer who stays too long becomes a dependency. An engineer who leaves at the right time becomes a resource. Mark left at the right time."</em></blockquote>
+
+<p style="margin-bottom:14px">Tom shook his hand. "Good report. I'll check your cost estimates against SCSI."</p>
+
+<p style="margin-bottom:14px">Mark almost smiled. "I'd expect nothing less."</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Declan walked Mark to the car park. It was the same walk they'd done every evening for two weeks — past the loading bay, past the generator compound, past the diesel tank and the ESB cable route. Declan knew this path better than anyone. He'd walked it thousands of times, in daylight and in darkness, in storms and in sunshine. The path hadn't changed. What he saw when he walked it had.</p>
+
+<p style="margin-bottom:14px">"Will you come back?" Declan said.</p>
+
+<p style="margin-bottom:14px">"When there's a scope." Mark opened his car door. "You've got a good building, Declan. It works. The question isn't whether it works today — it's whether it works in 2030. And that question has an answer, but the answer isn't free."</p>
+
+<p style="margin-bottom:14px">Declan nodded. He'd been hearing variations of this from Mark for two weeks — not criticism, not complaint, just the persistent diagnostic pressure of a man who asked questions that nobody else had thought to ask.</p>
+
+<p style="margin-bottom:14px">"The fuel supplier called back," Declan said. "They can do a guaranteed four-hour delivery window if we upgrade the contract. Costs twelve thousand a year more."</p>
+
+<p style="margin-bottom:14px">Mark considered this. "That's a start. Put it in the programme."</p>
+
+<p style="margin-bottom:14px">He got in the car.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 7:</strong> <em>"The report would contain everything Mark had found — and everything the building needed to hear. The building wasn't broken. But it was running out of room to grow, and the grid was the wall it would hit first."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Ann watched Mark drive out of the Clonshaugh car park. She stood by the security barrier with her notebook and a coffee she'd forgotten to drink.</p>
+
+<p style="margin-bottom:14px">She had, in two weeks, learned more about this building than she had in the previous six months of ownership. She had walked the power chain, felt the transformer hum, watched the generators start in the dark, seen Tom write half a million euros on a whiteboard, listened to Sarah name regulations she'd never heard of, and watched Declan discover that testing an engine wasn't the same as testing endurance.</p>
+
+<p style="margin-bottom:14px">She had a building full of problems. A team of four — Declan, Sarah, Tom, and herself. A report coming in two weeks. And a connection agreement from 2013 that couldn't carry the future she was planning.</p>
+
+<p style="margin-bottom:14px">She opened her notebook to the page she'd started on day one. She crossed out the heading — <em>Site Visit Notes</em> — and wrote a new one:</p>
+
+<p style="margin-bottom:14px"><em>Programme.</em></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 8:</strong> <em>"She crossed out 'Site Visit Notes' and wrote 'Programme.' The word change was small. What it meant was not."</em></blockquote>
+
+<p style="margin-bottom:14px">Declan appeared beside her. He had his hard hat in his hand, which meant he was going back to the data hall.</p>
+
+<p style="margin-bottom:14px">"What do we do now?" he said.</p>
+
+<p style="margin-bottom:14px">"We wait for the report. Then we build a programme."</p>
+
+<p style="margin-bottom:14px">"And the grid application?"</p>
+
+<p style="margin-bottom:14px">She looked at the ESB cable route — the single line from the street to the building, the same cable that had carried every watt since 2013. Five MVA. One path. One connection. Four hundred tenants and a future that needed twice the power.</p>
+
+<p style="margin-bottom:14px">"That starts Monday," she said.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 9:</strong> <em>"Five MVA. Issued 2013. The building had outgrown the wire, and the wire wouldn't grow back on its own. The grid application started Monday — not because they were ready, but because the timeline wouldn't wait until they were."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 6 — The Wire to the World</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CLOCKQUOTE EXTRACT (9 quotes for injection)</h3>
+
+<p style="margin-bottom:14px">| # | Character | Context | Quote | |---|-----------|---------|-------| | CQ6-1 | Mark | Connection agreement significance | <em>"A connection agreement is not a receipt. It is a contract between the building and the grid. When the building changes, the contract needs to change with it — and the grid doesn't move fast."</em> | | CQ6-2 | Mark | Grid upstream of everything | <em>"You can have the best cooling system in Ireland. You can have the most efficient PUE in Dublin. But if the wire from the grid can't carry the load, none of it matters. The connection is upstream of everything."</em> | | CQ6-3 | Narrator | Grid capacity earned | <em>"Grid capacity is earned, not inherited. A connection issued in 2013 does not guarantee capacity in 2026. The building changed. The grid didn't change with it."</em> | | CQ6-4 | Mark | Critical path | <em>"The grid timeline is the longest single item in the entire programme. Everything else — cooling, PUE, containment, free cooling — fits inside it. The grid is the critical path."</em> | | CQ6-5 | Narrator | Connection never reviewed | <em>"Nobody had reviewed the connection agreement since 2013. The building had changed every year since then — new tenants, new load, new ambitions. The wire hadn't changed at all."</em> | | CQ6-6 | Narrator | Mark's departure | <em>"An engineer who stays too long becomes a dependency. An engineer who leaves at the right time becomes a resource. Mark left at the right time."</em> | | CQ6-7 | Narrator | Mark's report coming | <em>"The report would contain everything Mark had found — and everything the building needed to hear. The building wasn't broken. But it was running out of room to grow, and the grid was the wall it would hit first."</em> | | CQ6-8 | Ann | Word change — site visit to programme | <em>"She crossed out 'Site Visit Notes' and wrote 'Programme.' The word change was small. What it meant was not."</em> | | CQ6-9 | Narrator | Grid application starts Monday | <em>"Five MVA. Issued 2013. The building had outgrown the wire, and the wire wouldn't grow back on its own. The grid application started Monday — not because they were ready, but because the timeline wouldn't wait until they were."</em> |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CONTINUITY FLAGS (carry to Chapter 7)</h3>
+
+<p style="margin-bottom:14px">- <strong>Mark departed.</strong> He returns in Ch12 (Energy Centres). Chapters 7–11 are the four-person arc — Declan, Ann, Sarah, Tom without Mark. His absence is felt. - <strong>Mark's formal report:</strong> Due in two weeks. Covers cooling survey (Ch2), PUE gap analysis (Ch4), generator endurance (Ch5), grid connection recommendation (Ch6). <strong>Sarah uses this report to build the calendar in Ch7.</strong> - <strong>Grid application starts Monday.</strong> Ann committed. ESB Networks pre-application enquiry. <strong>Timeline: 18–36 months. This is the critical path for densification.</strong> - <strong>38 kV substation:</strong> If density goes to 20 kW/rack, demand exceeds 10 kV MV threshold. Need 38 kV HV substation on site. Capex: €1.5–3M plus ESB connection charge €300K–1M+. <strong>Tom will incorporate into programme budget.</strong> - <strong>Current MIC utilisation:</strong> 4.0 MVA against 5 MVA = 80%. ESB Networks flags above 75%. <strong>Already in the zone — even without density increase.</strong> - <strong>Fuel contract upgrade:</strong> Declan secured guaranteed 4-hour delivery for €12K/yr more. <strong>Partial resolution of Ch5 fuel risk.</strong> - <strong>Declan's motif:</strong> "No" — shortest answer, most honest. The connection was never reviewed. He's past defending; he's accepting gaps and acting. - <strong>Ann's motif:</strong> "Site Visit Notes" crossed out → "Programme." <strong>Intellectual turning point. She's moved from observer to programme owner.</strong> - <strong>Tom's motif:</strong> First encounter with infrastructure costs that don't follow building economics. €3–4M for a wire. <strong>Foreshadows his crack chapter in Ch12 when CRM revenue breaks his benchmarks entirely.</strong> - <strong>Connection agreement on the table:</strong> Physical document, 2013, now a symbol. <strong>The calendar in Ch7 will include the grid timeline as the longest bar.</strong> - <strong>Whiteboard:</strong> Two meetings' worth of numbers. Nobody wipes it. <strong>It and Sarah's calendar become the two visual artefacts of the programme.</strong></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">ENGINEERING SOURCES (Chapter 6)</h3>
+
+<p style="margin-bottom:14px">| Claim | Value | Source | Tier | |-------|-------|--------|------| | Clonshaugh MIC | 5 MVA | Series Spec §2 | T1 | | Clonshaugh voltage | 10 kV, ESB Networks MV | Series Spec §2 | T1 | | Current demand | ~4.0 MVA (3,600 kW at ~0.9 PF) | Derived | — | | MIC utilisation | ~80% | Derived (4.0 / 5.0) | — | | ESB Networks flag threshold | ~75% of MIC | ESB Networks connection policy | T2 | | Target density | 20 kW/rack × 400 racks = 8,000 kW IT | Handoff §Ch4 outline | T1 | | Target demand at PUE 1.30 | 10,400 kW ≈ 11.6 MVA | Derived | — | | MV threshold | ≤5 MVA on 10 kV (ESB Networks) | ESB Networks Distribution Code | T1 | | HV threshold | 5–20 MVA on 38 kV (ESB Networks) | ESB Networks Distribution Code | T1 | | 110 kV threshold | 20+ MVA (EirGrid transmission) | EirGrid Grid Code | T1 | | Pre-application timeline | 8–12 weeks | ESB Networks published process | T2 | | Formal application to offer | 12–16 weeks + 6–12 months | ESB Networks published process | T2 | | Build to energisation | 12–24 months | ESB Networks; SCSI Q1 2025 | T2/T3 | | Total grid timeline | 18–36 months | Derived from above stages | — | | 38 kV substation capex | €1.5–3M (dual transformer, protection, civils) | SCSI Q1 2025; ABB/Schneider published | T3 | | ESB connection charge | €300K–1M+ (network-dependent) | ESB Networks connection charging | T2 | | Power factor assumption | 0.9 lagging (typical DC) | IEEE 519; ESB Networks requirements | T2 |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>The Data Centre Clock — Chapter 6 | LBE | 3 April 2026</em></p>

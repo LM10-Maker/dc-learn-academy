@@ -1,0 +1,167 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">Who Gets In</h2>
+
+<p style="margin-bottom:14px">The tenant audit was scheduled for a Thursday. A financial services company — one of Clonshaugh's larger tenants, occupying sixty racks in Hall A — had sent their compliance officer with a checklist and a mandate. PCI-DSS. Payment Card Industry Data Security Standard. The company processed credit card transactions, and PCI-DSS required them to verify the physical security of every facility where their data was stored or processed.</p>
+
+<p style="margin-bottom:14px">The auditor arrived at nine. She was polite, thorough, and systematic. She signed in at the front desk, accepted a visitor badge, and asked three questions before she reached the data hall.</p>
+
+<p style="margin-bottom:14px">"Can I see your zone map?"</p>
+
+<p style="margin-bottom:14px">"Your what?" Declan said.</p>
+
+<p style="margin-bottom:14px">"The zone map. A diagram showing the security zones — perimeter, building entry, corridor, data hall, rack level — and how they align with your fire compartmentation and cooling zones."</p>
+
+<p style="margin-bottom:14px">Declan looked at her. He knew the answer. He knew every zone in the building, every access point, every badge reader, every camera, every fire compartment wall. He had managed access at Clonshaugh for ten years. He knew which tenants had access to which rows, which contractors needed escort, which doors required two-factor, and which ones were propped open on Tuesdays for the cleaning crew.</p>
+
+<p style="margin-bottom:14px">He knew all of it. And none of it was written down.</p>
+
+<p style="margin-bottom:14px">"I don't have a map," he said. "I have a system."</p>
+
+<p style="margin-bottom:14px">"Is the system documented?"</p>
+
+<p style="margin-bottom:14px">The silence was familiar. It was the same shape as the silence after Mark had asked about simultaneous UPS failures. The same shape as the silence after Sarah had asked about EED registration. The answer was no, and no was becoming a pattern.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 1:</strong> <em>"He knew every zone, every badge reader, every camera position. He'd managed access for ten years. But when the auditor asked for the map, the only map was in his head — and a map that lives in one person's head is a map that leaves when they do."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The auditor walked the building. She was professional about it — she didn't challenge Declan, didn't embarrass him, didn't point out deficiencies in front of the tenant's IT staff. She walked, she photographed, she took notes, and she asked questions that Declan could answer but couldn't evidence.</p>
+
+<p style="margin-bottom:14px">"This door between the corridor and the data hall — is it on a separate access control zone?"</p>
+
+<p style="margin-bottom:14px">"Yes. Badge reader, PIN, audit trail."</p>
+
+<p style="margin-bottom:14px">"Show me the audit trail."</p>
+
+<p style="margin-bottom:14px">He pulled it up on the access control system. The log showed every badge swipe for the last ninety days — name, time, door, granted or denied. The system worked. The data was there.</p>
+
+<p style="margin-bottom:14px">"Good. Now show me how this zone boundary aligns with the fire compartmentation."</p>
+
+<p style="margin-bottom:14px">Declan paused. The fire compartment wall between the corridor and Hall A was on his left. The access control door was in front of him. They were not in the same position. The fire wall ran three metres to the south of the access door — meaning there was a three-metre section of corridor that was inside the fire compartment of Hall A but outside the access control zone of Hall A. Anyone with corridor access could stand in that three metres and be technically inside the fire compartment of the data hall without having swiped into the data hall.</p>
+
+<p style="margin-bottom:14px">It didn't matter in practice. The three metres was a dead-end corridor with a fire hose reel and nothing else. Nobody went there. Nobody had a reason to go there.</p>
+
+<p style="margin-bottom:14px">But the auditor noted it. And the note said: <em>Security zone boundary does not align with fire compartment wall at Hall A corridor junction.</em></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 2:</strong> <em>"Three metres of corridor. Inside the fire compartment but outside the access zone. It didn't matter in practice — nobody went there. But the audit didn't measure practice. It measured alignment. And the lines didn't align."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">After the auditor left — professionally, with a handshake and a promise to send the report within ten days — Declan called Ann, Sarah, and Tom.</p>
+
+<p style="margin-bottom:14px">They met in the conference room. Sarah's calendar was on the wall. Declan's F-Gas line was at the bottom. Tom's cost-of-doing-nothing numbers were still visible in the corner. The room had become the programme office, whether anyone had named it that or not.</p>
+
+<p style="margin-bottom:14px">Declan described the audit. He was honest about it — not defensive, not dismissive. He had passed that stage somewhere between the PUE meeting and the fire suppression datasheet. He described the zone misalignment. He described the missing map. He described the three metres of corridor that didn't match.</p>
+
+<p style="margin-bottom:14px">"She's going to flag it," he said. "Not as a critical finding — PCI-DSS grades findings, and a zone misalignment with no data exposure is probably a medium. But it's on the report. And it stays on the report until we close it."</p>
+
+<p style="margin-bottom:14px">Ann nodded. "What do we need?"</p>
+
+<p style="margin-bottom:14px">"A zone map. A real one — not what's in my head. A drawing that shows every security zone, every fire compartment, and every cooling zone, and where they align and where they don't."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 3:</strong> <em>"He had been the zone map for ten years. Now the building needed the zone map to be on paper, because paper survived shift changes, staff turnover, and tenant audits. Knowledge in one person's head was not a system. It was a single point of failure."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">They built it together.</p>
+
+<p style="margin-bottom:14px">Declan pulled up the building floor plan on the large screen — a CAD drawing from 2013, last updated in 2018 when the Hall B expansion was completed. It showed walls, doors, columns, cable routes, and plant rooms. It did not show security zones, fire compartments, or cooling zones, because in 2013 nobody had asked a floor plan to show all three at once.</p>
+
+<p style="margin-bottom:14px">Sarah opened the fire safety file — the document that every building was required to maintain under Irish fire regulations. It contained the fire compartmentation drawings: walls rated at 60 or 120 minutes, fire doors with closers, fire dampers in the ductwork, and the boundaries between compartments. She traced them onto a printed copy of the floor plan in red.</p>
+
+<p style="margin-bottom:14px">Tom opened the lease plans — the demarcation drawings that showed which tenant occupied which rack rows, where the boundaries were, and which areas were shared. He traced them in blue.</p>
+
+<p style="margin-bottom:14px">Declan described the security zones from memory. Perimeter — the fence line and vehicle gate. Building entry — lobby, visitor desk, man-trap. Corridor — general access, badge-controlled. Hall A — data hall access, badge plus PIN. Hall B — same. Plant rooms — restricted, escorted access only. Roof — restricted, escorted. Generator compound — restricted. He traced them in green.</p>
+
+<p style="margin-bottom:14px">Four layers on one floor plan. Red for fire. Blue for lease. Green for security. And then — because the floor plan needed it — yellow for cooling zones, which Declan added from memory: CRAH zones 1 through 6, each serving a different section of the data hall, each with a different supply temperature setpoint, each connected to a different chiller circuit.</p>
+
+<p style="margin-bottom:14px">The floor plan filled up. And the gaps became visible.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 4:</strong> <em>"Four layers on one floor plan. Fire in red. Lease in blue. Security in green. Cooling in yellow. The zones had been managed separately for a decade. When they were drawn on the same page, the gaps were obvious."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Three misalignments.</p>
+
+<p style="margin-bottom:14px">The first was the corridor junction that the auditor had found — the three-metre gap between the fire compartment wall and the security door at Hall A. Low risk, easy fix: extend the access control zone to match the fire boundary, or move the badge reader to the compartment wall. Cost: €2,000 to €5,000 for a reader relocation.</p>
+
+<p style="margin-bottom:14px">The second was less obvious and more significant. The cooling zone for CRAHs 4, 5, and 6 served rack rows that crossed the fire compartment boundary between Hall A and Hall B. The fire wall separated the two halls — a 120-minute rated partition. But the chilled water pipework and the CRAH supply ductwork passed through the fire wall via penetrations that were sealed with fire-rated collars. The cooling was continuous. The fire compartmentation was not — because the fire dampers in the ductwork would close in a fire event, cutting cooling to the racks on the far side of the wall.</p>
+
+<p style="margin-bottom:14px">"If the fire dampers close in Hall B," Declan said, "CRAH 5 and 6 still run, but the air can't reach rows 12 through 16 in Hall B. Those racks lose cooling."</p>
+
+<p style="margin-bottom:14px">Sarah looked at the floor plan. "And those racks are in the financial services tenant's cage."</p>
+
+<p style="margin-bottom:14px">Nobody spoke for a moment.</p>
+
+<p style="margin-bottom:14px">Tom wrote: <em>Fire damper closure = cooling interruption to tenant racks in Hall B rows 12–16. SLA exposure: TBD. Engineering fix: TBD. Mark needed.</em></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 5:</strong> <em>"The fire damper was doing its job — protecting the compartment. The cooling system was doing its job — keeping the racks cool. The problem was that in a fire event, one system's safety measure became the other system's interruption. Nobody had mapped them together."</em></blockquote>
+
+<p style="margin-bottom:14px">The third misalignment was administrative. The access control system logged every badge swipe, but the logs were not cross-referenced with the fire safety evacuation list. In an emergency, the evacuation roll call was taken from a paper sign-in sheet at the lobby desk. The electronic access log showed who was in the building. The paper sheet showed who had signed in. The two lists were not synchronised — a contractor who tailgated through a held-open door would appear on neither.</p>
+
+<p style="margin-bottom:14px">"That's a life safety gap," Sarah said. "In a fire event, the evacuation controller doesn't know how many people are in the building."</p>
+
+<p style="margin-bottom:14px">Declan said: "I know how many people are in the building."</p>
+
+<p style="margin-bottom:14px">Ann, from her chair at the end of the table: "What happens when you're not here?"</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 6:</strong> <em>"What happens when you're not here? It was the question Declan had been avoiding for ten years. Not because he didn't know the answer, but because the answer was: nobody else knows what I know. And that wasn't a system — it was a dependency."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">They worked for three hours. The floor plan — now covered in four colours of marker, annotations, and sticky notes — was photographed, scanned, and saved to the shared drive. It was not a professional drawing. It was not an engineering document. It was four people's combined knowledge, captured on paper for the first time.</p>
+
+<p style="margin-bottom:14px">Tom priced the fixes. The badge reader relocation: €2–5K. A proper zone alignment survey by a security consultant: €8–15K. The fire damper / cooling zone engineering review: €5–10K (Mark needed). Electronic evacuation integration — linking the access control system to the fire panel roll call: €15–25K for the software, hardware, and integration.</p>
+
+<p style="margin-bottom:14px">Total: €30–55K. On the scale of the programme, it was a small number. On the scale of the audit finding, it was the difference between a medium and a closed.</p>
+
+<p style="margin-bottom:14px">Declan added the security items to Sarah's calendar on the wall. He wrote them in green — the colour he'd chosen for security on the floor plan. The calendar now had red, black, blue, and green. It was becoming a programme in colour.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 7:</strong> <em>"The calendar now had four colours. Red for regulatory deadlines. Black for descriptions. Blue for caveats. Green for security. Every colour was a system. Every system was connected to the others. The wall was becoming a programme."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Before they left, Declan saved the zone map to the shared drive. He labelled the file carefully:</p>
+
+<p style="margin-bottom:14px"><em>CLONSHAUGH_ZONE_MAP_v0.1_DRAFT — NEEDS ENGINEERING REVIEW</em></p>
+
+<p style="margin-bottom:14px">It was the first time he had documented something that had previously existed only in his head. It was imperfect — hand-drawn zones on a 2013 floor plan, with annotations in four colours and sticky notes that wouldn't survive a strong draught. But it was on paper. It was on the server. And it had a version number.</p>
+
+<p style="margin-bottom:14px">v0.1. Not v1.0. The distinction mattered. He was asking for help, not claiming completeness.</p>
+
+<p style="margin-bottom:14px">Sarah noticed the version number. She didn't say anything, but she understood what it meant: Declan was no longer the person who kept the building running by knowing everything himself. He was becoming the person who documented what he knew, shared it with the team, and marked it as draft so that someone with more expertise — Mark, when he came back — could review and improve it.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 8:</strong> <em>"v0.1 — not v1.0. The version number was deliberate. He was sharing what he knew and marking it as draft. He was asking for review, not guarding territory. It was the most professional thing Declan had done in ten years of operations."</em></blockquote>
+
+<p style="margin-bottom:14px">Ann walked past the conference room on her way out. The calendar covered the wall. The zone map was pinned in the corner. The whiteboard still had faint ghosts of Tom's PUE arithmetic. The room looked like a war room — which, she thought, was exactly what a programme office should look like when the programme was real.</p>
+
+<p style="margin-bottom:14px">She thought about Tallaght. Twelve hundred racks. If the zone misalignment at Clonshaugh — a 400-rack facility — had taken three hours and four people to map, how long would Tallaght take? How many zones? How many fire compartments? How many cooling circuits crossing how many lease boundaries?</p>
+
+<p style="margin-bottom:14px">The methodology was the same. The scale was the problem. And the methodology would have to scale with it.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 9:</strong> <em>"The zone map at Clonshaugh took four people three hours. At Tallaght — twelve hundred racks, three times the floor area, four times the systems — the same exercise would take weeks. The methodology had to scale. That was the test Clonshaugh was preparing them for."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 11 — Who Gets In</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CLOCKQUOTE EXTRACT (9 quotes for injection)</h3>
+
+<p style="margin-bottom:14px">| # | Character | Context | Quote | |---|-----------|---------|-------| | CQ11-1 | Narrator | Declan's knowledge as the map | <em>"He knew every zone, every badge reader, every camera position. He'd managed access for ten years. But when the auditor asked for the map, the only map was in his head — and a map that lives in one person's head is a map that leaves when they do."</em> | | CQ11-2 | Narrator | Three-metre gap | <em>"Three metres of corridor. Inside the fire compartment but outside the access zone. It didn't matter in practice — nobody went there. But the audit didn't measure practice. It measured alignment. And the lines didn't align."</em> | | CQ11-3 | Narrator | Knowledge as SPOF | <em>"He had been the zone map for ten years. Now the building needed the zone map to be on paper, because paper survived shift changes, staff turnover, and tenant audits. Knowledge in one person's head was not a system. It was a single point of failure."</em> | | CQ11-4 | Narrator | Four layers on one plan | <em>"Four layers on one floor plan. Fire in red. Lease in blue. Security in green. Cooling in yellow. The zones had been managed separately for a decade. When they were drawn on the same page, the gaps were obvious."</em> | | CQ11-5 | Narrator | Fire damper vs cooling | <em>"The fire damper was doing its job — protecting the compartment. The cooling system was doing its job — keeping the racks cool. The problem was that in a fire event, one system's safety measure became the other system's interruption. Nobody had mapped them together."</em> | | CQ11-6 | Ann | What happens when you're not here | <em>"What happens when you're not here? It was the question Declan had been avoiding for ten years. Not because he didn't know the answer, but because the answer was: nobody else knows what I know. And that wasn't a system — it was a dependency."</em> | | CQ11-7 | Narrator | Calendar in four colours | <em>"The calendar now had four colours. Red for regulatory deadlines. Black for descriptions. Blue for caveats. Green for security. Every colour was a system. Every system was connected to the others. The wall was becoming a programme."</em> | | CQ11-8 | Narrator | v0.1 — asking for review | <em>"v0.1 — not v1.0. The version number was deliberate. He was sharing what he knew and marking it as draft. He was asking for review, not guarding territory. It was the most professional thing Declan had done in ten years of operations."</em> | | CQ11-9 | Narrator | Methodology must scale | <em>"The zone map at Clonshaugh took four people three hours. At Tallaght — twelve hundred racks, three times the floor area, four times the systems — the same exercise would take weeks. The methodology had to scale. That was the test Clonshaugh was preparing them for."</em> |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CONTINUITY FLAGS (carry to Chapter 12)</h3>
+
+<p style="margin-bottom:14px">- <strong>Tenant audit finding:</strong> PCI-DSS medium — security zone doesn't align with fire compartment at Hall A corridor junction. <strong>10-day report due. Closure requires badge reader relocation (€2–5K) and documented zone map.</strong> - <strong>Zone map v0.1 on shared drive.</strong> First time Declan documented institutional knowledge. Labelled "needs engineering review." <strong>Mark will review when he returns in Ch12.</strong> - <strong>Fire damper / cooling zone conflict:</strong> CRAHs 4–6 serve racks across the Hall A/B fire wall. Fire dampers closing in a fire event cuts cooling to Hall B rows 12–16 (financial services tenant). <strong>Engineering review needed — Mark required. SLA exposure TBD.</strong> - <strong>Evacuation gap:</strong> Electronic access log and paper sign-in sheet not synchronised. Tailgating = person on neither list. <strong>Life safety gap. Electronic evacuation integration €15–25K.</strong> - <strong>Three misalignments total:</strong> Badge/fire wall (€2–5K), cooling/fire damper (Mark needed), evacuation log (€15–25K). Plus zone survey €8–15K. Total: €30–55K. - <strong>Declan's arc continues:</strong> From defending ("I know who belongs where") to documenting ("v0.1 — needs engineering review"). He's asking for help, not guarding territory. <strong>His proof chapter is Ch13 (commissioning) — where he signs the witness report.</strong> - <strong>Ann thinks about Tallaght.</strong> The zone mapping exercise at 400 racks took 3 hours and 4 people. At 1,200 racks the methodology must scale. <strong>Reinforces Ch10's pilot-to-deployment theme.</strong> - <strong>Calendar in four colours now.</strong> Red (regulatory), black (descriptions), blue (caveats), green (security). <strong>The wall is becoming a visual programme management tool.</strong> - <strong>Mark absent — final chapter without him.</strong> This is the last of the four Mark-absent chapters (8–11). <strong>He returns in Ch12 with drawings, not a notebook.</strong> - <strong>Team functioning as a team.</strong> Four people, four colours, one floor plan. They built the zone map together without Mark. It's rough. It works. <strong>Act 3 arc complete: the team can apply what they've learned.</strong></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">ENGINEERING SOURCES (Chapter 11)</h3>
+
+<p style="margin-bottom:14px">| Claim | Value | Source | Tier | |-------|-------|--------|------| | PCI-DSS | Payment Card Industry Data Security Standard v4.0 | PCI SSC | T1 | | Fire compartment rating | 60/120 min fire-rated walls | IS 3217; BS 9999; TGD Part B | T1 | | Fire damper operation | Close on fire alarm / fusible link | EN 15650; IS 3217 | T1 | | Access control audit trail | 90-day retention minimum | PCI-DSS Req 9.1; EN 60839-11-1 | T1/T2 | | Badge reader relocation | €2–5K | Irish security contractor rates | T3 | | Zone alignment survey | €8–15K | ASIS CPP benchmarks; Irish security consultant rates | T3 | | Fire damper / cooling review | €5–10K (MEP consultant) | RICS NRM1 fee benchmarks | T2/T3 | | Electronic evacuation integration | €15–25K (software + hardware + integration) | Lenel/Honeywell/Paxton published; Irish integrator rates | T3 | | Total security fixes | €30–55K | Aggregated from above | T3 | | Defence-in-depth zones | Perimeter → building → corridor → hall → rack | EN 50600-1; ASIS/BICSI best practice | T1/T2 | | Cooling zone / fire compartment interaction | Fire damper closure interrupts cooling airflow | EN 50600-2-3; EN 15650 | T1 | | Irish fire safety file obligation | Maintained for life of building | S.I. No. 299/2007; IS 3217 | T1 |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>The Data Centre Clock — Chapter 11 | LBE | 3 April 2026</em></p>

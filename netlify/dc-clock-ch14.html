@@ -1,0 +1,201 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">The New Density</h2>
+
+<p style="margin-bottom:14px">The email arrived at 16:47 on a Friday. Ann forwarded it to Mark, Declan, and Sarah with one word: <em>Thoughts?</em></p>
+
+<p style="margin-bottom:14px">A prospective tenant. An AI company — Dublin-based, venture-funded, scaling fast. They wanted to know if Clonshaugh could host a GPU training cluster. Forty racks. Thirty kilowatts per rack. 1.2 megawatts of IT load in a footprint that currently drew 240 kilowatts.</p>
+
+<p style="margin-bottom:14px">Thirty kilowatts per rack. Five times the current average density. In forty positions that were designed for six kilowatts each.</p>
+
+<p style="margin-bottom:14px">Mark read the email at his desk at home. He read it again. Then he opened a fresh page in his notebook and wrote the number that mattered:</p>
+
+<p style="margin-bottom:14px"><strong>30 kW/rack. 40 racks. 1,200 kW. Air cooling ceiling: ~25 kW/rack.</strong></p>
+
+<p style="margin-bottom:14px">The tenant was asking for something the building couldn't do. Not wouldn't — couldn't. The physics wouldn't allow it. And physics, unlike budgets and timelines, did not negotiate.</p>
+
+<p style="margin-bottom:14px">He had twenty-four hours before the tenant meeting. He started the feasibility assessment. Tom was already in Ann's calendar for Monday — the cost model would follow the engineering. Sarah had flagged the EU Taxonomy implications on high-density cooling in a note to Ann two weeks earlier. The engineering came first.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 1:</strong> <em>"You can upgrade software. You can upgrade servers. You cannot upgrade the specific heat capacity of air. At 30 kW per rack, the physics changes the conversation — and the conversation changes the building."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">He began with the physics, because the physics determined whether the conversation was about how or whether.</p>
+
+<p style="margin-bottom:14px">Air has a specific heat capacity of 1.006 kJ/kg·K. Water: 4.18. For the same temperature differential, water carries four times the heat per kilogram. For the same heat removal at 30 kW per rack, you need four times the air volume compared to water — and at 30 kW, the air volume required through a standard hot-aisle containment exceeds what the raised floor plenum can deliver.</p>
+
+<p style="margin-bottom:14px">At 6 kW per rack — Clonshaugh's current average — air cooling was comfortable. The perforated tiles in the raised floor delivered cold air at sufficient volume and velocity. The CRAHs pressurised the plenum. The containment kept hot and cold separate. The system worked.</p>
+
+<p style="margin-bottom:14px">At 20 kW per rack — the original density target — air cooling still worked, with good containment, VSD-driven fans, and optimised supply temperature. This was the world they had been planning for since Chapter 4.</p>
+
+<p style="margin-bottom:14px">At 30 kW per rack, air cooling hit a wall. The wall was not design — it was physics. The specific heat capacity of air set an absolute limit on how much heat could be removed by blowing air through a rack at any reasonable velocity. Above approximately 25 kW per rack, the air volume required either exceeded the floor tile capacity or created noise levels above 85 dBA — the occupational exposure limit.</p>
+
+<p style="margin-bottom:14px">The answer was not more air. The answer was a different medium.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 2:</strong> <em>"At 6 kW, air works. At 20 kW, air works harder. At 30 kW, air can't work hard enough — the specific heat capacity sets the ceiling. The medium has to change. That's not a preference. It's thermodynamics."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Mark's first option was direct-to-chip liquid cooling.</p>
+
+<p style="margin-bottom:14px">A copper cold plate bonded directly to the GPU die — the hottest component, the primary heat source. Coolant — a water-glycol mixture, typically 18 to 45 degrees Celsius supply temperature — circulated through micro-channels in the cold plate, picked up heat at the source, and returned to a Coolant Distribution Unit on the data hall floor.</p>
+
+<p style="margin-bottom:14px">The CDU was the interface. Facility chilled water on one side, server-level coolant on the other, separated by a plate heat exchanger. The CDU controlled the supply temperature, the flow rate, and the pressure. It was, in cooling terms, the translator between the building and the chip — the same way the transformer in Chapter 1 translated between ESB's voltage and the building's voltage.</p>
+
+<p style="margin-bottom:14px">At 30 kW per rack, direct-to-chip captured 60 to 70 percent of the server's heat at the source. The remaining 30 to 40 percent — drives, memory, power supplies, ancillary components — was still rejected as hot air into the data hall. The air cooling system still ran, but at a fraction of the load. The CRAHs handled the residual. The liquid handled the peak.</p>
+
+<p style="margin-bottom:14px">"The question," Mark wrote in his feasibility note, "is whether Clonshaugh's existing chilled water plant can feed CDUs at the required flow rates and temperatures."</p>
+
+<p style="margin-bottom:14px">He modelled it. The chiller had capacity — the cooling retrofit from Phase 1 had sized the new plant for PUE 1.20 at 2,400 kW IT, which meant the chiller could handle the thermal load from forty racks at 30 kW if the total IT load stayed within the MIC envelope. The problem was the distribution pipework. The chilled water headers had been sized for CRAH connections — large-bore, low-velocity, long runs. CDU connections required higher flow rates at each rack row, with secondary branch pipework that didn't exist.</p>
+
+<p style="margin-bottom:14px"><strong>Chiller: adequate. Pipework: inadequate. Solution: CDU manifold with secondary plate heat exchanger.</strong></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 3:</strong> <em>"The chiller could handle the heat. The pipes couldn't carry the water. The constraint wasn't capacity — it was distribution. The building had the engine but not the plumbing."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">His second option was immersion cooling.</p>
+
+<p style="margin-bottom:14px">Servers submerged in a dielectric fluid — a non-conductive liquid that absorbed heat directly from every component surface. Single-phase immersion used a circulated fluid that remained liquid throughout. Two-phase used a fluid with a low boiling point that vaporised on the hottest surfaces, carrying enormous heat through phase change — the same principle as a refrigerant, but inside the tank with the servers.</p>
+
+<p style="margin-bottom:14px">Mark noted the option but didn't recommend it for retrofit. The capital cost was high — €1,500 to €3,000 per kW of IT load for a full immersion deployment. The operational complexity was significant: maintenance procedures changed entirely, because you couldn't slide a server out of a tray when it was submerged in fluid. The rack form factor changed. The floor loading changed. The fire suppression strategy changed. The monitoring approach changed.</p>
+
+<p style="margin-bottom:14px">He wrote: <em>Immersion cooling offers the highest density potential (50–100+ kW/rack) and the lowest PUE contribution from cooling (<1.03). Not recommended for Clonshaugh retrofit due to capital cost, operational disruption, and the hybrid nature of the existing facility. Recommend as an option for Tallaght greenfield zones only.</em></p>
+
+<p style="margin-bottom:14px">Declan was at the door. He had read the tenant email and driven to Clonshaugh at seven on a Saturday morning, which told Mark everything he needed to know about how Declan felt about this opportunity.</p>
+
+<p style="margin-bottom:14px">"Can we do it?" Declan said.</p>
+
+<p style="margin-bottom:14px">"We can do it. Not with air."</p>
+
+<p style="margin-bottom:14px">"What then?"</p>
+
+<p style="margin-bottom:14px">"Liquid. Direct-to-chip. CDUs on the hall floor, pipework from the existing chiller, cold plates on the GPUs."</p>
+
+<p style="margin-bottom:14px">Declan processed this. He had spent ten years managing air-cooled systems. Fans, ducts, raised floors, containment curtains. He understood air. Air was visible — you could feel it, hear it, see the curtain sway when the CRAH changed speed. Liquid was different. Liquid was invisible inside pipes, silent, pressurised. A leak in an air system was a draught. A leak in a liquid system was a flood.</p>
+
+<p style="margin-bottom:14px">"You'd put the servers in a bath?" he said.</p>
+
+<p style="margin-bottom:14px">Mark almost smiled. "That's immersion. I'm not recommending immersion — not here. I'm recommending cold plates. The liquid stays inside a sealed loop. The servers stay in conventional racks. You add a coolant connection to each rack alongside the power connection. Think of it as plumbing, not swimming."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 4:</strong> <em>"Declan understood air — you could feel it, hear it, see the curtain sway. Liquid was invisible, pressurised, silent. A leak in an air system was a draught. A leak in a liquid system was a flood. The risk profile changed with the medium."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Then the floor.</p>
+
+<p style="margin-bottom:14px">Mark called the structural engineer at ten o'clock on a Saturday morning. He apologised for the timing. The structural engineer — a colleague from a previous project, Dublin-based, available because structural engineers who work on data centres are accustomed to weekend calls — pulled up the Clonshaugh structural drawings from the original planning file.</p>
+
+<p style="margin-bottom:14px">"Raised floor is rated for 12 kN/m² distributed and 3 kN point load per tile," the engineer said. "That was standard for 2013 IT equipment at 6 kW per rack. A loaded 6 kW rack with servers, cabling, and PDUs is approximately 500 to 800 kilograms."</p>
+
+<p style="margin-bottom:14px">"What does a loaded 30 kW GPU rack weigh?" Mark asked.</p>
+
+<p style="margin-bottom:14px">"With full GPU population, power supplies, NVLink interconnects, and the server chassis? 1,200 to 1,800 kilograms. Depending on the manufacturer and configuration."</p>
+
+<p style="margin-bottom:14px">Mark wrote the numbers. Rack weight at 30 kW: up to 1,800 kg. Floor tile rating: 3 kN point load — approximately 300 kg per tile corner. Four corners per rack, but the load concentrated at two front and two rear pedestals.</p>
+
+<p style="margin-bottom:14px">"The floor won't take it," the engineer said. "Not without reinforcement. You need either supplementary steelwork under the raised floor — cross-bracing between pedestals — or you set the GPU racks on a slab-mounted plinth that bypasses the raised floor entirely."</p>
+
+<p style="margin-bottom:14px">Mark thanked her and hung up. He looked at Declan, who had been listening to the call with the expression of a man whose jaw was tightening slightly.</p>
+
+<p style="margin-bottom:14px">"The floor," Declan said.</p>
+
+<p style="margin-bottom:14px">"The floor."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 5:</strong> <em>"The floor was designed for 6 kW racks at 800 kilograms. A 30 kW GPU rack weighs up to 1,800 kilograms. The floor won't take it — not the tiles, not the pedestals, not the sub-structure. Density isn't just a cooling problem. It's a structural problem."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">By noon, Mark had four pages. A feasibility note — not a report, not a design, but a structured assessment of what was possible, what was required, and what it would cost.</p>
+
+<p style="margin-bottom:14px"><strong>Option A: Direct-to-chip liquid cooling (recommended)</strong> - 40 racks × 30 kW, CDUs on hall floor - Chiller plant: adequate (Phase 1 retrofit) - Pipework: new CDU manifold + secondary PHX. €120–180K. - CDUs: 4 units at €40–60K each. €160–240K. - Cold plates: server-specific, tenant responsibility (GPU vendor supply) - Leak detection: mandatory under every CDU and rack. €20–30K. - Floor reinforcement: supplementary steelwork or slab-mounted plinths for 40 positions. €60–100K. - Power: busway upgrade for 40 positions at 30 kW. €80–120K. - Total facility-side capex: €440–670K (excluding tenant IT equipment) - Revenue: 40 racks × 30 kW × tenant rate (significantly above 6 kW rate)</p>
+
+<p style="margin-bottom:14px"><strong>Option B: Immersion cooling (noted, not recommended for retrofit)</strong> - Higher density ceiling (50–100+ kW/rack) - Capital cost: €1,500–3,000/kW installed - Operational complexity: high - Recommended for Tallaght greenfield zones only</p>
+
+<p style="margin-bottom:14px"><strong>Option C: Decline the tenant (counterfactual)</strong> - Revenue foregone: 1.2 MW at high-density rates - Competitive risk: tenant goes elsewhere</p>
+
+<p style="margin-bottom:14px">He wrote the summary line: <em>The facility can accommodate 30 kW/rack density in a dedicated hybrid zone. The infrastructure cost is material but bounded. The revenue opportunity is significantly higher per rack than current tenancy. Recommend proceed to detailed design.</em></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 6:</strong> <em>"The answer isn't one technology. The answer is the right technology for each zone, designed to coexist. Air for the 400 racks at 6 kW. Liquid for the 40 racks at 30 kW. Two thermal worlds in one building."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Ann arrived at two o'clock. She had read the feasibility note on her phone driving up from Dublin. She had one question, and she asked it standing in the doorway of the conference room, before she sat down.</p>
+
+<p style="margin-bottom:14px">"If we do this, what happens to our PUE?"</p>
+
+<p style="margin-bottom:14px">Mark had been waiting for this question. He had a careful answer, because the answer was not simple and Ann deserved precision.</p>
+
+<p style="margin-bottom:14px">"PUE improves," he said. "At 30 kW per rack, 60 to 70 percent of the heat is captured by the liquid loop and rejected at a higher temperature than air cooling can achieve. That means the chiller runs at a higher COP — less electricity per unit of cooling. The residual air cooling handles less load. Total cooling energy per kW of IT goes down. PUE improves."</p>
+
+<p style="margin-bottom:14px">"By how much?"</p>
+
+<p style="margin-bottom:14px">"For the 40-rack zone, the cooling PUE contribution drops from approximately 0.30 to 0.08. For the whole facility — blended — PUE might drop from 1.30 to 1.22 or lower, depending on the mix."</p>
+
+<p style="margin-bottom:14px">"Good. But?"</p>
+
+<p style="margin-bottom:14px">Mark nodded. She was learning to hear the but.</p>
+
+<p style="margin-bottom:14px">"PUE alone stops telling the whole story when your cooling medium changes. The right metric for a liquid-cooled zone is TUE — Thermal Utilisation Effectiveness. It captures the efficiency of the liquid loop, the CDU, and the heat rejection path as a single number. PUE measures the building. TUE measures the cooling technology within the building."</p>
+
+<p style="margin-bottom:14px">Ann wrote it down. <em>TUE. Ask Sarah how it fits into EED reporting.</em></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 7:</strong> <em>"If the number we've been measuring stops telling the whole story, we don't abandon the number. We add a second one. PUE for the building. TUE for the zone. Two metrics, one facility."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Declan had been reading the feasibility note. He was on page three — the floor loading section — and his jaw had returned to its tightened position.</p>
+
+<p style="margin-bottom:14px">"How much?" he said.</p>
+
+<p style="margin-bottom:14px">Mark looked at the cost summary. "Facility-side: four hundred and forty to six hundred and seventy thousand. That's pipework, CDUs, leak detection, floor reinforcement, and power distribution. It doesn't include the tenant's IT equipment or the cold plates — those are the GPU vendor's scope."</p>
+
+<p style="margin-bottom:14px">Declan looked at Ann. Ann looked at the number. She looked at it the way Tom would look at it — per kilowatt, not per rack, not per square metre.</p>
+
+<p style="margin-bottom:14px">€440–670K for 1,200 kW of new IT capacity. That was €367–558 per kW of IT installed — facility-side only. The revenue per kW at 30 kW density was three to four times the revenue at 6 kW density. The tenant was paying a premium for density that the market was demanding and the building could now provide.</p>
+
+<p style="margin-bottom:14px">"Tom needs to see this," she said.</p>
+
+<p style="margin-bottom:14px">"Tom's not here," Declan said.</p>
+
+<p style="margin-bottom:14px">"I know. I'm calling him now."</p>
+
+<p style="margin-bottom:14px">She picked up her phone. The feasibility note was four pages. Tom would turn it into a business case by Monday. The business case would go to the fund committee by Wednesday. The tenant meeting was Thursday.</p>
+
+<p style="margin-bottom:14px">The plan hadn't finished and the target had already moved. The building that started at 6 kW per rack — a 2013 design for a 2013 market — was looking at a future where density was the revenue driver and cooling technology was the enabler.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 8:</strong> <em>"The plan hadn't finished and the target had already moved. The building designed for 6 kW was being asked to host 30 kW. The programme wasn't behind — the market was ahead."</em></blockquote>
+
+<p style="margin-bottom:14px">Declan stood at the door of Hall A. Same raised floor. Same ceiling height. Same cable trays and busway overhead. The hall looked the way it always looked. But underneath the raised floor, the pedestals were rated for 800 kilograms. And in forty positions, the future wanted 1,800.</p>
+
+<p style="margin-bottom:14px">The building hadn't changed. What it needed to become had.</p>
+
+<p style="margin-bottom:14px">Ann, phone to her ear, waiting for Tom to answer, looked at Declan. She smiled — the first genuine smile in the book, not relief, not satisfaction, but the particular expression of someone who has just realised that the problem she's been solving has become an opportunity she didn't expect.</p>
+
+<p style="margin-bottom:14px">"That's not a problem," she said. "That's a market."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 9:</strong> <em>"That's not a problem. That's a market. Ann smiled for the first time since she'd walked into this building. The density request wasn't a disruption to the programme. It was the reason the programme existed."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 14 — The New Density</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CLOCKQUOTE EXTRACT (9 quotes for injection)</h3>
+
+<p style="margin-bottom:14px">| # | Character | Context | Quote | |---|-----------|---------|-------| | CQ14-1 | Mark | Air cooling ceiling — physics | <em>"You can upgrade software. You can upgrade servers. You cannot upgrade the specific heat capacity of air. At 30 kW per rack, the physics changes the conversation — and the conversation changes the building."</em> | | CQ14-2 | Mark | Density progression | <em>"At 6 kW, air works. At 20 kW, air works harder. At 30 kW, air can't work hard enough — the specific heat capacity sets the ceiling. The medium has to change. That's not a preference. It's thermodynamics."</em> | | CQ14-3 | Mark | Chiller adequate, pipes inadequate | <em>"The chiller could handle the heat. The pipes couldn't carry the water. The constraint wasn't capacity — it was distribution. The building had the engine but not the plumbing."</em> | | CQ14-4 | Narrator | Air vs liquid risk profile | <em>"Declan understood air — you could feel it, hear it, see the curtain sway. Liquid was invisible, pressurised, silent. A leak in an air system was a draught. A leak in a liquid system was a flood. The risk profile changed with the medium."</em> | | CQ14-5 | Narrator | Floor loading constraint | <em>"The floor was designed for 6 kW racks at 800 kilograms. A 30 kW GPU rack weighs up to 1,800 kilograms. The floor won't take it — not the tiles, not the pedestals, not the sub-structure. Density isn't just a cooling problem. It's a structural problem."</em> | | CQ14-6 | Mark | Hybrid coexistence | <em>"The answer isn't one technology. The answer is the right technology for each zone, designed to coexist. Air for the 400 racks at 6 kW. Liquid for the 40 racks at 30 kW. Two thermal worlds in one building."</em> | | CQ14-7 | Ann | PUE + TUE | <em>"If the number we've been measuring stops telling the whole story, we don't abandon the number. We add a second one. PUE for the building. TUE for the zone. Two metrics, one facility."</em> | | CQ14-8 | Narrator | Target moved before plan finished | <em>"The plan hadn't finished and the target had already moved. The building designed for 6 kW was being asked to host 30 kW. The programme wasn't behind — the market was ahead."</em> | | CQ14-9 | Ann | Problem becomes market | <em>"That's not a problem. That's a market. Ann smiled for the first time since she'd walked into this building. The density request wasn't a disruption to the programme. It was the reason the programme existed."</em> |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CONTINUITY FLAGS (carry to Chapter 15)</h3>
+
+<p style="margin-bottom:14px">- <strong>GPU tenant meeting Thursday.</strong> 40 racks × 30 kW = 1.2 MW. Feasibility confirmed. Tom pricing by Monday, fund committee by Wednesday. <strong>The tenant decision connects to Ch15's CRU readiness — expansion triggers dispatch threshold.</strong> - <strong>Direct-to-chip recommended for Clonshaugh.</strong> CDUs, secondary pipework, floor reinforcement. Facility capex: €440–670K. <strong>Immersion noted for Tallaght greenfield only.</strong> - <strong>Floor loading constraint.</strong> Standard floor: 500–800 kg/rack. GPU rack: 1,200–1,800 kg. Needs supplementary steelwork or slab-mounted plinths. <strong>Structural engineer engaged.</strong> - <strong>TUE introduced alongside PUE.</strong> PUE measures the building. TUE measures the liquid-cooled zone. Sarah needs to integrate into EED reporting framework. <strong>Carries to Ch15 compliance dashboard.</strong> - <strong>Leak detection mandatory.</strong> Under every CDU and every liquid-cooled rack. €20–30K. <strong>New operational requirement for Declan.</strong> - <strong>Hybrid building.</strong> Air for 400 racks at 6 kW, liquid for 40 racks at 30 kW. Two thermal worlds coexisting. <strong>The building is now a mixed-mode facility.</strong> - <strong>Tom not in the room.</strong> Ann calls him. He'll build the business case per kW cooled (his proof — DC economics, not property economics). <strong>Tom's arc: €/m² → kW → MW → CRM. Complete.</strong> - <strong>Ann's first smile.</strong> "That's not a problem. That's a market." <strong>Her arc in this chapter: the density request validates the programme — the programme prepared the building for a future it didn't know was coming.</strong> - <strong>Chiller adequate, pipework inadequate.</strong> Phase 1 retrofit sized the chiller correctly. Distribution needs CDU manifold + secondary PHX. <strong>Good engineering foresight from Mark's original design.</strong> - <strong>Revenue per kW at 30 kW = 3–4× revenue at 6 kW.</strong> The density premium is the commercial driver. <strong>This changes the programme's financial profile significantly.</strong></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">ENGINEERING SOURCES (Chapter 14)</h3>
+
+<p style="margin-bottom:14px">| Claim | Value | Source | Tier | |-------|-------|--------|------| | Air specific heat capacity | 1.006 kJ/kg·K | Thermodynamic constant | T1 | | Water specific heat capacity | 4.18 kJ/kg·K | Thermodynamic constant | T1 | | Air cooling practical ceiling | ~25 kW/rack (with containment) | ASHRAE TC 9.9 2021 | T1 | | DLC heat capture at source | 60–70% | ASHRAE TC 9.9 Liquid Cooling Guidelines | T2 | | CDU supply temperature | 18–45°C (water-glycol) | ASHRAE TC 9.9 | T2 | | CDU cost | €40–60K per unit | Vertiv/CoolIT/Motivair published | T3 | | CDU manifold + secondary PHX | €120–180K | SCSI Q1 2025 benchmarks; Irish M&E contractor rates | T3 | | Leak detection (40-rack zone) | €20–30K | Liebert/RLE published; Irish integrator rates | T3 | | Floor reinforcement (40 positions) | €60–100K | Structural engineer estimate; SCSI rates | T3 | | Busway upgrade (40 positions × 30 kW) | €80–120K | Schneider/Legrand busway published | T3 | | Total facility-side capex | €440–670K | Aggregated | T3 | | Standard rack weight (6 kW) | 500–800 kg | Typical; site-specific verification | T3 | | GPU rack weight (30 kW) | 1,200–1,800 kg | NVIDIA DGX / HPE Cray published specs | T3 | | Raised floor rating (2013 standard) | 12 kN/m² distributed, 3 kN point load | EN 12825; original Clonshaugh spec | T2 | | Immersion cost | €1,500–3,000/kW installed | Thunder Said Energy 2025; LBE screening | T3 | | TUE (Thermal Utilisation Effectiveness) | Liquid cooling zone efficiency metric | The Green Grid; ASHRAE | T2 | | PUE improvement (blended, with DLC zone) | 1.30 → ~1.22 (indicative) | Derived from DLC PUE contribution 0.08 vs air 0.30 | T3 | | Noise limit | 85 dBA (occupational exposure) | SI No. 371/2006; 2003/10/EC | T1 |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>The Data Centre Clock — Chapter 14 | LBE | 3 April 2026</em></p>

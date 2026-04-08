@@ -1,0 +1,161 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">The Walk</h2>
+
+<p style="margin-bottom:14px"># Chapter 1: The Walk</p>
+
+<p style="margin-bottom:14px"><em>DC-LEARN-001: Power Distribution (Utility → Server PSU)</em> <em>Tension: 2 | POV: Ann (80%), Declan (20%) | Mark: absent</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The car park told you nothing. Grey cladding, grey sky, a security barrier and a sign that said CLONSHAUGH DATA CENTRE in letters that were starting to fade. Ann had seen a hundred commercial buildings that looked exactly like this. Warehouses. Light industrial. The kind of thing you drove past on the M50 without a second thought.</p>
+
+<p style="margin-bottom:14px">Declan Murphy was waiting inside the lobby. Late forties, steel-capped boots, an ID lanyard that had been through the wash more than once. He didn't offer his hand. He offered a hard hat.</p>
+
+<p style="margin-bottom:14px">"You'll want this on the roof later."</p>
+
+<p style="margin-bottom:14px">"I didn't know we were going to the roof."</p>
+
+<p style="margin-bottom:14px">"Everyone goes to the roof eventually."</p>
+
+<p style="margin-bottom:14px">He led her through a door marked ELECTRICAL INTAKE — NO UNAUTHORISED ACCESS and into a room that was louder than she expected. Not loud like a building site. Loud like a machine. A low, continuous hum that she could feel in her sternum.</p>
+
+<p style="margin-bottom:14px">"This is where Dublin meets the building," Declan said. He pointed at a thick cable that came through the wall at ceiling height, encased in steel conduit. "ESB Networks. 10 kilovolt. That's your utility feed. One cable, one route, one connection. Everything in this building — every server, every light, every fire panel — starts here."</p>
+
+<p style="margin-bottom:14px">Ann looked at the cable. It didn't look like two and a half megawatts.</p>
+
+<p style="margin-bottom:14px">"What's on the other end of that?"</p>
+
+<p style="margin-bottom:14px">"About four hundred tenants who assume the power's always on."</p>
+
+<p style="margin-bottom:14px">The connection agreement was framed on the wall beside the switchgear panel, like a university diploma nobody read. Ann stepped closer. Maximum Import Capacity: 5 MVA. Issued 2013.</p>
+
+<p style="margin-bottom:14px">"Five MVA," she said. "Is that a lot?"</p>
+
+<p style="margin-bottom:14px">"It's the pipe diameter," Declan said. "Think of it like a water main. Everything we do in here — the IT, the cooling, the lights, the lot — has to fit through that pipe. If we ever need more than five MVA, it doesn't matter what we do inside the building. We need a bigger pipe from ESB, and that's a four-to-eight-year conversation."</p>
+
+<p style="margin-bottom:14px">She looked at the date again. 2013. Nobody had reviewed the connection since the building was built.</p>
+
+<p style="margin-bottom:14px">He walked her past the cable to a grey-green steel enclosure the size of two fridges standing side by side. Through a glass panel she could see copper busbars and rows of circuit breakers.</p>
+
+<p style="margin-bottom:14px">"Transformer. Steps the voltage down. 10 kV comes in, 400 volts comes out. Everything downstream runs at 400."</p>
+
+<p style="margin-bottom:14px">"Why not just bring in 400 to start with?"</p>
+
+<p style="margin-bottom:14px">Declan almost smiled. "Because you'd need a cable the width of your arm. High voltage, low current — that's how you move power efficiently over distance. The transformer is the translation point. ESB's language on one side. The building's language on the other."</p>
+
+<p style="margin-bottom:14px">Ann put her hand near the casing. Warm.</p>
+
+<p style="margin-bottom:14px">"Is that normal?"</p>
+
+<p style="margin-bottom:14px">"It's working. A transformer converts energy, and conversion means heat. This one's oil-cooled — mineral oil inside the tank. There's a bund underneath in case it leaks. The oil does two jobs: insulates the windings and carries heat away."</p>
+
+<p style="margin-bottom:14px">"And if it fails?"</p>
+
+<p style="margin-bottom:14px">Declan paused. "We have one transformer. The lead time for a replacement at this rating is fifty-two to seventy-eight weeks."</p>
+
+<p style="margin-bottom:14px">She let that settle. Over a year to replace a component that the entire building depended on. The acquisition report had mentioned insurance. It hadn't mentioned this.</p>
+
+<p style="margin-bottom:14px">They moved into the main switchboard room. This was bigger — a long row of floor-standing panels, each one labelled with stencilled text. MSB-A. MSB-B. She could hear the hum here too, deeper, more resonant.</p>
+
+<p style="margin-bottom:14px">"Main switchboard," Declan said. "This is the junction. Power comes in from the transformer, and from here it splits — UPS systems, mechanical plant, lighting, life safety. Every circuit in the building traces back to one of these panels."</p>
+
+<p style="margin-bottom:14px">Ann ran her hand along the front of MSB-A. It was warm.</p>
+
+<p style="margin-bottom:14px">"Should it be warm?"</p>
+
+<p style="margin-bottom:14px">"It's carrying current. Current makes heat. Everything in this building makes heat." He looked at her. "That's the first thing you need to understand about a data centre. Every watt of electricity you put in becomes a watt of heat you have to take out. The power chain and the cooling chain are the same problem, just measured at different ends."</p>
+
+<p style="margin-bottom:14px">He pointed at the gap between the two panels. "Bus section A and bus section B. Normally they run independently — separate feeds from the transformer. There's a bus coupler between them, but it's open."</p>
+
+<p style="margin-bottom:14px">"What does that mean?"</p>
+
+<p style="margin-bottom:14px">"It means if one side fails, the coupler can close and the other side takes the load. But closing it doubles the fault level. Every breaker downstream would have to handle twice the fault current. So we keep it open unless we absolutely need it."</p>
+
+<p style="margin-bottom:14px">She'd read the acquisition report on the train. Eighty-four pages. Rent roll, WAULT, cap rate, tenant covenant strength. Not one mention of a transformer. Not one mention of a bus coupler. Not one sentence about what happens when copper carries current and the air gets warm.</p>
+
+<p style="margin-bottom:14px">Declan led her through another door and the sound changed. The hum was higher now, layered with a faint electronic whine. The UPS room. Four tall grey cabinets stood in a row, each with a small display panel showing green status indicators.</p>
+
+<p style="margin-bottom:14px">"Uninterruptible Power Supply," Declan said. "This is the bridge between the grid and the servers. If ESB drops, the UPS holds the load on battery while the generators start. You get about thirty seconds of battery. Enough time for diesel to take over."</p>
+
+<p style="margin-bottom:14px">"Thirty seconds?"</p>
+
+<p style="margin-bottom:14px">"The generators are at the back of the building. They need time to spin up, stabilise voltage, and sync. The UPS buys that time. Without it, every server in the building crashes in the same millisecond that ESB hiccups."</p>
+
+<p style="margin-bottom:14px">She looked at the UPS modules. Each one hummed with a particular intensity — not the deep vibration of the transformer, but a focused electrical noise. Double conversion, he explained. All power passes through the UPS processor: AC from the grid is converted to DC, stored in the battery, then converted back to AC for the servers. Two conversions. The IT load never sees raw mains power.</p>
+
+<p style="margin-bottom:14px">"What does that cost?"</p>
+
+<p style="margin-bottom:14px">"Three to six percent of everything that passes through. Older units, worse. These are rated ninety-four percent efficient. Means six percent of 2.4 megawatts — call it 150 kilowatts — becomes heat in this room. Heat that the cooling system has to deal with."</p>
+
+<p style="margin-bottom:14px">Another number. Another connection between systems.</p>
+
+<p style="margin-bottom:14px">They walked through to the data hall. Ann had been in server rooms before — or what she'd thought were server rooms. Small network closets in office basements. This was different. The hall was vast, controlled, precise. Rows of black cabinets on a raised floor, blue LEDs blinking behind perforated doors. Cold air pushed up from beneath the floor tiles.</p>
+
+<p style="margin-bottom:14px">"Four hundred racks," Declan said. "Each one draws about six kilowatts. Power comes from the UPS, through a floor PDU" — he pointed at a large unit at the end of the row — "and then through a busway overhead or cables under the floor to each rack."</p>
+
+<p style="margin-bottom:14px">He opened a rack door. The noise was immediate — fans, dozens of them, pulling cold air through the servers. He pointed at the back.</p>
+
+<p style="margin-bottom:14px">"Rack PDU. That's the last distribution point before the server. Each server has two power supplies — one on the A feed, one on the B feed. Different PDUs, different paths, all the way back to different UPS modules. If the A side fails, the B side holds everything."</p>
+
+<p style="margin-bottom:14px">Ann traced the path in her mind. One cable through the wall. One transformer. One switchboard. Two bus sections. UPS modules. Floor PDUs. Busway. Rack PDUs. Two power supplies in every server.</p>
+
+<p style="margin-bottom:14px">"How many conversion points is that?"</p>
+
+<p style="margin-bottom:14px">"From the grid to the CPU? At least four. Ten thousand volts becomes four hundred at the transformer. Four hundred goes through the UPS — AC to DC to AC. PDU steps it down again if needed. Server PSU converts 230 volts AC to 12 volts DC. Every conversion is a potential failure point. Every failure point is a decision somebody made."</p>
+
+<p style="margin-bottom:14px">He reached into the rack and touched a small metal box at the back of a server.</p>
+
+<p style="margin-bottom:14px">"This is where the chain ends. The PSU. 80 PLUS rated — Titanium is the best, ninety-six percent efficient at half load. Bronze is eighty-two percent. The difference across ten thousand servers is megawatts."</p>
+
+<p style="margin-bottom:14px">"Megawatts of what?"</p>
+
+<p style="margin-bottom:14px">"Waste heat. Heat that didn't do any computing. Heat that the cooling system has to remove, which uses more electricity, which makes more heat. It's a loop. The inefficiency at the end of the chain creates load at the beginning of the chain."</p>
+
+<p style="margin-bottom:14px">They stood in the cold aisle. Ann could feel the air moving — up from the floor, through the servers, out the back as heat. She looked up. Cable trays, busway, fluorescent lights, smoke detectors. Infrastructure she'd never thought about in any building she'd invested in.</p>
+
+<p style="margin-bottom:14px">"How much power does this building use?"</p>
+
+<p style="margin-bottom:14px">"Two point four megawatts, IT load. Call it three and a half total when you add the cooling and everything else. PUE of 1.50."</p>
+
+<p style="margin-bottom:14px">"PUE?"</p>
+
+<p style="margin-bottom:14px">"Power Usage Effectiveness. Total facility power divided by IT load. A perfect building would be 1.0 — every watt goes to computing. We're at 1.50. Means for every watt of IT, we use half a watt just keeping it alive."</p>
+
+<p style="margin-bottom:14px">"Is 1.50 good?"</p>
+
+<p style="margin-bottom:14px">Declan looked at the row of racks. "It was good in 2013."</p>
+
+<p style="margin-bottom:14px">They walked back through the building in silence, past the switchboard room, past the transformer, past the connection agreement on the wall. Five MVA. Issued 2013.</p>
+
+<p style="margin-bottom:14px">In the loading bay, Ann looked at the building from the outside. Same grey cladding. Same faded sign. But now she could trace the cable route from the ESB connection point. She could see the transformer pad behind the security fence. She noticed the diesel tank at the back — the fuel that bought them time when the grid failed.</p>
+
+<p style="margin-bottom:14px">The building hadn't changed. She had.</p>
+
+<p style="margin-bottom:14px">"So what's the problem?" she asked.</p>
+
+<p style="margin-bottom:14px">Declan looked at the building. He took his time.</p>
+
+<p style="margin-bottom:14px">"Nothing. Yet."</p>
+
+<p style="margin-bottom:14px">She noticed he didn't say "nothing." He said "nothing yet." There was a silence between those two words that was bigger than the transformer room.</p>
+
+<p style="margin-bottom:14px">"I've got someone coming next week," she said. "An engineer. MEP consultant."</p>
+
+<p style="margin-bottom:14px">"What's his name?"</p>
+
+<p style="margin-bottom:14px">"Mark."</p>
+
+<p style="margin-bottom:14px">Declan nodded. "When does he get here?"</p>
+
+<p style="margin-bottom:14px">"Tuesday."</p>
+
+<p style="margin-bottom:14px">"Tell him to bring a thermal camera," Declan said. "And tell him to start on the roof."</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>clockQuotes extracted from this chapter:</em></p>
+
+<p style="margin-bottom:14px">| Level | clockQuote | |:---:|---| | L1 | "One cable, one route, one connection. Four hundred tenants who assume the power's always on." | | L2 | "ESB's language on one side. The building's language on the other." | | L3 | "Every circuit in the building traces back to one of these panels. Both warm." | | L4 | "Thirty seconds of battery. Enough time for diesel to take over." | | L5 | "If the A side fails, the B side holds everything. If you've wired it right." | | L6 | "The last distribution point before the server. After this, it's the machine." | | L7 | "A power highway running above the racks. Plug in wherever you need it." | | L8 | "Two power supplies in every server. One on A, one on B. Either keeps it alive." | | L9 | "Everything works. Everything hums. She asked what the problem was. He said: Nothing. Yet." |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 1. ~2,600 words. Covers DC-LEARN-001 L1–L9: utility supply, HV/LV transformation, main switchboard, UPS, STS path, floor PDU, busway, rack PDU, server PSU. Technical content delivered through dialogue and observation. Ann learns as the reader learns. Declan teaches by showing. No number without context. No jargon without translation.</em></p>

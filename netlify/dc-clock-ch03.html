@@ -1,0 +1,253 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">The Belt and Braces</h2>
+
+<p style="margin-bottom:14px">The Method of Procedure was eleven pages long and had been reviewed by three people before it was printed. It sat on the desk in the control room with a pen clipped to the front page, and every step that had been completed was initialled by two people, and every step that was yet to be completed was not initialled by anyone.</p>
+
+<p style="margin-bottom:14px">This was not bureaucracy. This was the data centre equivalent of measuring twice before cutting — except in a data centre, the thing you were cutting was live, and if you cut wrong, three hundred and sixty-seven tenants lost the ability to process transactions until you cut it back.</p>
+
+<p style="margin-bottom:14px">Declan was reading page four. He had read it twice already this morning and once the night before. He knew what it said. He was reading it again because that was what you did with a Method of Procedure before you executed it. You read it until you were bored of reading it, and then you read it one more time.</p>
+
+<p style="margin-bottom:14px">Ann arrived at half eight. She had her notebook and a question she hadn't asked yet.</p>
+
+<p style="margin-bottom:14px">"What are we testing today?" she said.</p>
+
+<p style="margin-bottom:14px">Declan looked up. "UPS transfer. We're going to trip Module C and see what happens."</p>
+
+<p style="margin-bottom:14px">"And what should happen?"</p>
+
+<p style="margin-bottom:14px">"The load transfers to Modules A and B. The servers keep running. Nobody notices."</p>
+
+<p style="margin-bottom:14px">She wrote that down. "And if that's not what happens?"</p>
+
+<p style="margin-bottom:14px">Declan picked up his coffee. "Then people notice."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 1:</strong> <em>"A test you're confident about is not a test. A test you're slightly nervous about — that's the one that tells you something."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Mark was in the UPS room when they got there. He had arrived before either of them, which Ann was beginning to understand was simply how Mark operated — he was always already there, already looking at something, already writing in his clipboard.</p>
+
+<p style="margin-bottom:14px">The UPS room at Clonshaugh held three modular UPS units, designated A, B, and C, each rated at 800 kVA. Total installed capacity: 2,400 kVA. Design load: 1,600 kVA — which was approximately the facility load at the current PUE of 1.50 divided by the power factor. The design intent was N+1: any one module could fail, and the remaining two would carry the load without interruption.</p>
+
+<p style="margin-bottom:14px">That was the theory. Today was the test.</p>
+
+<p style="margin-bottom:14px">Mark had the Method of Procedure under his arm and was looking at the bus connections between Module C and the main distribution board. He looked up when they came in.</p>
+
+<p style="margin-bottom:14px">"Who signed off the scope?" he said.</p>
+
+<p style="margin-bottom:14px">Declan said, "What do you mean?"</p>
+
+<p style="margin-bottom:14px">"The MoP scope. It says single-module trip, load transfer observed, module restored." He held up the document. "That's N+1 verification. That's not full redundancy testing."</p>
+
+<p style="margin-bottom:14px">Declan set his coffee down. "It's what we test every year."</p>
+
+<p style="margin-bottom:14px">Mark nodded slowly, in the way that meant he was acknowledging a fact, not agreeing with a conclusion. "I know," he said. "I'm just flagging the scope."</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The test itself was unremarkable, in the way that successful engineering is always unremarkable. Declan called the control room. The control room confirmed all systems nominal. The shift engineer initialled step seven on page four. Declan nodded.</p>
+
+<p style="margin-bottom:14px">Mark pressed the trip button on Module C.</p>
+
+<p style="margin-bottom:14px">The UPS system transferred the load to Modules A and B in less than four milliseconds. The servers in Hall A and Hall B continued to process transactions. The lights in the UPS room did not flicker. The BMS alarm panel showed a single amber warning: <em>UPS Module C — Offline (Planned).</em> In the control room, nobody got up from their desk.</p>
+
+<p style="margin-bottom:14px">Three minutes later, Declan restored Module C. The load rebalanced across all three modules. The amber warning cleared.</p>
+
+<p style="margin-bottom:14px">Declan initialled step fourteen on page eight. The shift engineer countersigned.</p>
+
+<p style="margin-bottom:14px">"That's it?" Ann said.</p>
+
+<p style="margin-bottom:14px">"That's it," Declan said. There was quiet satisfaction in his voice — the satisfaction of a thing going as planned, which in a data centre was not nothing.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 2:</strong> <em>"Four milliseconds. That's how long the load was unprotected during transfer. Not zero — four milliseconds. In a well-designed facility, four milliseconds is acceptable. In a facility with poorly specified equipment, four milliseconds is an outage. Spec matters."</em></blockquote>
+
+<p style="margin-bottom:14px">Ann was writing. She looked up. "So the redundancy works."</p>
+
+<p style="margin-bottom:14px">"The redundancy works," Declan said.</p>
+
+<p style="margin-bottom:14px">She turned to Mark, who had been standing to one side with his clipboard. He was writing something. He didn't look up immediately.</p>
+
+<p style="margin-bottom:14px">"Mark?" she said.</p>
+
+<p style="margin-bottom:14px">He finished his sentence, then looked up. "Yes," he said. "The redundancy works."</p>
+
+<p style="margin-bottom:14px">She waited. She had learned to wait.</p>
+
+<p style="margin-bottom:14px">"For a single-module failure," he said.</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The question he asked next was not dramatic. He asked it in the same tone he had used to note the delta-T readings in the CRAH units, the same tone he had used to count the condenser circuits on the roof. Flat, precise, directed.</p>
+
+<p style="margin-bottom:14px">"When did you last test two modules failing simultaneously?"</p>
+
+<p style="margin-bottom:14px">Declan said, "That's not a standard test."</p>
+
+<p style="margin-bottom:14px">"I know," Mark said. "When did you last do it?"</p>
+
+<p style="margin-bottom:14px">The silence was not long. Three seconds, perhaps four. But it was a specific kind of silence — the kind that follows a question to which the honest answer is <em>never,</em> and the person being asked is deciding whether the honest answer is the right answer to give in front of a fund manager with a notebook.</p>
+
+<p style="margin-bottom:14px">"It's N+1," Declan said. "The design is N+1. You only need to test for what the design covers."</p>
+
+<p style="margin-bottom:14px">Mark said, "That's correct."</p>
+
+<p style="margin-bottom:14px">He wrote something else in his clipboard.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 3:</strong> <em>"Redundancy is not a guarantee against failure. It is a guarantee that a single defined failure will not cause an outage. The moment you have two failures simultaneously, you are outside the design envelope. The question is: how likely is that, and do you know?"</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Ann had started, in her notebook, a column she labelled <em>Things that are true but incomplete.</em> She had been adding to it since Monday. It now had six entries. She added a seventh: <em>N+1 = one failure tolerated. Not two. Not concurrent.</em></p>
+
+<p style="margin-bottom:14px">She looked up from the notebook. "Can I ask a stupid question?"</p>
+
+<p style="margin-bottom:14px">"There are no stupid questions," Declan said, with the automatic reflex of a man who had said this many times to many people and mostly meant it.</p>
+
+<p style="margin-bottom:14px">"What's the belt and braces?" she said.</p>
+
+<p style="margin-bottom:14px">Declan looked briefly pleased — this was a question he could answer fully and without reservation. "Irish expression," he said. "If you're wearing a belt, your trousers won't fall down. If you're wearing braces as well, they definitely won't fall down. Belt and braces means you've covered the same risk two different ways."</p>
+
+<p style="margin-bottom:14px">"So N+1 is belt and braces."</p>
+
+<p style="margin-bottom:14px">"N+1 is belt and braces."</p>
+
+<p style="margin-bottom:14px">She looked at Mark. Mark was looking at the UPS modules, lined up in their grey cabinets, humming with the sound of power being processed and delivered.</p>
+
+<p style="margin-bottom:14px">"Except," she said slowly, "both the belt and the braces are attached to the same pair of trousers."</p>
+
+<p style="margin-bottom:14px">Mark turned around. He looked at her with an expression she hadn't seen from him before — something approaching respect.</p>
+
+<p style="margin-bottom:14px">"That's exactly right," he said. "And the trousers, in this facility, are the transformer."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 4:</strong> <em>"N+1 redundancy protects against the failure of one component in a set. It does not protect against the failure of a component that sits upstream of the entire set. That upstream component is your single point of failure. Finding it is the job. Fixing it is the next job."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The transformer room was on the south side of the building, accessed through a door marked <em>Authorised Personnel Only</em> in the kind of font that meant it. Mark had the key from Declan's key safe. Ann stayed in the doorway.</p>
+
+<p style="margin-bottom:14px">The transformer was a cast resin unit, rated 2,500 kVA, stepping 10 kV MV supply down to 400 V LV for the facility. It was the only transformer. It had been there since 2013 — she knew this because she had read the MV connection agreement on the wall in Chapter One, and the transformer was part of the same installation.</p>
+
+<p style="margin-bottom:14px">Mark opened his clipboard to a fresh page. He noted the nameplate: manufacturer, rating, year. He looked at the cooling fins along the sides. He looked at the condition of the LV busbars connecting to the main switchboard.</p>
+
+<p style="margin-bottom:14px">Then he said, to nobody in particular: "Fifty-two weeks."</p>
+
+<p style="margin-bottom:14px">Ann said, "What?"</p>
+
+<p style="margin-bottom:14px">"Lead time on a replacement unit of this size. Fifty-two weeks minimum, possibly seventy-eight. That's from the manufacturer's order to delivery in Dublin." He closed his clipboard. "If this transformer fails — a winding fault, insulation breakdown, sustained overcurrent — you cannot buy a replacement next week. You cannot buy one next month. You can, at best, hire a mobile transformer while you wait for the permanent replacement."</p>
+
+<p style="margin-bottom:14px">She looked at the transformer. It was, she realised, unremarkable looking — a grey rectangular object that happened to be the single component standing between 5 MVA of grid supply and everything in the building. No redundancy. No standby. One unit.</p>
+
+<p style="margin-bottom:14px">"And the UPS?" she said.</p>
+
+<p style="margin-bottom:14px">"The UPS sees the 400V output side of this transformer. If the transformer fails, the UPS input goes dead. The UPS runs on battery. For" — he looked at her — "do you know the battery runtime here?"</p>
+
+<p style="margin-bottom:14px">She didn't. She wrote <em>find out battery runtime</em> in her notebook.</p>
+
+<p style="margin-bottom:14px">"Ten to fifteen minutes at full load," he said. "That's industry standard for an installation of this age without extended runtime battery strings." He paused. "Enough time for the generators to start and pick up the load. But not if the generators are also on the LV side of this transformer."</p>
+
+<p style="margin-bottom:14px">She looked at him.</p>
+
+<p style="margin-bottom:14px">"They're not," he said. "The generators connect directly to the LV main switchboard via automatic transfer switching, bypassing the transformer. So that's correctly designed." He said it the way he said most positive observations — without celebration. A thing being correct was the baseline, not an achievement. "But the transformer is still the single point of failure for grid supply to this building. The UPS covers the gap between grid loss and generator pickup. It does not cover the transformer."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 5:</strong> <em>"A UPS does not protect against every power failure. It protects against the power failures it can see — which is anything on its input side. A failure upstream of the UPS input is a problem the UPS cannot solve. Know where your UPS input is. Know what sits upstream of it."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Back in the control room, Declan had the asset register open on his laptop. Mark had asked to see it.</p>
+
+<p style="margin-bottom:14px">The register listed 847 components across the facility: UPS modules, CRAH units, generators, switchgear, PDUs, the transformer, the chillers, the condensers. For each component: installation date, last service date, next service date, MTBF estimate where known. It was, as asset registers went, well maintained — Declan's team updated it quarterly.</p>
+
+<p style="margin-bottom:14px">Mark ran his eye down the list and stopped at three entries.</p>
+
+<p style="margin-bottom:14px">"These three," he said, pointing. "Static transfer switches. When were they last exercised?"</p>
+
+<p style="margin-bottom:14px">Declan looked. "The STS units. They're — they do automatic testing. Self-diagnostic."</p>
+
+<p style="margin-bottom:14px">"Self-diagnostic confirms the logic works. Exercising confirms the transfer works under load." Mark looked at the dates. The last load transfer test on each STS was more than two years ago. "If an STS fails to transfer, the load on that bus loses protection. It doesn't lose power — yet. But if the primary source then has a disturbance, you're transferring to bypass on raw mains." He looked at Declan. "Have any of them ever failed to transfer in a test?"</p>
+
+<p style="margin-bottom:14px">Declan said, "Not that I know of."</p>
+
+<p style="margin-bottom:14px">Mark wrote: <em>STS load transfer test — schedule within 90 days.</em></p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 6:</strong> <em>"Self-diagnostic is not the same as a live test. A component can report healthy and fail when called. The only test that counts is the test under actual operating conditions. Everything else is an estimate."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Ann had one more question before she left for the afternoon. She found Mark in the car park, writing up his notes before the drive back.</p>
+
+<p style="margin-bottom:14px">"The Tier classification," she said. "Where does Clonshaugh sit?"</p>
+
+<p style="margin-bottom:14px">He thought about how to answer this in a way that was both accurate and useful.</p>
+
+<p style="margin-bottom:14px">"Uptime Institute Tier II," he said. "N+1 redundancy, no requirement for concurrent maintainability. You can maintain most systems, but not all of them, without taking the load down." He paused. "Tier III would require concurrent maintainability across all distribution paths — meaning you could take any single component offline for service without a planned downtime window. That requires 2N distribution topology. Dual power paths from utility to rack, independent all the way."</p>
+
+<p style="margin-bottom:14px">"And Clonshaugh has one path."</p>
+
+<p style="margin-bottom:14px">"Clonshaugh has one transformer, one MV connection, one set of generators, and N+1 UPS modules. You can service the UPS modules concurrently. You cannot service the transformer concurrently. You cannot service the MV connection concurrently."</p>
+
+<p style="margin-bottom:14px">She wrote: <em>Tier II. Single path to transformer. Concurrent maintainability: partial.</em></p>
+
+<p style="margin-bottom:14px">"Is that a problem?" she asked.</p>
+
+<p style="margin-bottom:14px">"It depends on what your tenants are paying for," he said. "Tier II availability is 99.741 percent per year. That's approximately twenty-two hours of potential downtime annually, spread across all planned and unplanned events. For most tenants, that's acceptable. For a tenant running payment processing on GPUs at thirty kilowatts a rack—" He stopped. "That's a conversation for when you have the tenant brief."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 7:</strong> <em>"Tier classification is not a quality judgment. It is a design specification. A Tier II facility is not inferior to a Tier IV facility — it is appropriate for a different risk profile and a different cost point. The error is selling Tier II availability to a Tier IV tenant."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Declan was the last one in the building. He stood in the UPS room after Mark had left, looking at the three modules — A, B, C — all green, all nominal, all carrying roughly equal shares of the load now that the test was done and the system had rebalanced.</p>
+
+<p style="margin-bottom:14px">He had run this room for eight years. He knew the sound of it — the background hum that changed pitch slightly when the load shifted, the soft click of the ventilation dampers, the particular whine of Module B's fan that had been there for two years and that every service engineer had told him was within tolerance.</p>
+
+<p style="margin-bottom:14px">The test had gone perfectly. The redundancy had caught the trip. The MoP was complete, signed, and filed.</p>
+
+<p style="margin-bottom:14px">And yet.</p>
+
+<p style="margin-bottom:14px"><em>When did you last test two modules failing simultaneously?</em></p>
+
+<p style="margin-bottom:14px">He hadn't answered. He hadn't answered because the answer was never, and because never was true, and because true wasn't the same as wrong. N+1 wasn't designed for simultaneous failure. N+1 was designed for single failure. He had been testing for what the design covered.</p>
+
+<p style="margin-bottom:14px">He was now thinking about what the design didn't cover.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 8:</strong> <em>"The design tells you what it protects against. The gap analysis tells you what it doesn't. Both are necessary. Most facilities have done the first. Fewer have done the second."</em></blockquote>
+
+<p style="margin-bottom:14px">He turned off the light in the UPS room — the modules kept running in the dark, as they were designed to do — and walked back to the control room to write up the test record.</p>
+
+<p style="margin-bottom:14px">He wrote: <em>UPS transfer test — Module C. Single module trip. Load transferred successfully to A and B. Transfer time <4 ms. All systems nominal post-restoration.</em></p>
+
+<p style="margin-bottom:14px">He signed it. He dated it.</p>
+
+<p style="margin-bottom:14px">Then he sat for a moment with the pen in his hand.</p>
+
+<p style="margin-bottom:14px">He added one line: <em>Action: Schedule simultaneous dual-module scenario assessment with MEP engineer. Date TBD.</em></p>
+
+<p style="margin-bottom:14px">It was the smallest possible thing. It was also, he thought, the right thing.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 9:</strong> <em>"Writing it down doesn't fix it. But it does mean you can't forget it. In a facility that runs continuously, the maintenance log is the memory. What isn't in the log didn't happen. What is in the log must be followed up."</em></blockquote>
+
+<p style="margin-bottom:14px">He capped the pen and went home.</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 3 — The Belt and Braces</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CLOCKQUOTE EXTRACT (9 quotes for injection)</h3>
+
+<p style="margin-bottom:14px">| # | Character | Context | Quote | |---|-----------|---------|-------| | CQ3-1 | Declan | Pre-test mindset | <em>"A test you're confident about is not a test. A test you're slightly nervous about — that's the one that tells you something."</em> | | CQ3-2 | Mark | Transfer time observation | <em>"Four milliseconds. That's how long the load was unprotected during transfer. Not zero — four milliseconds. In a well-designed facility, four milliseconds is acceptable. In a facility with poorly specified equipment, four milliseconds is an outage. Spec matters."</em> | | CQ3-3 | Mark | N+1 scope | <em>"Redundancy is not a guarantee against failure. It is a guarantee that a single defined failure will not cause an outage. The moment you have two failures simultaneously, you are outside the design envelope. The question is: how likely is that, and do you know?"</em> | | CQ3-4 | Mark | SPOF upstream of UPS set | <em>"N+1 redundancy protects against the failure of one component in a set. It does not protect against the failure of a component that sits upstream of the entire set. That upstream component is your single point of failure. Finding it is the job. Fixing it is the next job."</em> | | CQ3-5 | Mark | UPS input boundary | <em>"A UPS does not protect against every power failure. It protects against the power failures it can see — which is anything on its input side. A failure upstream of the UPS input is a problem the UPS cannot solve. Know where your UPS input is. Know what sits upstream of it."</em> | | CQ3-6 | Mark | STS self-diagnostic vs live test | <em>"Self-diagnostic is not the same as a live test. A component can report healthy and fail when called. The only test that counts is the test under actual operating conditions. Everything else is an estimate."</em> | | CQ3-7 | Mark | Tier classification | <em>"Tier classification is not a quality judgment. It is a design specification. A Tier II facility is not inferior to a Tier IV facility — it is appropriate for a different risk profile and a different cost point. The error is selling Tier II availability to a Tier IV tenant."</em> | | CQ3-8 | Mark (internal to Declan) | Design vs gap | <em>"The design tells you what it protects against. The gap analysis tells you what it doesn't. Both are necessary. Most facilities have done the first. Fewer have done the second."</em> | | CQ3-9 | Declan | Maintenance log discipline | <em>"Writing it down doesn't fix it. But it does mean you can't forget it. In a facility that runs continuously, the maintenance log is the memory. What isn't in the log didn't happen. What is in the log must be followed up."</em> |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CONTINUITY FLAGS (carry to Chapter 4)</h3>
+
+<p style="margin-bottom:14px">- Declan's action item: <em>Schedule simultaneous dual-module scenario assessment.</em> <strong>Unresolved — will surface in Ch13 (Commissioning) as a testing gap.</strong> - STS load transfer test: <strong>overdue. Mark's note: schedule within 90 days. Tom will cost it in Ch4 or Ch5.</strong> - Transformer SPOF: 52–78 week lead time, single unit, no redundancy. <strong>Foreshadows Ch6 (grid connection). The connection agreement and transformer are the same 2013 vintage problem.</strong> - Battery runtime: Ann wrote <em>find out.</em> <strong>Answer: 10–15 min industry standard this age. Confirmed by Mark. Carries to Ch5 (backup power).</strong> - Tier II classification confirmed. <strong>GPU tenant request (Ch14) surfaces the Tier II vs Tier IV gap explicitly.</strong> - Ann's motif: <em>"Things that are true but incomplete."</em> <strong>This is her intellectual arc across the book — she is learning to hear the second half of every true sentence.</strong> - Ann's trousers observation: <em>"Both the belt and braces are attached to the same pair of trousers."</em> <strong>Mark's best teaching moment so far. She is starting to think like an engineer.</strong></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">ENGINEERING SOURCES (Chapter 3)</h3>
+
+<p style="margin-bottom:14px">| Claim | Value | Source | Tier | |-------|-------|--------|------| | UPS transfer time (STS) | <4 ms | Uptime Institute / IEEE 446 | T2 | | Tier II availability | 99.741% | Uptime Institute Tier Standard 2022 | T2 | | Tier II downtime allowance | ~22 hrs/yr | Uptime Institute Tier Standard 2022 | T2 | | N+1 design intent | N active + 1 standby | Uptime Institute / IEC 62040 | T2 | | Transformer lead time | 52–78 weeks | ABB/Schneider published lead times; SCSI Q1 2025 | T3 | | UPS battery runtime (standard) | 10–15 min at full load | IEC 62040-3; industry standard for this age | T2 | | STS transfer under load | Must be live-tested, not self-diagnostic only | Uptime Institute M&O Stamp criteria | T2 | | MTBF concept | Component reliability baseline | IEC 61511 / IEEE 493 (Gold Book) | T2 | | Clonshaugh UPS | 3 × 800 kVA modules, N+1 config | Series Spec §2 | T1 | | Clonshaugh transformer | Single 2,500 kVA, 10 kV/400 V | Series Spec §2 | T1 |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>The Data Centre Clock — Chapter 3 | LBE | 3 April 2026</em></p>

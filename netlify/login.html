@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC-LEARN Professional — Sign In</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/supabase/2.39.3/supabase.min.js"
+          integrity="sha512-FE5U2LNvCkMwnLi0W9BGheSimzsr5PkJPQiGxPNjPz0TZ1REKM7+CfO/HKcqYpniF+bMAuIRFCzMyx9SoHXag=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0d1117;
+      --card: #161b22;
+      --accent: #4a7c59;
+      --accent-hover: #2d5a3d;
+      --green: #16a34a;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --dim: #6e7681;
+      --border: #30363d;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'IBM Plex Sans', system-ui, sans-serif;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 2.5rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    p.sub { color: var(--muted); margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.5; }
+    label { display: block; font-size: 0.875rem; color: var(--muted); margin-bottom: 0.5rem; }
+    input[type=email] {
+      width: 100%; padding: 0.75rem 1rem; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--navy); color: var(--text);
+      font-size: 1rem; outline: none; transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--accent); }
+    button {
+      width: 100%; padding: 0.75rem; margin-top: 1rem; border: none;
+      border-radius: 8px; background: var(--accent); color: #fff;
+      font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
+    }
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .msg {
+      margin-top: 1rem; padding: 0.75rem; border-radius: 8px;
+      font-size: 0.9rem; line-height: 1.4; display: none;
+    }
+    .msg.ok { background: rgba(74,124,89,0.15); color: #78a840; }
+    .msg.err { background: rgba(220,38,38,0.15); color: #f87171; }
+    .welcome-banner {
+      background: rgba(74,124,89,0.12); color: #78a840; border-radius: 8px;
+      padding: 0.75rem; margin-bottom: 1.25rem; font-size: 0.9rem;
+      line-height: 1.4; display: none;
+    }
+    .footer {
+      margin-top: 1.5rem; text-align: center;
+      font-size: 0.8rem; color: var(--dim); line-height: 1.8;
+    }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">Legacy Business Engineers</div>
+    <h1>DC-LEARN Professional</h1>
+
+    <div class="welcome-banner" id="welcome">
+      Payment confirmed — welcome aboard. Enter your email below to sign in and start learning.
+    </div>
+
+    <p class="sub">Sign in with the email you used at checkout. We'll send a secure link — no password needed.</p>
+
+    <label for="email">Email address</label>
+    <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+    <button id="btn">Send Sign-In Link</button>
+    <div class="msg" id="msg"></div>
+
+    <div class="footer">
+      Don't have access yet? <a href="/index.html#pricing">Get DC-LEARN Professional</a><br>
+      Free modules — <a href="/">no login required</a>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://iphonednnnqhxvhypvwn.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwaG9uZWRubm5xaHh2aHlwdnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDU0MzMsImV4cCI6MjA4OTc4MTQzM30.VoexekmmKTbiLOBcROZl4YxUnx-A3EP8Rj7J72FBWAU';
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const params = new URLSearchParams(location.search);
+    const redirect = params.get('redirect');
+
+    // Show welcome banner for post-purchase arrivals
+    if (params.get('welcome') === 'true') {
+      document.getElementById('welcome').style.display = 'block';
+    }
+
+    // If already logged in, skip straight through
+    (async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        window.location.href = redirect || '/';
+      }
+    })();
+
+    // Listen for magic-link callback (Supabase appends tokens to the URL)
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        window.location.href = redirect || '/';
+      }
+    });
+
+    // Wire up the button
+    document.getElementById('btn').addEventListener('click', sendLink);
+    document.getElementById('email').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') sendLink();
+    });
+
+    async function sendLink() {
+      const btn = document.getElementById('btn');
+      const msg = document.getElementById('msg');
+      const email = document.getElementById('email').value.trim().toLowerCase();
+
+      if (!email) {
+        msg.style.display = 'block';
+        msg.className = 'msg err';
+        msg.textContent = 'Please enter your email address.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Sending\u2026';
+
+      const redirectTo = window.location.origin + '/login.html'
+        + (redirect ? '?redirect=' + encodeURIComponent(redirect) : '');
+
+      const { error } = await sb.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: redirectTo }
+      });
+
+      msg.style.display = 'block';
+      if (error) {
+        msg.className = 'msg err';
+        msg.textContent = error.message;
+      } else {
+        msg.className = 'msg ok';
+        msg.textContent = 'Check your inbox \u2014 click the link to sign in. It may take a minute.';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Send Sign-In Link';
+    }
+  </script>
+</body>
+</html>

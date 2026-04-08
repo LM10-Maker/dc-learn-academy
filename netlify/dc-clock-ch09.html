@@ -1,0 +1,185 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">What Gets Measured</h2>
+
+<p style="margin-bottom:14px">Sarah sat at the BMS terminal in the ops room at Clonshaugh and looked at the screen. Tom had been here last week — she'd passed him in the car park, heading out with a cost model on his laptop screen. He was building the lifecycle numbers for the monitoring spec; he'd said he'd have a figure by Friday. She had the regulatory side. He had the cost. For now, she worked alone. It showed her one number.</p>
+
+<p style="margin-bottom:14px">Total building load: 3,614 kW.</p>
+
+<p style="margin-bottom:14px">She needed fifty.</p>
+
+<p style="margin-bottom:14px">Not fifty guesses. Not fifty estimates derived from nameplate ratings and assumptions. Fifty metered, logged, exportable data points that would satisfy an EED Article 12 submission: power consumption per IT function, cooling energy by zone, UPS losses, lighting, PUE calculated from continuous metering at EN 50600-4-2 Category 2 minimum, WUE from a water sub-meter that she already knew didn't exist, and carbon usage effectiveness derived from all of the above.</p>
+
+<p style="margin-bottom:14px">The BMS gave her the building. She needed the building broken into its parts.</p>
+
+<p style="margin-bottom:14px">She clicked through the screens. Total MSB-A power. Total MSB-B power. Chiller status: running. CRAH units: all six showing green. Generator status: standby. UPS status: online. Temperature: a single return-air average from Hall A. No Hall B temperature displayed — the sensor had been offline since February.</p>
+
+<p style="margin-bottom:14px">She closed the screen and opened her laptop. She had brought the EED Delegated Regulation 2024/1364 — the document that specified exactly what data a facility above 500 kW IT load must submit, in what format, at what frequency. She had read it four times. She had built a checklist of every data field the regulation required. The checklist had forty-three items.</p>
+
+<p style="margin-bottom:14px">She started ticking the ones the BMS could provide. She got to seven.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 1:</strong> <em>"The regulation required forty-three data points. The BMS provided seven. The gap wasn't a reporting problem. It was an infrastructure problem — and she was just now realising the difference."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Declan found her an hour later, still at the terminal, with her checklist and an expression he recognised. It was the expression of someone who had come to the building expecting a filing cabinet and found an empty room.</p>
+
+<p style="margin-bottom:14px">"What are you looking for?" he said.</p>
+
+<p style="margin-bottom:14px">"Everything," she said. Then, more precisely: "IT load metering at the PDU level. Cooling energy separated by component — CRAH fan power, chiller compressor power, pump power, condenser fan power. UPS efficiency — input versus output, real-time. Temperature logging per rack row, not per hall. Humidity by zone. Power factor at the MSB. Water consumption — although you don't have a cooling tower, so WUE should be zero, but I need a meter to prove it."</p>
+
+<p style="margin-bottom:14px">Declan sat down. He didn't interrupt. He was learning to listen to Sarah the way he had learned to listen to Mark — not because she was always right, but because she was always specific.</p>
+
+<p style="margin-bottom:14px">"The BMS was installed in 2013," he said. "It manages the cooling plant, the fire panel interface, the lighting, and the generator start sequence. It's a building management system. It was not designed to be a data centre monitoring platform."</p>
+
+<p style="margin-bottom:14px">"I know."</p>
+
+<p style="margin-bottom:14px">"The DCIM was added in 2016. Different system, different contractor, different protocol. It was supposed to do the rack-level monitoring — power per rack, temperature per row, capacity planning."</p>
+
+<p style="margin-bottom:14px">"What happened?"</p>
+
+<p style="margin-bottom:14px">Declan paused. "It was partially commissioned. The rack power meters were installed on thirty positions. Twelve of them went offline within the first year — communication faults, protocol mismatches, a firmware update that bricked a batch of sensors. The contractor came back twice. Then the contract expired and nobody renewed it."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 2:</strong> <em>"The DCIM had been installed with thirty sensors. Twelve went offline in the first year. Nobody renewed the maintenance contract. The monitoring system was half-built, and the half that worked wasn't connected to the half that reported."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Sarah asked to see it. Declan walked her through the building's monitoring infrastructure the way he had walked Ann through the power chain in Chapter 1 — methodically, without rushing, because the infrastructure was physical and you had to stand in front of each piece to understand what it did and didn't do.</p>
+
+<p style="margin-bottom:14px">The BMS head-end was in the ops room. A Trend controller — BACnet protocol, building-standard, perfectly adequate for HVAC management, lighting schedules, and fire panel integration. It had 340 points — a point being a single data connection to a sensor, a valve, a motor, a damper. Of those 340 points, approximately 280 were operational. The remaining 60 had been disabled over the years — sensors that had failed and not been replaced, valves that had been manually overridden and never returned to automatic, points that had been added for equipment that was subsequently removed.</p>
+
+<p style="margin-bottom:14px">"When a sensor fails," Declan said, "I can see it on the alarm screen. But if nobody's going to fix it this week, I disable the alarm so it doesn't clutter the overnight log. That's been the practice since 2015."</p>
+
+<p style="margin-bottom:14px">"How many disabled alarms?"</p>
+
+<p style="margin-bottom:14px">"Sixty-three."</p>
+
+<p style="margin-bottom:14px">Sarah wrote the number down. Sixty-three disabled alarms. Sixty-three points where the building had stopped talking to the management system, and the management system had been told to stop listening.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 3:</strong> <em>"Sixty-three disabled alarms. Not because the building had sixty-three faults — but because when a sensor fails and nobody replaces it, the only way to stop the alarm screen from crying wolf is to tell it to stop crying. The building had been systematically silenced."</em></blockquote>
+
+<p style="margin-bottom:14px">The DCIM was in a separate rack in the IT comms room. A Nlyte instance, version 8, installed on a virtual machine. Declan logged in. The dashboard showed a floor plan of Hall A with rack positions marked in green, amber, and grey. Green: monitored and reporting. Amber: monitored but stale data. Grey: no data.</p>
+
+<p style="margin-bottom:14px">Of the thirty rack power meters originally installed, eighteen showed green. Eight showed grey. Four showed amber — they were reporting, but the last data point was from October 2024. Eighteen months of stale data displayed as current, because nobody had configured the staleness threshold.</p>
+
+<p style="margin-bottom:14px">"The DCIM doesn't talk to the BMS," Declan said. "Different protocol. BACnet on the BMS. SNMP on the DCIM. There was supposed to be a gateway — a protocol translator — installed during the DCIM commissioning. It was on the scope of works. I have the quotation. It was value-engineered out during the budget review."</p>
+
+<p style="margin-bottom:14px">Sarah looked at him. "So the building management system and the data centre monitoring system are completely separate."</p>
+
+<p style="margin-bottom:14px">"Completely."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 4:</strong> <em>"The BMS spoke BACnet. The DCIM spoke SNMP. There was supposed to be a gateway between them. It was value-engineered out. The two systems that needed to share data had never been introduced."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">They stood in Hall A, between Row 4 and Row 5. Sarah pointed at the ceiling — cable trays, busway, smoke detectors, VESDA sample pipes, and every three metres a small white sensor box mounted to the rack rail.</p>
+
+<p style="margin-bottom:14px">"Temperature sensors," Declan said. "Inlet side, every third rack. They read. They display on the BMS if you navigate to the right screen. They don't log."</p>
+
+<p style="margin-bottom:14px">"They don't log?"</p>
+
+<p style="margin-bottom:14px">"They display in real-time. If you're looking at the screen when the temperature spikes, you see it. If you're not looking at the screen, the data is gone. There's no historian. The BMS logs alarms — threshold exceedances. But if the temperature rises from 22 to 28 degrees and back down again in ten minutes, and the alarm threshold is 32 degrees, nobody knows it happened."</p>
+
+<p style="margin-bottom:14px">Sarah thought about what that meant for PUE measurement. EN 50600-4-2 Category 2 required continuous metering with historical data retention. Continuous meant logged, timestamped, exportable. Real-time display without logging was not continuous measurement — it was observation, and observation didn't survive a shift change.</p>
+
+<p style="margin-bottom:14px">"Mark mentioned this," she said. "In his report. He recommended metering at PDU level for IT load and sub-metering at the MSB for facility load. He priced it at sixteen to thirty thousand."</p>
+
+<p style="margin-bottom:14px">"He did. That's the power metering. This is the environmental monitoring — temperature, humidity, airflow. Different budget, different sensors, different scope. The metering gives you PUE. The environmental monitoring gives you ASHRAE compliance evidence, thermal trend analysis, and the data to support setpoint optimisation."</p>
+
+<p style="margin-bottom:14px">She was beginning to see the full picture. The building had a BMS that managed systems. It had a DCIM that monitored racks — partially, intermittently, without history. It had temperature sensors that displayed but didn't log. It had power meters on eighteen of four hundred racks. It had no water sub-meter, no cooling component sub-metering, no protocol gateway between the two platforms, and sixty-three disabled alarms.</p>
+
+<p style="margin-bottom:14px">The building could run. It could not report.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 5:</strong> <em>"The building could run. The lights were on, the cooling was working, the servers were processing. But it could not report — because reporting required data, and data required infrastructure, and the infrastructure had never been completed."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">They went back to the ops room. Sarah closed her laptop and opened her notebook — a physical notebook, lined, with a pen. She had started using paper at Clonshaugh because the digital tools she used in the office felt too distant from the building. Paper was something Declan understood. Paper stayed on the desk when the laptop closed.</p>
+
+<p style="margin-bottom:14px">"I came here thinking compliance was a reporting problem," she said. "Fill in the forms, submit the data, meet the deadline. What I'm looking at is not a reporting problem. It's a measurement problem. And a measurement problem is an infrastructure problem."</p>
+
+<p style="margin-bottom:14px">Declan nodded. He had been waiting for someone to say this — not because he wanted to hear it, but because it was true, and truths that were spoken aloud could be budgeted for.</p>
+
+<p style="margin-bottom:14px">"I can't report what you can't measure," Sarah said. "And you can't measure what you haven't wired."</p>
+
+<p style="margin-bottom:14px">Declan looked at her. "She's not wrong," he said — to himself more than to her, but she heard it, and it was the closest Declan had come to a compliment since she'd arrived.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 6:</strong> <em>"I can't report what you can't measure. And you can't measure what you haven't wired. Compliance isn't a form. It's an infrastructure investment — and until the wiring is done, the form stays empty."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">They sat together for two hours and built the spec. Not the full DCIM upgrade — that was a €100,000-to-€300,000 project that required Mark's input on scope and architecture. The minimum viable monitoring infrastructure — the smallest investment that would allow Clonshaugh to produce a defensible EED Article 12 submission.</p>
+
+<p style="margin-bottom:14px">Sarah wrote the requirements. Declan added the site constraints.</p>
+
+<p style="margin-bottom:14px"><strong>Power metering (Mark's spec, confirmed):</strong> - Revenue-grade meter at MSB-A and MSB-B: total facility power. €8–12K. - IT load metering at PDU level (8 PDUs): IT power. €5–10K. - UPS input/output metering: conversion efficiency. €3–5K.</p>
+
+<p style="margin-bottom:14px"><strong>Environmental monitoring (new scope):</strong> - Temperature/humidity logging at every fourth rack position (100 sensors), with BMS historian integration. €15–25K installed. - Cooling component sub-metering: CRAH fan power, chiller compressor, CHW pumps, condenser fans — 12 sub-meters. €8–12K. - BACnet-SNMP gateway to connect BMS and DCIM. €5–8K. - DCIM sensor recovery: replace 12 offline rack power meters, update firmware on 4 stale units. €6–10K. - Data historian: 12-month rolling log with export to CSV for EED submission. €3–5K (software licence + configuration).</p>
+
+<p style="margin-bottom:14px"><strong>Total minimum monitoring investment: €53–87K.</strong></p>
+
+<p style="margin-bottom:14px">Declan looked at the total. "That's not nothing."</p>
+
+<p style="margin-bottom:14px">"No," Sarah said. "But without it, every number on that calendar" — she pointed toward the conference room, toward the brown paper, toward the timeline she had built — "is an estimate. With it, every number is metered. The difference between an estimate and a measurement is the difference between a provisional EED submission and a compliant one."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 7:</strong> <em>"The minimum monitoring spec was €53–87K. Without it, every efficiency claim was an estimate. With it, every claim was a measurement. The difference between the two was the difference between a provisional report and a compliant one."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Sarah sent the spec to Ann that evening. Subject line: <em>We need to spend money to save money.</em></p>
+
+<p style="margin-bottom:14px">The email was three paragraphs. Sarah had learned that Ann read short emails in full and long emails in summary. Three paragraphs. The problem. The spec. The cost.</p>
+
+<p style="margin-bottom:14px"><em>The building cannot produce a defensible EED Article 12 submission without metering infrastructure. The current BMS provides building-level data only. Rack-level, component-level, and environmental monitoring either don't exist or are partially offline. The minimum investment to produce compliant data is €53–87K. Without this, Mark's Phase 1 (PUE metering) and Phase 2 (setpoint optimisation) cannot be measured — we'll be optimising blind and reporting by estimation.</em></p>
+
+<p style="margin-bottom:14px">Ann read it on the train home. She read it again at the kitchen table. She thought about Mark's four-step sequence from the PUE meeting — metering, setpoints, containment, free cooling. Metering was first. She had understood that as power metering — the revenue-grade meters at the MSB and PDU. What Sarah was showing her was that metering was bigger than power. Metering was the entire nervous system of the building — every sensor, every logger, every protocol connection, every alarm threshold.</p>
+
+<p style="margin-bottom:14px">Measurement is infrastructure. Mark had said that. She hadn't understood it until Sarah showed her the sixty-three disabled alarms and the twelve offline sensors and the gateway that was value-engineered out.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 8:</strong> <em>"Measurement is infrastructure. She had heard Mark say it. She hadn't understood it until Sarah showed her the building that couldn't measure itself — sixty-three disabled alarms, twelve dead sensors, and a gateway that was never installed."</em></blockquote>
+
+<p style="margin-bottom:14px">She picked up her phone and approved the spec. No meeting. No board paper. Operational budget. The same decision pathway Tom had identified for Phase 1 — under the delegation threshold, no committee required, money spent to enable measurement that would justify every subsequent investment.</p>
+
+<p style="margin-bottom:14px">She typed one line back to Sarah: <em>Approved. Start Monday.</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Sarah read the reply at her desk in Dublin. Two words and a date. She had spent the weekend building a forty-three-item compliance checklist and the week discovering that thirty-six of those items depended on infrastructure the building didn't have.</p>
+
+<p style="margin-bottom:14px">She had arrived at Clonshaugh believing compliance was her job — read the regulation, map the requirement, fill in the form. She was leaving with a different understanding. Compliance was a programme, and the programme started with wiring.</p>
+
+<p style="margin-bottom:14px">She looked at her checklist. Seven items the BMS could provide. Thirty-six it couldn't. And a spec — her spec, co-authored with Declan, approved by Ann — that would close the gap.</p>
+
+<p style="margin-bottom:14px">It was the first time she had written an engineering specification. She suspected it wouldn't be the last.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 9:</strong> <em>"She had arrived believing compliance was a reporting exercise. She was leaving understanding it was an infrastructure programme. The form was the last step, not the first. Everything before it — sensors, meters, gateways, historians — was the work that made the form honest."</em></blockquote>
+
+<p style="margin-bottom:14px">She was about to close the laptop when her phone buzzed. Ann's email. Subject line: <em>Portfolio review — Q3 infrastructure assets — call Thursday.</em> The body was two lines: a dial-in number and a note that the fund's investment committee wanted a progress update on Clonshaugh before quarter-end.</p>
+
+<p style="margin-bottom:14px">Sarah stared at the subject line. She did not know what <em>portfolio review</em> meant in practice. She did not know what the investment committee would ask. She knew only that Thursday was in four days, that the monitoring spec had been approved but not yet installed, and that the form was still empty.</p>
+
+<p style="margin-bottom:14px">She forwarded Ann's email to Declan with one line: <em>We should talk before Thursday.</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 9 — What Gets Measured</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CLOCKQUOTE EXTRACT (9 quotes for injection)</h3>
+
+<p style="margin-bottom:14px">| # | Character | Context | Quote | |---|-----------|---------|-------| | CQ9-1 | Narrator | Regulation vs BMS capability | <em>"The regulation required forty-three data points. The BMS provided seven. The gap wasn't a reporting problem. It was an infrastructure problem — and she was just now realising the difference."</em> | | CQ9-2 | Narrator | DCIM half-built | <em>"The DCIM had been installed with thirty sensors. Twelve went offline in the first year. Nobody renewed the maintenance contract. The monitoring system was half-built, and the half that worked wasn't connected to the half that reported."</em> | | CQ9-3 | Narrator | Sixty-three disabled alarms | <em>"Sixty-three disabled alarms. Not because the building had sixty-three faults — but because when a sensor fails and nobody replaces it, the only way to stop the alarm screen from crying wolf is to tell it to stop crying. The building had been systematically silenced."</em> | | CQ9-4 | Narrator | BACnet/SNMP disconnect | <em>"The BMS spoke BACnet. The DCIM spoke SNMP. There was supposed to be a gateway between them. It was value-engineered out. The two systems that needed to share data had never been introduced."</em> | | CQ9-5 | Narrator | Can run, can't report | <em>"The building could run. The lights were on, the cooling was working, the servers were processing. But it could not report — because reporting required data, and data required infrastructure, and the infrastructure had never been completed."</em> | | CQ9-6 | Sarah | Can't report what you can't measure | <em>"I can't report what you can't measure. And you can't measure what you haven't wired. Compliance isn't a form. It's an infrastructure investment — and until the wiring is done, the form stays empty."</em> | | CQ9-7 | Narrator | Cost of minimum monitoring | <em>"The minimum monitoring spec was €53–87K. Without it, every efficiency claim was an estimate. With it, every claim was a measurement. The difference between the two was the difference between a provisional report and a compliant one."</em> | | CQ9-8 | Narrator | Ann understands measurement = infrastructure | <em>"Measurement is infrastructure. She had heard Mark say it. She hadn't understood it until Sarah showed her the building that couldn't measure itself — sixty-three disabled alarms, twelve dead sensors, and a gateway that was never installed."</em> | | CQ9-9 | Narrator | Sarah's crack — compliance is infrastructure | <em>"She had arrived believing compliance was a reporting exercise. She was leaving understanding it was an infrastructure programme. The form was the last step, not the first. Everything before it — sensors, meters, gateways, historians — was the work that made the form honest."</em> |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CONTINUITY FLAGS (carry to Chapter 10)</h3>
+
+<p style="margin-bottom:14px">- <strong>Monitoring spec approved.</strong> €53–87K. Start Monday. Operational budget — under delegation threshold, no board paper. <strong>Same approval pathway as Mark's Phase 1. Ann is learning to move fast on enabling investments.</strong> - <strong>Sarah's crack chapter complete.</strong> She arrived thinking compliance was reporting. She leaves understanding it's infrastructure. <strong>Her proof chapter is Ch15 — compliance dashboard, all metrics green, infrastructure in place.</strong> - <strong>BMS: 340 points, 280 operational, 60 disabled.</strong> 63 disabled alarms. Trend controller, BACnet. <strong>Building-level only.</strong> - <strong>DCIM: Nlyte v8, 2016 install, partially commissioned.</strong> 18/30 rack meters operational. 8 offline (grey). 4 stale (amber, Oct 2024). <strong>No protocol gateway to BMS.</strong> - <strong>BACnet-SNMP gateway:</strong> Value-engineered out in 2016. Now spec'd at €5–8K. <strong>The missing connection between building management and data centre monitoring.</strong> - <strong>Temperature sensors read but don't log.</strong> No historian. Real-time display only. <strong>Cannot satisfy EN 50600-4-2 continuous metering requirement.</strong> - <strong>Cooling component sub-metering absent.</strong> Can't separate CRAH from pump from condenser from chiller. <strong>Sarah can't calculate partial PUE or identify cooling inefficiencies by component.</strong> - <strong>Sarah and Declan worked as a pair.</strong> She wrote requirements, he added site constraints. <strong>First collaboration — they're becoming a team. Foreshadows Ch13 (commissioning) where Declan drives testing with Sarah documenting.</strong> - <strong>Ann's two-word approval:</strong> "Approved. Start Monday." <strong>She trusts the team now. Decisions are faster.</strong> - <strong>Declan's line:</strong> "She's not wrong." <strong>The closest Declan comes to a compliment. He's accepting Sarah's value.</strong> - <strong>Sarah wrote an engineering spec.</strong> First time. Suspects not the last. <strong>Her arc: reporting → infrastructure → programme. By Ch15 she's running the compliance dashboard.</strong> - <strong>EED Article 12 submission status:</strong> Still not submitted. Monitoring spec is the prerequisite. <strong>Target: compliant submission within 6 months of monitoring installation.</strong></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">ENGINEERING SOURCES (Chapter 9)</h3>
+
+<p style="margin-bottom:14px">| Claim | Value | Source | Tier | |-------|-------|--------|------| | EED Article 12 data requirements | PUE, WUE, CUE, REF + supporting metrics | Delegated Regulation 2024/1364 | T1 | | EN 50600-4-2 Category 2 | IT metering at PDU output | EN 50600-4-2:2016+A1:2019 | T1 | | BMS protocol (typical) | BACnet (ISO 16484-5) | Industry standard | T2 | | DCIM protocol (typical) | SNMP (v2c/v3) | Industry standard | T2 | | BACnet-SNMP gateway cost | €5–8K | Schneider/Siemens/Trend published | T3 | | Revenue-grade MSB metering | €8–12K (2 meters) | Schneider ION/ABB published | T2/T3 | | IT load PDU metering | €5–10K (8 PDUs) | Vertiv/Schneider published | T2/T3 | | UPS input/output metering | €3–5K | Schneider/Eaton published | T3 | | Environmental sensors (100 positions) | €15–25K installed | Nlyte/Sunbird/Vertiv sensor kits | T3 | | Cooling sub-metering (12 meters) | €8–12K | Schneider/Siemens published | T3 | | DCIM sensor recovery (16 units) | €6–10K | Nlyte/Vertiv parts + labour | T3 | | Data historian (12-month) | €3–5K (software + config) | Nlyte/OSIsoft/Honeywell published | T3 | | Total minimum monitoring | €53–87K | Aggregated from above | T3 | | DCIM full upgrade (reference) | €100–300K | Nlyte/Sunbird/Vertiv published | T3 | | Clonshaugh BMS | Trend controller, ~340 points, 2013 | Facility reference (fictional) | — | | Clonshaugh DCIM | Nlyte v8, 2016, partially commissioned | Facility reference (fictional) | — |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>The Data Centre Clock — Chapter 9 | LBE | 3 April 2026</em></p>

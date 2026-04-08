@@ -1,0 +1,229 @@
+<h2 style="font-size:18px;color:var(--text-bright);margin-bottom:16px;font-family:var(--font-sans)">Thirty Seconds</h2>
+
+<p style="margin-bottom:14px">The email from ESB Networks arrived at 14:17 on a Wednesday. Planned outage. 10 kV feeder maintenance. Duration: four hours, 02:00 to 06:00, Tuesday next. Declan read it twice, printed it, pinned it to the notice board in the control room, and added the date to the whiteboard calendar in red marker.</p>
+
+<p style="margin-bottom:14px">He had managed thirty-one planned outages in ten years. Every one of them had gone the same way: UPS holds the load, generators start, load transfers, ESB does their work, grid comes back, load retransfers, generators cool down, everyone goes home. The building didn't know the difference. The tenants didn't know the difference. That was the point.</p>
+
+<p style="margin-bottom:14px">He began the preparation the way he always did — methodically, without rushing, because preparation was where mistakes were caught and execution was where they weren't.</p>
+
+<p style="margin-bottom:14px">Generator pre-start checks: oil levels, coolant, belt tension, battery condition. All four gensets — three duty, one standby. Each one rated at 1,250 kVA, configured N+1. Total installed capacity: 5,000 kVA for a building that drew 3,600 kVA at current PUE. Margin of 1,400 kVA. Comfortable.</p>
+
+<p style="margin-bottom:14px">Fuel: the day tank on each genset held enough for four hours at full load. The bulk tank in the yard held 15,000 litres — enough for approximately eight hours at full load across the fleet. He had topped it off on Monday. The fuel gauge read 98%.</p>
+
+<p style="margin-bottom:14px">He briefed the night shift at 22:00. Method of Procedure signed. The shift engineer initialled every step. Declan went home, set his alarm for 01:30, and lay in the dark thinking about nothing, which was how he slept before planned outages — not because he was worried, but because his mind knew the sequence and was running it without permission.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 1:</strong> <em>"Preparation is where you catch mistakes. Execution is where you pay for the ones you missed. Declan had never missed one. That was either skill or luck, and he wasn't sure which one worried him more."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">He was back at 01:45. Mark was already there.</p>
+
+<p style="margin-bottom:14px">Declan had stopped being surprised by this. Mark arrived before things happened. It was a professional habit that Declan recognised because he shared it — the difference between them was that Declan arrived early to run things, and Mark arrived early to watch things. Both were valid. Neither was comfortable with the other.</p>
+
+<p style="margin-bottom:14px">"You here to observe?" Declan said.</p>
+
+<p style="margin-bottom:14px">"If that's alright."</p>
+
+<p style="margin-bottom:14px">Declan handed him a hard hat and a radio. "Stay behind the yellow line in the generator room. Don't touch anything. If I say move, move."</p>
+
+<p style="margin-bottom:14px">Mark nodded. He had his clipboard and a stopwatch.</p>
+
+<p style="margin-bottom:14px">Ann arrived at 01:55. She had a takeaway coffee and a notebook. She stood in the control room doorway, out of the operational path, and said nothing. She was learning when not to speak, which was harder than learning when to ask questions. Tom was in London for a client presentation — he'd asked Declan to send the BMS screenshots in the morning. Sarah had seen the outage in the maintenance schedule and made a note: <em>generator endurance — ask Mark</em>.</p>
+
+<p style="margin-bottom:14px">At 02:00, the grid dropped.</p>
+
+<p style="margin-bottom:14px">The building changed. Not violently — not the way a house goes dark when the power cuts. The UPS modules engaged, the hum shifted pitch, and the emergency lighting came on in the corridors. The servers in Hall A and Hall B didn't pause. They kept processing transactions, streaming data, running queries, because the UPS batteries were holding the entire IT load, silently, on stored energy.</p>
+
+<p style="margin-bottom:14px">The BMS panel showed the countdown. Battery runtime: estimated 14 minutes at current load.</p>
+
+<p style="margin-bottom:14px">Fourteen minutes. The industry quoted ten to fifteen for VRLA batteries at this age and load. Declan knew this battery set was seven years old — original equipment, last capacity test eighteen months ago. He watched the countdown.</p>
+
+<p style="margin-bottom:14px">Ann watched it too. Fourteen minutes. She had never timed anything in her professional life by the second. She did not write in her notebook. There was nothing to write yet — just a number counting down, and the question of whether it would reach zero.</p>
+
+<p style="margin-bottom:14px">The generator start sequence initiated at 02:00:04 — four seconds after grid loss. The automatic transfer switch sent the start signal. In the generator room, the first engine turned over, caught, and stabilised. Then the second. Then the third. The fourth stayed on standby — N+1, one spare.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 2:</strong> <em>"Thirty seconds. That's the gap between the grid dropping and the generators taking the load. Thirty seconds where the only thing keeping four hundred tenants online is a room full of batteries that are seven years old."</em></blockquote>
+
+<p style="margin-bottom:14px">At 02:00:31, the transfer switch closed. Generator power reached the main switchboard. The UPS modules synchronised and began recharging. The battery countdown stopped. The building was running on diesel.</p>
+
+<p style="margin-bottom:14px">Declan exhaled. The shift engineer initialled step nine.</p>
+
+<p style="margin-bottom:14px">Everything had worked. The sequence was textbook. Thirty-one seconds from grid loss to generator load acceptance. The BMS showed all systems nominal. Hall A nominal. Hall B nominal. Cooling plant running on generator power. The building didn't know.</p>
+
+<p style="margin-bottom:14px">Mark wrote something on his clipboard. He didn't look up.</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The generators ran for three hours and forty-seven minutes. At 05:47, ESB restored the 10 kV feed. The automatic transfer switch detected stable grid power, waited the programmed sixty-second verification delay, and transferred the load back. The generators ran unloaded for five minutes — the cooldown cycle — then shut down.</p>
+
+<p style="margin-bottom:14px">Declan signed the MoP. The shift engineer countersigned. Test complete. No interruption. No alarm. No incident.</p>
+
+<p style="margin-bottom:14px">Ann closed her notebook. "That was impressive," she said.</p>
+
+<p style="margin-bottom:14px">Declan allowed himself a small satisfaction. "That's the building working the way it's supposed to."</p>
+
+<p style="margin-bottom:14px">Mark was still writing. He finished his note, looked up, and said: "How much fuel did that use?"</p>
+
+<p style="margin-bottom:14px">Declan checked the gauge. "About 1,200 litres. Four hours at roughly seventy percent load."</p>
+
+<p style="margin-bottom:14px">"And the bulk tank holds fifteen thousand."</p>
+
+<p style="margin-bottom:14px">"Yes."</p>
+
+<p style="margin-bottom:14px">"So at that burn rate — call it 300 litres per hour at seventy percent — fifteen thousand litres gives you about fifty hours." Mark paused. "But that's at seventy percent. At full load, what's the burn rate?"</p>
+
+<p style="margin-bottom:14px">Declan thought about it. "Closer to 400 litres per hour."</p>
+
+<p style="margin-bottom:14px">"So at full load, the bulk tank gives you about thirty-seven hours."</p>
+
+<p style="margin-bottom:14px">"Roughly."</p>
+
+<p style="margin-bottom:14px">Mark wrote the number down. "When was the last time you tested beyond eight hours?"</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 3:</strong> <em>"The generator started in thirty-one seconds. That was the test everyone celebrated. The question nobody asked was what happened at hour nine."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">The control room was quiet. The night shift was standing down. The generators were cooling in the yard, ticking softly the way engines do when they've been working and have stopped. Ann had gone to make a phone call. It was just Declan and Mark.</p>
+
+<p style="margin-bottom:14px">"The fuel contract," Mark said. "What does it guarantee?"</p>
+
+<p style="margin-bottom:14px">Declan pulled it up on his phone. He'd signed it four years ago, renewed automatically. The supplier was a Dublin firm — reliable, local. He scrolled to the service level.</p>
+
+<p style="margin-bottom:14px">"Best endeavours to deliver within four hours of request," he read.</p>
+
+<p style="margin-bottom:14px">"Best endeavours," Mark said.</p>
+
+<p style="margin-bottom:14px">"Yes."</p>
+
+<p style="margin-bottom:14px">"Not guaranteed."</p>
+
+<p style="margin-bottom:14px">Declan looked at the screen again. The words were clear. Best endeavours. Not guaranteed within four hours. Not guaranteed at all, if you read it strictly. Best endeavours meant they would try. It didn't mean they would succeed. It didn't mean they had a tanker on standby at two in the morning during a winter storm when every generator in Dublin was calling the same number.</p>
+
+<p style="margin-bottom:14px">Mark sat down on the bench by the control room window. He looked at his clipboard. The numbers were simple: thirty-seven hours of fuel at full load. A supplier contract that promised to try. No 48-hour island test in the facility's history.</p>
+
+<p style="margin-bottom:14px">"Resilience isn't starting," Mark said. "The generators started in thirty-one seconds. That's excellent. But starting is the first five minutes of a story that might last five days."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 4:</strong> <em>"A generator that starts is a component. A generator that runs for 48 hours on secured fuel is a system. Most facilities test the component. Almost none test the system."</em></blockquote>
+
+<p style="margin-bottom:14px">He flipped to a clean page in his clipboard. "I'd recommend a 48-hour island simulation. Planned. Fuelled. Monitored. You disconnect from the grid deliberately — or simulate it — and you run the building on generators for two full days. You test the fuel consumption rate, the coolant temperatures over sustained load, the automatic fuel transfer from bulk to day tank, the alarm thresholds, the handover between shift teams."</p>
+
+<p style="margin-bottom:14px">Declan said nothing for a moment. He was thinking about ten years of generator maintenance logs. Perfect records. Monthly start tests. Annual load bank tests — four hours, full rated load, every parameter within tolerance. Every test had been a sprint. Thirty seconds on. Four hours sustained. Then back to grid.</p>
+
+<p style="margin-bottom:14px">Nobody had tested the marathon.</p>
+
+<p style="margin-bottom:14px">"When was the last time anyone in Ireland did a 48-hour island test?" Declan asked.</p>
+
+<p style="margin-bottom:14px">Mark considered this. "The hyperscalers do it routinely. Purpose-built facilities with on-site fuel storage for 72 hours or more, contractual fuel delivery with SLA-backed response times, and dedicated tanker allocation. At this scale—" He looked around the control room. "I'd say it's rare. Not because it's difficult. Because nobody asks for it."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 5:</strong> <em>"The maintenance log showed a perfect record: every monthly start test passed, every annual load bank within tolerance. But every test was a sprint. Nobody had tested the marathon."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Declan walked to the generator room after Mark left. The four engines sat in a row — each one the size of a small car, grey and green, bolted to concrete plinths, exhaust pipes running up through the roof. They were warm. He could smell diesel and hot metal, the particular scent of engines that had been working and had earned their rest.</p>
+
+<p style="margin-bottom:14px">He put his hand on the nearest radiator grille. Still warm. The engine had started in under eight seconds. It had carried its share of the load for nearly four hours without a fault, without an alarm, without a temperature excursion. The oil pressure had held. The coolant temperature had held. The voltage and frequency had held.</p>
+
+<p style="margin-bottom:14px">And yet.</p>
+
+<p style="margin-bottom:14px">The bulk tank was at 92% — down from 98%. Four hours had cost 1,200 litres. A real outage — a storm that took out the ESB transformer, a cable fault that took days to repair, a grid event that nobody had planned for — would burn through that tank in a day and a half. After that, the building's survival depended on a phone call to a supplier whose contract said "best endeavours."</p>
+
+<p style="margin-bottom:14px">He thought about Storm Éowyn. Storm Debi. The Beast from the East. Planned outages came with a start time and an end time. Real emergencies came with neither.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 6:</strong> <em>"Planned outages have a known duration. Real emergencies don't. The building was designed for the first. The question was whether it could survive the second."</em></blockquote>
+
+<p style="margin-bottom:14px">He stood in the generator room and looked at the fuel lines running from the bulk tank to the day tanks. Automatic transfer — when the day tank dropped below 60%, the solenoid valve opened and fuel flowed from the bulk. He'd watched it happen during every test. It worked.</p>
+
+<p style="margin-bottom:14px">But at sustained full load, the transfer rate mattered. If the generators consumed fuel faster than the bulk-to-day transfer could supply, you had a problem that no amount of starting reliability could fix. It was a flow rate question, not a starting question.</p>
+
+<p style="margin-bottom:14px">He made a note: <em>Verify bulk-to-day tank transfer rate at full load. Confirm flow exceeds consumption.</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Ann found him in the loading bay at seven o'clock. The sun was coming up over the industrial estate, catching the generator exhaust stacks and the ESB cable route and the diesel tank behind the security fence. She had her notebook.</p>
+
+<p style="margin-bottom:14px">"How did the generators perform?" she asked.</p>
+
+<p style="margin-bottom:14px">"Perfectly," he said. And it was true. The generators had performed perfectly.</p>
+
+<p style="margin-bottom:14px">"But?"</p>
+
+<p style="margin-bottom:14px">He looked at her. She was getting better at hearing the word that came after the full stop.</p>
+
+<p style="margin-bottom:14px">"The tank holds thirty-seven hours at full load. The fuel contract says 'best endeavours.' Nobody has ever tested what happens when we need more than a day and a half of fuel and the supplier can't get here."</p>
+
+<p style="margin-bottom:14px">Ann wrote in her notebook. She wrote slowly, the way she did when the information was important enough to get the words exactly right.</p>
+
+<p style="margin-bottom:14px">"What does a 48-hour test cost?" she said.</p>
+
+<p style="margin-bottom:14px">"In fuel — maybe eight thousand euro. In planning and supervision — Mark would have to spec it. Call it twenty to thirty thousand all in, with the consultant and the monitoring."</p>
+
+<p style="margin-bottom:14px">"And what does it prove?"</p>
+
+<p style="margin-bottom:14px">"It proves the building can survive without ESB for two days. Or it proves it can't. Either way, we know."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 7:</strong> <em>"A 48-hour island test costs thirty thousand euros and two days of planning. Not doing it costs nothing — until the day you need it, when it costs everything."</em></blockquote>
+
+<p style="margin-bottom:14px">She wrote the number. Then she looked at the diesel tank behind the fence. 15,000 litres. Thirty-seven hours. A contract that said "best endeavours."</p>
+
+<p style="margin-bottom:14px">"Is there an alternative to diesel?" she said.</p>
+
+<p style="margin-bottom:14px">Declan had been reading about this. "HVO. Hydrotreated Vegetable Oil. Drop-in replacement — same engines, same tanks, same injectors. Lower carbon, no sulphur. The hyperscalers are switching. It's about thirty percent more expensive per litre, but it reduces the Scope 1 emissions from generator operation to near-zero on a lifecycle basis."</p>
+
+<p style="margin-bottom:14px">"Near-zero?"</p>
+
+<p style="margin-bottom:14px">"Depends on the feedstock certification. But for EED and SFDR reporting, it's a material improvement. Sarah would know the numbers."</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 8:</strong> <em>"HVO in the same tank, the same engine, the same injectors. Thirty percent more per litre. Scope 1 emissions close to zero. The fuel changed but the infrastructure didn't have to."</em></blockquote>
+
+<p style="margin-bottom:14px">Ann looked at her notebook. Three entries from this morning: <em>48-hour test. Fuel contract. HVO.</em></p>
+
+<p style="margin-bottom:14px">None of them had been in her acquisition report. None of them had been in any acquisition report she'd ever read. The building's resilience had been described in one line: <em>Backup power: N+1 diesel generators.</em> As though the generators were the whole story, and the fuel was an assumption.</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px">Declan stayed after Ann left. He went back to the control room and pulled up the maintenance log on the computer. Every generator start for the last five years. He scrolled through them.</p>
+
+<p style="margin-bottom:14px">Monthly: 168 start tests. Zero failures. Average start time: 8.2 seconds.</p>
+
+<p style="margin-bottom:14px">Annual: 10 load bank tests. Zero failures. Duration: 4 hours each. All parameters within tolerance.</p>
+
+<p style="margin-bottom:14px">A perfect record. Sixty tests, zero failures, five years. But every test had been the same test — the short test. The thirty-second test. The four-hour test. Start the engine, run it at load, bring the grid back, shut it down.</p>
+
+<p style="margin-bottom:14px">He had been testing the engine. He had not been testing the endurance.</p>
+
+<p style="margin-bottom:14px">He opened a new entry in the maintenance log. He typed carefully, because what went into the log stayed in the log, and what was in the log had to be followed up.</p>
+
+<p style="margin-bottom:14px"><em>Action: Commission 48-hour island simulation test. Scope to include sustained generator operation, fuel consumption monitoring, bulk-to-day tank transfer rate verification, coolant temperature trending, shift handover protocol under generator power, and fuel delivery logistics. MEP consultant to specify. Budget estimate: €20–30K. Target date: TBD — within 90 days.</em></p>
+
+<p style="margin-bottom:14px">He saved the entry. He printed it. He pinned it to the notice board next to the ESB outage notification.</p>
+
+<p style="margin-bottom:14px">Then he picked up his phone and called the fuel supplier.</p>
+
+<blockquote style="border-left:3px solid var(--green);padding-left:16px;margin:28px 0;font-style:italic;color:var(--text-dim)"><strong>clockQuote 9:</strong> <em>"He had been testing the engine for ten years. He had not been testing the endurance. The difference between the two was the difference between a building that starts and a building that survives."</em></blockquote>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>End of Chapter 5 — Thirty Seconds</em></p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CLOCKQUOTE EXTRACT (9 quotes for injection)</h3>
+
+<p style="margin-bottom:14px">| # | Character | Context | Quote | |---|-----------|---------|-------| | CQ5-1 | Narrator | Declan's pre-outage preparation | <em>"Preparation is where you catch mistakes. Execution is where you pay for the ones you missed. Declan had never missed one. That was either skill or luck, and he wasn't sure which one worried him more."</em> | | CQ5-2 | Narrator | Battery countdown | <em>"Thirty seconds. That's the gap between the grid dropping and the generators taking the load. Thirty seconds where the only thing keeping four hundred tenants online is a room full of batteries that are seven years old."</em> | | CQ5-3 | Mark | Hour nine question | <em>"The generator started in thirty-one seconds. That was the test everyone celebrated. The question nobody asked was what happened at hour nine."</em> | | CQ5-4 | Mark | Component vs system | <em>"A generator that starts is a component. A generator that runs for 48 hours on secured fuel is a system. Most facilities test the component. Almost none test the system."</em> | | CQ5-5 | Narrator | Perfect record, wrong test | <em>"The maintenance log showed a perfect record: every monthly start test passed, every annual load bank within tolerance. But every test was a sprint. Nobody had tested the marathon."</em> | | CQ5-6 | Narrator | Planned vs real | <em>"Planned outages have a known duration. Real emergencies don't. The building was designed for the first. The question was whether it could survive the second."</em> | | CQ5-7 | Narrator | Cost of testing vs not testing | <em>"A 48-hour island test costs thirty thousand euros and two days of planning. Not doing it costs nothing — until the day you need it, when it costs everything."</em> | | CQ5-8 | Declan | HVO as drop-in replacement | <em>"HVO in the same tank, the same engine, the same injectors. Thirty percent more per litre. Scope 1 emissions close to zero. The fuel changed but the infrastructure didn't have to."</em> | | CQ5-9 | Narrator | Declan's realisation — the crack | <em>"He had been testing the engine for ten years. He had not been testing the endurance. The difference between the two was the difference between a building that starts and a building that survives."</em> |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">CONTINUITY FLAGS (carry to Chapter 6)</h3>
+
+<p style="margin-bottom:14px">- <strong>48-hour island test:</strong> Declan logged the action item. Budget €20–30K. Target: within 90 days. <strong>Mark to specify the scope — feeds into his report (Ch6).</strong> - <strong>Fuel contract "best endeavours":</strong> No guaranteed delivery window. <strong>Risk item for Ann's investment model — surfaces in Tom's cost analysis later.</strong> - <strong>Battery age:</strong> VRLA, 7 years old, capacity test 18 months ago. Runtime: 14 minutes at current load. <strong>Industry standard 10–15 min at this age. Battery replacement programme is a capex item Tom will price.</strong> - <strong>HVO conversion:</strong> Drop-in replacement, ~30% cost premium, near-zero Scope 1. <strong>Sarah's EED/SFDR reporting benefit — carries to Ch7 (regulatory calendar) and Ch10 (net zero).</strong> - <strong>Bulk-to-day tank transfer rate:</strong> Declan's self-identified gap — verify flow rate exceeds consumption at full load. <strong>Engineering detail that Mark will include in his report.</strong> - <strong>Generator fleet:</strong> 4 × 1,250 kVA, N+1, 3 duty + 1 standby. 15,000 L bulk tank. ~37 hrs at full load, ~50 hrs at 70% load. <strong>Numbers locked for continuity.</strong> - <strong>Declan's motif evolution:</strong> Ch1 "Nothing. Yet." Ch2 "Never had a problem." Ch3 action item in the log. Ch4 "PUE 1.50 was real work." Ch5 <strong>crack chapter</strong> — "He had been testing the engine, not the endurance." <strong>Declan moves from defending to questioning to acting.</strong> - <strong>Ann's motif:</strong> "Things that are true but incomplete." <em>N+1 diesel generators</em> in the acquisition report was true. But it was incomplete without the fuel duration, the supply contract, and the 48-hour question. - <strong>Declan calls the fuel supplier:</strong> End of chapter action. <strong>Resolution of this call can surface in Ch6 or Ch7.</strong> - <strong>Mark's report:</strong> He's accumulating findings — cooling survey (Ch2), PUE gap (Ch4), generator endurance (Ch5). His formal report is written up in Ch6 before departure.</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<h3 style="font-size:16px;color:var(--text-bright);margin-bottom:12px;margin-top:24px;font-family:var(--font-sans)">ENGINEERING SOURCES (Chapter 5)</h3>
+
+<p style="margin-bottom:14px">| Claim | Value | Source | Tier | |-------|-------|--------|------| | Generator start time | <31 seconds (typical 8–12 sec cranking + sync) | IEC 60034; Uptime Institute Tier II | T2 | | UPS battery runtime | 10–15 min at full load (VRLA, age-dependent) | IEC 62040-3; industry standard | T2 | | Battery age (Clonshaugh) | 7 years, VRLA | Series Spec §2 | T1 | | Generator fleet | 4 × 1,250 kVA, N+1 | Series Spec §2 | T1 | | Bulk fuel tank | 15,000 litres | Facility reference (fictional) | — | | Fuel burn rate (70% load) | ~300 L/hr (4 × genset share) | Cummins/CAT published fuel curves | T3 | | Fuel burn rate (full load) | ~400 L/hr | Cummins/CAT published fuel curves | T3 | | Fuel endurance (full load) | ~37 hours | Derived (15,000 ÷ 400) | — | | Fuel endurance (70% load) | ~50 hours | Derived (15,000 ÷ 300) | — | | Fuel supply contract | "Best endeavours" — no SLA | Common contract term (Irish market) | T3 | | 48-hour island test cost | €20–30K (consultant + fuel + monitoring) | RICS NRM1 fee benchmarks; Irish market | T3 | | HVO (Hydrotreated Vegetable Oil) | Drop-in diesel replacement, ~30% cost premium | Neste/TotalEnergies published pricing | T3 | | HVO Scope 1 impact | Near-zero lifecycle CO₂ (feedstock-dependent) | RED III methodology; SEAI guidance | T2 | | Clonshaugh facility load | 3,600 kVA at PUE 1.50 | Series Spec §2 (derived) | T1 | | Load bank test (annual) | 4 hours at rated load | BS 7698; NFPA 110 | T2 |</p>
+
+<hr style="border:none;border-top:1px solid var(--border);margin:28px 0"/>
+
+<p style="margin-bottom:14px"><em>The Data Centre Clock — Chapter 5 | LBE | 3 April 2026</em></p>
