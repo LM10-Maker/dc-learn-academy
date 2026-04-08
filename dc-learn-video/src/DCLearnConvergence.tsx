@@ -257,7 +257,7 @@ export const DCLearnConvergence: React.FC = () => {
           Free.
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 500, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 540, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1725),
           width: 100, height: 100, borderRadius: "50%", overflow: "hidden",
           border: "2px solid #4a7c59",
@@ -267,14 +267,14 @@ export const DCLearnConvergence: React.FC = () => {
           <Img src={staticFile("logo_only.png")} style={{ width: 120, height: 120, objectFit: "cover" }} />
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 620, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 660, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1745),
           fontFamily: playfair.fontFamily, fontWeight: "bold", fontSize: 42, color: "#4a7c59",
         }}>
           DC-LEARN
         </div>
         <div style={{
-          position: "absolute", left: "50%", top: 660, transform: "translate(-50%, -50%)",
+          position: "absolute", left: "50%", top: 700, transform: "translate(-50%, -50%)",
           opacity: fadeIn(frame, 1760),
           fontFamily: playfair.fontFamily, fontStyle: "italic", fontSize: 16, color: "#8b949e",
         }}>

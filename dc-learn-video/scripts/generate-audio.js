@@ -99,19 +99,21 @@ for (let f = 360; f < 390; f += 27) {
   addTone(f, 500, 100, 0.25 * (1 - (f - 360) / 30), 30);
 }
 
-// Connection tones: ascending harmonic sequence, 300ms plucked sine
+// Connection tones: soft low "thum" — same base freq with slight variation
+// 200ms, decay factor 3, plus 2nd harmonic for warmth
 const connections = [
-  { frame: 360, freq: 220 },  // A3
-  { frame: 450, freq: 262 },  // C4
-  { frame: 540, freq: 330 },  // E4
-  { frame: 630, freq: 392 },  // G4
-  { frame: 720, freq: 440 },  // A4
-  { frame: 810, freq: 494 },  // B4
-  { frame: 900, freq: 523 },  // C5
-  { frame: 990, freq: 587 },  // D5
+  { frame: 360, freq: 170 },
+  { frame: 450, freq: 185 },
+  { frame: 540, freq: 175 },
+  { frame: 630, freq: 190 },
+  { frame: 720, freq: 180 },
+  { frame: 810, freq: 170 },
+  { frame: 900, freq: 185 },
+  { frame: 990, freq: 195 },
 ];
 connections.forEach(({ frame, freq }) => {
-  addTone(frame, freq, 300, 0.35, 8);
+  addTone(frame, freq, 200, 0.15, 3);       // fundamental
+  addTone(frame, freq * 2, 200, 0.05, 3);   // 2nd harmonic for warmth
 });
 
 // ═══════════════════════════════════════════════════════════
