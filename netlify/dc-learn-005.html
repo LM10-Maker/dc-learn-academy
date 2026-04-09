@@ -2241,7 +2241,7 @@ function BibliographyPanel(){
    ─────────────────────────────────────────────────────────────────────── */
 
 const ACCESS_BYPASS = new URLSearchParams(window.location.search).get('access') === 'lbe2026';
-const IS_FREE_MODULE = ACCESS_BYPASS; // SET TO true FOR DC-LEARN-000, 001, 002
+const IS_FREE_MODULE = true; // SOFT LAUNCH: all modules open. REVERT: = ACCESS_BYPASS
 
 /* ── Auth State Manager ── */
 const dcAuth = {
