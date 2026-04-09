@@ -4536,6 +4536,28 @@ document.querySelectorAll('.chapter').forEach(function(ch){obs.observe(ch);});
   });
   var mainGate = document.getElementById('gate');
   if(mainGate) mainGate.style.display = 'block';
+
+  // Prevent locked TOC items from scrolling to collapsed chapters
+  // Instead, scroll to the first gate CTA — every click is a conversion nudge
+  var firstGate = document.querySelector('.ch-gate-inline');
+  document.querySelectorAll('.toc-item').forEach(function(link){
+    var target = link.getAttribute('href');
+    if(!target) return;
+    var el = document.querySelector(target);
+    if(el && el.classList.contains('gated-active')){
+      link.style.opacity = '0.5';
+      link.style.cursor = 'pointer';
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        if(firstGate){
+          firstGate.scrollIntoView({behavior:'smooth', block:'center'});
+          firstGate.style.transition = 'box-shadow 0.3s ease';
+          firstGate.style.boxShadow = '0 0 0 3px rgba(74,124,89,0.4)';
+          setTimeout(function(){ firstGate.style.boxShadow = 'none'; }, 1500);
+        }
+      });
+    }
+  });
 })();
 </script>
 
