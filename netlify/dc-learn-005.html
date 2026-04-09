@@ -146,6 +146,7 @@ header .sub{font-size:11px;font-family:var(--font-mono);color:var(--text-dim);ma
 .dc-story-body em{font-style:italic}
 .dc-story-body strong{color:var(--text-bright)}
 .dc-story-body .dc-story-dropcap::first-letter{float:left;font-family:Georgia,"Times New Roman",serif;font-size:68px;line-height:0.85;padding-right:10px;padding-top:4px;color:var(--green);font-weight:400}
+@media(max-width:600px){.dc-authbtn-dropdown{position:fixed !important;top:68px !important;left:12px !important;right:12px !important;min-width:0 !important;width:auto !important}}
 </style>
 
 </head>
@@ -2323,7 +2324,7 @@ function AuthButton({ authState }) {
         background:'transparent',border:'1px solid var(--accent)',borderRadius:4,
         padding:'3px 10px',cursor:'pointer'}}>Sign in</button>
       {showLogin && (
-        <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,
+        <div className="dc-authbtn-dropdown" style={{position:'absolute',top:'calc(100% + 8px)',right:0,
           background:'var(--surface)',border:'1px solid var(--border)',
           borderRadius:8,padding:16,zIndex:999,minWidth:280,
           boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
@@ -2367,20 +2368,6 @@ function AuthButton({ authState }) {
 }
 
 function LockedOverlay() {
-  const [email, setEmail] = React.useState('');
-  const [sent, setSent] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
-
-  const handleSend = async () => {
-    if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
-    setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
-    setLoading(false);
-    if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
-    else setSent(true);
-  };
-
   return (
     <div style={{position:'fixed',inset:0,zIndex:9999,
       background:'rgba(13,17,23,0.97)',
@@ -2396,45 +2383,16 @@ function LockedOverlay() {
           This module is part of DC-LEARN Professional
         </h2>
         <p style={{fontSize:14,color:'var(--text-dim)',lineHeight:1.6,marginBottom:24}}>
-          Modules 000–002 are free. Sign in below if you've already purchased access,
-          or visit legacybe.ie to get the full 16-module series.
+          Modules 000–002 are free. The full 16-module series is available at legacybe.ie.
         </p>
 
         <div style={{background:'var(--surface)',border:'1px solid var(--border)',
-          borderRadius:12,padding:24,marginBottom:20}}>
-          {!sent ? (
-            <div>
-              <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:12}}>
-                Already have access? Enter your email for a sign-in link.
-              </div>
-              <input type="email" value={email}
-                onChange={e=>{setEmail(e.target.value);setError('');}}
-                onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
-                placeholder="your@email.com"
-                style={{width:'100%',padding:'10px 12px',fontSize:14,
-                background:'var(--panel)',border:'1px solid var(--border)',
-                borderRadius:8,color:'var(--text-bright)',marginBottom:10,
-                fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
-              {error && <div style={{fontSize:12,color:'var(--error)',marginBottom:8}}>{error}</div>}
-              <button onClick={handleSend} disabled={loading}
-                style={{width:'100%',padding:'10px',fontSize:14,fontWeight:600,
-                background:'var(--lbe-green)',color:'#fff',border:'none',
-                borderRadius:8,cursor:'pointer',opacity:loading?0.7:1,marginBottom:8}}>
-                {loading ? 'Sending…' : 'Send sign-in link'}
-              </button>
-            </div>
-          ) : (
-            <div style={{padding:'8px 0',textAlign:'center'}}>
-              <div style={{fontSize:28,marginBottom:10}}>✓</div>
-              <div style={{fontSize:14,color:'var(--text-bright)',fontWeight:600,marginBottom:6}}>
-                Check your email
-              </div>
-              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.5}}>
-                Sign-in link sent to <strong style={{color:'var(--text-bright)'}}>{email}</strong>.<br/>
-                Click the link to access this module.
-              </div>
-            </div>
-          )}
+          borderRadius:12,padding:20,marginBottom:20}}>
+          <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6}}>
+            Already purchased? Check your email for your access link, or contact{' '}
+            <a href="mailto:info@legacybe.ie"
+              style={{color:'var(--accent)',textDecoration:'none'}}>info@legacybe.ie</a>.
+          </div>
         </div>
 
         <a href="https://legacybe.ie/dc-learn/"
