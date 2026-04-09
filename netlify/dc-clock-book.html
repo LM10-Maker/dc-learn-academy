@@ -4518,7 +4518,7 @@ document.querySelectorAll('.chapter').forEach(function(ch){obs.observe(ch);});
 // When Supabase auth is live, check dc_learn_access flag
 (function(){
   var params = new URLSearchParams(window.location.search);
-  var hasAccess = params.get('access') === 'lbe';
+  var hasAccess = true; // SOFT LAUNCH: all chapters open. REVERT: = params.get('access') === 'lbe'
   if(hasAccess){
     // Full access — no gating
     console.log('DC-LEARN: Full access granted');
@@ -4531,7 +4531,7 @@ document.querySelectorAll('.chapter').forEach(function(ch){obs.observe(ch);});
     cta.className = 'ch-gate-inline gated-visible';
     cta.innerHTML = '<h4>Continue reading</h4>'
       + '<p>Chapters 3\u201315 are available with a DC-LEARN programme licence.</p>'
-      + '<a href="https://learn.legacybe.ie/index.html#pricing" class="gate-btn">View access options \u2192</a>';
+      + '<a href="index.html#pricing" class="gate-btn">View access options \u2192</a>';
     ch.after(cta);
   });
   var mainGate = document.getElementById('gate');
