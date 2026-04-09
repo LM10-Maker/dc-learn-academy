@@ -132,6 +132,7 @@ section+section{border-top:1px solid var(--border)}
 footer{padding:28px 0;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)}
 .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 @media(max-width:768px){
+  .authority-grid{grid-template-columns:1fr !important}
   .hero{padding:48px 0 40px}.hero h1{font-size:26px}.hero-stats{flex-wrap:wrap;gap:16px}
   .persona-grid{grid-template-columns:1fr}
   .persona-img{height:180px}
@@ -612,7 +613,7 @@ footer{padding:28px 0;border-top:1px solid var(--border);font-size:11px;color:va
 
 <section style="padding:48px 0;border-bottom:1px solid var(--border);background:#fff">
 <div class="container">
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+  <div class="authority-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
     <div>
       <div class="section-label">05 &mdash; Who built this</div>
       <h2 class="section-title" style="font-size:22px">Built by an engineer who does this for a living</h2>
