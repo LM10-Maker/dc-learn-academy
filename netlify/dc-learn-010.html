@@ -187,7 +187,7 @@ var MODULE_TITLE = 'Sustainability and Net Zero';
 </script>
 <div id="root"></div>
 <script type="text/babel">
-const supa = null;
+const supa = (typeof supabase !== 'undefined') ? supabase.createClient(SUPA_URL, SUPA_KEY) : null;
 
 /* ═══ DC-LEARN-002 v5.4.1 — Data Centre Cooling Chain ═══
    Architecture: DC-LEARN-011 v1.1.0 template
@@ -2975,86 +2975,57 @@ function BibliographyPanel(){
   );
 }
 
-/* ─── DC-LEARN AUTH COMPONENT v1.0 ───────────────────────────────────────
-   Drop this block into each module HTML file, inside the <script type="text/babel"> block,
-   immediately BEFORE function App().
+/* ═══ DC-LEARN STAGE 5 AUTH + SYNC ═════════════════════════════════════════
+   Built: 09/04/2026 — Stage 5 Session 2
+   Layer 1 (localStorage) never depends on Layer 2 (Supabase).
+   If Supabase is blocked, offline, or errors, the module works exactly as
+   it did before: IS_FREE_MODULE or localStorage.dc_learn_paid decides access.
+   =========================================================================*/
 
-   FREE modules (DC-LEARN-000, 001, 002): set IS_FREE_MODULE = true
-   PAID modules (DC-LEARN-003 to 015):    set IS_FREE_MODULE = false
+const IS_FREE_MODULE = (TOOL_ID === 'DC-LEARN-000' || TOOL_ID === 'DC-LEARN-001' || TOOL_ID === 'DC-LEARN-002');
+const DC_PROGRESS_KEY = 'dc' + TOOL_ID.replace('DC-LEARN-','') + '_progress';
 
-   The component:
-   - Checks Supabase session on load
-   - Queries learner_tiers for paid status
-   - Free modules: always open, shows login button in header if not logged in
-   - Paid modules: locked overlay if not logged in or free tier
-   - Login via email magic link (no password to forget)
-   - Session cached in localStorage for speed
-   ─────────────────────────────────────────────────────────────────────── */
-
-const ACCESS_BYPASS = new URLSearchParams(window.location.search).get('access') === 'lbe2026';
-const IS_FREE_MODULE = true; // SOFT LAUNCH: all modules open. REVERT: = ACCESS_BYPASS
-
-/* ── Auth State Manager ── */
 const dcAuth = {
-  _session: null,
-  _tier: null,
-
-  async init() {
-    if (!supa) return;
-    // Check cached session
-    try {
-      const { data: { session } } = await supa.auth.getSession();
-      this._session = session;
-      if (session) {
-        await this._loadTier(session.user.id);
-      }
-    } catch(e) {
-      console.warn('Auth init failed:', e);
-    }
-    // Listen for auth changes
-    supa.auth.onAuthStateChange(async (_event, session) => {
-      this._session = session;
-      this._tier = null;
-      if (session) await this._loadTier(session.user.id);
-    });
-  },
-
-  async _loadTier(userId) {
-    try {
-      const { data } = await supa
-        .from('learner_tiers')
-        .select('tier')
-        .eq('user_id', userId)
-        .single();
-      this._tier = data?.tier || 'free';
-    } catch(e) {
-      this._tier = 'free';
-    }
-  },
-
-  isLoggedIn() { return !!this._session; },
-  isPaid() { return this._tier === 'founding' || this._tier === 'professional'; },
-  hasAccess() { return IS_FREE_MODULE || this.isPaid(); },
-  userEmail() { return this._session?.user?.email || null; },
-
   async sendMagicLink(email) {
     if (!supa) return { error: 'Not connected' };
-    const { error } = await supa.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: window.location.href }
-    });
-    return { error };
+    try {
+      const { error } = await supa.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.href },
+      });
+      return { error };
+    } catch(e) { return { error: (e && e.message) || 'Network error' }; }
   },
-
   async signOut() {
     if (!supa) return;
-    await supa.auth.signOut();
-    window.location.reload();
-  }
+    try { await supa.auth.signOut(); } catch(e) {}
+    try { localStorage.removeItem('dc_learn_paid'); } catch(e) {}
+  },
+  isPaid() { try { return localStorage.getItem('dc_learn_paid') === 'true'; } catch(e) { return false; } },
+  setPaid() { try { localStorage.setItem('dc_learn_paid', 'true'); } catch(e) {} },
+  isAdminUser(user) {
+    try { return !!(user && user.user_metadata && user.user_metadata.role === 'admin'); }
+    catch(e) { return false; }
+  },
+  async checkLicence(userId) {
+    if (!supa || !userId) return null;
+    try {
+      const { data, error } = await supa.from('licences')
+        .select('id, tier, status')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .limit(1);
+      if (error) throw error;
+      return !!(data && data.length > 0);
+    } catch(e) {
+      console.warn('DC-LEARN: licence check failed, falling through', (e && e.message) || e);
+      return null;
+    }
+  },
+  hasAccess() { return IS_FREE_MODULE || this.isPaid(); },
 };
 
-/* ── Auth Header Button ── */
-function AuthButton({ authState, onAuthChange }) {
+function AuthButton({ authState }) {
   const [showLogin, setShowLogin] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [sent, setSent] = React.useState(false);
@@ -3066,48 +3037,46 @@ function AuthButton({ authState, onAuthChange }) {
     setLoading(true); setError('');
     const { error: err } = await dcAuth.sendMagicLink(email);
     setLoading(false);
-    if (err) { setError('Could not send link. Try again.'); }
-    else { setSent(true); }
+    if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
+    else setSent(true);
   };
 
-  if (authState.loggedIn) {
+  if (!supa) return null;
+
+  if (authState && authState.user) {
     return (
       <div style={{display:'flex',alignItems:'center',gap:8}}>
         <span style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--text-muted)'}}>
-          {authState.email}
+          {authState.user.email}{authState.isAdmin ? ' · admin' : ''}
         </span>
-        <button onClick={()=>dcAuth.signOut()}
+        <button onClick={()=>dcAuth.signOut().then(()=>window.location.reload())}
           style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--text-dim)',
           background:'transparent',border:'1px solid var(--border)',borderRadius:4,
-          padding:'3px 8px',cursor:'pointer'}}>
-          Sign out
-        </button>
+          padding:'3px 8px',cursor:'pointer'}}>Sign out</button>
       </div>
     );
   }
 
   return (
     <div style={{position:'relative'}}>
-      {supa && (<button onClick={()=>setShowLogin(v=>!v)}
+      <button onClick={()=>setShowLogin(v=>!v)}
         style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--accent)',
         background:'transparent',border:'1px solid var(--accent)',borderRadius:4,
-        padding:'3px 10px',cursor:'pointer'}}>
-        Sign in
-      </button>)}
+        padding:'3px 10px',cursor:'pointer'}}>Sign in</button>
       {showLogin && (
         <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,
           background:'var(--surface)',border:'1px solid var(--border)',
           borderRadius:8,padding:16,zIndex:999,minWidth:280,
           boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
           {!sent ? (
-            <>
+            <div>
               <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:10,lineHeight:1.5}}>
                 Enter your email — we'll send a sign-in link.<br/>
                 <span style={{fontSize:11,color:'var(--text-muted)'}}>No password needed.</span>
               </div>
               <input type="email" value={email}
                 onChange={e=>{setEmail(e.target.value);setError('');}}
-                onKeyDown={e=>e.key==='Enter'&&handleSend()}
+                onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
                 placeholder="your@email.com"
                 style={{width:'100%',padding:'8px 10px',fontSize:13,
                 background:'var(--panel)',border:'1px solid var(--border)',
@@ -3120,7 +3089,7 @@ function AuthButton({ authState, onAuthChange }) {
                 borderRadius:6,cursor:'pointer',opacity:loading?0.7:1}}>
                 {loading ? 'Sending…' : 'Send sign-in link'}
               </button>
-            </>
+            </div>
           ) : (
             <div style={{textAlign:'center',padding:'8px 0'}}>
               <div style={{fontSize:22,marginBottom:8}}>✓</div>
@@ -3138,7 +3107,6 @@ function AuthButton({ authState, onAuthChange }) {
   );
 }
 
-/* ── Locked Module Overlay (paid modules only) ── */
 function LockedOverlay() {
   const [email, setEmail] = React.useState('');
   const [sent, setSent] = React.useState(false);
@@ -3150,8 +3118,8 @@ function LockedOverlay() {
     setLoading(true); setError('');
     const { error: err } = await dcAuth.sendMagicLink(email);
     setLoading(false);
-    if (err) { setError('Could not send link. Try again.'); }
-    else { setSent(true); }
+    if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
+    else setSent(true);
   };
 
   return (
@@ -3166,7 +3134,7 @@ function LockedOverlay() {
           DC Learning Series — {TOOL_ID}
         </div>
         <h2 style={{fontSize:22,fontWeight:700,color:'var(--text-bright)',marginBottom:8,lineHeight:1.3}}>
-          This module is part of the full DC-LEARN course
+          This module is part of DC-LEARN Professional
         </h2>
         <p style={{fontSize:14,color:'var(--text-dim)',lineHeight:1.6,marginBottom:24}}>
           Modules 000–002 are free. Sign in below if you've already purchased access,
@@ -3176,13 +3144,13 @@ function LockedOverlay() {
         <div style={{background:'var(--surface)',border:'1px solid var(--border)',
           borderRadius:12,padding:24,marginBottom:20}}>
           {!sent ? (
-            <>
+            <div>
               <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:12}}>
                 Already have access? Enter your email for a sign-in link.
               </div>
               <input type="email" value={email}
                 onChange={e=>{setEmail(e.target.value);setError('');}}
-                onKeyDown={e=>e.key==='Enter'&&handleSend()}
+                onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
                 placeholder="your@email.com"
                 style={{width:'100%',padding:'10px 12px',fontSize:14,
                 background:'var(--panel)',border:'1px solid var(--border)',
@@ -3195,7 +3163,7 @@ function LockedOverlay() {
                 borderRadius:8,cursor:'pointer',opacity:loading?0.7:1,marginBottom:8}}>
                 {loading ? 'Sending…' : 'Send sign-in link'}
               </button>
-            </>
+            </div>
           ) : (
             <div style={{padding:'8px 0',textAlign:'center'}}>
               <div style={{fontSize:28,marginBottom:10}}>✓</div>
@@ -3210,7 +3178,7 @@ function LockedOverlay() {
           )}
         </div>
 
-        <a href="https://legacybe.ie/dc-learn-data-ce--siness-engineers/"
+        <a href="https://legacybe.ie/dc-learn/"
           target="_blank" rel="noopener"
           style={{display:'block',padding:'12px',fontSize:14,fontWeight:600,
           color:'var(--accent)',border:'1px solid var(--accent)',borderRadius:8,
@@ -3226,45 +3194,147 @@ function LockedOverlay() {
   );
 }
 
-/* ── Auth Hook for App() ── */
 function useAuth() {
-  const [authState, setAuthState] = React.useState({
-    loading: true,
-    loggedIn: false,
-    hasAccess: IS_FREE_MODULE,
-    email: null
+  const [state, setState] = React.useState({
+    loading: !!supa,
+    user: null,
+    isAdmin: false,
+    hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
   });
 
-  React.useEffect(()=>{
-    dcAuth.init().then(()=>{
-      setAuthState({
-        loading: false,
-        loggedIn: dcAuth.isLoggedIn(),
-        hasAccess: dcAuth.hasAccess(),
-        email: dcAuth.userEmail()
-      });
-    });
+  React.useEffect(() => {
+    let mounted = true;
 
-    if (supa) {
-      supa.auth.onAuthStateChange(async ()=>{
-        // Small delay to let tier load
-        setTimeout(()=>{
-          setAuthState({
-            loading: false,
-            loggedIn: dcAuth.isLoggedIn(),
-            hasAccess: dcAuth.hasAccess(),
-            email: dcAuth.userEmail()
-          });
-        }, 500);
-      });
+    async function resolve(session) {
+      if (!mounted) return;
+      try {
+        if (session && session.user) {
+          const user = session.user;
+          if (dcAuth.isAdminUser(user)) {
+            dcAuth.setPaid();
+            setState({ loading: false, user: user, isAdmin: true, hasAccess: true });
+            return;
+          }
+          const licenceOk = await dcAuth.checkLicence(user.id);
+          if (licenceOk === true) {
+            dcAuth.setPaid();
+            setState({ loading: false, user: user, isAdmin: false, hasAccess: true });
+          } else {
+            // licenceOk === null (error: fall through) or false (no row)
+            setState({
+              loading: false, user: user, isAdmin: false,
+              hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+            });
+          }
+          return;
+        }
+        setState({
+          loading: false, user: null, isAdmin: false,
+          hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+        });
+      } catch(e) {
+        console.warn('DC-LEARN: auth resolve failed, falling through', (e && e.message) || e);
+        setState({
+          loading: false, user: null, isAdmin: false,
+          hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+        });
+      }
     }
-  },[]);
 
-  return authState;
+    if (!supa) {
+      setState({
+        loading: false, user: null, isAdmin: false,
+        hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+      });
+      return () => { mounted = false; };
+    }
+
+    (async () => {
+      try {
+        const { data: { session } } = await supa.auth.getSession();
+        await resolve(session);
+      } catch(e) {
+        console.warn('DC-LEARN: getSession failed, falling through', (e && e.message) || e);
+        if (mounted) setState({
+          loading: false, user: null, isAdmin: false,
+          hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+        });
+      }
+    })();
+
+    let sub = null;
+    try {
+      const r = supa.auth.onAuthStateChange((_ev, session) => { resolve(session); });
+      sub = r && r.data && r.data.subscription;
+    } catch(e) {}
+
+    return () => {
+      mounted = false;
+      try { if (sub) sub.unsubscribe(); } catch(e) {}
+    };
+  }, []);
+
+  return state;
 }
 
-/* ── END AUTH COMPONENT ── */
-/* ─────────────────────────────────────────────────────────────────────── */
+function PlatformSync({ user, progress }) {
+  React.useEffect(() => {
+    if (!supa || !user || !user.id) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        // 1. Flush timing buffer → learner_analytics, then clear on success
+        const raw = safeStore.get(DC_TIMING_KEY);
+        if (raw) {
+          let events = [];
+          try { events = JSON.parse(raw); } catch(e) { events = []; }
+          if (!cancelled && Array.isArray(events) && events.length) {
+            const rows = events.slice(0, 500).map(function(ev) {
+              return {
+                user_id: user.id,
+                module_id: TOOL_ID,
+                event_type: (ev && ev.event) || 'unknown',
+                event_data: ev || {},
+                recorded_at: new Date((ev && ev.ts) || Date.now()).toISOString(),
+              };
+            });
+            const { error } = await supa.from('learner_analytics').insert(rows);
+            if (!error) safeStore.remove(DC_TIMING_KEY);
+            else console.warn('DC-LEARN: analytics flush failed', error.message);
+          }
+        }
+        // 2. Upsert progress → learner_progress (keeps localStorage as cache)
+        if (!cancelled && progress && typeof progress === 'object') {
+          const keys = Object.keys(progress);
+          const rows = keys.map(function(levelId) {
+            const p = progress[levelId] || {};
+            return {
+              user_id: user.id,
+              module_id: TOOL_ID,
+              level_id: String(levelId),
+              grammar_complete: !!p.grammar,
+              logic_complete: !!p.logic,
+              rhetoric_complete: !!p.rhetoric,
+              updated_at: new Date().toISOString(),
+            };
+          });
+          if (rows.length) {
+            const { error } = await supa.from('learner_progress').upsert(rows, {
+              onConflict: 'user_id,module_id,level_id',
+            });
+            if (error) console.warn('DC-LEARN: progress upsert failed', error.message);
+          }
+        }
+      } catch(e) {
+        console.warn('DC-LEARN: PlatformSync error', (e && e.message) || e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user && user.id, JSON.stringify(progress || {})]);
+  return null;
+}
+
+/* ═══ END DC-LEARN STAGE 5 AUTH + SYNC ═════════════════════════════════════*/
 
 
 function BookTab() {
@@ -3332,6 +3402,7 @@ function App(){
   return (
     <div>
       {!IS_FREE_MODULE && !authState.hasAccess && !authState.loading && <LockedOverlay/>}
+      <PlatformSync user={authState.user} progress={progress}/>
       <div id="lbe-audience-bar" className="no-print" style={{background:'linear-gradient(135deg,#1a1a1a,#2a2a2a)',padding:'8px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
         <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'#78a840'}}>AUDIENCE: Data Centre Professionals — Operators, Engineers, Fund Managers, ESG Analysts, Cost Managers</span>
         <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'#78a840'}}>DC LEARNING SERIES</span>
