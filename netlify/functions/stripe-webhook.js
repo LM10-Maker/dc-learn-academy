@@ -1,5 +1,15 @@
 // netlify/functions/stripe-webhook.js
-// Handles Stripe checkout.session.completed → creates Supabase user + licence
+// DC-LEARN Stage 5 — handles Stripe checkout.session.completed →
+//   1. Verify signature
+//   2. Create or find Supabase auth user for the customer email
+//   3. Insert row into `licences` with tier mapped from Stripe price ID
+//   4. Send magic link so the learner can sign in immediately
+//
+// Four tiers (live prices):
+//   €995       one-off     → founding
+//   €1,995     one-off     → professional
+//   €9,500/yr  subscription → corporate
+//   €18,000+   one-off/sub  → enterprise
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { createClient } = require('@supabase/supabase-js');
@@ -9,9 +19,13 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// Stripe price-id → tier mapping. Price IDs come from the Stripe dashboard
+// and are injected via Netlify environment variables.
 const PRICE_MAP = {
-  [process.env.STRIPE_PRICE_FOUNDING]: 'founding',
-  [process.env.STRIPE_PRICE_STANDARD]: 'standard',
+  [process.env.STRIPE_PRICE_FOUNDING]:     'founding',
+  [process.env.STRIPE_PRICE_PROFESSIONAL]: 'professional',
+  [process.env.STRIPE_PRICE_CORPORATE]:    'corporate',
+  [process.env.STRIPE_PRICE_ENTERPRISE]:   'enterprise',
 };
 
 exports.handler = async (event) => {
@@ -39,39 +53,65 @@ exports.handler = async (event) => {
   }
 
   const session = stripeEvent.data.object;
-  const email = (session.customer_details?.email || session.customer_email || '').toLowerCase();
+  const email = (session.customer_details?.email || session.customer_email || '')
+    .toLowerCase();
 
   if (!email) {
     console.error('No email in checkout session:', session.id);
     return { statusCode: 400, body: 'No customer email' };
   }
 
-  // 3. Determine plan from line items or metadata
-  //    Stripe checkout sessions include line_items only if expanded,
-  //    so we also check session.metadata.price_id as a fallback.
-  let plan = 'standard';
+  // 3. Determine tier + amount + expiry from line items / subscription
+  let tier = null;
+  let amountCents = session.amount_total || null;
+  let currency = session.currency || 'eur';
+  let expiresAt = null;
+  let paymentIntentId = session.payment_intent || null;
+
   try {
     const fullSession = await stripe.checkout.sessions.retrieve(session.id, {
-      expand: ['line_items'],
+      expand: ['line_items', 'subscription'],
     });
+
     const priceId = fullSession.line_items?.data?.[0]?.price?.id
       || session.metadata?.price_id;
+
     if (priceId && PRICE_MAP[priceId]) {
-      plan = PRICE_MAP[priceId];
+      tier = PRICE_MAP[priceId];
+    }
+
+    // For subscription checkouts (corporate tier), grab period-end as expiry.
+    if (fullSession.mode === 'subscription' && fullSession.subscription) {
+      const sub = typeof fullSession.subscription === 'string'
+        ? await stripe.subscriptions.retrieve(fullSession.subscription)
+        : fullSession.subscription;
+      if (sub && sub.current_period_end) {
+        expiresAt = new Date(sub.current_period_end * 1000).toISOString();
+      }
     }
   } catch (err) {
-    console.warn('Could not expand line_items, defaulting to standard:', err.message);
+    console.warn('Could not expand checkout session:', err.message);
+  }
+
+  if (!tier) {
+    // Unknown price id → infer from amount as a last-resort (avoids silent drops).
+    if (amountCents >= 1800000)      tier = 'enterprise';
+    else if (amountCents >= 950000)  tier = 'corporate';
+    else if (amountCents >= 199500)  tier = 'professional';
+    else if (amountCents >= 99500)   tier = 'founding';
+    else {
+      console.error('Could not map price to tier. Session:', session.id, 'amount:', amountCents);
+      return { statusCode: 400, body: 'Unknown price / tier' };
+    }
+    console.warn('Tier inferred from amount:', tier);
   }
 
   try {
     // 4. Create or find Supabase Auth user
     let userId;
-
-    // Check if user already exists
-    const { data: listData, error: listErr } = await supabase.auth.admin.listUsers({
+    const { data: listData } = await supabase.auth.admin.listUsers({
       filter: `email.eq.${email}`,
     });
-
     // listUsers filter may not work on all Supabase versions — fallback to scan
     const existingUser = listData?.users?.find(u => u.email === email);
 
@@ -86,7 +126,7 @@ exports.handler = async (event) => {
       userId = newUser.user.id;
     }
 
-    // 5. Guard against duplicate webhook delivery
+    // 5. Idempotency guard — skip if this Stripe session already has a licence
     const { data: existingLicence } = await supabase
       .from('licences')
       .select('id')
@@ -104,10 +144,13 @@ exports.handler = async (event) => {
       .insert({
         user_id: userId,
         stripe_customer_id: session.customer,
+        stripe_payment_intent_id: paymentIntentId,
         stripe_session_id: session.id,
-        plan: plan,
-        amount_paid: session.amount_total,
-        currency: session.currency,
+        tier: tier,
+        amount_cents: amountCents,
+        currency: currency,
+        status: 'active',
+        expires_at: expiresAt,
       });
 
     if (licErr) throw licErr;
@@ -126,8 +169,11 @@ exports.handler = async (event) => {
       console.warn('Magic link generation failed:', magicErr.message);
     }
 
-    console.log('Licence granted:', { userId, plan, sessionId: session.id });
-    return { statusCode: 200, body: JSON.stringify({ received: true, userId, plan }) };
+    console.log('Licence granted:', { userId, tier, sessionId: session.id, expiresAt });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ received: true, userId, tier }),
+    };
 
   } catch (err) {
     console.error('Webhook processing error:', err);
