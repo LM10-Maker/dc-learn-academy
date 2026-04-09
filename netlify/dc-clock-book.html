@@ -4505,13 +4505,10 @@ window.addEventListener('scroll',function(){
   document.getElementById('progress').style.width=pct+'%';
 });
 
-// Fade-in chapters on scroll
-var obs=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    if(e.isIntersecting) e.target.classList.add('visible');
-  });
-},{threshold:0.05});
-document.querySelectorAll('.chapter').forEach(function(ch){obs.observe(ch);});
+// SOFT LAUNCH: force all chapters visible immediately.
+// IntersectionObserver fade-in was unreliable on mobile for long gated chapters,
+// leaving them stuck at opacity:0 (blank white page). REVERT: restore obs.observe loop.
+document.querySelectorAll('.chapter').forEach(function(ch){ch.classList.add('visible');});
 
 // Content gating — blur/fade for chapters 4-15
 // Bypass: ?access=lbe unlocks all chapters (for sharing with contacts)
