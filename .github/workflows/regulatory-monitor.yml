@@ -46,6 +46,13 @@ jobs:
           git commit -m "regulatory-monitor: $(date -u +%Y-%m-%d) check"
           git push
 
+      - name: Ensure regulatory-monitor label exists
+        if: steps.check.outputs.changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "regulatory-monitor" --color "d73a4a" --description "Automated regulatory change alerts" 2>/dev/null || true
+
       - name: Create GitHub Issue if changes detected
         if: steps.check.outputs.changes == 'true'
         env:
