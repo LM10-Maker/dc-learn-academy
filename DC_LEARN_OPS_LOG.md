@@ -99,3 +99,14 @@
 - [BUILD] Babel syntax check: 16/16 PASS
 
 ---
+
+## 2026-04-10 | Opus | 001, 011, 013 | Fix Session 3 — Cause-and-Effect Content Depth
+- [BUILD] 001 (Power Chain): 9 new C&E entries added (1 per level), covering: power factor penalty, K-factor transformer, fault level rating, eco mode tolerance, STS source review, PDU transformer overheating, busway water exposure, C13/C19 connector mismatch, PSU over-provisioning efficiency
+- [BUILD] 011 (Physical Security): 9 new C&E entries added (1 per level), covering: time-based access restrictions, PIDS zone granularity, gate interlock failure, mantrap sensor drift, dormant credentials, electronic lock fail-mode, NVR storage shortfall, IDS–ACS integration, maintenance contract lapse
+- [BUILD] 013 (Commissioning): 9 new C&E entries added (1 per level), covering: seasonal schedule dependency, harmonic load FAT, pre-functional documentation, realistic IST failure profiles, post-test thermal imaging, mild-weather PVT limitation, BMS winter control gap, inaccessible snagging items, night-shift training gap
+- [SWEEP] C&E counts verified: 001=36, 011=36, 013=36 (4 per level × 9 levels, up from 3 per level × 9 = 27)
+- [DECISION] All new entries cover different failure modes from existing entries — no duplicates, no modifications to existing content
+- [DECISION] Every entry includes specific numbers (kW, €, %, hours) and references Clonshaugh parameters where applicable
+- [BUILD] Babel syntax check: 16/16 PASS
+
+---
