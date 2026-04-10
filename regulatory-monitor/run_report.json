@@ -1,0 +1,100 @@
+{
+  "run_date": "2026-04-10T15:37:17.738188+00:00",
+  "sources_checked": 12,
+  "sources_changed": 7,
+  "fetch_errors": 0,
+  "changes": [
+    {
+      "date": "2026-04-10",
+      "source_id": "cru",
+      "source_name": "CRU \u2014 Decisions & Publications",
+      "url": "https://www.cru.ie/publications/",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "015",
+        "007",
+        "006",
+        "012"
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "source_id": "eirgrid",
+      "source_name": "EirGrid \u2014 News & Publications",
+      "url": "https://www.eirgrid.ie/news",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "006",
+        "015",
+        "012"
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "source_id": "esb_networks",
+      "source_name": "ESB Networks \u2014 Connection Policy",
+      "url": "https://www.esbnetworks.ie/",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "006",
+        "001"
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "source_id": "seai",
+      "source_name": "SEAI \u2014 Publications & Data",
+      "url": "https://www.seai.ie/data-and-insights/",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "010",
+        "004",
+        "007",
+        "012",
+        "015"
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "source_id": "epa",
+      "source_name": "EPA \u2014 Licensing",
+      "url": "https://www.epa.ie/",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "007",
+        "012"
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "source_id": "semo",
+      "source_name": "SEMO \u2014 Capacity Market",
+      "url": "https://www.sem-o.com/",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "012",
+        "015",
+        "006"
+      ]
+    },
+    {
+      "date": "2026-04-10",
+      "source_id": "crrem",
+      "source_name": "CRREM \u2014 Methodology",
+      "url": "https://www.crrem.eu/",
+      "priority": "P3",
+      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "modules_affected": [
+        "010",
+        "007",
+        "015"
+      ]
+    }
+  ]
+}
