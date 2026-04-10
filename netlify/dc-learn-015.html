@@ -10,6 +10,7 @@
 <meta name="robots" content="index, follow">
 <title>DC-LEARN-015 v2.4.8 | CRU Readiness & Energy Transition | Legacy Business Engineers</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -2469,6 +2470,20 @@ function AuthButton({ authState }) {
 }
 
 function LockedOverlay() {
+  const [email, setEmail] = React.useState('');
+  const [sent, setSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const handleSend = async () => {
+    if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
+    setLoading(true); setError('');
+    const { error: err } = await dcAuth.sendMagicLink(email);
+    setLoading(false);
+    if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
+    else setSent(true);
+  };
+
   return (
     <div style={{position:'fixed',inset:0,zIndex:9999,
       background:'rgba(13,17,23,0.97)',
@@ -2488,12 +2503,44 @@ function LockedOverlay() {
         </p>
 
         <div style={{background:'var(--surface)',border:'1px solid var(--border)',
-          borderRadius:12,padding:20,marginBottom:20}}>
-          <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6}}>
-            Already purchased? Check your email for your access link, or contact{' '}
-            <a href="mailto:info@legacybe.ie"
-              style={{color:'var(--accent)',textDecoration:'none'}}>info@legacybe.ie</a>.
-          </div>
+          borderRadius:12,padding:20,marginBottom:20,textAlign:'left'}}>
+          {!sent ? (
+            <div>
+              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6,marginBottom:12,textAlign:'center'}}>
+                Already purchased? Enter your email to sign in.
+              </div>
+              <input type="email" value={email}
+                onChange={e=>{setEmail(e.target.value);setError('');}}
+                onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
+                placeholder="your@email.com"
+                style={{width:'100%',padding:'8px 10px',fontSize:13,
+                background:'var(--panel)',border:'1px solid var(--border)',
+                borderRadius:6,color:'var(--text-bright)',marginBottom:8,
+                fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
+              {error && <div style={{fontSize:11,color:'var(--error)',marginBottom:6}}>{error}</div>}
+              <button onClick={handleSend} disabled={loading}
+                style={{width:'100%',padding:'8px',fontSize:13,fontWeight:600,
+                background:'var(--lbe-green)',color:'#fff',border:'none',
+                borderRadius:6,cursor:'pointer',opacity:loading?0.7:1}}>
+                {loading ? 'Sending…' : 'Send sign-in link'}
+              </button>
+              <div style={{fontSize:11,color:'var(--text-muted)',marginTop:8,lineHeight:1.5,textAlign:'center'}}>
+                No password needed. Or contact{' '}
+                <a href="mailto:info@legacybe.ie"
+                  style={{color:'var(--accent)',textDecoration:'none'}}>info@legacybe.ie</a>.
+              </div>
+            </div>
+          ) : (
+            <div style={{textAlign:'center',padding:'8px 0'}}>
+              <div style={{fontSize:22,marginBottom:8}}>✓</div>
+              <div style={{fontSize:13,color:'var(--text-bright)',fontWeight:600,marginBottom:4}}>
+                Check your email
+              </div>
+              <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.5}}>
+                We sent a sign-in link to<br/><strong>{email}</strong>
+              </div>
+            </div>
+          )}
         </div>
 
         <a href="https://legacybe.ie/dc-learn/"
