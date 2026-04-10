@@ -90,3 +90,12 @@
 - [BUILD] Babel syntax check: 16/16 PASS
 
 ---
+
+## 2026-04-10 | Opus | 000 | Fix Session 2 — assessment position rebalance
+- [FIX] 000: assessment answer-position bias fixed — redistributed from 1/20/5/1 → 7/7/7/6 across positions 0/1/2/3
+- [FIX] 15 questions repositioned: Q3(1→0), Q5(1→3), Q6(1→3), Q7(1→0), Q8(1→0), Q9(1→2), Q10(1→3), Q12(1→2), Q13(2→1), Q14(1→0), Q15(1→3), Q17(1→0), Q19(1→0), Q20(1→2), Q22(1→3), Q24(1→0), Q27(0→1)
+- [SWEEP] Fleet check: all 16 modules within 5–8 per position (adjusted for useState false positives). No deviations.
+- [DECISION] Option text, question text, and explanations unchanged — position rotation only
+- [BUILD] Babel syntax check: 16/16 PASS
+
+---
