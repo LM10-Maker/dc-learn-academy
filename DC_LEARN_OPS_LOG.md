@@ -76,3 +76,17 @@
 - [GNEW] G-NEW-73 enforced: zero code changes, zero fixes — audit only
 
 ---
+
+## 2026-04-10 | Opus | 000, 004, 007 | Fix Session 1 — broken text repair
+- [FIX] 000 line 682: restored 'CRU Compliance' as deprecated term in Q000-21 options + explain (was 'CRU Readiness' on both sides of contrast)
+- [FIX] 007 lines 468, 470, 473, 636, 708: restored 'Stranding Year' as deprecated term in 7 broken contrast sentences (was 'Misalignment Year' on both sides)
+- [FIX] 007 line 600: replaced near-duplicate distractor 'Misalignment Year' with 'Stranding Year' in Q007-19 options
+- [FIX] 004 line 447: repaired Declan L6 truncated rhetoric ("compliant.d me" → "compliant. He told me")
+- [FIX] 004 line 486: repaired Declan L7 truncated rhetoric ("payback.d me" → "payback. Nobody told me")
+- [FIX] 004 line 525: repaired Declan L9 truncated rhetoric ("next.r into a plan" → "next." — removed duplicate tail)
+- [FIX] 004 line 451: repaired Tom L6 truncated rhetoric ("market.ination." → "market. Risk elimination:")
+- [SWEEP] Fleet-wide grep: 0 broken terminology replacements remaining, 0 mid-sentence truncation fragments remaining
+- [SWEEP] D1 (001 "TODO Curate") status: RESOLVED — 0 matches
+- [BUILD] Babel syntax check: 16/16 PASS
+
+---
