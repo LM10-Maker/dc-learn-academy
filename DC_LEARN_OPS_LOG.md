@@ -65,3 +65,14 @@
 - [SHIP] Stage 5 Session 2 ready to ship — 16/16 Babel pass, all failure modes fall through to localStorage, no user-visible regressions.
 
 ---
+
+## 2026-04-10 | Opus | ALL | Fleet-wide content & quality audit
+- [SWEEP] Fleet audit complete — 16/16 modules scanned, report delivered
+- [SWEEP] Checks executed: stale values (1A/1D), banned terminology (1B), Mark voice (1C), version consistency (1E), IS_FREE_MODULE (1F), EED Art.26 (1G), service codes (1H), scenario terminology (1I), hall naming (1J), content depth (Task 2), assessment distribution (Task 3), known defects D1–D4 (Task 4), Supabase schema snapshot (Task 5)
+- [SWEEP] Defect totals: 6 P1, 4 P2, 14 P3. Modules 000 and 007 are lowest launch-readiness (terminology replacement bugs + assessment bias). Modules 012 and 014 are cleanest.
+- [SWEEP] Known defects D1 (001 TODO), D3 (004 missing L9), D4 (001 tab style) all RESOLVED. D2 (004 L6 narrative leak) not reproduced but 3 truncated rhetoric texts found nearby.
+- [SWEEP] 6 fix sessions recommended: A (terminology 30min), B (assessment rebalance 45min), C (C&E depth 2hrs), D (text corruption 15min), E (version comments 20min), F (Mark voice 30min)
+- [DECISION] Report saved: DC_LEARN_FLEET_AUDIT_REPORT_v1_0.md — LM to review before fix sessions begin
+- [GNEW] G-NEW-73 enforced: zero code changes, zero fixes — audit only
+
+---
