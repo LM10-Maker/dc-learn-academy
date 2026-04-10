@@ -1,0 +1,81 @@
+name: DC-LEARN Regulatory Monitor
+
+on:
+  schedule:
+    # Every Monday at 07:00 UTC (08:00 Dublin time)
+    - cron: '0 7 * * 1'
+  workflow_dispatch:  # Manual trigger button in GitHub UI
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  check-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run regulatory monitor
+        run: python regulatory-monitor/monitor.py
+
+      - name: Check for changes
+        id: check
+        run: |
+          if git diff --quiet regulatory-monitor/; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit updates
+        if: steps.check.outputs.changes == 'true'
+        run: |
+          git config user.name "DC-LEARN Regulatory Monitor"
+          git config user.email "monitor@legacybe.ie"
+          git add regulatory-monitor/
+          git commit -m "regulatory-monitor: $(date -u +%Y-%m-%d) check"
+          git push
+
+      - name: Create GitHub Issue if changes detected
+        if: steps.check.outputs.changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Read the latest CHANGELOG entries added by this run
+          CHANGES=$(python3 -c "
+          import json
+          with open('regulatory-monitor/run_report.json') as f:
+              report = json.load(f)
+          if report['changes']:
+              lines = []
+              for c in report['changes']:
+                  modules = ', '.join(c['modules_affected'])
+                  lines.append(f\"### {c['source_name']}\n**Priority:** {c['priority']}\n**Modules:** {modules}\n**Summary:** {c['summary']}\n\")
+              print('\n'.join(lines))
+          else:
+              print('No changes detected.')
+          ")
+
+          gh issue create \
+            --title "Regulatory Monitor — Changes Detected $(date -u +%Y-%m-%d)" \
+            --body "The weekly regulatory monitor detected changes in the following sources:
+
+          ${CHANGES}
+
+          **Action required:** Review the changes and determine if any DC-LEARN modules need updating.
+
+          See \`regulatory-monitor/CHANGELOG.md\` for full details.
+
+          ---
+          *Automated by DC-LEARN Regulatory Monitor*" \
+            --label "regulatory-monitor"
