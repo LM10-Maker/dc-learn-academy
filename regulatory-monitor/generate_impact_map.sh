@@ -9,8 +9,8 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SOURCES_FILE="$(dirname "$0")/sources.json"
 
-# Module IDs from sources.json
-MODULES=(001 002 004 005 006 007 008 009 010 012 015)
+# All 16 DC-LEARN modules (000–015)
+MODULES=(000 001 002 003 004 005 006 007 008 009 010 011 012 013 014 015)
 
 if [[ $# -ge 1 ]]; then
     MODULES=("$1")
