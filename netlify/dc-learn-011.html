@@ -2512,7 +2512,7 @@ function AuthButton({ authState }) {
   const handleSend = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
     setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
     setLoading(false);
     if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
     else setSent(true);
@@ -2593,7 +2593,7 @@ function LockedOverlay() {
   const handleSend = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
     setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
     setLoading(false);
     if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
     else setSent(true);
