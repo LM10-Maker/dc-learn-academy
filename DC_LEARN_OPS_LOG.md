@@ -123,3 +123,9 @@
 - [DECISION] Report saved: DC_LEARN_CONTENT_AUDIT_v1_0.md — no P1 or P2 defects found. One P3 (naming inconsistency).
 
 ---
+
+## 2026-04-12 | Sonnet | ALL | AuthButton email normalisation
+- [FIX] AuthButton email normalisation | .trim().toLowerCase() added before sendMagicLink across 16 modules (29 call-sites). Prevents orphan accounts from whitespace/case mismatch. Branch: claude/normalize-authbutton-email-KRjlq
+- [BUILD] Babel parse check (@babel/parser, jsx+flow plugins): **16/16 PASS** — dc-learn-000 through dc-learn-015
+
+---
