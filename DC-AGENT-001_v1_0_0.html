@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-AGENT-001 v1.0.0 | Data Centre Retrofit Screening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root,[data-theme="dark"]{
+  --bg:#1a1a1a;--bg2:#242424;--bg3:#2e2e2e;--text:#e5e5e5;--text2:#999;
+  --border:#333;--accent:#0d9488;--gold:#b45309;
+  --green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+}
+[data-theme="light"]{
+  --bg:#faf9f6;--bg2:#ffffff;--bg3:#f0efec;--text:#1a1a1a;--text2:#666;--border:#e0e0e0;
+}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.mono{font-family:'IBM Plex Mono',monospace}
+.container{max-width:1100px;margin:0 auto;padding:16px 20px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:16px}
+.form-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.screen-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.exec-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;text-align:center}
+@media(max-width:900px){.screen-grid,.form-grid{grid-template-columns:repeat(2,1fr)}.exec-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.screen-grid,.form-grid,.exec-grid{grid-template-columns:1fr}}
+input,select{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:14px;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--accent)}
+label{display:block;font-size:12px;color:var(--text2);margin-bottom:4px;font-weight:500}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text);cursor:pointer;font-family:inherit;font-size:14px;font-weight:500}
+.btn:hover{border-color:var(--accent)}.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{opacity:0.9}.btn:disabled{opacity:0.4;cursor:not-allowed}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.badge-green{background:rgba(34,197,94,0.15);color:var(--green)}
+.badge-amber{background:rgba(245,158,11,0.15);color:var(--amber)}
+.badge-red{background:rgba(239,68,68,0.15);color:var(--red)}
+.screen-card{cursor:pointer;transition:border-color 0.2s,box-shadow 0.2s}
+.screen-card:hover{border-color:var(--accent);box-shadow:0 2px 12px rgba(13,148,136,0.15)}
+.pipeline{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.stage{padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.stage.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.check-label{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:14px;cursor:pointer}
+.check-label input{margin-top:3px;width:auto}
+@media print{
+  body{background:#fff!important;color:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .no-print{display:none!important}.print-only{display:block!important}
+  .card{border:1px solid #ccc!important;break-inside:avoid;page-break-inside:avoid;background:#fff!important}
+  .badge-green{background:#e8f5e9!important;color:#2e7d32!important}
+  .badge-amber{background:#fff3e0!important;color:#e65100!important}
+  .badge-red{background:#ffebee!important;color:#c62828!important}
+}
+.print-only{display:none}
+</style>
+</head>
+<body>
+<div id="root">
+  <div style="padding:60px 20px;text-align:center;font-family:'IBM Plex Sans',sans-serif">
+    <h1 style="color:#0d9488;font-size:28px">DC-AGENT-001 v1.0.0</h1>
+    <p style="color:#999;margin-top:8px">Loading screening engine…</p>
+  </div>
+</div>
+<script type="text/babel">
+/* ===== DC-AGENT-001 v1.0.0 — Data Centre Retrofit Screening Engine ===== */
+/* © 2026 Legacy Business Engineers Ltd | legacybe.ie                      */
+const {useState,useEffect,useCallback} = React;
+const VERSION = "1.0.0";
+
+/* ===== CONSTANTS (verbatim from spec — locked) ===== */
+const TARGET_PUE = {chiller_only:1.40,chiller_fc:1.20,fc_adiabatic:1.12,fc_dry:1.15,dlc:1.08,immersion:1.06};
+const FC_HOURS_DUBLIN = 7200; // T1 — Met Éireann 30-year normals
+const FC_UTIL = {
+  chiller_only:{low:0,mid:0,high:0},chiller_fc:{low:0.60,mid:0.70,high:0.85},
+  fc_adiabatic:{low:0.85,mid:0.92,high:0.97},fc_dry:{low:0.80,mid:0.88,high:0.95},
+  dlc:{low:0.92,mid:0.96,high:0.99},immersion:{low:0.95,mid:0.97,high:0.99}
+};
+const COP_BY_TYPE = {
+  chiller_only:{low:2.5,mid:3.5,high:5.0},chiller_fc:{low:3.5,mid:4.5,high:6.0},
+  fc_adiabatic:{low:4.0,mid:5.0,high:6.5},fc_dry:{low:3.5,mid:4.5,high:6.0},
+  dlc:{low:4.0,mid:5.0,high:6.5},immersion:{low:4.0,mid:5.0,high:6.5}
+};
+const HIGH_GWP = ['r410a','r134a','r407c'];
+const FGAS_COST_KW = {low:600,mid:800,high:1200}; // T3
+const EED_METERING = {low:30000,mid:60000,high:150000}; // T3
+const EED_ANNUAL = {low:10000,mid:20000,high:30000}; // T3
+const GRID_FACTOR = 0.2241; // T1 — SEAI 2026
+const CARBON_TAX_CURRENT = 71; // T1 — Budget 2025
+const CARBON_TAX_2030 = 100; // T1 — Finance Act
+const TAXONOMY_PUE_LIMIT = 1.30; // T1 — EU Delegated Act 2021/2139
+const THRESHOLD_GOOD=300; const THRESHOLD_RISK=400; const THRESHOLD_MISALIGNED=500;
+const MAX_GROWTH_FACTOR = 1.50; // T4
+const CEILING_KW_RACK = 20; // T2
+const NEWBUILD_PER_KW = {low:10000,mid:15000,high:20000}; // T2
+const UPS_EFF = {
+  modular_liion:{low:0.965,mid:0.970,high:0.975},legacy_static:{low:0.88,mid:0.90,high:0.93},
+  rotary:{low:0.90,mid:0.92,high:0.94},unknown:{low:0.88,mid:0.90,high:0.93}
+};
+const ECO_MODE_EFF = 0.99; // T2
+const EED_THRESHOLD_KW = 1000; // T1 — EED Art.12
+const RETROFIT_COST_KW = {low:800,mid:1100,high:1500}; // T3
+
+/* ===== HELPERS ===== */
+const fmt = n => '€' + Math.round(n).toLocaleString();
+const SAMPLE = {name:'Clonshaugh DC-01',it_load:'2.4',pue:'1.80',age:'2013',racks:'400',cool:'chiller_fc',ref:'r410a',rate:'0.12',dens:'6',ups:'legacy_static'};
+const EMPTY = {name:'',it_load:'',pue:'',age:'',racks:'',cool:'',ref:'',rate:'0.12',dens:'',ups:''};
+const COOL_OPTS = [['chiller_only','Chiller Only'],['chiller_fc','Chiller + Free Cooling'],['fc_adiabatic','Free Cooling + Adiabatic'],['fc_dry','Free Cooling (Dry)'],['dlc','Direct Liquid Cooling'],['immersion','Immersion']];
+const REF_OPTS = [['r410a','R-410A'],['r134a','R-134a'],['r407c','R-407C'],['r32','R-32'],['none','None / Low-GWP']];
+const UPS_OPTS = [['modular_liion','Modular Li-ion'],['legacy_static','Legacy Static'],['rotary','Rotary'],['unknown','Unknown']];
+const NOT_CHECKED_ITEMS = ['Actual meter data & trending','EirGrid connection constraints','District heating proximity & feasibility','Physical plant condition survey','Planning permission constraints','UPS battery end-of-life status','Structural load capacity','Actual refrigerant charge quantities','Fire suppression system compliance','Network/fibre redundancy','BMS/DCIM integration scope','Lease & tenant obligations'];
+const SIGNOFF_LABELS = ['These results are screening-level indicative estimates with ±ranges','No physical inspection or meter data has been reviewed','AI commentary is machine-generated and unverified by an engineer','The 12 boundary items listed as "Not Checked" are excluded','Independent verification by a chartered engineer is required before investment decisions'];
+
+/* ===== STORAGE ABSTRACTION ===== */
+const store = {
+  async set(k,v){try{if(window.storage&&window.storage.set)return await window.storage.set(k,v);localStorage.setItem(k,v)}catch(e){}},
+  async get(k){try{if(window.storage&&window.storage.get)return await window.storage.get(k);const v=localStorage.getItem(k);return v?{value:v}:null}catch(e){return null}},
+  async list(p){try{if(window.storage&&window.storage.list)return await window.storage.list(p);const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith(p))keys.push(k)}return{keys}}catch(e){return{keys:[]}}},
+  async remove(k){try{if(window.storage&&window.storage.remove)return await window.storage.remove(k);localStorage.removeItem(k)}catch(e){}}
+};
+
+/* ===== 8-SCREEN CALCULATION ENGINE ===== */
+function calculate(f) {
+  const kW = parseFloat(f.it_load) * 1000;
+  const pue = parseFloat(f.pue);
+  const age = parseInt(f.age);
+  const racks = parseInt(f.racks);
+  const rate = parseFloat(f.rate);
+  const dens = parseFloat(f.dens);
+  const cool = f.cool, ref = f.ref, ups = f.ups;
+  const H = 8760;
+  const cool_kW = kW * (pue - 1);
+
+  // S1: PUE Gap — gap = PUE - TARGET_PUE[cool]
+  const gap = pue - TARGET_PUE[cool];
+  const s1 = {
+    label:'PUE Gap', gap, recoverable: kW * Math.max(0, gap) / 1000,
+    mid: kW * Math.max(0, gap) * H * rate,
+    low: kW * Math.max(0, gap - 0.05) * H * rate,
+    high: kW * Math.max(0, gap + 0.05) * H * rate,
+    verdict: gap <= 0.05 ? 'green' : gap <= 0.20 ? 'amber' : 'red'
+  };
+
+  // S2: Free Cooling — unused_hrs = 7200 × (1 - utilisation)
+  const util = FC_UTIL[cool], cop = COP_BY_TYPE[cool];
+  const s2 = {
+    label:'Free Cooling',
+    mid: (cool_kW / cop.mid) * (FC_HOURS_DUBLIN * (1 - util.mid)) * rate,
+    low: (cool_kW / cop.high) * (FC_HOURS_DUBLIN * (1 - util.high)) * rate,
+    high: (cool_kW / cop.low) * (FC_HOURS_DUBLIN * (1 - util.low)) * rate
+  };
+  s2.verdict = s2.mid < 50000 ? 'green' : s2.mid < 200000 ? 'amber' : 'red';
+
+  // S3: F-Gas — If not HIGH_GWP → green/€0
+  const highGWP = HIGH_GWP.includes(ref);
+  const s3 = {
+    label:'F-Gas Exposure',
+    mid: highGWP ? cool_kW * FGAS_COST_KW.mid : 0,
+    low: highGWP ? cool_kW * FGAS_COST_KW.low : 0,
+    high: highGWP ? cool_kW * FGAS_COST_KW.high : 0,
+    verdict: !highGWP ? 'green' : age < 2018 ? 'red' : 'amber'
+  };
+
+  // S4: EED Compliance — If IT<500kW → green/€0
+  const s4 = {label:'EED Compliance', mid:0, low:0, high:0, verdict:'green'};
+  if (kW >= 500) {
+    if (age < 2024) {
+      s4.mid = EED_METERING.mid + EED_ANNUAL.mid;
+      s4.low = EED_METERING.low + EED_ANNUAL.low;
+      s4.high = EED_METERING.high + EED_ANNUAL.high;
+    } else {
+      s4.mid = EED_ANNUAL.mid; s4.low = EED_ANNUAL.low; s4.high = EED_ANNUAL.high;
+    }
+    s4.verdict = age >= 2024 ? 'green' : age >= 2018 ? 'amber' : 'red';
+  }
+
+  // S5: Carbon & Taxonomy — intensity = PUE × 0.2241 × 1000
+  const intensity = pue * GRID_FACTOR * 1000;
+  const gap_tco2 = kW * (pue - 1) * H * GRID_FACTOR / 1000;
+  const taxonomy = pue <= TAXONOMY_PUE_LIMIT;
+  const s5 = {
+    label:'Carbon & Taxonomy', intensity, taxonomy, gap_tco2,
+    mid: gap_tco2 * CARBON_TAX_CURRENT,
+    low: gap_tco2 * CARBON_TAX_CURRENT,
+    high: gap_tco2 * CARBON_TAX_2030,
+    verdict: (intensity < THRESHOLD_GOOD && taxonomy) ? 'green'
+      : (intensity >= THRESHOLD_MISALIGNED || (!taxonomy && age < 2010)) ? 'red' : 'amber'
+  };
+
+  // S6: Density Headroom — headroom = min(20, density×1.50) - density
+  const headroom = Math.min(CEILING_KW_RACK, dens * MAX_GROWTH_FACTOR) - dens;
+  const potential = Math.min(CEILING_KW_RACK, dens * MAX_GROWTH_FACTOR) * racks;
+  const current = dens * racks;
+  const s6 = {
+    label:'Density Headroom', headroom,
+    rebound: current > 0 ? ((potential - current) / current) * 100 : 0,
+    mid: headroom * racks * NEWBUILD_PER_KW.mid,
+    low: headroom * racks * NEWBUILD_PER_KW.low,
+    high: headroom * racks * NEWBUILD_PER_KW.high,
+    verdict: headroom > 5 ? 'green' : headroom > 0 ? 'amber' : 'red'
+  };
+
+  // S7: UPS Efficiency — loss_kW = IT_kW × (1 - efficiency)
+  const eff = UPS_EFF[ups] || UPS_EFF.unknown;
+  const s7 = {
+    label:'UPS Efficiency', loss_pct: (1 - eff.mid) * 100,
+    mid: kW * (1 - eff.mid) * H * rate,
+    low: kW * (1 - eff.high) * H * rate,
+    high: kW * (1 - eff.low) * H * rate,
+    verdict: ups === 'modular_liion' ? 'green' : (1 - eff.mid) > 0.05 ? 'red' : 'amber'
+  };
+
+  // S8: Waste Heat — waste_kW = IT_kW × (PUE-1)
+  const eed_applies = kW >= EED_THRESHOLD_KW;
+  const s8 = {
+    label:'Waste Heat', waste_kW: cool_kW, eed_applies,
+    mid: 0, low: 0, high: 0,
+    verdict: !eed_applies ? 'green' : cool_kW >= 2000 ? 'red' : 'amber'
+  };
+
+  // Aggregation: annual = S1+S2+S7+S5_gap_tax, capital = S3+S4
+  const annual_mid = s1.mid + s2.mid + s7.mid + s5.mid;
+  const annual_low = s1.low + s2.low + s7.low + s5.low;
+  const annual_high = s1.high + s2.high + s7.high + s5.high;
+  const capital_mid = s3.mid + s4.mid;
+  const capital_low = s3.low + s4.low;
+  const capital_high = s3.high + s4.high;
+
+  return {
+    s1, s2, s3, s4, s5, s6, s7, s8,
+    agg: {
+      annual_mid, annual_low, annual_high, annual_daily: annual_mid / 365,
+      capital_mid, capital_low, capital_high,
+      donothing3: annual_mid * 3, recoverable: s1.recoverable
+    }
+  };
+}
+
+/* ===== AI COMMENTARY ===== */
+const getAICommentary = async (R, f, setAiText, setAiLoading, setAiError) => {
+  setAiLoading(true); setAiError(false); setAiText(null);
+  const reds = ['s1','s2','s3','s4','s5','s6','s7','s8']
+    .filter(s => R[s].verdict === 'red').map(s => R[s].label);
+  const prompt = 'You are an MEP engineer at LBE reviewing a DC retrofit screening.\n\n' +
+    'FACILITY: ' + f.name + ' | ' + f.it_load + ' MW IT | PUE ' + f.pue + ' | ' + f.cool + ' cooling | ' + f.racks + ' racks at ' + f.dens + ' kW | Built ' + f.age + ' | ' + f.ups + ' UPS\n\n' +
+    'NUMBERS:\nAnnual: €' + Math.round(R.agg.annual_mid).toLocaleString() + ' (€' + Math.round(R.agg.annual_daily).toLocaleString() + '/day)\n' +
+    'Capital: €' + Math.round(R.agg.capital_mid).toLocaleString() + '\n' +
+    '3yr do-nothing: €' + Math.round(R.agg.donothing3).toLocaleString() + '\n' +
+    'Carbon: ' + R.s5.intensity.toFixed(0) + ' kgCO₂/MWh_IT | Taxonomy: ' + (R.s5.taxonomy ? 'aligned' : 'NOT aligned') + '\n' +
+    'Red screens: ' + (reds.length > 0 ? reds.join(', ') : 'none') + '\n' +
+    'Recoverable: ' + (R.s1.recoverable ? R.s1.recoverable.toFixed(2) : '0') + ' MW\n\n' +
+    'Write 3 paragraphs, 200 words max total:\n' +
+    '1. What these numbers mean for THIS facility (use the €/day figure)\n' +
+    '2. The single most urgent action (name the screen, use screening cost ranges)\n' +
+    '3. What the owner should do next. End with: "Independent verification by a chartered engineer is required before investment decisions."\n\n' +
+    'Rules: never "exact/guaranteed/compliant" — use "indicative/screening-level". Diagnose only. No vendors. No equipment brands.';
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({model: "claude-sonnet-4-20250514", max_tokens: 1000, messages: [{role: "user", content: prompt}]})
+    });
+    const data = await res.json();
+    if (data.content && data.content[0]) { setAiText(data.content[0].text); }
+    else { setAiError(true); }
+  } catch(e) { setAiError(true); }
+  setAiLoading(false);
+};
+
+/* ===== ERROR BOUNDARY — BSG Layer 2 ===== */
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = {hasError: false, error: null}; }
+  static getDerivedStateFromError(error) { return {hasError: true, error}; }
+  render() {
+    if (this.state.hasError) return (
+      <div className="container" style={{textAlign:'center',paddingTop:60}}>
+        <h1 style={{color:'var(--accent)',fontSize:28}}>DC-AGENT-001 v{VERSION}</h1>
+        <p style={{color:'var(--red)',marginTop:16}}>Screening engine error — please reload the page.</p>
+        <p style={{marginTop:8,fontSize:13,color:'var(--text2)'}}>{String(this.state.error)}</p>
+      </div>
+    );
+    return this.props.children;
+  }
+}
+
+/* ===== COMPONENTS ===== */
+function FacilityInputs({facility, onChange, onRun, onSample, onReset}) {
+  const set = (k,v) => onChange({...facility,[k]:v});
+  const Sel = ({label,k,opts}) => (
+    <div><label>{label}</label>
+      <select value={facility[k]} onChange={e=>set(k,e.target.value)}>
+        <option value="">Select…</option>
+        {opts.map(([val,lbl])=><option key={val} value={val}>{lbl}</option>)}
+      </select></div>
+  );
+  return (
+    <div className="card">
+      <div style={{marginBottom:12}}>
+        <label>Facility Name</label>
+        <input value={facility.name} onChange={e=>set('name',e.target.value)} placeholder="e.g. Clonshaugh DC-01" />
+      </div>
+      <div className="form-grid">
+        <div><label>IT Load (MW)</label><input type="number" step="0.1" min="0" value={facility.it_load} onChange={e=>set('it_load',e.target.value)} placeholder="e.g. 2.4"/></div>
+        <div><label>PUE (measured)</label><input type="number" step="0.01" min="1" value={facility.pue} onChange={e=>set('pue',e.target.value)} placeholder="e.g. 1.80"/></div>
+        <div><label>Year Built</label><input type="number" min="1970" max="2030" value={facility.age} onChange={e=>set('age',e.target.value)} placeholder="e.g. 2013"/></div>
+        <Sel label="Cooling Type" k="cool" opts={COOL_OPTS} />
+        <Sel label="Refrigerant" k="ref" opts={REF_OPTS} />
+        <Sel label="UPS Type" k="ups" opts={UPS_OPTS} />
+        <div><label>Racks</label><input type="number" min="1" value={facility.racks} onChange={e=>set('racks',e.target.value)} placeholder="e.g. 400"/></div>
+        <div><label>Density (kW/rack)</label><input type="number" step="0.5" min="0" value={facility.dens} onChange={e=>set('dens',e.target.value)} placeholder="e.g. 6"/></div>
+        <div><label>Electricity Rate (€/kWh)</label><input type="number" step="0.01" min="0" value={facility.rate} onChange={e=>set('rate',e.target.value)} placeholder="0.12"/></div>
+      </div>
+      <div style={{display:'flex',gap:8,marginTop:16,flexWrap:'wrap'}}>
+        <button className="btn btn-primary" onClick={onRun}>Run Screening</button>
+        <button className="btn" onClick={onSample}>Load Sample</button>
+        <button className="btn" onClick={onReset}>Reset</button>
+      </div>
+    </div>
+  );
+}
+
+function ExecSummary({R}) {
+  const items = [
+    {l:'Annual Exposure',v:fmt(R.agg.annual_mid),s:fmt(R.agg.annual_low)+' – '+fmt(R.agg.annual_high)},
+    {l:'Daily Bleed',v:fmt(R.agg.annual_daily)+'/day',c:'var(--red)'},
+    {l:'Capital Exposure',v:fmt(R.agg.capital_mid),s:fmt(R.agg.capital_low)+' – '+fmt(R.agg.capital_high)},
+    {l:'3yr Do-Nothing',v:fmt(R.agg.donothing3),c:'var(--gold)'},
+    {l:'Recoverable',v:R.agg.recoverable.toFixed(2)+' MW'}
+  ];
+  return (
+    <div className="card">
+      <h3 style={{marginBottom:12,fontWeight:600}}>Executive Summary</h3>
+      <div className="exec-grid">
+        {items.map(({l,v,s,c},i) => (
+          <div key={i}>
+            <div style={{fontSize:12,color:'var(--text2)'}}>{l}</div>
+            <div className="mono" style={{fontSize:20,fontWeight:700,color:c||'var(--text)'}}>{v}</div>
+            {s && <div style={{fontSize:11,color:'var(--text2)'}}>{s}</div>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScreenCard({id, screen, expanded, onExpand}) {
+  const open = expanded === id;
+  const color = 'var(--' + screen.verdict + ')';
+  const isMoney = !['s6','s8'].includes(id);
+  return (
+    <div className="card screen-card" style={{borderLeft:'3px solid '+color,marginTop:0}}
+         onClick={() => onExpand(open ? null : id)}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <span style={{fontWeight:600,fontSize:13}}>{screen.label}</span>
+        <span className={'badge badge-'+screen.verdict}>{screen.verdict}</span>
+      </div>
+      <div className="mono" style={{fontSize:22,fontWeight:700,marginTop:8,color}}>
+        {id==='s6' ? screen.headroom.toFixed(1)+' kW' : id==='s8' ? Math.round(screen.waste_kW).toLocaleString()+' kW' : fmt(screen.mid)}
+      </div>
+      <div style={{fontSize:11,color:'var(--text2)',marginTop:4}}>
+        {id==='s6' ? 'headroom/rack' : id==='s8' ? 'waste heat' : 'mid estimate'}
+      </div>
+      {open && (
+        <div style={{marginTop:12,paddingTop:12,borderTop:'1px solid var(--border)',fontSize:13,color:'var(--text2)'}}>
+          {isMoney && <p>Range: {fmt(screen.low)} – {fmt(screen.high)}</p>}
+          {id==='s1' && <p>PUE gap: {screen.gap.toFixed(2)} | Recoverable: {screen.recoverable.toFixed(2)} MW</p>}
+          {id==='s5' && <p>Intensity: {screen.intensity.toFixed(0)} kgCO₂/MWh_IT | Taxonomy: {screen.taxonomy ? 'Aligned (PUE ≤ 1.30)' : 'Not aligned'}</p>}
+          {id==='s6' && <p>Rebound risk: {screen.rebound.toFixed(0)}% | Avoided newbuild: {fmt(screen.mid)}</p>}
+          {id==='s7' && <p>UPS loss: {screen.loss_pct.toFixed(1)}%</p>}
+          {id==='s8' && <p>EED Art.12 reporting: {screen.eed_applies ? 'Required (IT ≥ 1 MW)' : 'Not required (IT < 1 MW)'}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AICommentary({text, loading, error}) {
+  return (
+    <div className="card">
+      <h3 style={{marginBottom:8,fontWeight:600}}>
+        AI Commentary <span style={{fontSize:11,color:'var(--text2)',fontWeight:400}}>— machine-generated, unverified</span>
+      </h3>
+      {loading && <p style={{color:'var(--text2)',fontStyle:'italic'}}>Generating engineering commentary…</p>}
+      {error && <p style={{color:'var(--amber)'}}>AI commentary unavailable — screening results are unaffected.</p>}
+      {text && <div style={{whiteSpace:'pre-wrap',fontSize:14,lineHeight:1.7}}>{text}</div>}
+    </div>
+  );
+}
+
+function ConfidencePanel() {
+  const [open, setOpen] = useState(false);
+  const tiers = [
+    {t:'T1 — Regulatory/Government',n:7,d:'Grid EF (SEAI 2026), carbon tax current & 2030 (Finance Act), EU Taxonomy PUE limit (Delegated Act 2021/2139), EED Art.12 threshold, free cooling hours (Met Éireann), CRREM thresholds'},
+    {t:'T2 — Industry Standard',n:5,d:'Default electricity rate (CRU Q4 2024), rack density ceiling, newbuild cost/kW, UPS efficiency bands, eco-mode efficiency'},
+    {t:'T3 — LBE Estimates',n:3,d:'F-Gas replacement cost/kW, EED metering capital, EED annual compliance'},
+    {t:'T4 — Adjustable',n:1,d:'Max growth factor (1.50×)'}
+  ];
+  return (
+    <div className="card">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer'}} onClick={()=>setOpen(!open)}>
+        <span style={{fontWeight:600}}>Confidence Tiers (16 parameters)</span>
+        <span style={{color:'var(--text2)',fontSize:18}}>{open ? '▾' : '▸'}</span>
+      </div>
+      {open && <div style={{marginTop:12,fontSize:13}}>
+        {tiers.map(({t,n,d},i) => <p key={i} style={{marginBottom:8}}><strong>{t}</strong> ({n} values): {d}</p>)}
+      </div>}
+    </div>
+  );
+}
+
+function NotChecked() {
+  return (
+    <div className="card">
+      <h3 style={{marginBottom:8,fontWeight:600}}>Not Checked — Screening Boundary (12 items)</h3>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill, minmax(250px, 1fr))',gap:4,fontSize:13}}>
+        {NOT_CHECKED_ITEMS.map((item,i) => <div key={i} style={{color:'var(--text2)'}}>• {item}</div>)}
+      </div>
+    </div>
+  );
+}
+
+function SignOffGate({signOff, setSignOff}) {
+  const toggle = i => { const n=[...signOff]; n[i]=!n[i]; setSignOff(n); };
+  const done = signOff.every(Boolean);
+  return (
+    <div className="card">
+      <h3 style={{marginBottom:12,fontWeight:600}}>Sign-Off Gate</h3>
+      {SIGNOFF_LABELS.map((l,i) => (
+        <label key={i} className="check-label">
+          <input type="checkbox" checked={signOff[i]} onChange={()=>toggle(i)} />
+          <span>{l}</span>
+        </label>
+      ))}
+      {done && <p style={{color:'var(--green)',marginTop:8,fontWeight:600}}>All checks completed — export enabled</p>}
+    </div>
+  );
+}
+
+function ExportPanel({results, facility, signOff, aiText}) {
+  const allSigned = signOff.every(Boolean);
+  const buildJSON = () => {
+    const R = results;
+    const screens = ['s1','s2','s3','s4','s5','s7'];
+    const primary = screens.reduce((a,b) => R[a].mid > R[b].mid ? a : b);
+    return {
+      _aimep_lineage: {source_tool:"DC-AGENT-001",version:VERSION,timestamp:new Date().toISOString(),type:"screening",disclaimer:"60-second screening — indicative ranges only. Subject to design team verification."},
+      facility: {...facility},
+      results: {
+        annual_exposure: {total_mid:Math.round(R.agg.annual_mid),daily:Math.round(R.agg.annual_daily),screens:{s1_pue:Math.round(R.s1.mid),s2_cool:Math.round(R.s2.mid),s7_ups:Math.round(R.s7.mid),s5_gap_tax:Math.round(R.s5.mid)}},
+        capital_exposure: {total_mid:Math.round(R.agg.capital_mid),screens:{s3_fgas:Math.round(R.s3.mid),s4_eed:Math.round(R.s4.mid)}},
+        risk_flags: {s5_crrem:{intensity:parseFloat(R.s5.intensity.toFixed(2)),taxonomy:R.s5.taxonomy,verdict:R.s5.verdict},s6_density:{headroom:R.s6.headroom,verdict:R.s6.verdict},s8_heat:{waste_kw:Math.round(R.s8.waste_kW),eed:R.s8.eed_applies,verdict:R.s8.verdict}},
+        primary_exposure: {screen:primary,range:{low:Math.round(R[primary].low),mid:Math.round(R[primary].mid),high:Math.round(R[primary].high)}},
+        recoverable_mw: parseFloat(R.agg.recoverable.toFixed(3)),
+        do_nothing_3yr: Math.round(R.agg.donothing3),
+        confidence_summary: {t1:7,t2:5,t3:3,t4:1},
+        not_checked: "Actual meter data, EirGrid constraints, district heating proximity, plant condition, planning, UPS battery life, structural capacity, refrigerant charges, fire suppression, network redundancy, BMS scope, lease constraints"
+      },
+      sign_off: {checks:signOff,completed_at:allSigned?new Date().toISOString():null},
+      ai_commentary: aiText ? {text:aiText,generated_at:new Date().toISOString()} : null
+    };
+  };
+  const handleJSON = () => {
+    const blob = new Blob([JSON.stringify(buildJSON(),null,2)],{type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url;
+    a.download='DC-AGENT-001_'+(facility.name||'screening').replace(/\s+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.json';
+    a.click(); URL.revokeObjectURL(url);
+  };
+  const handleCopy = () => {
+    navigator.clipboard.writeText(JSON.stringify(buildJSON(),null,2)).catch(()=>{});
+  };
+  return (
+    <div className="card no-print">
+      <h3 style={{marginBottom:12,fontWeight:600}}>Export</h3>
+      <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+        <button className="btn btn-primary" disabled={!allSigned} onClick={handleJSON}>JSON Export</button>
+        <button className="btn" disabled={!allSigned} onClick={()=>window.print()}>Print / PDF</button>
+        <button className="btn" disabled={!allSigned} onClick={handleCopy}>Copy to Clipboard</button>
+      </div>
+      {!allSigned && <p style={{fontSize:12,color:'var(--text2)',marginTop:8}}>Complete all sign-off checks to enable export</p>}
+    </div>
+  );
+}
+
+/* ===== APP ===== */
+function App() {
+  const [facility, setFacility] = useState({...EMPTY});
+  const [results, setResults] = useState(null);
+  const [aiText, setAiText] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState(false);
+  const [signOff, setSignOff] = useState([false,false,false,false,false]);
+  const [activeStage] = useState(1);
+  const [savedProjects, setSavedProjects] = useState([]);
+  const [theme, setTheme] = useState('dark');
+  const [expandedScreen, setExpandedScreen] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme); }, [theme]);
+  useEffect(() => { store.list('dc-agent:project:').then(r => { if(r&&r.keys&&r.keys.length) setSavedProjects(r.keys); }); }, []);
+
+  const handleRun = () => {
+    setError(null);
+    const kW = parseFloat(facility.it_load) * 1000;
+    const pue = parseFloat(facility.pue);
+    const racks = parseInt(facility.racks);
+    const dens = parseFloat(facility.dens);
+    const rate = parseFloat(facility.rate);
+    const age = parseInt(facility.age);
+    if (isNaN(kW)||kW<=0||kW>200000) { setError('IT load must be between 0 and 200 MW'); return; }
+    if (isNaN(pue)||pue<1.0) { setError('PUE must be ≥ 1.0'); return; }
+    if (!facility.cool) { setError('Select a cooling type'); return; }
+    if (!facility.ref) { setError('Select a refrigerant type'); return; }
+    if (!facility.ups) { setError('Select a UPS type'); return; }
+    if (isNaN(racks)||racks<=0) { setError('Racks must be > 0'); return; }
+    if (isNaN(dens)||dens<=0) { setError('Density must be > 0'); return; }
+    if (isNaN(rate)||rate<=0) { setError('Electricity rate must be > 0'); return; }
+    if (isNaN(age)||age<1970||age>2030) { setError('Year built must be between 1970 and 2030'); return; }
+    const R = calculate(facility);
+    if (!R) { setError('Calculation error — check inputs'); return; }
+    setResults(R);
+    setSignOff([false,false,false,false,false]);
+    setExpandedScreen(null);
+    const key = 'dc-agent:project:' + (facility.name||'unnamed').replace(/\s+/g,'_').toLowerCase();
+    store.set(key, JSON.stringify({facility,results:R,stage:1,version:VERSION,updatedAt:new Date().toISOString()}));
+    store.list('dc-agent:project:').then(r => { if(r&&r.keys&&r.keys.length) setSavedProjects(r.keys); });
+    getAICommentary(R, facility, setAiText, setAiLoading, setAiError);
+  };
+
+  const handleResume = async (key) => {
+    try {
+      const data = await store.get(key);
+      if (data && data.value) {
+        const p = JSON.parse(data.value);
+        setFacility(p.facility);
+        if (p.results) setResults(p.results);
+        if (p.aiText) setAiText(p.aiText);
+        if (p.signOff) setSignOff(p.signOff);
+      }
+    } catch(e) {}
+  };
+
+  const handleDelete = async (key) => {
+    await store.remove(key);
+    setSavedProjects(prev => prev.filter(k => k !== key));
+  };
+
+  const stages = ['SCREEN','CHARACTERISE','DIAGNOSE','DESIGN','REPORT'];
+  const screenIds = ['s1','s2','s3','s4','s5','s6','s7','s8'];
+
+  return (
+    <div className="container">
+      <div className="print-only" style={{textAlign:'center',marginBottom:20,paddingBottom:16,borderBottom:'2px solid #333'}}>
+        <h2 style={{fontSize:20}}>DC-AGENT-001 v{VERSION} — Data Centre Retrofit Screening</h2>
+        <p style={{fontSize:12,marginTop:4}}>60-second screening — indicative ranges only. Subject to design team verification.</p>
+        <p style={{fontSize:12}}>© {new Date().getFullYear()} Legacy Business Engineers Ltd | legacybe.ie</p>
+      </div>
+
+      <div className="no-print" style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+        <div>
+          <h1 style={{fontSize:24,fontWeight:700,letterSpacing:'-0.5px'}}>
+            <span style={{color:'var(--accent)'}}>DC-AGENT-001</span>
+          </h1>
+          <p style={{fontSize:13,color:'var(--text2)'}}>Data Centre Retrofit Screening Engine v{VERSION}</p>
+        </div>
+        <button className="btn" onClick={()=>setTheme(t=>t==='dark'?'light':'dark')}>
+          {theme==='dark' ? 'Light' : 'Dark'} Theme
+        </button>
+      </div>
+
+      <div className="pipeline no-print">
+        {stages.map((s,i) => <span key={s} className={'stage'+(i===0?' active':'')}>{i+1}. {s}</span>)}
+      </div>
+
+      {savedProjects.length > 0 && (
+        <div className="card no-print" style={{padding:'8px 16px',display:'flex',alignItems:'center',gap:8,fontSize:13,flexWrap:'wrap'}}>
+          <span style={{color:'var(--text2)',fontWeight:500}}>Saved:</span>
+          {savedProjects.map(k => (
+            <span key={k} style={{display:'inline-flex',alignItems:'center',gap:4}}>
+              <button className="btn" style={{padding:'2px 8px',fontSize:12}} onClick={()=>handleResume(k)}>
+                {k.replace('dc-agent:project:','')}
+              </button>
+              <button style={{background:'none',border:'none',color:'var(--red)',cursor:'pointer',fontSize:16,padding:'0 2px'}}
+                      onClick={()=>handleDelete(k)} title="Delete">×</button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      <FacilityInputs facility={facility} onChange={setFacility} onRun={handleRun}
+        onSample={()=>setFacility({...SAMPLE})}
+        onReset={()=>{setFacility({...EMPTY});setResults(null);setAiText(null);setAiError(false);setError(null);}} />
+
+      {error && <div style={{color:'var(--red)',padding:'8px 0',fontSize:14,fontWeight:500}}>{error}</div>}
+
+      {results && (
+        <React.Fragment>
+          <ExecSummary R={results} />
+          <div className="screen-grid">
+            {screenIds.map(id => <ScreenCard key={id} id={id} screen={results[id]} expanded={expandedScreen} onExpand={setExpandedScreen} />)}
+          </div>
+          <AICommentary text={aiText} loading={aiLoading} error={aiError} />
+          <ConfidencePanel />
+          <NotChecked />
+          <SignOffGate signOff={signOff} setSignOff={setSignOff} />
+          <ExportPanel results={results} facility={facility} signOff={signOff} aiText={aiText} />
+        </React.Fragment>
+      )}
+
+      <div className="card no-print" style={{textAlign:'center',borderColor:'var(--gold)',borderWidth:'2px'}}>
+        <p style={{fontWeight:700,color:'var(--gold)',fontSize:16}}>Ready for a full diagnostic?</p>
+        <p style={{marginTop:4,fontSize:14}}>DC-S01 Chartered Engineer Diagnostic — €5,000 / 48hrs</p>
+        <p style={{marginTop:4,fontSize:12,color:'var(--text2)'}}>Independent MEP review by Les Murphy CEng MIEI | legacybe.ie</p>
+      </div>
+
+      <div className="print-only" style={{marginTop:24,paddingTop:16,borderTop:'2px solid #333',textAlign:'center',fontSize:11}}>
+        <p><strong>DISCLAIMER:</strong> This is a 60-second screening tool producing indicative ranges only. Not engineering advice. Not a substitute for professional assessment.</p>
+        <p style={{marginTop:4}}>Independent verification by a chartered engineer is required before investment decisions.</p>
+        <p style={{marginTop:4}}>DC-AGENT-001 v{VERSION} © {new Date().getFullYear()} Legacy Business Engineers Ltd | legacybe.ie</p>
+      </div>
+
+      <footer style={{marginTop:20,paddingTop:16,borderTop:'1px solid var(--border)',textAlign:'center',fontSize:12,color:'var(--text2)'}}>
+        <p>DC-AGENT-001 v{VERSION} © {new Date().getFullYear()} Legacy Business Engineers Ltd</p>
+        <p style={{marginTop:4}}>legacybe.ie — Screening tool only. Not engineering advice. Not a substitute for professional assessment.</p>
+      </footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ErrorBoundary><App /></ErrorBoundary>);
+</script>
+</body>
+</html>
