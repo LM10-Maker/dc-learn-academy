@@ -111,6 +111,136 @@
       --transition-level:   0.20s ease;
       --transition-theme:   0.20s ease;
     }
+
+    /* ─── AUDIENCE BAR ──────────────────────────────────────────── */
+    .audience-bar {
+      width: 100%;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 5px 1.5rem;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--lbe-green);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ─── TWO-COLUMN LAYOUT ─────────────────────────────────────── */
+    .content-with-sidebar {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 0;
+      flex: 1;
+      align-items: start;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .main-col { min-width: 0; }
+    .sidebar-col {
+      border-left: 1px solid var(--border);
+      padding: 1.25rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+    .sidebar-card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    @media (max-width: 900px) {
+      .content-with-sidebar { grid-template-columns: 1fr; }
+      .sidebar-col { display: none; }
+    }
+
+    /* ─── CLARIFY BUTTON ────────────────────────────────────────── */
+    .clarify-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 0.5rem; padding: 3px 10px;
+      font-size: 0.72rem; font-weight: 500; cursor: pointer;
+      border: 1px solid var(--grammar); border-radius: 12px;
+      background: transparent; color: var(--grammar);
+      transition: all var(--transition);
+    }
+    .clarify-btn:hover { background: var(--accent-dim); }
+    .clarify-box {
+      margin-top: 0.5rem; padding: 0.6rem 0.9rem;
+      background: var(--panel); border: 1px solid var(--grammar);
+      border-left: 3px solid var(--grammar);
+      border-radius: var(--radius-sm); font-size: 0.82rem;
+      color: var(--text); line-height: 1.6;
+    }
+
+    /* ─── FIELD CHALLENGE REVEAL ────────────────────────────────── */
+    .show-fix-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; margin-top: 0.75rem;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--logic); border-radius: var(--radius-sm);
+      background: rgba(217,119,6,0.08); color: var(--logic);
+      transition: all var(--transition);
+    }
+    .show-fix-btn:hover { background: rgba(217,119,6,0.18); }
+    .fix-reveal-box { margin-top: 0.75rem; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+
+    /* ─── CTA SECTION ───────────────────────────────────────────── */
+    .cta-section {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1rem; padding: 1.5rem;
+      background: var(--surface); border-top: 1px solid var(--border);
+    }
+    .cta-card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1.1rem;
+    }
+    .cta-card h4 { font-size: 0.88rem; font-weight: 600; color: var(--text-bright); margin-bottom: 0.35rem; }
+    .cta-card p  { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem; }
+    .cta-btn {
+      display: inline-block; padding: 7px 16px;
+      border-radius: var(--radius-sm); font-size: 0.78rem; font-weight: 600;
+      border: 1px solid var(--lbe-green); color: var(--lbe-green);
+      background: rgba(22,163,74,0.06); text-decoration: none;
+      transition: all var(--transition);
+    }
+    .cta-btn:hover { background: rgba(22,163,74,0.15); text-decoration: none; }
+    /* ─── FOOTER 2-TIER ─────────────────────────────────────────── */
+    .footer-nav-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.7rem 1.5rem; background: var(--surface);
+      border-top: 1px solid var(--border); font-size: 0.78rem;
+    }
+    .footer-nav-link {
+      color: var(--text-dim); padding: 4px 10px; border: 1px solid var(--border);
+      border-radius: 14px; font-size: 0.75rem; transition: all var(--transition);
+    }
+    .footer-nav-link.disabled { opacity: 0.35; pointer-events: none; }
+    .footer-nav-link:hover { background: var(--panel); text-decoration: none; }
+    .footer-copy-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.5rem 1.5rem; background: var(--panel);
+      border-top: 1px solid var(--border); font-size: 0.72rem;
+    }
+    @media (max-width: 600px) {
+      .cta-section { grid-template-columns: 1fr; }
+    }
     /* ─── RESET & BASE ──────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 15px; scroll-behavior: smooth; }
@@ -329,41 +459,41 @@
     .level-progress-dot.logic.done    { background: var(--logic); }
     .level-progress-dot.rhetoric.done { background: var(--rhetoric); }
 
-    /* ─── TAB BAR ──────────────────────────────────────────────────── */
+    /* ─── TAB BAR — pill style ─────────────────────────────────── */
     .tab-bar {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       display: flex;
-      padding: 0 1.5rem;
-      gap: 0;
+      padding: 0.55rem 1.5rem;
+      gap: 0.4rem;
       overflow-x: auto;
       scrollbar-width: none;
-      position: sticky;
-      top: 0;
-      z-index: 10;
     }
     .tab-bar::-webkit-scrollbar { display: none; }
     .tab-btn {
       flex-shrink: 0;
-      padding: 0.75rem 1.2rem;
-      font-size: 0.82rem;
+      padding: 5px 14px;
+      font-size: 0.8rem;
       font-weight: 500;
       color: var(--text-dim);
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      transition: color var(--transition), border-color var(--transition);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      transition: all var(--transition);
       white-space: nowrap;
     }
-    .tab-btn:hover { color: var(--text); }
-    /* Active tab: text-bright base, then stage-coloured border+text via data-tab */
-    .tab-btn.active                         { font-weight: 600; color: var(--text-bright); }
-    .tab-btn.active[data-tab='chain']       { border-bottom-color: var(--text-dim); }
-    .tab-btn.active[data-tab='grammar']     { border-bottom-color: var(--grammar);  color: var(--grammar); }
-    .tab-btn.active[data-tab='logic']       { border-bottom-color: var(--logic);    color: var(--logic); }
-    .tab-btn.active[data-tab='rhetoric']    { border-bottom-color: var(--rhetoric); color: var(--rhetoric); }
-    .tab-btn.active[data-tab='field']       { border-bottom-color: var(--logic);    color: var(--logic); }
-    .tab-btn.active[data-tab='assessment']  { border-bottom-color: var(--grammar);  color: var(--grammar); }
-    .tab-btn.active[data-tab='bsg']         { border-bottom-color: var(--text-dim); }
+    .tab-btn:hover { background: var(--panel); color: var(--text); border-color: var(--border-2); }
+    .tab-btn.active { font-weight: 600; background: var(--panel); color: var(--text-bright); }
+    .tab-btn.active[data-tab='chain']      { border-color: var(--text-dim); }
+    .tab-btn.active[data-tab='learn']      { border-color: var(--grammar); color: var(--grammar); }
+    .tab-btn.active[data-tab='grammar']    { border-color: var(--grammar); color: var(--grammar); }
+    .tab-btn.active[data-tab='logic']      { border-color: var(--logic);   color: var(--logic); }
+    .tab-btn.active[data-tab='rhetoric']   { border-color: var(--rhetoric);color: var(--rhetoric); }
+    .tab-btn.active[data-tab='field']      { border-color: var(--logic);   color: var(--logic); }
+    .tab-btn.active[data-tab='assessment'] { border-color: var(--grammar); color: var(--grammar); }
+    .tab-btn.active[data-tab='progress']   { border-color: var(--lbe-green);color: var(--lbe-green); }
+    .tab-btn.active[data-tab='bsg']        { border-color: var(--text-dim); }
+    .tab-btn.active[data-tab='reference']  { border-color: var(--text-dim); }
 
     /* ─── MAIN CONTENT ─────────────────────────────────────────────── */
     .main-content {
@@ -2975,12 +3105,11 @@ function LevelSelector({ selectedLevel, setSelectedLevel, visitedStages }) {
 // ═══════════════════════════════════════════════════════════════
 var TABS = [
   { id: 'chain',      label: 'Chain' },
-  { id: 'grammar',    label: 'Grammar' },
-  { id: 'logic',      label: 'Logic' },
-  { id: 'rhetoric',   label: 'Rhetoric' },
-  { id: 'field',      label: 'Field Challenge' },
+  { id: 'learn',      label: 'Learn' },
+  { id: 'field',      label: 'Field Challenges' },
   { id: 'assessment', label: 'Assessment' },
-  { id: 'bsg',        label: 'Reference' }
+  { id: 'progress',   label: 'Progress' },
+  { id: 'reference',  label: 'Reference' }
 ];
 
 function TabBar({ activeTab, setActiveTab }) {
@@ -3002,6 +3131,59 @@ function TabBar({ activeTab, setActiveTab }) {
   );
 }
 
+
+// ═══════════════════════════════════════════════════════════════
+// LEARN TAB — Grammar | Logic | Rhetoric with stage selector
+// ═══════════════════════════════════════════════════════════════
+function LearnTab({ selectedLevel, visitedStages }) {
+  var level = LEVELS[selectedLevel];
+  var vs = (visitedStages && visitedStages[selectedLevel]) || {};
+  var [stage, setStage] = React.useState('grammar');
+  var STAGES = [
+    { id: 'grammar',  label: 'Grammar',  color: 'var(--grammar)' },
+    { id: 'logic',    label: 'Logic',    color: 'var(--logic)' },
+    { id: 'rhetoric', label: 'Rhetoric', color: 'var(--rhetoric)' }
+  ];
+  return (
+    <div>
+      <div style={{background:'var(--surface)',borderBottom:'1px solid var(--border)',padding:'0.9rem 1.5rem'}}>
+        <div style={{display:'flex',alignItems:'center',gap:'0.6rem',marginBottom:'0.5rem'}}>
+          <span style={{fontSize:'1.3rem'}}>{level.icon}</span>
+          <div>
+            <div style={{fontSize:'1rem',fontWeight:600,color:'var(--text-bright)'}}>Level {level.level}: {level.title}</div>
+            <div style={{fontSize:'0.75rem',fontFamily:'var(--font-mono)',color:'var(--text-dim)'}}>{level.subtitle}</div>
+          </div>
+        </div>
+        {level.retrofitRelevance && (
+          <div style={{background:'rgba(217,119,6,0.08)',border:'1px solid var(--logic)',borderRadius:'var(--radius-sm)',padding:'0.5rem 0.8rem',fontSize:'0.78rem',color:'var(--text)',marginBottom:'0.6rem'}}>
+            <strong style={{color:'var(--logic)'}}>Retrofit Relevance: </strong>{level.retrofitRelevance}
+          </div>
+        )}
+        <div style={{display:'flex',gap:'0.5rem'}}>
+          {STAGES.map(function(s) {
+            var active = stage === s.id;
+            var done = vs[s.id];
+            return (
+              <button key={s.id} onClick={function(){setStage(s.id);}} style={{
+                padding:'5px 16px',borderRadius:'20px',fontSize:'0.8rem',fontWeight:active?600:400,
+                border:'1px solid '+(active?s.color:'var(--border)'),cursor:'pointer',
+                background:active?s.color:'transparent',color:active?'#fff':'var(--text-dim)',
+                transition:'all 0.15s ease'
+              }}>
+                {s.label}{done?' ✓':''}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div className="main-content">
+        {stage === 'grammar'  && <GrammarTab  selectedLevel={selectedLevel} />}
+        {stage === 'logic'    && <LogicTab    selectedLevel={selectedLevel} />}
+        {stage === 'rhetoric' && <RhetoricTab selectedLevel={selectedLevel} />}
+      </div>
+    </div>
+  );
+}
 // ═══════════════════════════════════════════════════════════════
 // CHAIN TAB COMPONENT
 // ═══════════════════════════════════════════════════════════════
@@ -3009,6 +3191,10 @@ function ChainTab({ selectedLevel, setSelectedLevel, setActiveTab }) {
   var level = LEVELS[selectedLevel];
   var [expandedEnglish, setExpandedEnglish] = React.useState({});
   var [expandedRefs,    setExpandedRefs]    = React.useState({});
+  var [activePersona, setActivePersona] = React.useState(null);
+
+  var personaColors = { asset_management:'#2563EB',technology:'#7c3aed',technical:'#d97706',compliance:'#16a34a',cost:'#dc2626' };
+
   return (
     <div>
       <div className="card">
@@ -3103,6 +3289,49 @@ function ChainTab({ selectedLevel, setSelectedLevel, setActiveTab }) {
           </div>
         </div>
       </div>
+
+      {/* Persona Selector */}
+      <div className="main-content" style={{paddingTop:'0.5rem'}}>
+        <div className="card">
+          <div className="card-header">
+            <div className="card-icon green">👤</div>
+            <div><div className="card-title">Viewing As</div>
+              <div className="card-subtitle">Select a persona to see where this chain is most relevant</div>
+            </div>
+          </div>
+          <div style={{display:'flex',gap:'0.5rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
+            {PERSONAS.map(function(p){ var active=activePersona===p.key; return (
+              <button key={p.key} onClick={function(){setActivePersona(active?null:p.key);}} style={{
+                padding:'5px 12px',borderRadius:'16px',fontSize:'0.78rem',fontWeight:active?600:400,cursor:'pointer',
+                border:'1px solid '+(active?personaColors[p.key]:'var(--border)'),
+                background:active?personaColors[p.key]+'22':'transparent',
+                color:active?personaColors[p.key]:'var(--text-dim)',transition:'all 0.15s'
+              }}>{p.icon} {p.name}</button>
+            ); })}
+          </div>
+          {activePersona && (
+            <div>
+              <div style={{fontSize:'0.7rem',fontWeight:600,textTransform:'uppercase',letterSpacing:'0.08em',color:'var(--text-faint)',marginBottom:'0.5rem'}}>
+                Where This Perspective Is Richest
+              </div>
+              {LEVELS.map(function(lvl,li){
+                var tw = (RHETORIC_TAKEAWAYS[lvl.id]||{})[activePersona];
+                if (!tw) return null;
+                return (
+                  <div key={li} style={{display:'flex',gap:'0.75rem',alignItems:'flex-start',padding:'0.5rem 0',borderBottom:'1px solid var(--border)'}}>
+                    <span style={{fontSize:'1rem',flexShrink:0}}>{lvl.icon}</span>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:'0.75rem',fontWeight:600,color:'var(--text-bright)'}}>{lvl.id}: {lvl.title}</div>
+                      <div style={{fontSize:'0.75rem',color:'var(--text-muted)',lineHeight:'1.5',marginTop:'2px'}}>{tw}</div>
+                    </div>
+                    <button onClick={function(){setSelectedLevel(li);setActiveTab('learn');}} style={{flexShrink:0,fontSize:'0.7rem',padding:'2px 8px',borderRadius:'10px',border:'1px solid var(--border)',background:'transparent',color:'var(--text-dim)',cursor:'pointer'}}>Learn →</button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -3136,6 +3365,7 @@ function GrammarTab({ selectedLevel }) {
         <div className="fact-grid">
           {facts.map(function(fact, fi) {
             var soWhat = SO_WHAT_MAP[fact.term] || fact.soWhat || '';
+            var clarifyOpen = !!(expandedEnglish && expandedEnglish[fi]);
             return (
               <div key={fi} className="fact-card">
                 <div className="fact-term">{fact.term}</div>
@@ -3146,14 +3376,18 @@ function GrammarTab({ selectedLevel }) {
                 </div>
                 <div className="fact-row">
                   <div className="fact-field">
-                    <span className="fact-field-label">Plain English</span>
-                    <span className="fact-field-value">{fact.plain}</span>
-                  </div>
-                  <div className="fact-field">
                     <span className="fact-field-label">By the Numbers</span>
                     <div className="fact-number-pill">{fact.number}</div>
                   </div>
                 </div>
+                {fact.plain && (
+                  <>
+                    <button className="clarify-btn" onClick={function(){ setExpandedEnglish(function(p){ var n=Object.assign({},p); n[fi]=!p[fi]; return n; }); }}>
+                      💡 Clarify {clarifyOpen ? '▲' : '▼'}
+                    </button>
+                    {clarifyOpen && <div className="clarify-box">{fact.plain}</div>}
+                  </>
+                )}
                 <div className="so-what-box">
                   <strong>So what? </strong>{soWhat || fact.soWhat}
                 </div>
@@ -3354,6 +3588,7 @@ function FieldChallengeTab({ selectedLevel }) {
   var level = LEVELS[selectedLevel];
   var scenario = level.scenario || {};
   var fixSteps = splitFixSteps(scenario.fix || '');
+  var [fixOpen, setFixOpen] = React.useState(false);
 
   return (
     <div>
@@ -3384,29 +3619,31 @@ function FieldChallengeTab({ selectedLevel }) {
             </div>
           </div>
 
-          {/* Fix — step by step */}
+          {/* Fix — hidden by default, revealed on click */}
           <div className="scenario-section">
-            <div className="scenario-label fix">Step-by-Step Solution</div>
-            {fixSteps.length > 1 ? (
-              <ul className="fix-steps">
-                {fixSteps.map(function(step, si) {
-                  return (
-                    <li key={si} style={{
-                      background: 'var(--surface-3)',
-                      border: '1px solid var(--border)',
-                      borderRadius: 'var(--radius-sm)',
-                      padding: '0.65rem 0.9rem',
-                      fontSize: '0.82rem',
-                      color: 'var(--text-muted)',
-                      lineHeight: '1.6'
-                    }}>
-                      {step.trim()}
-                    </li>
-                  );
-                })}
-              </ul>
-            ) : (
-              <div className="scenario-text">{scenario.fix}</div>
+            <button className="show-fix-btn" onClick={function(){setFixOpen(function(p){return !p;});}}>
+              🔧 {fixOpen ? 'Hide the Fix ▲' : 'Show the Fix ▼'}
+            </button>
+            {fixOpen && (
+              <div className="fix-reveal-box">
+                <div className="scenario-label fix" style={{marginBottom:'0.5rem'}}>Step-by-Step Solution</div>
+                {fixSteps.length > 1 ? (
+                  <ul className="fix-steps">
+                    {fixSteps.map(function(step, si) {
+                      return (
+                        <li key={si} style={{
+                          background:'var(--surface-3)',border:'1px solid var(--border)',
+                          borderRadius:'var(--radius-sm)',padding:'0.65rem 0.9rem',
+                          fontSize:'0.82rem',color:'var(--text-muted)',lineHeight:'1.6',
+                          marginBottom:'0.4rem'
+                        }}>{step.trim()}</li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <div className="scenario-text">{scenario.fix}</div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -3429,166 +3666,170 @@ function FieldChallengeTab({ selectedLevel }) {
 // ASSESSMENT TAB COMPONENT
 // ═══════════════════════════════════════════════════════════════
 function AssessmentTab() {
-  var [shuffledQs, setShuffledQs] = React.useState(function() {
-    return shuffleArray(ASSESSMENT_QUESTIONS);
-  });
-  var [current, setCurrent] = React.useState(safeLoad('aq_current', 0));
-  var [answers, setAnswers] = React.useState(safeLoad('aq_answers', {}));
-  var [selected, setSelected] = React.useState(null);
-  var [revealed, setRevealed] = React.useState(false);
+  var [started, setStarted] = React.useState(false);
+  var [shuffledQs] = React.useState(function(){ return shuffleArray(ASSESSMENT_QUESTIONS); });
+  var [current, setCurrent] = React.useState(0);
+  var [answers, setAnswers] = React.useState({});
   var [done, setDone] = React.useState(false);
+  var [seconds, setSeconds] = React.useState(0);
+  var [filterTier, setFilterTier] = React.useState('all');
+  var [filterLevel, setFilterLevel] = React.useState('all');
+
+  React.useEffect(function() {
+    if (!started || done) return;
+    var t = setInterval(function(){ setSeconds(function(s){ return s+1; }); }, 1000);
+    return function(){ clearInterval(t); };
+  }, [started, done]);
+
+  function fmt(s) { return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
 
   var total = shuffledQs.length;
   var q = shuffledQs[current] || {};
-  var correctIdx = q.correct;
-  var answered = Object.keys(answers).length;
+  var ansState = answers[current];
+  var revealed = !!ansState;
 
-  function handleOption(optIdx) {
+  function handleOption(oi) {
     if (revealed) return;
-    setSelected(optIdx);
-  }
-
-  function handleReveal() {
-    if (selected === null) return;
-    setRevealed(true);
-    var newAnswers = Object.assign({}, answers);
-    newAnswers[current] = { selected: selected, correct: selected === correctIdx };
-    setAnswers(newAnswers);
-    safeStore('aq_answers', newAnswers);
+    var isCorrect = oi === q.correct;
+    var newA = Object.assign({}, answers);
+    newA[current] = { selected: oi, correct: isCorrect };
+    setAnswers(newA);
   }
 
   function handleNext() {
-    if (current < total - 1) {
-      setCurrent(current + 1);
-      safeStore('aq_current', current + 1);
-      setSelected(null);
-      setRevealed(false);
-    } else {
-      setDone(true);
-    }
-  }
-
-  function handlePrev() {
-    if (current > 0) {
-      setCurrent(current - 1);
-      safeStore('aq_current', current - 1);
-      var prevAnswer = answers[current - 1];
-      setSelected(prevAnswer ? prevAnswer.selected : null);
-      setRevealed(prevAnswer ? true : false);
-    }
+    if (current < total - 1) { setCurrent(current + 1); }
+    else { setDone(true); }
   }
 
   function handleRestart() {
-    setShuffledQs(shuffleArray(ASSESSMENT_QUESTIONS));
-    setCurrent(0);
-    setAnswers({});
-    setSelected(null);
-    setRevealed(false);
-    setDone(false);
-    safeStore('aq_current', 0);
-    safeStore('aq_answers', {});
+    setStarted(false); setCurrent(0); setAnswers({}); setDone(false); setSeconds(0);
   }
 
+  var TIERS = ['knowledge','calculation','judgement'];
+  var TIER_LABELS = { knowledge:'Knowledge Check', calculation:'Eng. Calculation', judgement:'Prof. Judgement' };
+
+  /* Pre-start screen */
+  if (!started) return (
+    <div className="main-content">
+      <div className="card">
+        <div className="card-header"><div className="card-icon blue">📝</div>
+          <div><div className="card-title">DC-AI-001 Assessment</div>
+            <div className="card-subtitle">27 questions · three Trivium stages · 9 per stage</div></div></div>
+        {TIERS.map(function(t){ return (
+          <div key={t} style={{display:'flex',justifyContent:'space-between',padding:'0.6rem 0',borderBottom:'1px solid var(--border)',fontSize:'0.83rem'}}>
+            <span style={{color:'var(--text)'}}>{TIER_LABELS[t]}</span>
+            <span style={{color:'var(--text-muted)',fontFamily:'var(--font-mono)'}}>9 questions</span>
+          </div>
+        ); })}
+        <button onClick={function(){setStarted(true);}} style={{marginTop:'1.25rem',padding:'10px 28px',borderRadius:'var(--radius-sm)',background:'var(--grammar)',color:'#fff',fontWeight:600,fontSize:'0.9rem',border:'none',cursor:'pointer',width:'100%'}}>
+          Start Assessment →
+        </button>
+      </div>
+    </div>
+  );
+
+  /* Score screen */
   if (done) {
-    var score = Object.values(answers).filter(function(a) { return a.correct; }).length;
-    var pct = Math.round((score / total) * 100);
-    var label = pct >= 80 ? '🏆 Excellent' : pct >= 60 ? '✅ Good Pass' : pct >= 40 ? '📖 Keep Studying' : '🔄 Review Recommended';
+    var score = Object.values(answers).filter(function(a){return a.correct;}).length;
+    var pct = Math.round((score/total)*100);
+    var tierScores = TIERS.map(function(t){
+      var qs = shuffledQs.filter(function(q){return q.tier===t;});
+      var correct = qs.filter(function(q,i){ var idx=shuffledQs.indexOf(q); return answers[idx]&&answers[idx].correct; }).length;
+      return { t:t, correct:correct, total:qs.length };
+    });
+    var filteredReview = shuffledQs.filter(function(q,i){
+      if (filterTier!=='all' && q.tier!==filterTier) return false;
+      if (filterLevel!=='all' && String(q.level)!==filterLevel) return false;
+      return true;
+    });
     return (
-      <div className="card assessment-score">
-        <div className="score-circle">
-          <span className="score-num">{score}</span>
-          <span className="score-denom">/ {total}</span>
+      <div className="main-content">
+        <div className="card">
+          <div style={{textAlign:'center',padding:'1rem 0'}}>
+            <div style={{fontSize:'2.5rem',fontWeight:700,color:'var(--grammar)'}}>{score}<span style={{fontSize:'1.2rem',color:'var(--text-muted)'}}>/{total}</span></div>
+            <div style={{fontSize:'1rem',color:'var(--text-bright)',marginTop:'0.25rem'}}>{pct}% · {fmt(seconds)}</div>
+            <div style={{height:'6px',background:'var(--border)',borderRadius:'3px',margin:'0.75rem auto',maxWidth:'300px',overflow:'hidden'}}>
+              <div style={{height:'100%',width:pct+'%',background:'linear-gradient(90deg,var(--lbe-green),var(--grammar))',borderRadius:'3px'}}/>
+            </div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'0.5rem',marginBottom:'1rem'}}>
+            {tierScores.map(function(ts){ return (
+              <div key={ts.t} style={{background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',padding:'0.6rem',textAlign:'center'}}>
+                <div style={{fontSize:'0.68rem',color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'0.06em'}}>{TIER_LABELS[ts.t]}</div>
+                <div style={{fontSize:'1.2rem',fontWeight:600,color:'var(--text-bright)',marginTop:'2px'}}>{ts.correct}/{ts.total}</div>
+              </div>
+            ); })}
+          </div>
+          <div style={{display:'flex',gap:'0.4rem',flexWrap:'wrap',marginBottom:'0.75rem'}}>
+            {['all'].concat(TIERS).map(function(t){ return (
+              <button key={t} onClick={function(){setFilterTier(t);}} style={{padding:'3px 10px',borderRadius:'12px',fontSize:'0.72rem',border:'1px solid '+(filterTier===t?'var(--grammar)':'var(--border)'),background:filterTier===t?'var(--accent-dim)':'transparent',color:filterTier===t?'var(--grammar)':'var(--text-dim)',cursor:'pointer'}}>{t==='all'?'All Tiers':TIER_LABELS[t]}</button>
+            ); })}
+            {[1,2,3,4,5,6,7,8,9].map(function(l){ return (
+              <button key={l} onClick={function(){setFilterLevel(filterLevel===String(l)?'all':String(l));}} style={{padding:'3px 10px',borderRadius:'12px',fontSize:'0.72rem',border:'1px solid '+(filterLevel===String(l)?'var(--grammar)':'var(--border)'),background:filterLevel===String(l)?'var(--accent-dim)':'transparent',color:filterLevel===String(l)?'var(--grammar)':'var(--text-dim)',cursor:'pointer'}}>L{l}</button>
+            ); })}
+          </div>
+          {filteredReview.map(function(qr,i){
+            var idx=shuffledQs.indexOf(qr); var ar=answers[idx]||{}; var isC=ar.correct;
+            return (
+              <div key={i} style={{background:isC?'rgba(22,163,74,0.06)':'rgba(220,38,38,0.06)',border:'1px solid '+(isC?'var(--lbe-green)':'var(--error)'),borderRadius:'var(--radius-sm)',padding:'0.7rem',marginBottom:'0.5rem',fontSize:'0.82rem'}}>
+                <div style={{display:'flex',gap:'0.4rem',marginBottom:'0.3rem'}}>
+                  <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',background:'var(--panel)',padding:'1px 6px',borderRadius:'4px'}}>L{qr.level}</span>
+                  <span style={{color:isC?'var(--lbe-green)':'var(--error)',fontWeight:600}}>{isC?'✓ Correct':'✗ Incorrect'}</span>
+                </div>
+                <div style={{color:'var(--text)',marginBottom:'0.3rem'}}>{qr.q}</div>
+                {qr.explain && <div style={{color:'var(--text-muted)',fontSize:'0.78rem'}}>{qr.explain}</div>}
+              </div>
+            );
+          })}
+          <button onClick={handleRestart} style={{marginTop:'1rem',padding:'8px 20px',borderRadius:'var(--radius-sm)',border:'1px solid var(--border)',background:'var(--panel)',color:'var(--text)',cursor:'pointer',fontSize:'0.82rem'}}>Reset Assessment</button>
         </div>
-        <div className="score-label">{label}</div>
-        <div className="score-pct">{pct}% — {score} correct out of {total} questions</div>
-        <p style={{fontSize:'0.82rem', color:'var(--text-muted)', maxWidth:'400px', margin:'0.75rem auto 0', lineHeight:'1.6'}}>
-          {pct >= 80
-            ? 'Strong performance across all 9 levels. You understand the power density chain from legacy infrastructure through to the retrofit investment decision.'
-            : pct >= 60
-            ? 'Good foundation. Review the levels where you missed questions and revisit the Grammar and Logic tabs for those specific areas.'
-            : 'The module covers significant technical depth. Work through the Grammar and Logic tabs for each level before re-attempting the assessment.'}
-        </p>
-        <button className="restart-btn" onClick={handleRestart}>Restart Assessment</button>
       </div>
     );
   }
 
-  var optionLetters = ['A', 'B', 'C', 'D'];
-  var prevAnswerState = answers[current];
-  var displaySelected = revealed ? (prevAnswerState ? prevAnswerState.selected : selected) : selected;
-  var isCorrect = revealed && displaySelected === correctIdx;
-
+  /* Question screen */
+  var optionLetters = ['A','B','C','D'];
   return (
     <div>
       <div className="assessment-header">
-        <div className="assessment-progress">
-          Question {current + 1} of {total} · {answered} answered
-        </div>
-        <div style={{fontSize:'0.78rem', color:'var(--text-faint)'}}>
-          Score: {Object.values(answers).filter(function(a){return a.correct;}).length} / {answered}
-        </div>
+        <div className="assessment-progress">Question {current+1} of {total}</div>
+        <div style={{fontFamily:'var(--font-mono)',fontSize:'0.9rem',color:'var(--grammar)',fontWeight:600}}>{fmt(seconds)}</div>
+        <div style={{fontSize:'0.78rem',color:'var(--text-faint)'}}>Score: {Object.values(answers).filter(function(a){return a.correct;}).length}/{Object.keys(answers).length||0}</div>
       </div>
       <div className="progress-bar-wrap">
-        <div className="progress-bar-fill" style={{width: ((current / total) * 100) + '%'}} />
+        <div className="progress-bar-fill" style={{width:((current/total)*100)+'%'}} />
       </div>
-
       <div className="q-card">
         <div className="q-meta">
           <span className="q-level-badge">L{q.level}</span>
-          <span className={'q-tier-badge ' + (q.tier || 'knowledge')}>{q.tier || 'knowledge'}</span>
+          <span className={'q-tier-badge '+(q.tier||'knowledge')}>{TIER_LABELS[q.tier]||q.tier}</span>
           <span className="q-id">{q.id}</span>
         </div>
         <div className="q-text">{q.q}</div>
         <div className="q-options">
-          {(q.options || []).map(function(opt, oi) {
-            var cls = 'q-option-btn';
-            if (revealed) {
-              if (oi === correctIdx) cls += ' correct';
-              else if (oi === displaySelected && oi !== correctIdx) cls += ' incorrect';
-            } else if (oi === selected) {
-              cls += ' selected';
-            }
+          {(q.options||[]).map(function(opt,oi){
+            var cls='q-option-btn';
+            if (revealed){ if(oi===q.correct) cls+=' correct'; else if(oi===ansState.selected&&oi!==q.correct) cls+=' incorrect'; }
+            else if(ansState&&oi===ansState.selected) cls+=' selected';
             return (
-              <button
-                key={oi}
-                className={cls}
-                onClick={() => handleOption(oi)}
-                disabled={revealed}
-              >
-                <span className="q-option-letter">{optionLetters[oi]}</span>
-                <span>{opt}</span>
+              <button key={oi} className={cls} onClick={function(){handleOption(oi);}} disabled={revealed}>
+                <span className="q-option-letter">{optionLetters[oi]}</span><span>{opt}</span>
               </button>
             );
           })}
         </div>
-
         {revealed && q.explain && (
-          <div className={'q-explain' + (isCorrect ? '' : ' wrong')}>
-            <div className="q-explain-label">{isCorrect ? '✓ Correct' : '✗ Incorrect'}</div>
+          <div className={'q-explain'+(ansState.correct?'':' wrong')}>
+            <div className="q-explain-label">{ansState.correct?'✓ Correct':'✗ Incorrect'}</div>
             {q.explain}
           </div>
         )}
-
         <div className="q-nav">
-          <button
-            className="q-nav-btn secondary"
-            onClick={handlePrev}
-            disabled={current === 0}
-          >
-            ← Previous
-          </button>
-          <div style={{display:'flex', gap:'0.5rem'}}>
-            {!revealed && selected !== null && (
-              <button className="q-nav-btn primary" onClick={handleReveal}>
-                Check Answer
-              </button>
-            )}
-            {revealed && (
-              <button className="q-nav-btn primary" onClick={handleNext}>
-                {current < total - 1 ? 'Next →' : 'See Results'}
-              </button>
-            )}
-          </div>
+          <div/>
+          {revealed
+            ? <button className="q-nav-btn primary" onClick={handleNext}>{current<total-1?'Next →':'See Results'}</button>
+            : (ansState ? null : <div style={{fontSize:'0.78rem',color:'var(--text-faint)'}}>Select an answer above</div>)
+          }
         </div>
       </div>
     </div>
@@ -3690,6 +3931,185 @@ function BSGTab() {
 // ═══════════════════════════════════════════════════════════════
 // APP COMPONENT
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+// PROGRESS TAB
+// ═══════════════════════════════════════════════════════════════
+function ProgressTab({ selectedLevel, visitedStages }) {
+  var totalStages = LEVELS.length * 3;
+  var completed = 0;
+  LEVELS.forEach(function(lvl, i) {
+    var vs = (visitedStages && visitedStages[i]) || {};
+    if (vs.grammar)  completed++;
+    if (vs.logic)    completed++;
+    if (vs.rhetoric) completed++;
+  });
+  var pct = Math.round((completed / totalStages) * 100);
+
+  var storedAnswers = safeLoad('aq_answers', {});
+  var assessmentDone = Object.keys(storedAnswers).length === 27;
+  var assessmentScore = Object.values(storedAnswers).filter(function(a){ return a.correct; }).length;
+
+  var META = [
+    ['Module ID', 'DC-AI-001'],['Version', '2.0.0'],
+    ['Series', 'DC-AI (8 modules)'],['Topic', 'Power Density'],
+    ['Publisher', 'Legacy Business Engineers Ltd'],
+    ['Contact', 'lmurphy@legacybe.ie']
+  ];
+
+  return (
+    <div className="main-content">
+      {/* Overall progress */}
+      <div className="card">
+        <div className="card-header">
+          <div className="card-icon green">📊</div>
+          <div><div className="card-title">Overall Progress</div>
+            <div className="card-subtitle">{completed} of {totalStages} stages complete ({pct}%)</div>
+          </div>
+        </div>
+        <div style={{height:'8px',background:'var(--border)',borderRadius:'4px',overflow:'hidden',marginBottom:'1rem'}}>
+          <div style={{height:'100%',width:pct+'%',background:'linear-gradient(90deg,var(--lbe-green),var(--grammar))',transition:'width 0.4s ease'}}/>
+        </div>
+
+        {/* Per-level dots */}
+        {LEVELS.map(function(lvl, i) {
+          var vs = (visitedStages && visitedStages[i]) || {};
+          return (
+            <div key={i} style={{display:'flex',alignItems:'center',gap:'0.75rem',padding:'0.45rem 0',borderBottom:'1px solid var(--border)'}}>
+              <span style={{fontSize:'1rem',width:'24px',textAlign:'center'}}>{lvl.icon}</span>
+              <div style={{flex:1,minWidth:0}}>
+                <span style={{fontSize:'0.82rem',fontWeight:500,color:'var(--text-bright)'}}>{lvl.id}: {lvl.title}</span>
+              </div>
+              <div style={{display:'flex',gap:'5px'}}>
+                {[['G','grammar','var(--grammar)'],['L','logic','var(--logic)'],['R','rhetoric','var(--rhetoric)']].map(function(dot){
+                  var done = !!vs[dot[1]];
+                  return <span key={dot[0]} title={dot[1]} style={{width:'14px',height:'14px',borderRadius:'50%',background:done?dot[2]:'var(--border)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'8px',color:done?'#fff':'var(--text-faint)',fontWeight:700}}>{done?dot[0]:dot[0]}</span>;
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Assessment results */}
+      {assessmentDone && (
+        <div className="card">
+          <div className="card-header">
+            <div className="card-icon blue">📝</div>
+            <div><div className="card-title">Assessment Results</div>
+              <div className="card-subtitle">Last completed run</div>
+            </div>
+          </div>
+          <div style={{fontSize:'1.4rem',fontWeight:700,color:'var(--grammar)'}}>{assessmentScore}<span style={{fontSize:'0.9rem',color:'var(--text-muted)'}}>/27 ({Math.round(assessmentScore/27*100)}%)</span></div>
+        </div>
+      )}
+
+      {/* Module info */}
+      <div className="card">
+        <div className="card-header">
+          <div className="card-icon cyan">ℹ️</div>
+          <div><div className="card-title">Module Information</div></div>
+        </div>
+        <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.78rem'}}>
+          <tbody>
+            {META.map(function(r,i){ return (
+              <tr key={i} style={{borderBottom:'1px solid var(--border)',background:i%2===0?'transparent':'var(--panel)'}}>
+                <td style={{padding:'5px 8px',color:'var(--text-muted)',width:'40%'}}>{r[0]}</td>
+                <td style={{padding:'5px 8px',color:'var(--text)',fontFamily:'var(--font-mono)',fontSize:'0.75rem'}}>{r[1]}</td>
+              </tr>
+            ); })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SIDEBAR COMPONENTS
+// ═══════════════════════════════════════════════════════════════
+function SidebarCalculator({ selectedLevel }) {
+  var level = LEVELS[selectedLevel] || {};
+  var fnSrc = level.cascadeCheck || '';
+  var cascadeCheck = null;
+  try { cascadeCheck = fnSrc ? new Function('inputs', fnSrc.replace(/^function\s*\(inputs\)\s*\{/, '').replace(/\}\s*$/, '')) : null; } catch(e) {}
+
+  var [rackCount, setRackCount] = React.useState(50);
+  var [targetKW, setTargetKW] = React.useState(40);
+  var [result, setResult] = React.useState(null);
+
+  function runCheck() {
+    if (!cascadeCheck) { setResult({pass:false,reason:'No cascade check for this level.'}); return; }
+    try { setResult(cascadeCheck({rackCount:Number(rackCount),targetKW:Number(targetKW)})); }
+    catch(e) { setResult({pass:false,reason:'Calculation error: '+e.message}); }
+  }
+
+  return (
+    <div className="sidebar-card">
+      <div className="sidebar-card-title">⚡ AI Readiness Calculator</div>
+      <div style={{fontSize:'0.75rem',color:'var(--text-muted)',marginBottom:'0.6rem'}}>Level {level.level||'—'}: {level.title||''}</div>
+      <label style={{fontSize:'0.72rem',color:'var(--text-dim)'}}>Rack count
+        <input type="number" value={rackCount} onChange={function(e){setRackCount(e.target.value);}} style={{display:'block',width:'100%',padding:'5px 8px',marginTop:'3px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',color:'var(--text)',fontSize:'0.8rem',fontFamily:'var(--font-mono)'}} />
+      </label>
+      <label style={{fontSize:'0.72rem',color:'var(--text-dim)',marginTop:'0.5rem',display:'block'}}>Target kW/rack
+        <input type="number" value={targetKW} onChange={function(e){setTargetKW(e.target.value);}} style={{display:'block',width:'100%',padding:'5px 8px',marginTop:'3px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',color:'var(--text)',fontSize:'0.8rem',fontFamily:'var(--font-mono)'}} />
+      </label>
+      <button onClick={runCheck} style={{marginTop:'0.75rem',width:'100%',padding:'7px',background:'var(--lbe-green)',color:'#fff',border:'none',borderRadius:'var(--radius-sm)',fontWeight:600,fontSize:'0.8rem',cursor:'pointer'}}>Find Bottlenecks →</button>
+      {result && (
+        <div style={{marginTop:'0.6rem',padding:'0.5rem 0.7rem',borderRadius:'var(--radius-sm)',background:result.pass?'rgba(22,163,74,0.08)':'rgba(220,38,38,0.08)',border:'1px solid '+(result.pass?'var(--lbe-green)':'var(--error)'),fontSize:'0.75rem',color:'var(--text)',lineHeight:'1.5'}}>
+          <strong style={{color:result.pass?'var(--lbe-green)':'var(--error)'}}>{result.pass?'✓ PASS':'✗ FAIL'}</strong> — {result.reason}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SidebarFacility() {
+  var rows = [
+    ['Facility','Clonshaugh Reference DC (2012)'],
+    ['Racks','200 (Hall B)'],['Avg Density','8 kW/rack'],
+    ['IT Load','1.6 MW'],['PUE','1.50 (target 1.20)'],
+    ['MIC','5 MVA @ 10 kV ESB Networks'],
+    ['MIC Util.','~85%'],['Bus Section','1,600A @ 415V'],
+    ['Bus Util.','~73%'],['PDUs','Dual 32A single-phase'],
+    ['Voltage','415V 3-phase'],['PF','0.85']
+  ];
+  return (
+    <div className="sidebar-card">
+      <div className="sidebar-card-title">🏢 Facility Profile</div>
+      <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.73rem'}}>
+        <tbody>
+          {rows.map(function(r,i){ return (
+            <tr key={i} style={{borderBottom:'1px solid var(--border)',background:i%2===0?'transparent':'var(--panel)'}}>
+              <td style={{padding:'3px 6px',color:'var(--text-muted)',whiteSpace:'nowrap'}}>{r[0]}</td>
+              <td style={{padding:'3px 6px',color:'var(--text)',fontFamily:'var(--font-mono)',fontSize:'0.7rem'}}>{r[1]}</td>
+            </tr>
+          ); })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function SidebarMethodology() {
+  var items = [
+    ['Trivium Method','Grammar → Logic → Rhetoric. Facts first, consequences second, stakeholder communication third.'],
+    ['Feynman Clarify','Every fact has three layers: formal definition, plain English, and the number that makes it real.'],
+    ['Weakest Link','Each level identifies the most common misconception and the exact steps to correct it.'],
+    ['Five Personas','Same finding — five professional perspectives: Fund, CTO, MEP, ESG, QS.']
+  ];
+  return (
+    <div className="sidebar-card">
+      <div className="sidebar-card-title">📋 Methodology</div>
+      {items.map(function(it,i){ return (
+        <div key={i} style={{marginBottom:'0.6rem'}}>
+          <div style={{fontSize:'0.72rem',fontWeight:600,color:'var(--text-bright)',marginBottom:'2px'}}>{it[0]}</div>
+          <div style={{fontSize:'0.71rem',color:'var(--text-muted)',lineHeight:'1.5'}}>{it[1]}</div>
+        </div>
+      ); })}
+    </div>
+  );
+}
+
 function App() {
   var [theme, setTheme] = React.useState(safeLoad('theme', 'dark'));
   var [selectedLevel, setSelectedLevel] = React.useState(safeLoad('level', 0));
@@ -3724,6 +4144,8 @@ function App() {
     switch (activeTab) {
       case 'chain':
         return <ChainTab selectedLevel={levelIdx} setSelectedLevel={setSelectedLevel} setActiveTab={setActiveTab} />;
+      case 'learn':
+        return <LearnTab selectedLevel={levelIdx} visitedStages={visitedStages} />;
       case 'grammar':
         return <GrammarTab selectedLevel={levelIdx} />;
       case 'logic':
@@ -3734,6 +4156,9 @@ function App() {
         return <FieldChallengeTab selectedLevel={levelIdx} />;
       case 'assessment':
         return <AssessmentTab />;
+      case 'progress':
+        return <ProgressTab selectedLevel={levelIdx} visitedStages={visitedStages} />;
+      case 'reference':
       case 'bsg':
         return <BSGTab />;
       default:
@@ -3743,6 +4168,7 @@ function App() {
 
   return (
     <div className="app-container">
+      <div className="audience-bar">AUDIENCE: Fund Managers · Asset Owners · Colocation Executives · CTOs · Technical Advisors</div>
       <Header theme={theme} setTheme={setTheme} />
 
       {/* Hero */}
@@ -3781,24 +4207,45 @@ function App() {
         </div>
       )}
 
-      {/* Main content */}
-      <main className="main-content">
-        {renderTab()}
-      </main>
+      {/* Two-column: main + sidebar */}
+      <div className="content-with-sidebar">
+        <main className="main-col main-content">
+          {renderTab()}
+        </main>
+        <aside className="sidebar-col">
+          <SidebarCalculator selectedLevel={levelIdx} />
+          <SidebarFacility />
+          <SidebarMethodology />
+        </aside>
+      </div>
 
-      {/* Footer */}
-      <footer className="app-footer">
-        <div className="footer-inner">
-          <div className="footer-left">
-            <span className="footer-copyright">&copy; 2026 Legacy Business Engineers Ltd &middot; DC-AI Series &middot; Module 1 of 8</span>
-            <span className="footer-cta">Need to know where your facility stands on AI readiness?</span>
-          </div>
-          <div className="footer-right">
-            <a href="mailto:lmurphy@legacybe.ie" className="footer-contact">lmurphy@legacybe.ie</a>
-            <span className="footer-version">DC-AI-001 v{TOOL_VERSION}</span>
-          </div>
+      {/* CTA section */}
+      <div className="cta-section">
+        <div className="cta-card">
+          <h4>Need to know where your facility stands on AI readiness?</h4>
+          <p>Legacy Business Engineers delivers independent AI readiness assessments for data centre owners and asset managers across Ireland and the UK.</p>
+          <a href="mailto:lmurphy@legacybe.ie" className="cta-btn">Learn about AI Readiness Assessment →</a>
         </div>
-      </footer>
+        <div className="cta-card">
+          <h4>Questions or feedback on this content?</h4>
+          <p>We improve every module based on feedback from practitioners. If something is wrong, unclear, or missing — tell us.</p>
+          <a href="mailto:lmurphy@legacybe.ie" className="cta-btn">Send Us a Message</a>
+        </div>
+      </div>
+
+      {/* Footer — 2-tier */}
+      <div className="footer-nav-row">
+        <span className="footer-nav-link disabled">← First module</span>
+        <span style={{fontSize:'0.78rem',color:'var(--text-muted)',fontFamily:'var(--font-mono)'}}>Module 1 of 8 · DC-AI v{TOOL_VERSION}</span>
+        <a href="#" className="footer-nav-link">DC-AI-002: Cooling →</a>
+      </div>
+      <div className="footer-copy-row">
+        <span style={{color:'var(--text-muted)'}}>© 2026 Legacy Business Engineers Ltd</span>
+        <span style={{display:'flex',gap:'1rem'}}>
+          <a href="https://legacybe.ie" style={{color:'var(--text-dim)'}}>legacybe.ie</a>
+          <a href="mailto:lmurphy@legacybe.ie" style={{color:'var(--text-dim)'}}>Contact</a>
+        </span>
+      </div>
     </div>
   );
 }
