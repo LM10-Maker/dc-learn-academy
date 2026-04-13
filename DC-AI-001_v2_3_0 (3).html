@@ -3189,13 +3189,21 @@ function TabBar({ activeTab, setActiveTab }) {
 // ═══════════════════════════════════════════════════════════════
 // LEARN TAB — Grammar | Logic | Rhetoric with stage selector
 // ═══════════════════════════════════════════════════════════════
-function LearnTab({ selectedLevel, setSelectedLevel, visitedStages, progress, setProgress }) {
+function LearnTab({ selectedLevel, setSelectedLevel, visitedStages, setVisitedStages, progress, setProgress }) {
   var level = LEVELS[selectedLevel];
-  var p = (progress && progress[level.id]) || {};
+  var p = (visitedStages && visitedStages[selectedLevel]) || {};
   var [stage, setStage] = React.useState('grammar');
   var [rhetPersonaInit, setRhetPersona] = React.useState(null);
   var stageClass = function(s) { var active=stage===s; var done=p[s]; if(active) return 'triv-btn active-'+s; if(done) return 'triv-btn done-'+s; return 'triv-btn'; };
-  var handleComplete = function(s) { if(setProgress) setProgress(function(prev){return Object.assign({},prev,{[level.id]:Object.assign({},prev[level.id]||{},{[s]:true})}); }); };
+  var handleComplete = function(s) {
+    if (setVisitedStages) setVisitedStages(function(prev) {
+      var next = Object.assign({}, prev);
+      next[selectedLevel] = Object.assign({}, next[selectedLevel] || {});
+      next[selectedLevel][s] = true;
+      safeStore('visitedStages', next);
+      return next;
+    });
+  };
   return (
     <div>
     {level.clockQuote && (
@@ -3219,9 +3227,6 @@ function LearnTab({ selectedLevel, setSelectedLevel, visitedStages, progress, se
         {stage==='grammar' && <GrammarPanel level={level} onComplete={function(){handleComplete('grammar');}} done={p.grammar}/>}
         {stage==='logic' && <LogicPanel level={level} onComplete={function(){handleComplete('logic');}} done={p.logic}/>}
         {stage==='rhetoric' && <RhetoricPanel level={level} onComplete={function(){handleComplete('rhetoric');}} done={p.rhetoric} initialPersona={rhetPersonaInit}/>}
-      </div>
-      <div style={{marginTop:20}}>
-        <GlossaryBibToggle/>
       </div>
     </div>
   );
@@ -3369,8 +3374,8 @@ function GrammarPanel({level,onComplete,done}){
           );})}
         </div>
       )}
-      <button className={'completion-btn btn-grammar'+(done?' done':'')} onClick={onComplete}>
-        {done ? '✓ Key facts memorised' : "I've memorised the key facts"}
+      <button className={'completion-btn btn-grammar'+(done?' done':'')} onClick={done?undefined:onComplete} disabled={done}>
+        {done ? '✓ Complete' : "I've memorised the key facts"}
       </button>
       {level.sourceNote && (
         <div style={{marginTop:14,fontSize:12,color:'var(--text-dim)',lineHeight:1.8,borderLeft:'3px solid var(--grammar)',paddingLeft:12}}>
@@ -3418,8 +3423,8 @@ function LogicPanel({level,onComplete,done}){
           {level.crossRefs.map(function(cr,i){return(<div key={i} style={{fontSize:12,color:'var(--text-muted)',marginBottom:4}}>↔️ {cr.module} {cr.level}: {cr.topic}</div>);})}
         </div>
       )}
-      <button className={'completion-btn btn-logic'+(done?' done':'')} onClick={onComplete}>
-        {done ? '✓ Consequences understood' : 'I understand the consequences'}
+      <button className={'completion-btn btn-logic'+(done?' done':'')} onClick={done?undefined:onComplete} disabled={done}>
+        {done ? '✓ Complete' : 'I understand the consequences'}
       </button>
     </div>
   );
@@ -3461,8 +3466,8 @@ function RhetoricPanel({level,onComplete,done,initialPersona}){
           {pTakeaway && <div style={{fontStyle:'italic',color:'var(--rhetoric)',marginTop:10,fontSize:13,lineHeight:1.6}}>{pTakeaway}</div>}
         </div>
       )}
-      <button className={'completion-btn btn-rhetoric'+(done?' done':'')} onClick={onComplete} style={{marginTop:16}}>
-        {done ? '✓ Can explain to stakeholders' : 'I can explain it to each stakeholder'}
+      <button className={'completion-btn btn-rhetoric'+(done?' done':'')} onClick={done?undefined:onComplete} disabled={done} style={{marginTop:16}}>
+        {done ? '✓ Complete' : 'I can explain it to each stakeholder'}
       </button>
     </div>
   );
@@ -3851,17 +3856,19 @@ function AssessmentTab() {
   /* Pre-start screen */
   if (!started) return (
     <div>
-      <div style={{marginBottom:16,padding:'12px 16px',border:'1px solid var(--green)',borderLeft:'3px solid var(--green)',borderRadius:8,background:'transparent'}}>
-        <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.7}}>
+      <div className="card" style={{marginBottom:16,padding:12,borderLeft:'3px solid var(--green)'}}>
+        <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.8}}>
           27 questions across three Trivium stages — 9 per stage, one per chain level.<br/>
-          A 15-minute timer starts on your first answer. Score is shown after each question.
+          <strong>Knowledge Check</strong> (Grammar): can you recall the key facts? <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--green)'}}>60s</span><br/>
+          <strong>Eng. Calculation</strong> (Logic): can you work through the consequences? <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--green)'}}>120s</span><br/>
+          <strong>Prof. Judgement</strong> (Rhetoric): can you explain it to each stakeholder? <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--green)'}}>90s</span>
         </div>
       </div>
       <div className="card">
         <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
           <div style={{width:44,height:44,borderRadius:'50%',border:'2px solid var(--grammar)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>⏱</div>
           <div>
-            <div style={{fontSize:22,fontWeight:700,color:'var(--grammar)'}}>15:00</div>
+            <div style={{fontFamily:'var(--font-mono)',fontSize:22,fontWeight:700,color:'var(--grammar)',letterSpacing:2}}>15:00</div>
             <div style={{fontSize:11,color:'var(--text-muted)'}}>starts on first answer</div>
           </div>
         </div>
@@ -3873,7 +3880,7 @@ function AssessmentTab() {
             </div>
           ); })}
         </div>
-        <button onClick={function(){setStarted(true);}} style={{marginTop:'0.5rem',padding:'10px 28px',borderRadius:'var(--radius-sm)',background:'var(--grammar)',color:'#fff',fontWeight:600,fontSize:'0.9rem',border:'none',cursor:'pointer',width:'100%'}}>
+        <button onClick={function(){setStarted(true);}} style={{marginTop:'0.5rem',padding:'12px 28px',borderRadius:'var(--radius-sm)',background:'var(--lbe-green)',color:'#fff',fontWeight:600,fontSize:'0.9rem',border:'none',cursor:'pointer',width:'100%'}}>
           Start Assessment →
         </button>
       </div>
@@ -3923,9 +3930,10 @@ function AssessmentTab() {
           {filteredReview.map(function(qr,i){
             var idx=shuffledQs.indexOf(qr); var ar=answers[idx]||{}; var isC=ar.correct;
             return (
-              <div key={i} style={{background:isC?'rgba(74,124,89,0.06)':'rgba(220,38,38,0.06)',border:'1px solid '+(isC?'var(--lbe-green)':'var(--error)'),borderRadius:'var(--radius-sm)',padding:'0.7rem',marginBottom:'0.5rem',fontSize:'0.82rem'}}>
-                <div style={{display:'flex',gap:'0.4rem',marginBottom:'0.3rem'}}>
+              <div key={i} style={{background:isC?'rgba(74,124,89,0.06)':'rgba(220,38,38,0.06)',borderLeft:'3px solid '+({knowledge:'var(--grammar)',calculation:'var(--logic)',judgement:'var(--rhetoric)'}[qr.tier]||'var(--grammar)'),border:'1px solid '+(isC?'var(--lbe-green)':'var(--error)'),borderRadius:'0 var(--radius-sm) var(--radius-sm) 0',padding:'0.7rem',marginBottom:'0.5rem',fontSize:'0.82rem'}}>
+                <div style={{display:'flex',gap:'0.4rem',alignItems:'center',marginBottom:'0.3rem'}}>
                   <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',background:'var(--panel)',padding:'1px 6px',borderRadius:'4px'}}>L{qr.level}</span>
+                  <span className={'q-tier-badge '+(qr.tier||'knowledge')} style={{fontSize:'0.65rem',padding:'1px 6px'}}>{TIER_LABELS[qr.tier]||qr.tier}</span>
                   <span style={{color:isC?'var(--lbe-green)':'var(--error)',fontWeight:600}}>{isC?'✓ Correct':'✗ Incorrect'}</span>
                 </div>
                 <div style={{color:'var(--text)',marginBottom:'0.3rem'}}>{qr.q}</div>
@@ -3960,7 +3968,7 @@ function AssessmentTab() {
       <div className="progress-bar-wrap">
         <div className="progress-bar-fill" style={{width:((current/total)*100)+'%'}} />
       </div>
-      <div className="q-card">
+      <div className="q-card" style={{borderLeft:'3px solid '+({knowledge:'var(--grammar)',calculation:'var(--logic)',judgement:'var(--rhetoric)'}[q.tier||'knowledge']||'var(--grammar)'),borderRadius:'0 var(--radius-lg) var(--radius-lg) 0'}}>
         <div className="q-meta">
           <span className="q-level-badge">L{q.level}</span>
           <span className={'q-tier-badge '+(q.tier||'knowledge')}>{TIER_LABELS[q.tier]||q.tier}</span>
@@ -4152,42 +4160,55 @@ function ProgressTab({ selectedLevel, visitedStages, progress }) {
 // SIDEBAR COMPONENTS
 // ═══════════════════════════════════════════════════════════════
 function SidebarCalculator({ selectedLevel, onCascadeResult }) {
-  var level = LEVELS[selectedLevel] || {};
-  var fnSrc = level.cascadeCheck || '';
-  var cascadeCheck = null;
-  try { cascadeCheck = fnSrc ? new Function('inputs', fnSrc.replace(/^function\s*\(inputs\)\s*\{/, '').replace(/\}\s*$/, '')) : null; } catch(e) {}
-
   var [rackCount, setRackCount] = React.useState(50);
   var [targetKW, setTargetKW] = React.useState(40);
-  var [result, setResult] = React.useState(null);
+  var [allResults, setAllResults] = React.useState(null);
 
   function runCheck() {
-    if (!cascadeCheck) { var r={pass:false,reason:'No cascade check for this level.'}; setResult(r); if(onCascadeResult) onCascadeResult(selectedLevel,r); return; }
-    try {
-      var r = cascadeCheck({rackCount:Number(rackCount),targetKW:Number(targetKW)});
-      setResult(r);
-      if (onCascadeResult) onCascadeResult(selectedLevel, r);
-    } catch(e) {
-      var r = {pass:false,reason:'Calculation error: '+e.message};
-      setResult(r);
-      if (onCascadeResult) onCascadeResult(selectedLevel, r);
-    }
+    var results = [];
+    LEVELS.forEach(function(lvl, idx) {
+      var fnSrc = lvl.cascadeCheck || '';
+      var fn = null;
+      try { fn = fnSrc ? new Function('inputs', fnSrc.replace(/^function\s*\(inputs\)\s*\{/, '').replace(/\}\s*$/, '')) : null; } catch(e) {}
+      var r;
+      if (!fn) { r = {pass:false,reason:'No cascade check for this level.'}; }
+      else { try { r = fn({rackCount:Number(rackCount),targetKW:Number(targetKW)}); } catch(e) { r = {pass:false,reason:'Error: '+e.message}; } }
+      results.push(r);
+      if (onCascadeResult) onCascadeResult(idx, r);
+    });
+    setAllResults(results);
   }
 
+  var failCount = allResults ? allResults.filter(function(r){return !r.pass;}).length : 0;
+  var iStyle = {display:'block',width:'100%',padding:'5px 8px',marginTop:'3px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',color:'var(--text)',fontSize:'0.8rem',fontFamily:'var(--font-mono)'};
   return (
     <div className="sidebar-card">
       <div className="sidebar-card-title">AI Readiness Calculator</div>
-      <div style={{fontSize:'0.75rem',color:'var(--text-muted)',marginBottom:'0.6rem'}}>Level {level.level||'—'}: {level.title||''}</div>
+      <div style={{fontSize:'0.75rem',color:'var(--text-muted)',marginBottom:'0.6rem'}}>Runs all 9 levels simultaneously</div>
       <label style={{fontSize:'0.72rem',color:'var(--text-dim)'}}>Rack count
-        <input type="number" value={rackCount} onChange={function(e){setRackCount(e.target.value);}} style={{display:'block',width:'100%',padding:'5px 8px',marginTop:'3px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',color:'var(--text)',fontSize:'0.8rem',fontFamily:'var(--font-mono)'}} />
+        <input type="number" value={rackCount} onChange={function(e){setRackCount(e.target.value);}} style={iStyle} />
       </label>
       <label style={{fontSize:'0.72rem',color:'var(--text-dim)',marginTop:'0.5rem',display:'block'}}>Target kW/rack
-        <input type="number" value={targetKW} onChange={function(e){setTargetKW(e.target.value);}} style={{display:'block',width:'100%',padding:'5px 8px',marginTop:'3px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',color:'var(--text)',fontSize:'0.8rem',fontFamily:'var(--font-mono)'}} />
+        <input type="number" value={targetKW} onChange={function(e){setTargetKW(e.target.value);}} style={iStyle} />
       </label>
       <button onClick={runCheck} style={{marginTop:'0.75rem',width:'100%',padding:'7px',background:'var(--lbe-green)',color:'#fff',border:'none',borderRadius:'var(--radius-sm)',fontWeight:600,fontSize:'0.8rem',cursor:'pointer'}}>Find Bottlenecks →</button>
-      {result && (
-        <div style={{marginTop:'0.6rem',padding:'0.5rem 0.7rem',borderRadius:'var(--radius-sm)',background:result.pass?'rgba(74,124,89,0.08)':'rgba(220,38,38,0.08)',border:'1px solid '+(result.pass?'var(--lbe-green)':'var(--error)'),fontSize:'0.75rem',color:'var(--text)',lineHeight:'1.5'}}>
-          <strong style={{color:result.pass?'var(--lbe-green)':'var(--error)'}}>{result.pass?'✓ PASS':'✗ FAIL'}</strong> — {result.reason}
+      {allResults && (
+        <div style={{marginTop:'0.6rem'}}>
+          <div style={{fontSize:'0.8rem',fontWeight:700,color:failCount>0?'var(--red)':'var(--green)',marginBottom:'0.4rem',padding:'4px 8px',borderRadius:'var(--radius-sm)',background:failCount>0?'var(--red-dim)':'var(--green-dim)'}}>
+            {failCount} bottleneck{failCount!==1?'s':''} found
+          </div>
+          {allResults.map(function(r,idx){
+            var lvl=LEVELS[idx];
+            return (
+              <div key={idx} style={{padding:'5px 7px',marginBottom:'3px',borderRadius:'var(--radius-sm)',background:'var(--panel)',border:'1px solid var(--border)',fontSize:'0.72rem'}}>
+                <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:4}}>
+                  <span style={{color:'var(--text-bright)',fontWeight:600}}>L{lvl.level}: {lvl.title}</span>
+                  <span style={{fontWeight:700,padding:'1px 5px',borderRadius:3,background:r.pass?'var(--green-dim)':'var(--red-dim)',color:r.pass?'var(--green)':'var(--red)',whiteSpace:'nowrap'}}>{r.pass?'PASS':'FAIL'}</span>
+                </div>
+                <div style={{color:'var(--text-muted)',marginTop:'2px',lineHeight:1.4}}>{r.reason}</div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -4284,7 +4305,7 @@ function App() {
       case 'chain':
         return <ChainTab selectedLevel={levelIdx} setSelectedLevel={setSelectedLevel} setActiveTab={setActiveTab} cascadeResults={cascadeResults} visitedStages={visitedStages} />;
       case 'learn':
-        return <LearnTab selectedLevel={levelIdx} visitedStages={visitedStages} />;
+        return <LearnTab selectedLevel={levelIdx} visitedStages={visitedStages} setVisitedStages={setVisitedStages} />;
       case 'grammar':
         return <GrammarTab selectedLevel={levelIdx} />;
       case 'logic':
@@ -4372,14 +4393,15 @@ function App() {
       </div>
 
       {/* Series nav - DC-LEARN pattern */}
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'16px 24px',margin:'12px auto 0',maxWidth:1200,width:'100%',borderTop:'1px solid var(--border)',boxSizing:'border-box'}} className="no-print">
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:'24px',padding:'16px 24px',margin:'12px auto 0',maxWidth:1200,width:'100%',borderTop:'1px solid var(--border)',boxSizing:'border-box'}} className="no-print">
         <div style={{flex:'1 1 33%',textAlign:'left'}}><span style={{color:'var(--text-muted)',fontSize:13}}>First module</span></div>
         <div style={{flex:'1 1 33%',textAlign:'center'}}><span style={{color:'var(--text-muted)',fontSize:12}}>Module 1 of 8 · DC-AI v{TOOL_VERSION}</span></div>
         <div style={{flex:'1 1 33%',textAlign:'right'}}><a href="#" style={{color:'var(--green)',textDecoration:'none',fontSize:13}}>DC-AI-002: Cooling →</a></div>
       </div>
-      <div style={{borderTop:'1px solid var(--border)',padding:'16px 24px',margin:'0 auto',maxWidth:1200,width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8,fontSize:12,color:'var(--text-muted)',boxSizing:'border-box'}} className="no-print">
-        <span>© 2026 Legacy Business Engineers Ltd</span>
-        <div style={{display:'flex',gap:16}}>
+      <div style={{borderTop:'1px solid var(--border)',padding:'16px 24px',margin:'0 auto',maxWidth:1200,width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'24px',fontSize:12,color:'var(--text-muted)',boxSizing:'border-box'}} className="no-print">
+        <div style={{flex:'1 1 33%',textAlign:'left'}}><span>© 2026 Legacy Business Engineers Ltd</span></div>
+        <div style={{flex:'1 1 33%',textAlign:'center'}}></div>
+        <div style={{flex:'1 1 33%',textAlign:'right',display:'flex',gap:16,justifyContent:'flex-end'}}>
           <a href="https://legacybe.ie" target="_blank" rel="noopener" style={{color:'var(--green)',textDecoration:'none'}}>legacybe.ie</a>
           <a href="https://legacybe.ie/tools/" target="_blank" rel="noopener" style={{color:'var(--green)',textDecoration:'none'}}>Tools</a>
           <a href="mailto:lmurphy@legacybe.ie" style={{color:'var(--green)',textDecoration:'none'}}>Contact</a>
