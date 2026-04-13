@@ -73,3 +73,19 @@ Append-only. Each entry records a detected change from a watched source.
 **Action taken:** _pending_
 
 ---
+
+## 2026-04-13 | CRREM — Methodology | P2
+
+**What changed:** 4 new lines detected. Examples:
+  + We're building a new home for CRREM â science-based decarbonization pathways for real estate across 44 countries.
+66 lines removed. Examples:
+  - CRREM Pathways reflect the emissions and energy intensity levels buildings need to meet to stay within the global carbon
+  - CRREM accelerates global roll-out with launch of three Regional Advisory Committees.
+  - Welcoming members of CRREM’s Technical Council
+  - Assess transition risks, model decarbonization cost
+**Source URL:** https://www.crrem.eu/
+**Modules to check:** 010, 007, 015
+**Priority:** P2
+**Action taken:** _pending_
+
+---

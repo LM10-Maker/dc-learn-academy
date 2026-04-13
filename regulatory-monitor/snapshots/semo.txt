@@ -8,7 +8,7 @@ Good
 CRM
 Good
 Funds Transfer
-Warning
+Good
 Settlement
 Good
 Invoicing

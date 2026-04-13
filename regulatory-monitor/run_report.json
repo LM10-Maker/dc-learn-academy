@@ -1,95 +1,16 @@
 {
-  "run_date": "2026-04-10T15:37:17.738188+00:00",
+  "run_date": "2026-04-13T09:02:54.229566+00:00",
   "sources_checked": 12,
-  "sources_changed": 7,
+  "sources_changed": 1,
   "fetch_errors": 0,
   "changes": [
     {
-      "date": "2026-04-10",
-      "source_id": "cru",
-      "source_name": "CRU \u2014 Decisions & Publications",
-      "url": "https://www.cru.ie/publications/",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
-      "modules_affected": [
-        "015",
-        "007",
-        "006",
-        "012"
-      ]
-    },
-    {
-      "date": "2026-04-10",
-      "source_id": "eirgrid",
-      "source_name": "EirGrid \u2014 News & Publications",
-      "url": "https://www.eirgrid.ie/news",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
-      "modules_affected": [
-        "006",
-        "015",
-        "012"
-      ]
-    },
-    {
-      "date": "2026-04-10",
-      "source_id": "esb_networks",
-      "source_name": "ESB Networks \u2014 Connection Policy",
-      "url": "https://www.esbnetworks.ie/",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
-      "modules_affected": [
-        "006",
-        "001"
-      ]
-    },
-    {
-      "date": "2026-04-10",
-      "source_id": "seai",
-      "source_name": "SEAI \u2014 Publications & Data",
-      "url": "https://www.seai.ie/data-and-insights/",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
-      "modules_affected": [
-        "010",
-        "004",
-        "007",
-        "012",
-        "015"
-      ]
-    },
-    {
-      "date": "2026-04-10",
-      "source_id": "epa",
-      "source_name": "EPA \u2014 Licensing",
-      "url": "https://www.epa.ie/",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
-      "modules_affected": [
-        "007",
-        "012"
-      ]
-    },
-    {
-      "date": "2026-04-10",
-      "source_id": "semo",
-      "source_name": "SEMO \u2014 Capacity Market",
-      "url": "https://www.sem-o.com/",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
-      "modules_affected": [
-        "012",
-        "015",
-        "006"
-      ]
-    },
-    {
-      "date": "2026-04-10",
+      "date": "2026-04-13",
       "source_id": "crrem",
       "source_name": "CRREM \u2014 Methodology",
       "url": "https://www.crrem.eu/",
-      "priority": "P3",
-      "summary": "Initial snapshot \u2014 no previous version to compare.",
+      "priority": "P2",
+      "summary": "4 new lines detected. Examples:\n  + We're building a new home for CRREM \u00e2\u0080\u0094 science-based decarbonization pathways for real estate across 44 countries.\n66 lines removed. Examples:\n  - CRREM Pathways reflect the emissions and energy intensity levels buildings need to meet to stay within the global carbon\n  - CRREM accelerates global roll-out with launch of three Regional Advisory Committees.\n  - Welcoming members of CRREM\u2019s Technical Council\n  - Assess transition risks, model decarbonization cost",
       "modules_affected": [
         "010",
         "007",
