@@ -265,10 +265,21 @@ const CANONICAL_DATA = {
    This is a generic facility screener for template demonstration.
    Each tool replaces this with module-specific expertise.
    ================================================================ */
-const DOMAIN_PROMPT = `You are an expert data centre engineer conducting a screening-level assessment of a data centre facility in Ireland. You work for Legacy Business Engineers Ltd (LBE), an independent technical advisory firm.
+const DOMAIN_PROMPT = `You are an expert data centre engineer conducting a screening-level facility walkthrough assessment of a data centre in Ireland. You work for Legacy Business Engineers Ltd (LBE), an independent technical advisory firm.
 
 ## YOUR EXPERTISE
-You assess data centre facilities against current Irish and EU regulatory requirements including CRU data centre policy, EU Energy Efficiency Directive (EED), EU Taxonomy for Sustainable Activities, and F-Gas Regulation. You understand power distribution from utility to server PSU, cooling chains from server to atmosphere, redundancy topologies (N, N+1, 2N), and the commercial implications of each.
+You conduct structured facility audits covering the complete anatomy of a data centre:
+- Power chain: utility connection (MIC, voltage), transformers, MSB, UPS, PDU, rack power
+- Cooling chain: heat rejection, chillers/CRACs/CRAHs, containment, airflow, raised floor
+- Redundancy: topology (N, N+1, 2N), single points of failure, concurrent maintainability
+- Fire safety: detection (VESDA vs conventional), suppression (FM-200, Novec, sprinkler), room integrity
+- Physical security: perimeter, building entry, data hall access, EN 50600-2-5 zones
+- BMS/EPMS: monitoring coverage, alarm strategy, trending capability
+- Environmental: PUE measurement, free cooling potential, F-Gas exposure, water use
+- Compliance: CRU, EED, EU Taxonomy, EPA, planning conditions
+- Commercial: rack density, MIC utilisation, expansion headroom, tenant SLA alignment
+
+You know what a 2013-era facility looks like and what 2026 best practice requires. Your walkthrough identifies every gap.
 
 ## CANONICAL DATA (use these values — do not substitute)
 - Grid emission factor: 0.2241 kgCO₂/kWh (SEAI 2026, T1)
@@ -281,47 +292,53 @@ You assess data centre facilities against current Irish and EU regulatory requir
 - Dublin free cooling: 7,200 hrs/yr <18°C (Met Éireann 30-year, T1)
 
 ## ASSESSMENT LOGIC
-For each finding, determine:
-1. Current state vs required threshold
-2. Gap magnitude
-3. Indicative cost range to close the gap (T3 screening-level)
-4. Commercial implication for a 10-year hold investor
+Conduct a structured walkthrough assessment across ALL major systems:
+1. Power chain — from utility to rack
+2. Cooling chain — from server to atmosphere
+3. Redundancy and resilience
+4. Fire detection and suppression
+5. Physical security
+6. Monitoring and controls
+7. Environmental and compliance
+8. Commercial position
+
+For each system, assess: current state, age/condition, gap to 2026 standard, risk rating, indicative action.
 
 ## OUTPUT FORMAT
-Respond ONLY with a JSON object. No preamble, no markdown fences, no explanation outside the JSON.
+Respond ONLY with a JSON object. No preamble, no markdown fences.
 {
-  "executive_summary": "3 sentences in fund-manager language. What is the risk, what does it cost, does the 10-year hold thesis work.",
+  "executive_summary": "3 sentences in fund-manager language. Overall facility condition, key risks, recommended next steps.",
   "traffic_light": "GREEN or AMBER or RED",
   "findings": [
     {
-      "area": "string — assessment area name",
+      "area": "string — system being assessed",
       "status": "PASS or FLAG or FAIL",
-      "detail": "string — what was found",
-      "implication": "string — so what for the investor",
-      "indicative_action": "string — what to investigate next",
-      "cost_range": "string — T3 indicative range in EUR, or null if not applicable",
-      "source": "string — standard or regulation reference",
+      "detail": "string — current state and age assessment",
+      "implication": "string — risk to operations, tenants, or investment",
+      "indicative_action": "string — what to investigate further",
+      "cost_range": "string — T3 indicative EUR range, or null",
+      "source": "string — standard reference",
       "tier": "T1 or T2 or T3 or T4"
     }
   ],
   "persona_views": {
-    "ann": "Fund manager perspective — risk, cost, hold thesis",
-    "declan": "Ops manager perspective — practical site impact",
-    "mark": "MEP engineer perspective — technical gaps and standards",
-    "sarah": "ESG analyst perspective — reporting and taxonomy alignment",
-    "tom": "QS/cost manager perspective — capex, payback, benchmarks"
+    "ann": "Fund manager — overall asset quality, capex requirement, hold thesis",
+    "declan": "Ops manager — what needs fixing first, operational risks",
+    "mark": "MEP engineer — technical condition, standards gaps, upgrade priorities",
+    "sarah": "ESG analyst — compliance gaps, reporting readiness, taxonomy alignment",
+    "tom": "QS/cost — total remediation budget, phased programme, benchmarks"
   },
   "decision_gate": "DESKTOP_ASSESSMENT or MONITORING or DISPOSAL_ANALYSIS",
   "confidence_score": 0,
-  "data_quality_notes": "What inputs were missing or estimated"
+  "data_quality_notes": "string"
 }
 
 ## LANGUAGE RULES (PI-SAFE — MANDATORY)
 - Use "indicative" or "screening-level" for all cost figures
-- Use "screening assessment" not "audit" or "report"
 - Use "Misalignment Year" not "Stranding Year" for CRREM
+- CRREM DC pathway is LBE-derived (T3/T4) — always disclose
 - Never say "compliant" — use "aligned" or "readiness"
-- Never say "should" or "must" to the client — use "consider" or "investigate"
+- Never say "should" or "must" — use "consider" or "investigate"
 - Every cost figure must state its tier (T1–T4)
 - State: "This screening does not constitute a design deliverable or compliance determination"`;
 
@@ -330,45 +347,57 @@ Respond ONLY with a JSON object. No preamble, no markdown fences, no explanation
    ================================================================ */
 const INPUT_SCHEMA = [
   { id:'facility_name',    label:'Facility Name',           type:'text',   required:true,  demo:'Clonshaugh DC',     hint:'Internal reference name', unit:null },
-  { id:'location',         label:'Location',                type:'text',   required:false, demo:'Dublin 17',         hint:'City or area',            unit:null },
-  { id:'build_year',       label:'Year Built',              type:'number', required:true,  demo:2013,                hint:'Original commissioning',  unit:null, min:1990, max:2026 },
-  { id:'it_load_mw',       label:'IT Load',                 type:'number', required:true,  demo:2.4,                 hint:'Total IT — servers, storage, networking', unit:'MW', min:0, max:200, step:0.1 },
-  { id:'rack_count',       label:'Rack Count',              type:'number', required:true,  demo:400,                 hint:'Total populated racks',   unit:'racks', min:1, max:10000 },
-  { id:'rack_density_kw',  label:'Average Rack Density',    type:'number', required:false, demo:6,                   hint:'Average kW per rack',     unit:'kW/rack', min:1, max:100, step:0.5 },
-  { id:'pue',              label:'Current PUE',             type:'number', required:true,  demo:1.50,                hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
-  { id:'mic_kva',          label:'MIC (Maximum Import Capacity)', type:'number', required:false, demo:5000,          hint:'ESB Networks connection',  unit:'kVA', min:0, max:200000, step:100 },
-  { id:'voltage_kv',       label:'Supply Voltage',          type:'select', required:false, demo:'10',                hint:'ESB Networks MV supply',  unit:'kV', options:['10','20','38','110'] },
-  { id:'cooling_type',     label:'Primary Cooling',         type:'select', required:true,  demo:'air_crac',          hint:'Main cooling technology', unit:null, options:[
-    {value:'air_crac',label:'DX CRAC (Computer Room AC)'},
-    {value:'air_free',label:'Air-side Free Cooling'},
-    {value:'chilled_water',label:'Chilled Water'},
-    {value:'evaporative',label:'Evaporative/Adiabatic'},
-    {value:'hybrid_dlc',label:'Hybrid Direct Liquid Cooling'},
-    {value:'full_dlc',label:'Full Direct Liquid Cooling'},
-    {value:'immersion',label:'Immersion'}
+  { id:'location',         label:'Location',                type:'text',   required:false, demo:'Dublin 17',         hint:'City or area', unit:null },
+  { id:'build_year',       label:'Year Built',              type:'number', required:true,  demo:2013,                hint:'Original commissioning', unit:null, min:1990, max:2026 },
+  { id:'it_load_mw',       label:'IT Load',                 type:'number', required:true,  demo:2.4,                 hint:'Total IT load', unit:'MW', min:0, max:200, step:0.1 },
+  { id:'rack_count',       label:'Rack Count',              type:'number', required:true,  demo:400,                 hint:'Total populated racks', unit:'racks', min:1, max:10000 },
+  { id:'rack_density_kw',  label:'Average Rack Density',    type:'number', required:false, demo:6,                   hint:'Average kW per rack', unit:'kW/rack', min:1, max:100, step:0.5 },
+  { id:'pue',              label:'Current PUE',             type:'number', required:true,  demo:1.50,                hint:'Annualised PUE', unit:null, min:1.0, max:3.0, step:0.01 },
+  { id:'mic_kva',          label:'MIC',                     type:'number', required:false, demo:5000,                hint:'Maximum Import Capacity', unit:'kVA', min:0, max:200000 },
+  { id:'voltage_kv',       label:'Supply Voltage',          type:'select', required:false, demo:'10',                hint:'Connection voltage', unit:'kV', options:['10','20','38','110'] },
+  { id:'cooling_type',     label:'Primary Cooling',         type:'select', required:true,  demo:'air_crac',          hint:'Cooling technology', unit:null, options:[
+    {value:'air_crac',label:'DX CRAC'},{value:'air_free',label:'Air-side Free Cooling'},{value:'chilled_water',label:'Chilled Water'},{value:'evaporative',label:'Evaporative'},{value:'hybrid_dlc',label:'Hybrid DLC'},{value:'full_dlc',label:'Full DLC'},{value:'immersion',label:'Immersion'}
   ]},
-  { id:'redundancy_level', label:'Power Redundancy',        type:'select', required:true,  demo:'n_plus_1',          hint:'UPS/generator topology',  unit:null, options:[
-    {value:'n',label:'N (no redundancy)'},
-    {value:'n_plus_1',label:'N+1'},
-    {value:'two_n',label:'2N'},
-    {value:'two_n_plus_1',label:'2N+1'}
+  { id:'redundancy_level', label:'Power Redundancy',        type:'select', required:true,  demo:'n_plus_1',          hint:'UPS/generator topology', unit:null, options:[
+    {value:'n',label:'N'},{value:'n_plus_1',label:'N+1'},{value:'two_n',label:'2N'},{value:'two_n_plus_1',label:'2N+1'}
   ]},
-  { id:'generator_fuel',   label:'Generator Fuel',          type:'select', required:false, demo:'diesel',            hint:'Primary backup fuel type', unit:null, options:[
-    {value:'diesel',label:'Diesel'},
-    {value:'gas',label:'Natural Gas'},
-    {value:'hvo',label:'HVO (Hydrotreated Vegetable Oil)'}
+  { id:'generator_fuel',   label:'Generator Fuel',          type:'select', required:false, demo:'diesel',            hint:'Backup fuel type', unit:null, options:[
+    {value:'diesel',label:'Diesel'},{value:'gas',label:'Natural Gas'},{value:'hvo',label:'HVO'}
   ]},
-  { id:'generator_hours',  label:'Generator Run Hours',     type:'number', required:false, demo:200,                 hint:'Annual run hours (test + unplanned)', unit:'hrs/yr', min:0, max:8760, step:10 },
-  { id:'ppa_pct',          label:'Renewable Energy (PPA + Grid + Onsite)', type:'number', required:false, demo:45, hint:'Current % from all renewable sources', unit:'%', min:0, max:100 },
-  { id:'hall_config',      label:'Hall Configuration',      type:'text',   required:false, demo:'Hall A, Hall B',    hint:'Hall names/layout',       unit:null },
-  { id:'total_floor_m2',   label:'Whitespace Area',         type:'number', required:false, demo:1800,                hint:'Total raised floor area', unit:'m²', min:0, max:100000 }
+  { id:'generator_hours',  label:'Generator Run Hours',     type:'number', required:false, demo:200,                 hint:'Annual hours', unit:'hrs/yr', min:0, max:8760 },
+  { id:'ppa_pct',          label:'Renewable Energy',        type:'number', required:false, demo:45,                  hint:'% from renewables', unit:'%', min:0, max:100 },
+  { id:'detection_type',   label:'Fire Detection',          type:'select', required:false, demo:'conventional',      hint:'Smoke detection system', unit:null, options:[
+    {value:'conventional',label:'Conventional Optical'},{value:'vesda',label:'VESDA'},{value:'mixed',label:'VESDA + Conventional'},{value:'unknown',label:'Unknown'}
+  ]},
+  { id:'suppression_type', label:'Fire Suppression',        type:'select', required:false, demo:'fm200',             hint:'Suppression system', unit:null, options:[
+    {value:'fm200',label:'FM-200'},{value:'novec',label:'Novec 1230'},{value:'sprinkler',label:'Sprinkler'},{value:'preaction',label:'Pre-Action'},{value:'unknown',label:'Unknown'}
+  ]},
+  { id:'hall_config',      label:'Hall Configuration',      type:'text',   required:false, demo:'Hall A, Hall B',    hint:'Hall names/layout', unit:null },
+  { id:'total_floor_m2',   label:'Whitespace Area',         type:'number', required:false, demo:1800,                hint:'Total raised floor', unit:'m²', min:0, max:100000 }
 ];
-
 /* ================================================================
    DEMO DATA (Clonshaugh reference — pre-fills form)
    ================================================================ */
-const DEMO_DATA = {};
-INPUT_SCHEMA.forEach(f => { if(f.demo !== undefined && f.demo !== null) DEMO_DATA[f.id] = f.demo; });
+const DEMO_DATA = {
+  facility_name:'Clonshaugh DC',
+  location:'Dublin 17',
+  build_year:2013,
+  it_load_mw:2.4,
+  rack_count:400,
+  rack_density_kw:6,
+  pue:1.50,
+  mic_kva:5000,
+  voltage_kv:'10',
+  cooling_type:'air_crac',
+  redundancy_level:'n_plus_1',
+  generator_fuel:'diesel',
+  generator_hours:200,
+  ppa_pct:45,
+  detection_type:'conventional',
+  suppression_type:'fm200',
+  hall_config:'Hall A, Hall B',
+  total_floor_m2:1800
+};
 
 /* ================================================================
    PERSONAS (same 5 as DC-LEARN, tool-specific framing)
