@@ -73,8 +73,8 @@ header .sub{font-size:11px;font-family:var(--font-mono);color:var(--text-dim);ma
 .fc-fix .fc-label{background:var(--green-dim);color:var(--green)}
 .fc-challenge-q{font-weight:600;font-size:14px;color:var(--text-bright);margin-bottom:8px}
 .fc-fix-content{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-line;margin-top:10px}
-.assess-option{padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--panel);color:var(--text);cursor:pointer;font-size:14px;font-family:var(--font-sans);margin-bottom:8px;transition:all .2s}
-.assess-option:hover{border-color:var(--accent);background:var(--surface)}
+.assess-option{padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;font-size:14px;font-family:var(--font-sans);margin-bottom:8px;transition:all .2s}
+.assess-option:hover{border-color:var(--accent)}
 .assess-option.correct{border-color:var(--green);background:var(--green-dim);color:var(--green)}
 .assess-option.incorrect{border-color:var(--red);background:var(--red-dim);color:var(--red)}
 .assess-feedback{font-size:13px;color:var(--text-dim);margin-top:10px;padding:12px;background:var(--panel);border-radius:8px;line-height:1.7}
@@ -339,6 +339,7 @@ const LEVELS = [
       "padraig": "A comprehensive power quality survey and binding constraint analysis for a 400-rack facility runs €8,000–15,000, indicative, Irish market 2025. That investment identifies the exact upgrade path before any capital commitment. Without it, the risk is specifying upgrades to components that are not the actual bottleneck — a common error that wastes €200K–500K on switchgear that wasn't the constraint while the real bottleneck (often the bus section or PDU infrastructure) remains untouched."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'eoin', 'padraig'],
       "title": "Hall B Power Chain Assessment",
       "situation": "Clonshaugh DC Hall B houses 200 racks at 8 kW/rack average, fed from a 10 kV ESB Networks MV connection through a 2.5 MVA transformer to a main switchboard with a 1,600A bus section at 415V. The facility PUE is 1.50. The asset manager has received an inquiry from a hyperscaler prospect requesting 50 racks at 40 kW/rack for AI inference workloads. The site MIC is 5 MVA and current total site utilisation is approximately 85%. Hall B sub-distribution boards are fed via 630A MCCBs from the main switchboard.",
       "challenge": "Can the existing Hall B power distribution chain deliver 2 MW to 50 rack positions at 40 kW/rack without a grid connection upgrade, and if not, what is the binding constraint?",
@@ -446,6 +447,7 @@ const LEVELS = [
       "padraig": "Hall A containment project: materials €95,000, installation €65,000, CFD study €22,000, commissioning €18,000 — total €200,000 for 200 rack positions. Annual energy saving: €95,000. Additional lease revenue from density uplift: €320,000/year. The project paid for itself in under 5 months when accounting for both energy and revenue benefits. For Hall B, identical scope would cost similarly, but Hall B also needs PDU upgrades (€1,500–3,000/rack, add €300K–600K for 200 positions) to capture the full density potential."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'eoin'],
       "title": "Containment ROI Analysis for Hall B",
       "situation": "Clonshaugh Hall B currently operates at 8 kW/rack average with no containment installed. CRAH supply temperature is set at 15°C — a legacy setting from 2012 commissioning. There are 200 racks across 10 rows in a hot/cold aisle arrangement with 42U racks. Approximately 45% of rack positions are empty (no blanking panels). The asset manager wants to understand whether containment alone can increase density to 15 kW/rack to serve a medium-density tenant without liquid cooling investment.",
       "challenge": "What is the realistic density ceiling achievable through containment and airflow optimisation alone, and what prevents reaching the 15 kW target without power distribution upgrades?",
@@ -553,6 +555,7 @@ const LEVELS = [
       "padraig": "The economic crossover analysis for Clonshaugh Hall B at €0.12/kWh shows: at 25 kW/rack air-cooled, annual cooling energy per rack is approximately €12,500. At 25 kW/rack with DLC, annual cooling energy per rack is approximately €4,200. The DLC capex premium is approximately €80,000–120,000 per rack (indicative, Irish market 2025), but the €8,300/year operating saving means a 10–14 year payback on the DLC premium from cooling energy alone — before accounting for thermal throttling losses, acoustic compliance costs, and PUE reporting benefits."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'eoin', 'rachel'],
       "title": "Air Ceiling Validation for Hall B AI Zone",
       "situation": "Helena wants to deploy 50 AI inference racks at 35 kW/rack in Clonshaugh Hall B using air cooling with optimised containment, reasoning that 35 kW is below the theoretical ~41 kW air ceiling and avoids the complexity and capex of liquid cooling. Hall B has a 3.2m ceiling height, existing CRAH capacity of 2 MW sensible cooling, and N+1 redundancy designed for the original 8 kW/rack load. The current noise level on the hall floor is 72 dB(A).",
       "challenge": "Is 35 kW/rack air-cooled technically achievable in Hall B's physical envelope, and if so, what are the hidden costs that make it economically irrational compared to liquid cooling?",
@@ -661,6 +664,7 @@ const LEVELS = [
       "padraig": "DLC capex for 50 racks at 40 kW: CDUs (5 × €120K) = €600K, piping and manifolds €450K, cold plates (integrated in server pricing), commissioning €180K, structural reinforcement for rack weight €350K, contingency 15% = €237K. Total: approximately €1.82M for the DLC-specific infrastructure. Air upgrade for 50 racks at 40 kW: additional CRAHs (6 × €85K) = €510K, enhanced containment €250K, ducting modification €180K, acoustic treatment €120K, additional electrical for fans €95K. Total: approximately €1.16M. DLC capex premium: approximately €660K. Annual DLC opex saving: approximately €350K (energy) + €45K (maintenance). Simple payback on premium: under 2 years. The capex gap is a fraction of what most decision-makers assume."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'eoin', 'padraig'],
       "title": "DLC vs Air TCO Decision for Hall B",
       "situation": "Clonshaugh Hall B has a hyperscaler prospect requesting 50 racks at 40 kW/rack for AI inference, with a 10-year lease term and a contractual option to increase to 60 kW/rack after year 3. The asset manager has received two engineering proposals: Option A (enhanced air cooling at €1.16M capex) and Option B (DLC at €1.82M capex). The fund's quarterly report highlights the €660K capex gap. Energy price: €0.12/kWh. EU Taxonomy alignment is required for the fund's SFDR Article 8 classification.",
       "challenge": "Which option delivers better risk-adjusted NPV over the 10-year lease, accounting for energy cost, density growth option, Taxonomy alignment, and stranded infrastructure risk?",
@@ -770,6 +774,7 @@ const LEVELS = [
       "padraig": "Detailed cost build-up for 50-rack DLC zone at 100 kW (indicative, Irish market 2025): CDU units (5 × €130K) = €650K. Piping and manifolds (supply/return headers, rack connections, fittings): €480K. Leak detection and containment: €85K. Structural reinforcement for rack weight (refer DC-AI-003): €380K. Electrical supply for CDUs and controls: €195K. BMS/DCIM integration: €65K. Commissioning and testing: €220K. Operations training and manual development: €45K. Contingency 15%: €312K. Total: approximately €2.43M for DLC-specific infrastructure. Note: this excludes the power distribution upgrades (L7) and any MIC/grid upgrades (L1/DC-AI-004), which are separate cost lines."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'eoin', 'padraig'],
       "title": "DLC System Design for 50-Rack AI Zone",
       "situation": "Clonshaugh Hall B is approved for a 50-rack AI zone at 100 kW/rack. CDUs will be located in a new plant room 20m from the rack zone. The facility has 1.5 MW of spare chilled water capacity on the primary loop. Coolant selected: 25% propylene glycol in deionised water. The operations team has zero prior experience with liquid cooling. Go-live target: 9 months.",
       "challenge": "What are the critical design parameters for the DLC secondary loop, and what operational readiness steps must be completed before the first AI rack is energised?",
@@ -879,6 +884,7 @@ const LEVELS = [
       "padraig": "GB300-specific infrastructure for 10 racks (indicative, Irish market 2025): Structural reinforcement (slab-to-slab mounting, 10 positions): €50K–80K. Dedicated 3,200A sub-distribution board: €85K–120K. 10 × 250A radial feeds with cable and containment: €150K–200K. Additional CDU capacity (2 × €130K): €260K. Piping modification for higher flow: €120K. Electrical supply for additional CDU: €45K. Commissioning and testing: €95K. Contingency 15%: €128K. Total: approximately €980K–1.05M for the GB300-specific increment above the base DLC infrastructure. This is ON TOP of the L5 DLC infrastructure — it is the premium for going from 100 kW to 135 kW density."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'eoin', 'rachel', 'padraig'],
       "title": "GB300 NVL72 Deployment Feasibility at Clonshaugh",
       "situation": "A hyperscaler tenant requests deployment of 20 GB300 NVL72 racks in Clonshaugh Hall B. Each rack: 135 kW typical, 155 kW peak, 3,200 lbs, 800mm × 1200mm footprint, 90% liquid / 10% air cooling. The facility has an existing DLC infrastructure designed for 100 kW/rack (L5 specification), 5 MVA MIC at 85% utilisation, 150 psf raised floor, and 3.2m ceiling height.",
       "challenge": "What infrastructure gaps must be closed to deploy 20 GB300 racks, and what is the total incremental investment above the existing DLC infrastructure?",
@@ -987,6 +993,7 @@ const LEVELS = [
       "padraig": "Detailed power distribution redesign estimate for 50-rack AI zone at 40 kW (indicative, Irish market 2025): New 4,000A switchboard section: €120K–180K. Two in-hall sub-distribution boards at 1,600A: €90K–130K each. Busbar trunking (2 rows × 30m at €1,000/m): €60K. Alternatively, cable distribution (50 × 120mm² × 15m at €85/m installed): €64K. Protection coordination study: €12K. Cable tray and containment upgrades: €45K–65K. Commissioning, testing, and Safe Electric certification: €35K. Outage management and temporary supply: €25K. Total: approximately €500K–730K. At GB300 density (135 kW), scale to approximately €800K–1.2M."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'eoin', 'padraig'],
       "title": "Electrical Distribution Redesign for Hall B AI Zone",
       "situation": "Clonshaugh Hall B has approved a 50-rack AI zone at 40 kW/rack. The MIC upgrade to 8 MVA is underway (12 months remaining). The existing Hall B distribution consists of a 1,600A bus section feeding four 630A sub-distribution boards, each serving 50 racks via 32A single-phase whips. The facility operates 24/7 with live tenants in Hall A. Any electrical work in the main switchroom affects both halls.",
       "challenge": "How should the electrical distribution be redesigned to serve 2 MW to 50 rack positions without disrupting Hall A, and what is the outage plan for the switchboard modifications?",
@@ -1094,6 +1101,7 @@ const LEVELS = [
       "padraig": "Voltage option cost comparison for 50-rack AI zone at 135 kW (indicative, Irish market 2025): 415V baseline: switchboard €150K, cables €64K, trays €45K, sub-DBs €260K = €519K. 480V: switchboard €172K (+15%), cables €48K (smaller gauge), trays €45K, sub-DBs €299K (+15%) = €564K (+€45K). 480V with 800V future-proofing: add €120K for oversized pathways and reserved space = €684K. Recommendation: 415V with 800V future-proofing at €639K (€519K + €120K). The €120K insurance policy has a breakeven probability of approximately 65% — the probability that the facility will need to accommodate 400+ kW racks within 10 years. Given NVIDIA's roadmap, that probability is well above 65%."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'eoin', 'padraig', 'rachel'],
       "title": "Voltage Strategy for Hall B AI Zone",
       "situation": "Clonshaugh Hall B is being fitted with new electrical distribution for a 50-rack AI zone. The transformer has a 480V secondary tap available. Current facility distribution is 415V throughout. The tenant's initial deployment is GB300 at 135 kW/rack, with contractual option for 200+ kW hardware within 5 years. NVIDIA has demonstrated 800V DC for the Rubin platform (2027). The project budget has €100K contingency remaining.",
       "challenge": "Should the new AI zone distribution be installed at 415V, 480V, or planned for 800V DC — and what future-proofing provisions should be included regardless of the voltage choice?",
@@ -1203,6 +1211,7 @@ const LEVELS = [
       "padraig": "Summary cost comparison (indicative, Irish market 2025): 40 kW / 50 racks: Power distribution €730K, cooling (DLC) €1.82M, structural €350K, grid (MIC upgrade) €2M, commissioning €250K, contingency €775K. Total: approximately €5.9M. 100 kW / 50 racks: Power €1.1M, cooling €2.43M, structural €550K, grid €2.5M, commissioning €380K, contingency €1.05M. Total: approximately €8.0M. 135 kW / 20 racks: Power €1.2M, cooling €1.65M, structural €250K, grid €2.5M, commissioning €280K, contingency €880K. Total: approximately €6.8M. Revenue (Year 2, 80% fill): 40 kW: €2.0M. 100 kW: €4.4M. 135 kW: €4.3M. Best risk-adjusted return: 100 kW at 50 racks — highest NPV, broadest tenant appeal, future-proofed to 135 kW with pathway provisions."
     },
     "scenario": {
+      "whoShouldCare": ['conor', 'helena', 'rachel', 'padraig'],
       "title": "Investment Committee Decision — Clonshaugh Hall B",
       "situation": "Clonshaugh DC owner (fund) must decide: retrofit Hall B for AI, and at what density? Current state: 200 racks at 8 kW/rack, 5 MVA MIC at 85%, PUE 1.50, 12-year remaining lease, 2 tenants departing. Market: AI-ready premium €150–200/kW/month, 6–12 month fill for Tier 1 markets. Three proposals on the table: A) 40 kW/50 racks (€5.9M), B) 100 kW/50 racks (€8M), C) 135 kW/20 racks (€6.8M). Fund hurdle rate: 7%.",
       "challenge": "Which proposal maximises risk-adjusted NPV over the remaining lease, and what phasing strategy limits downside exposure?",
@@ -1283,7 +1292,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 1,
     "id": "QAI001-1",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "Clonshaugh Hall B has 200 racks averaging 8 kW each, fed from a 5 MVA MIC at 85% utilisation. An AI tenant requests 50 racks at 40 kW. What is the primary reason the existing infrastructure cannot serve this request?",
     "options": [
       "The remaining MIC headroom of 750 kVA provides only approximately 640 kW of usable capacity — far below the 2 MW required for 50 AI racks at 40 kW each",
@@ -1297,7 +1306,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 1,
     "id": "QAI001-2",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "A 1,600A bus section at 415V three-phase with 0.85 power factor is currently at 73% utilisation. An AI zone requires 2 MW of additional capacity. How much additional bus capacity is needed beyond the existing headroom?",
     "options": [
       "Approximately 1,240 kW additional capacity — the 2,000 kW requirement minus the 760 kW currently available from the 27% headroom at 0.95 power factor",
@@ -1311,7 +1320,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 1,
     "id": "QAI001-3",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "A facility reports 60% MIC utilisation and the asset manager concludes there is ample headroom for AI tenants. Which response best characterises the flaw in this reasoning?",
     "options": [
       "MIC utilisation measures the aggregate draw against the connection ceiling, but distribution constraints downstream (bus section, sub-DB MCCBs, PDUs) may be at much higher utilisation — the binding constraint is rarely at the grid connection level",
@@ -1325,7 +1334,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 2,
     "id": "QAI001-4",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "After installing hot aisle containment in a 200-rack hall, the operations team expects a 35% improvement in cooling capacity but measured improvement is only 12%. Which factor most likely explains the underperformance?",
     "options": [
       "The containment enclosures were installed during a low-load period and the improvement percentage only becomes apparent during peak summer cooling demand when the temperature differential is greatest",
@@ -1339,7 +1348,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 2,
     "id": "QAI001-5",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "A 200-rack hall at 8 kW/rack average with CRAH supply at 15°C and return at 26°C (ΔT=11°C) installs containment, achieving ΔT=20°C. If the CRAH fan speed and capacity remain constant, approximately what rack density can the same cooling infrastructure now support?",
     "options": [
       "Approximately 14.5 kW/rack, because the ΔT improvement from 11°C to 20°C means each unit of airflow removes 82% more heat (20/11 × 8 kW = 14.5 kW)",
@@ -1353,7 +1362,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 2,
     "id": "QAI001-6",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "A facility has completed containment and achieved 12 kW/rack average. The CTO wants to push to 15 kW/rack to meet a medium-density tenant requirement. Existing PDUs are dual-feed 32A single-phase at 230V. What is the most accurate assessment?",
     "options": [
       "Achievable — the containment has demonstrated adequate cooling performance, and the dual-feed PDU configuration provides 14.7 kW theoretical capacity, within reach of 15 kW with the CRAH setpoint optimisation providing additional margin",
@@ -1367,7 +1376,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 3,
     "id": "QAI001-7",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "What property of air establishes the fundamental physics ceiling for air-cooled rack density in data centres?",
     "options": [
       "Air's thermal conductivity of 0.026 W/m·K makes it a poor conductor of heat between the chip surface and the heatsink fins, limiting the rate of heat transfer from components",
@@ -1381,7 +1390,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 3,
     "id": "QAI001-8",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "At 35 kW per rack with a 20°C ΔT, what is the approximate fan power per rack, given that baseline fan power is 0.3 kW at 0.42 m³/s (8 kW/rack) and fan power scales with the cube of airflow?",
     "options": [
       "Approximately 4.7 kW per rack, based on linear scaling of fan power proportional to the increase in heat load from 8 kW to 35 kW",
@@ -1395,7 +1404,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 3,
     "id": "QAI001-9",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "A colocation operator plans to market '35 kW AI-ready' racks using enhanced air cooling. The calculated fan power at this density is 12.3 kW per rack. Which professional judgement is most defensible?",
     "options": [
       "The 35 kW density is achievable but the fan energy of 12.3 kW/rack (35% of IT load) should be modelled in the tenant pricing, and the acoustic impact of the required airflow velocity must be assessed against the 80 dB(A) regulatory action level before marketing the product",
@@ -1409,7 +1418,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 4,
     "id": "QAI001-10",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "What is the approximate density at which liquid cooling typically becomes more economical than air cooling on a total-cost-of-ownership basis over a 10-year period?",
     "options": [
       "Approximately 10–15 kW per rack, because even at moderate densities the lower maintenance requirements of sealed liquid systems provide cost advantages over air-cooled alternatives",
@@ -1423,7 +1432,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 4,
     "id": "QAI001-11",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "An AI zone has two proposals: air cooling (capex €1.16M, annual cooling energy €946K) and DLC (capex €1.82M, annual cooling energy €158K). What is the simple payback period on the DLC premium?",
     "options": [
       "Approximately 10 months, calculated as the full DLC capex of €1.82M divided by the annual energy saving of €788K",
@@ -1437,7 +1446,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 4,
     "id": "QAI001-12",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "A fund manager approves a €2M air cooling upgrade for 25 kW/rack AI racks, rejecting DLC at €5M as too expensive. The tenant has a 10-year lease with an option to increase density after year 3. What is the most significant risk in this decision?",
     "options": [
       "The air cooling system will have higher annual energy costs than DLC, eroding net operating income by approximately €350K per year and reducing the asset's capitalisation rate",
@@ -1451,7 +1460,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 5,
     "id": "QAI001-13",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "What is the primary function of the secondary cooling loop in a DLC system?",
     "options": [
       "To separate the IT equipment coolant from the facility chilled water system, protecting IT hardware from contaminants in the building water and controlling coolant quality independently",
@@ -1465,7 +1474,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 5,
     "id": "QAI001-14",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "A 50-rack DLC zone at 100 kW requires CDUs for heat rejection. If each CDU provides 500 kW capacity and N+1 redundancy is required, how many CDUs must be installed?",
     "options": [
       "10 CDUs total — 50 × 100 kW = 5,000 kW ÷ 500 kW/CDU = 10 active units, with no additional redundancy because the CDUs themselves are designed with internal redundancy",
@@ -1479,7 +1488,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 5,
     "id": "QAI001-15",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "An operations team with extensive air cooling experience but no liquid cooling background is preparing for a 50-rack DLC deployment. The commissioning is in 6 months. What is the highest priority operational readiness action?",
     "options": [
       "Procure and install a comprehensive DCIM monitoring integration for CDU metrics (flow rate, temperature, pressure, leak status) to ensure visibility from day one of DLC operation",
@@ -1493,7 +1502,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 6,
     "id": "QAI001-16",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "The NVIDIA GB300 NVL72 rack draws 132–142 kW TDP with peaks to 155 kW. What characteristic of the GB300 creates the peak demand that exceeds the average TDP?",
     "options": [
       "Power sloshing — dynamic power redistribution between the 18 compute trays based on workload phase, where individual trays spike while others idle, keeping the rack total within TDP but creating instantaneous peak demands at the circuit level",
@@ -1507,7 +1516,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 6,
     "id": "QAI001-17",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "A GB300 NVL72 rack weighs 3,200 lbs on a footprint of approximately 0.72 m² (800mm × 900mm). The raised floor is rated at 150 psf. By approximately what factor does the rack exceed the floor rating?",
     "options": [
       "Approximately 6× — based on distributing the weight evenly across the full 0.72 m² footprint and converting to psf",
@@ -1521,7 +1530,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 6,
     "id": "QAI001-18",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "A hyperscaler requests 20 GB300 racks in Hall B. The project manager calculates that the 3.1 MW peak demand exceeds the 750 kVA MIC headroom. What should be the first action?",
     "options": [
       "Submit the MIC upgrade application to ESB Networks immediately — the 12–24 month lead time for grid connection upgrades is the critical path constraint, and every week of delay extends the project timeline by the same period",
@@ -1535,7 +1544,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 7,
     "id": "QAI001-19",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "In the context of AI retrofit power distribution, what does 'protection coordination' (discrimination) ensure?",
     "options": [
       "That a fault on a single rack circuit is isolated by the nearest protective device without tripping upstream devices that protect adjacent racks, rows, or the entire AI zone",
@@ -1549,7 +1558,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 7,
     "id": "QAI001-20",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "Each AI rack requires a 250A three-phase feed at 415V. For 50 racks at 15m average cable run, what is the approximate total weight of copper cable required (using 120mm² 4-core+earth cable at approximately 2.8 kg/m)?",
     "options": [
       "Approximately 840 kg — 50 racks × 15m × 2.8 kg/m, requiring cable trays rated for this additional distributed load across the rack rows",
@@ -1563,7 +1572,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 7,
     "id": "QAI001-21",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "During an AI retrofit, the electrical contractor proposes running all 50 rack feed cables through a single overhead cable tray to minimise installation cost. The IS 10101 grouping derating factor for this configuration reduces current-carrying capacity by 25%. What is the most appropriate professional response?",
     "options": [
       "Accept the proposal but upsize all cables from 120mm² to 150mm² to compensate for the 25% derating, increasing material cost by approximately 30% but maintaining a single tray installation",
@@ -1577,7 +1586,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 8,
     "id": "QAI001-22",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "NVIDIA demonstrated an 800V DC sidecar PSU at GTC 2025. What is the primary engineering advantage of 800V DC over 415V AC for AI rack power distribution?",
     "options": [
       "800V DC eliminates the need for power factor correction equipment because DC systems have no reactive power component, reducing switchboard complexity and cost",
@@ -1591,7 +1600,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 8,
     "id": "QAI001-23",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "For a 50-rack AI zone at 135 kW, compare I²R distribution losses at 415V and 480V over a 20m cable run. If 415V uses 120mm² cable (resistance 0.153 mΩ/m) and 480V uses 95mm² (resistance 0.193 mΩ/m), what is the approximate annual cost saving of 480V at €0.12/kWh?",
     "options": [
       "Approximately €26,000/year — 415V loss is 1,340W/rack (221A, 120mm²) versus 480V loss of 850W/rack (191A, 95mm²), saving 490W/rack × 50 racks × 8,760h × €0.12",
@@ -1605,7 +1614,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 8,
     "id": "QAI001-24",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "The project budget has €100K contingency remaining. The electrical engineer proposes spending €120K on 800V DC future-proofing (oversized cable trays, reserved electrical room space, pre-installed empty conduits). Should the investment committee approve the €20K budget overrun?",
     "options": [
       "No — the €120K should be deferred to a future budget cycle when 800V DC equipment is commercially available and the actual pathway requirements are known with certainty",
@@ -1619,7 +1628,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 9,
     "id": "QAI001-25",
-    "tier": "knowledge",
+    "stage": "grammar",
     "q": "In the context of data centre AI retrofit investment, what does 'opportunity cost of inaction' specifically quantify?",
     "options": [
       "The cumulative cost of delayed maintenance and energy inefficiency that accrues when a legacy facility operates beyond its design lifecycle without modernisation investment",
@@ -1633,7 +1642,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 9,
     "id": "QAI001-26",
-    "tier": "calculation",
+    "stage": "logic",
     "q": "Three retrofit scenarios for Hall B: A (40 kW/50 racks, €5.9M capex, €2M/yr revenue), B (100 kW/50 racks, €8M capex, €4.4M/yr revenue), C (135 kW/20 racks, €6.8M capex, €4.3M/yr revenue). At 80% fill and 7% discount rate over 12 years (PV factor 7.94), which scenario has the lowest breakeven fill rate?",
     "options": [
       "Scenario A at approximately 37% — capex €5.9M ÷ (€2M × 7.94) = 37%, because lower revenue per rack requires higher absolute fill to cover the fixed infrastructure cost",
@@ -1647,7 +1656,7 @@ const ASSESSMENT_QUESTIONS = [
   {
     "level": 9,
     "id": "QAI001-27",
-    "tier": "judgement",
+    "stage": "rhetoric",
     "q": "The investment committee must choose between three retrofit scenarios. Scenario B (100 kW/50 racks) has NPV €20M. Scenario C (135 kW/20 racks) has NPV €20.5M. Both have similar breakeven fill rates. What additional factor should most influence the committee's decision?",
     "options": [
       "Scenario B serves 50 rack positions — 2.5× more than C — creating a larger addressable tenant base. If any single 135 kW tenant is lost in Scenario C, the revenue impact is 5% of total versus 2% in B. Concentration risk favours B despite the marginally lower NPV.",
@@ -2674,16 +2683,16 @@ function FieldChallengesTab(){
   const [filterPersona,setFilterPersona]=useState('all');
   const [revealed,setRevealed]=useState({});
   const PERSONA_FILTERS=[
-    {key:'all',              label:'All',        role:''},
-    {key:'asset_management', label:'Asset Mgmt', role:'Investment / Revenue'},
-    {key:'technology',       label:'Technology', role:'CTO / Systems'},
-    {key:'technical',        label:'Technical',  role:'MEP / Engineering'},
-    {key:'compliance',       label:'Compliance', role:'ESG / Regulatory'},
-    {key:'cost',             label:'Cost',       role:'QS / Finance'},
+    {key:'all',   label:'All',    role:'', color:'var(--accent)', bg:'rgba(91,155,213,.15)'},
+    {key:'conor',   label:'Conor',   role:'Asset Manager', color:'var(--accent)', bg:'rgba(91,155,213,.15)'},
+    {key:'helena',  label:'Helena',  role:'CTO', color:'#e879a0', bg:'rgba(232,121,160,.15)'},
+    {key:'eoin',    label:'Eoin',    role:'MEP Engineer', color:'var(--green)', bg:'rgba(34,197,94,.15)'},
+    {key:'rachel',  label:'Rachel',  role:'ESG Director', color:'#2dd4bf', bg:'rgba(45,212,191,.15)'},
+    {key:'padraig', label:'Padraig', role:'QS / Cost', color:'#fb923c', bg:'rgba(251,146,60,.15)'},
   ];
   const filtered = LEVELS.filter(l=>{
     if(filterLevel>0 && l.level!==filterLevel) return false;
-    if(filterPersona!=='all' && !(RHETORIC_TAKEAWAYS[l.id]&&RHETORIC_TAKEAWAYS[l.id][filterPersona])) return false;
+    if(filterPersona!=='all' && !((l.scenario&&l.scenario.whoShouldCare||l.whoShouldCare)||[]).includes(filterPersona)) return false;
     return true;
   });
   return (
@@ -2696,12 +2705,15 @@ function FieldChallengesTab(){
         {LEVELS.map(l=>(<button key={l.id} className={'filter-btn'+(filterLevel===l.level?' active':'')} onClick={()=>setFilterLevel(l.level)}>L{l.level}</button>))}
       </div>
       <div className="filter-row" style={{marginTop:6}}>
-        {PERSONA_FILTERS.map(p=>(
-          <button key={p.key} className={'filter-btn'+(filterPersona===p.key?' active':'')} onClick={()=>setFilterPersona(p.key)} style={{textAlign:'center',lineHeight:1.2}}>
+        {PERSONA_FILTERS.map(p=>{
+          const isActive = filterPersona===p.key;
+          const activeStyle = isActive ? {borderColor:p.color,color:p.color,background:p.bg,fontWeight:600} : {};
+          return (
+          <button key={p.key} className={'filter-btn'+(isActive?' active':'')} onClick={()=>setFilterPersona(p.key)} style={{textAlign:'center',lineHeight:1.2,...activeStyle}}>
             <div style={{fontWeight:600}}>{p.label}</div>
             {p.role && <div style={{fontSize:9,opacity:0.75,marginTop:1}}>{p.role}</div>}
           </button>
-        ))}
+        );})}
         {filterPersona!=='all' && <span style={{fontSize:11,color:'var(--text-muted)',marginLeft:8,alignSelf:'center'}}>Showing {filtered.length} of {LEVELS.length} challenges</span>}
       </div>
       {filtered.length===0 && <div style={{padding:'20px',textAlign:'center',fontSize:13,color:'var(--text-muted)'}}>No challenges tagged for this persona.</div>}
@@ -2711,11 +2723,11 @@ function FieldChallengesTab(){
           <h3 style={{fontSize:15,fontWeight:600,color:'var(--text-bright)',marginBottom:12}}>{lvl.scenario.title}</h3>
           <div className="fc-situation" style={{marginBottom:12}}>
             <div className="fc-label">Situation</div>
-            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.8,margin:0}}>{lvl.scenario.narrative}</p>
+            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.8,margin:0}}>{lvl.scenario.situation}</p>
           </div>
           <div className="fc-challenge-q" style={{marginBottom:8}}>
             <div className="fc-label" style={{marginBottom:6}}>Challenge</div>
-            <div>{lvl.scenario.question}</div>
+            <div>{lvl.scenario.challenge}</div>
           </div>
           {!revealed[lvl.id] ? (
             <button style={{marginTop:8,padding:'8px 16px',border:'1px solid var(--green)',borderRadius:8,background:'var(--green-dim)',color:'var(--green)',cursor:'pointer',fontSize:13,fontFamily:'var(--font-sans)'}}
@@ -2723,7 +2735,7 @@ function FieldChallengesTab(){
           ) : (
             <div className="fc-fix fade-in" style={{marginTop:10}}>
               <div className="fc-label">Show the Fix</div>
-              <div className="fc-fix-content selectable-text" style={{userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>{lvl.scenario.answer}</div>
+              <div className="fc-fix-content selectable-text" style={{userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>{lvl.scenario.fix}</div>
               {lvl.sourceNote&&<div style={{fontSize:11,fontFamily:'var(--font-mono)',color:'var(--text-muted)',marginTop:10}}>Sources: {lvl.sourceNote}</div>}
             </div>
           )}
