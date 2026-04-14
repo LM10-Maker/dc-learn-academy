@@ -212,6 +212,23 @@
 
 ---
 
+## 2026-04-14 | Sonnet | DC-TOOL-007 | Build — Regulatory Gap Screener v1.0.0
+- [BUILD] DC-TOOL-007_v1_0_0.html created from DC-TOOL-000_v1_0_0.html (inherits factory CSS, BSG, tab architecture)
+- [BUILD] TOOL_ID = 'DC-TOOL-007' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Regulatory Gap Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-007 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-007 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: Expert regulatory analyst — covers EED Art.12/26, EPA/MCPD thermal threshold (50 MWth installed), EU Taxonomy PUE ≤1.3, F-Gas GWP/phase-down, CRREM Misalignment Year (LBE-derived pathway T3/T4), CRU 80% renewables, carbon cost trajectory
+- [BUILD] CANONICAL_DATA in prompt: 10 entries — grid_ef (0.2241 kgCO₂/kWh), carbon_tax_current (€71), carbon_tax_2030 (€100), CRM_T4 (€149,960/MW/yr), electricity_price (€0.12/kWh), EU Taxonomy PUE threshold (≤1.3), CRU renewable obligation (80%), Dublin free cooling (7,200 hrs/yr), EPA IE Licence threshold (50 MWth), EPA standby limit (200 hrs/yr)
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3), Energy Profile (4), Cooling & Refrigerants (3), Generators & EPA (5), Regulatory Status (2), Commercial (1)
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Energy Profile, Cooling & Refrigerants, Generators & EPA, Regulatory Status, Commercial
+- [BUILD] LOADING_MESSAGES: 5 regulatory-specific messages (EED Art.12/26, EPA thermal, EU Taxonomy, F-Gas, CRREM)
+- [BUILD] DEMO_DATA: auto-derived — Clonshaugh DC, 2013, 2.4 MW IT, 400 racks, PUE 1.50, 45% renewables, DX CRAC, R410A 192 kg, 2× 2000 kW diesel, 200 hrs/yr, EED not started, waste heat assessment no, no EPA licence, 1800 m²
+- [SWEEP] QG-2 stale value sweep: 0 matches — rack_density_kw, mic_kva, voltage_kv, redundancy_level, hall_config all removed
+- [SWEEP] QG-3 PI-safe sweep: 0 output-side violations — "Stranding Year" appears only in DOMAIN_PROMPT instruction (negative rule); all PI-safe elements present (indicative, Misalignment Year, LBE-derived disclosure, screening caveat)
+- [SWEEP] Babel check: PASS — 1 text/babel block parsed clean (jsx + flow plugins)
+- [DECISION] No deviations from task scope — CSS, BSG, tab architecture, JSON import/export all inherited unchanged
+- [COMMIT] Branch: claude/build-regulatory-gap-screener-uHjDO | tools/DC-TOOL-007_v1_0_0.html
 ## 2026-04-14 | Sonnet | DC-TOOL-008 | Build — Fire Safety Screener v1.0.0
 - [BUILD] DC-TOOL-008_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
 - [BUILD] TOOL_ID = 'DC-TOOL-008' — updated in all 4 version points (title, BSG L1, spec comment, const)
@@ -247,5 +264,22 @@
 - [BUILD] Babel check: PASS — JSX structure unchanged, all React component architecture inherited from template
 - [DECISION] OUTPUT_FORMAT: findings areas — Cx Plan, FAT Documentation, SAT Completion, IST/Transfer Testing, PUE Verification, O&M Handover, Operational Readiness
 - [COMMIT] Branch: claude/build-commissioning-tool-uxWAX | tools/DC-TOOL-012_v1_0_0.html
+
+## 2026-04-14 | Sonnet | DC-TOOL-013 | Build — AI-Ready Cooling Screener v1.0.0
+- [BUILD] DC-TOOL-013_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-013' — updated in all 4 version points (title, BSG L1, spec comment, BSG L2)
+- [BUILD] TOOL_NAME = 'AI-Ready Cooling Screener' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-013 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-013 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: liquid cooling retrofit specialist — DLC cold plates, immersion (single/two-phase), ASHRAE TC 9.9, OCP, EN 50600-2-3, NVIDIA DGX/HGX; physics of high density (water 3,500× air heat capacity); CDU architecture; Clonshaugh reference (400 racks, 6 kW/rack, 2.4 MW IT, PUE 1.50, target 40-rack AI pod at 40 kW/rack)
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3: name, location, build_year), Current State (6: it_load_mw, rack_count, rack_density_kw, pue, cooling_type, has_containment), AI Workload Target (3: target_density_kw, target_rack_count, preferred_cooling), Infrastructure Constraints (5: chiller_capacity_kw, mic_kva, floor_type, ceiling_height_m, slab_load_kpa), Commercial (2: ppa_pct, total_floor_m2)
+- [BUILD] SECTIONS: 5 sections — Facility Identity, Current State, AI Workload Target, Infrastructure Constraints, Commercial
+- [BUILD] LOADING_MESSAGES: 5 cooling-specific messages — heat load at target density, cooling plant headroom, power distribution, structural constraints, retrofit roadmap
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values (Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, 400 racks, 6 kW/rack current, 40 kW/rack target, 40 target racks, PUE 1.50, DX CRAC, no containment, 2000 kW chiller, 5000 kVA MIC, raised floor, 3.0 m ceiling, 5 kPa slab, DLC preferred, 45% renewable, 1800 m²)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — DC-TOOL-000, Factory Template, old fields (voltage_kv, redundancy_level, generator_fuel, generator_hours, hall_config) all purged
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — 'should'/'must' in UI caveat-box boilerplate only (inherited template); 'report' in tab labels only; DOMAIN_PROMPT instruction rules correctly scoped
+- [BUILD] Babel check: PASS (@babel/parser, jsx+flow plugins)
+- [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export inherited unchanged from factory template
+- [DEPLOY] Branch: claude/build-cooling-screener-qw6Hd | tools/DC-TOOL-013_v1_0_0.html
 
 ---
