@@ -170,3 +170,24 @@
 - [COMMIT] Branch: claude/build-compliance-checker-HaNNQ | tools/DC-TOOL-004_v1_0_0.html
 
 ---
+
+## 2026-04-14 | Sonnet | DC-TOOL-006 | Build — Grid Headroom Calculator v1.0.0
+- [BUILD] DC-TOOL-006_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-006' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Grid Headroom Calculator' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror) updated: 'DC-TOOL-006 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary) updated: 'DC-TOOL-006 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: grid connection specialist — EirGrid TCP, ESB Networks MIC/MV/HV, SNSP, ECP-1/ECP-2, generation licence, CRM revenue, queue timeline 4–8 years
+- [BUILD] INPUT_SCHEMA: 19 fields across Facility Identity, Load Profile, Grid Connection, On-Site Generation, Expansion Planning, Commercial
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Load Profile, Grid Connection, On-Site Generation, Expansion Planning, Commercial
+- [BUILD] LOADING_MESSAGES: 5 grid-specific messages — MIC utilisation, headroom, voltage adequacy, generation licence, connection timeline
+- [BUILD] CANONICAL_DATA: updated to grid tool — dc_grid_share 22% (CRU 2024 T1), queue_timeline 4–8 yrs (EirGrid TCP T2), gen_licence_thresh 10 MW (CRU T1), queue_total_gw 2.1 GW (EirGrid T2)
+- [BUILD] DEMO_DATA: auto-derived — Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, PUE 1.50, 5000 kVA MIC, 10 kV supply, 1 feed, 2 generators 2 MW each, 4 MW total gen, 45% renewable
+- [SWEEP] Stale value sweep (QG-2): 0 stale DC-TOOL-000 references, 0 Factory Template references
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — 'should' and 'must' in caveat_box UI text only (not AI output), 'must' in DOMAIN_PROMPT instruction rules only
+- [BUILD] Babel check: PASS — no JSX structure modified, all React component structure inherited from template
+- [DECISION] Primary persona: Ann (Fund Manager) — per DC-TOOL-006 spec
+- [DECISION] OUTPUT_FORMAT: 7 assessment areas — MIC Utilisation, Grid Headroom, Connection Voltage, Planning Risk, Generation Licence, CRM Revenue, Expansion Timeline
+- [COMMIT] Branch: main | tools/DC-TOOL-006_v1_0_0.html
+
+---
