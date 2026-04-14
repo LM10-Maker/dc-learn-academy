@@ -304,6 +304,22 @@
 
 ---
 
+## 2026-04-14 | Sonnet | DC-TOOL-001 | Build — Power Chain Screener v1.0.0
+- [BUILD] DC-TOOL-001_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-001' — updated in all 4 version points (title tag, BSG L1 window.onerror, spec comment header, BSG L2 ErrorBoundary)
+- [BUILD] TOOL_NAME = 'Power Chain Screener' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-001 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-001 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: expert data centre electrical engineer — full power chain utility→rack; MIC/ESB Networks, HV/MV transformers (oil-immersed/cast-resin, K-factor), LV MSB (single bus/split bus, fault level, STS), UPS (online double-conversion, modular), PDU (floor/busway, intelligent metering); standards EN 50600-2-2, IEC 62040-3, IS 10101, IEEE 493; canonical data SEAI 2026 0.2241 kgCO₂/kWh, carbon tax €71/tCO₂, electricity €0.12/kWh, CRM T-4 €149,960/MW/yr
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3: facility_name, location, build_year), Grid Connection (5: it_load_mw, pue, mic_kva, voltage_kv, supply_feeds), Transformers & Switchgear (3: transformer_config, transformer_age, msb_config), UPS (4: ups_count, ups_capacity_kva, ups_topology, redundancy_level), Distribution & Racks (3: pdu_type, rack_count, rack_density_kw), Commercial (1: ppa_pct)
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Grid Connection, Transformers & Switchgear, UPS, Distribution & Racks, Commercial
+- [BUILD] LOADING_MESSAGES: 5 power-chain-specific messages (grid/MIC, transformer, UPS, distribution, risk profile)
+- [BUILD] DEMO_DATA: auto-derived — Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, PUE 1.50, 5000 kVA MIC, 10 kV, 1 supply feed, 2 × 2MVA transformer, 12 yr age, 3200A single bus MSB, 2× 1500 kVA UPS (online double), N+1, floor PDU, 400 racks, 6 kW/rack, 45% renewable
+- [SWEEP] QG-2 stale value sweep: 0 matches — DC-TOOL-000, Factory Template, cooling_type, generator_fuel, generator_hours, hall_config, total_floor_m2 all purged
+- [SWEEP] QG-3 PI-safe sweep: 0 output-side violations — 'should'/'must' in DOMAIN_PROMPT instruction rules and UI caveat-box boilerplate only (inherited template); all PI-safe elements present (indicative, screening-level, LBE disclosure)
+- [BUILD] Babel check: PASS — brace balance 523:523, JSX structure unchanged, all React component architecture inherited from template
+- [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export all inherited unchanged
+- [COMMIT] Branch: claude/build-power-chain-screener-Xzf4L | tools/DC-TOOL-001_v1_0_0.html
 ## 2026-04-14 | Sonnet | DC-TOOL-002 | Build — Cooling Chain Screener v1.0.0
 - [BUILD] DC-TOOL-002_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
 - [BUILD] TOOL_ID = 'DC-TOOL-002' — updated in all 4 version points (title, BSG L1, spec comment, const)
