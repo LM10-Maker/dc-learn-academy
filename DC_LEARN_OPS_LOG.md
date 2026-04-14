@@ -283,3 +283,23 @@
 - [DEPLOY] Branch: claude/build-cooling-screener-qw6Hd | tools/DC-TOOL-013_v1_0_0.html
 
 ---
+
+## 2026-04-14 | Sonnet | DC-TOOL-010 | Build — Facility Audit Checklist v1.0.0
+- [BUILD] DC-TOOL-010_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-010' — updated in all 4 version points (title tag, BSG L1 window.onerror, spec comment header, BSG L2 ErrorBoundary)
+- [BUILD] TOOL_NAME = 'Facility Audit Checklist' — replaced 'Factory Template'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-010 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-010 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: expert data centre engineer conducting screening-level facility walkthrough in Ireland for LBE; covers full anatomy (power chain utility→rack, cooling chain server→atmosphere, redundancy topology, fire safety, physical security EN 50600-2-5, BMS/EPMS, environmental PUE/F-Gas/water, compliance CRU/EED/EU Taxonomy/EPA, commercial); canonical data locked (SEAI 2026 0.2241 kgCO₂/kWh, carbon tax €71/tCO₂, CRM T-4 €149,960/MW/yr, electricity €0.12/kWh, EU Taxonomy PUE ≤1.3, CRU 80% renewable, Dublin free cooling 7,200 hrs/yr); 8-system walkthrough; PI-safe output rules
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3: facility_name, location, build_year), Power & IT (5: it_load_mw, rack_count, rack_density_kw, mic_kva, voltage_kv), Cooling (2: pue, cooling_type), Redundancy & Backup (3: redundancy_level, generator_fuel, generator_hours), Fire Safety (2: detection_type, suppression_type), Commercial & ESG (4: ppa_pct, hall_config, total_floor_m2) — total 19 fields, IDs match DC-Screen MSTR-001 shared standard
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Power & IT, Cooling, Redundancy & Backup, Fire Safety, Commercial & ESG
+- [BUILD] LOADING_MESSAGES: 5 facility-audit-specific messages — power chain utility to rack, cooling chain adequacy, redundancy and resilience, fire safety and security, facility condition profile
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values (Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, 400 racks, 6 kW/rack, PUE 1.50, 5000 kVA MIC, 10 kV, DX CRAC, N+1, diesel, 200 hrs/yr, 45% renewable, Hall A/B, 1800 m²)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — DC-TOOL-000 and 'Factory Template' purged from all 4 version points
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — language rules enforced in DOMAIN_PROMPT; 'should'/'must' in UI caveat-box boilerplate only (inherited template)
+- [BUILD] Babel check: PASS
+- [NOTE] Primary intake tool — JSON export feeds DC-Screen MSTR-001; field IDs verified against shared standard
+- [DECISION] No deviations from task scope
+- [DEPLOY] Branch: claude/facility-audit-checklist-HUcGi | tools/DC-TOOL-010_v1_0_0.html
+
+---
