@@ -340,6 +340,21 @@
 
 ---
 
+## 2026-04-14 | Sonnet 4.6 | DC-TOOL-014 | Build CRU Readiness Screener
+- [BUILD] tools/DC-TOOL-014_v1_0_0.html created from DC-TOOL-000 factory template
+- [BUILD] TOOL_ID: DC-TOOL-014 | TOOL_VERSION: 1.0.0 | TOOL_NAME: CRU Readiness Screener
+- [BUILD] 4 static version reference points updated: title, BSG guard, script header comment, ErrorBoundary
+- [BUILD] DOMAIN_PROMPT: CRU/2025236 specialist — three pillars (grid security, 80% renewable, reporting), tier classification (de minimis / autoproducer 1–10 MVA / full 10 MVA+), MIC policy, CRM T-4 revenue, PPA/GOs/solar procurement, carbon trajectory
+- [BUILD] CANONICAL_DATA: grid_ef 0.2241 kgCO₂/kWh (SEAI 2026 T1), carbon_tax_current €71/tCO₂ (T1), carbon_tax_2030 €100/tCO₂ (T1), crm_t4 €149,960/MW/yr (SEMO PCAR2829T-4 T1), electricity_price €0.12/kWh (T2), cru_renewable 80% (CRU/2025236 T1), free_cooling 7200 hrs/yr (T1)
+- [BUILD] INPUT_SCHEMA: 18 fields — facility_name, location, build_year, it_load_mw, pue, mic_kva, ppa_pct, ppa_type (5 options), generator_count, generator_kw_each, generator_fuel (4 options), has_bess (3 options), bess_mw, expansion_planned, planned_it_mw, crm_participating (3 options), rack_count, total_floor_m2
+- [BUILD] SECTIONS: 5 sections — Facility Identity, Energy Profile, Renewables, On-Site Generation, Expansion & CRM
+- [BUILD] LOADING_MESSAGES: 5 CRU-specific messages — Classifying CRU tier, Calculating renewable energy gap, Assessing on-site generation potential, Modelling CRM revenue opportunity, Evaluating grid expansion risk
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values (Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, PUE 1.50, MIC 5000 kVA, 45% renewable, grid average, 2 generators × 2000 kW diesel, no BESS, no expansion, no CRM, 400 racks, 1800 m²)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — DC-TOOL-000, Factory Template, rack_density_kw, voltage_kv, cooling_type, redundancy_level, generator_hours, hall_config all purged
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — 'compliant'/'CRU Compliance' appear only inside DOMAIN_PROMPT LANGUAGE RULES (instructing AI not to use them); no UI-side violations
+- [BUILD] Babel check: PASS — 1 text/babel block, 522/522 brace balance, 28 backticks (even), all new field IDs and constants verified
+- [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export, PERSONAS, CANONICAL_DATA inherited unchanged from factory template
+- [DEPLOY] Branch: claude/build-cru-screener-XPxB4 | tools/DC-TOOL-014_v1_0_0.html
 ## 2026-04-14 | Sonnet | DC-TOOL-011 | Build — Security Assessment Tool v1.0.0
 - [BUILD] DC-TOOL-011_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
 - [BUILD] TOOL_ID = 'DC-TOOL-011' — updated in all 4 version points (title, BSG L1, spec comment, const)
