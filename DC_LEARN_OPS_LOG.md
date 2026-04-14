@@ -373,3 +373,11 @@
 - [COMMIT] Branch: claude/setup-security-tool-nBZST | tools/DC-TOOL-011_v1_0_0.html
 
 ---
+
+---
+
+## 2026-04-14 | Sonnet 4.6 | DC-AI-001 | Defect fixes v4.0.1
+- [DEFECT-1] Assessment option colours: `.assess-option` used `var(--surface)` — same as enclosing `.card` container — making option boxes invisible/flat. Fixed: changed to `var(--panel)` background; hover gains `var(--surface)` lift. Matches DC-LEARN-002 assessment styling.
+- [DEFECT-2] Field Challenges persona filter: `PERSONA_FILTERS` used narrative keys (conor/helena/eoin/rachel/padraig) and filtered on non-existent `l.scenario.whoShouldCare`, returning "0 of 9 challenges". Fixed: updated to DC-AI rhetoric takeaway keys (asset_management/technology/technical/compliance/cost); filter condition checks `RHETORIC_TAKEAWAYS[l.id][filterPersona]`.
+- [BUILD] DC-AI-001_v4_0_0.html patched in-place (9 lines changed).
+- [DEPLOY] Branch: claude/fix-assessment-colors-Bwlnj | commit 96cebe7
