@@ -212,6 +212,23 @@
 
 ---
 
+## 2026-04-14 | Sonnet | DC-TOOL-007 | Build — Regulatory Gap Screener v1.0.0
+- [BUILD] DC-TOOL-007_v1_0_0.html created from DC-TOOL-000_v1_0_0.html (inherits factory CSS, BSG, tab architecture)
+- [BUILD] TOOL_ID = 'DC-TOOL-007' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Regulatory Gap Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-007 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-007 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: Expert regulatory analyst — covers EED Art.12/26, EPA/MCPD thermal threshold (50 MWth installed), EU Taxonomy PUE ≤1.3, F-Gas GWP/phase-down, CRREM Misalignment Year (LBE-derived pathway T3/T4), CRU 80% renewables, carbon cost trajectory
+- [BUILD] CANONICAL_DATA in prompt: 10 entries — grid_ef (0.2241 kgCO₂/kWh), carbon_tax_current (€71), carbon_tax_2030 (€100), CRM_T4 (€149,960/MW/yr), electricity_price (€0.12/kWh), EU Taxonomy PUE threshold (≤1.3), CRU renewable obligation (80%), Dublin free cooling (7,200 hrs/yr), EPA IE Licence threshold (50 MWth), EPA standby limit (200 hrs/yr)
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3), Energy Profile (4), Cooling & Refrigerants (3), Generators & EPA (5), Regulatory Status (2), Commercial (1)
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Energy Profile, Cooling & Refrigerants, Generators & EPA, Regulatory Status, Commercial
+- [BUILD] LOADING_MESSAGES: 5 regulatory-specific messages (EED Art.12/26, EPA thermal, EU Taxonomy, F-Gas, CRREM)
+- [BUILD] DEMO_DATA: auto-derived — Clonshaugh DC, 2013, 2.4 MW IT, 400 racks, PUE 1.50, 45% renewables, DX CRAC, R410A 192 kg, 2× 2000 kW diesel, 200 hrs/yr, EED not started, waste heat assessment no, no EPA licence, 1800 m²
+- [SWEEP] QG-2 stale value sweep: 0 matches — rack_density_kw, mic_kva, voltage_kv, redundancy_level, hall_config all removed
+- [SWEEP] QG-3 PI-safe sweep: 0 output-side violations — "Stranding Year" appears only in DOMAIN_PROMPT instruction (negative rule); all PI-safe elements present (indicative, Misalignment Year, LBE-derived disclosure, screening caveat)
+- [SWEEP] Babel check: PASS — 1 text/babel block parsed clean (jsx + flow plugins)
+- [DECISION] No deviations from task scope — CSS, BSG, tab architecture, JSON import/export all inherited unchanged
+- [COMMIT] Branch: claude/build-regulatory-gap-screener-uHjDO | tools/DC-TOOL-007_v1_0_0.html
 ## 2026-04-14 | Sonnet | DC-TOOL-008 | Build — Fire Safety Screener v1.0.0
 - [BUILD] DC-TOOL-008_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
 - [BUILD] TOOL_ID = 'DC-TOOL-008' — updated in all 4 version points (title, BSG L1, spec comment, const)
