@@ -320,5 +320,22 @@
 - [BUILD] Babel check: PASS — brace balance 523:523, JSX structure unchanged, all React component architecture inherited from template
 - [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export all inherited unchanged
 - [COMMIT] Branch: claude/build-power-chain-screener-Xzf4L | tools/DC-TOOL-001_v1_0_0.html
+## 2026-04-14 | Sonnet | DC-TOOL-002 | Build — Cooling Chain Screener v1.0.0
+- [BUILD] DC-TOOL-002_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-002' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Cooling Chain Screener' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-002 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-002 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: cooling chain expert — server→rack→room→plant→atmosphere; ASHRAE TC 9.9 A1–A4 thermal envelope; CRAC vs CRAH; free cooling (7,200 hrs/yr Dublin); adiabatic cooling; chiller COP; cooling towers (Legionella); F-Gas 2024/573 phase-down; EN 50600-2-3; CIBSE Guide B2; HSA Legionella
+- [BUILD] CANONICAL_DATA: grid_ef 0.2241 kgCO₂/kWh (SEAI 2026 T1), carbon_tax €71/tCO₂ (Budget 2025 T1), electricity_price €0.12/kWh (CRU Q4 2024 T2), EU Taxonomy PUE ≤1.3 (T1), Dublin free cooling 7,200 hrs/yr (Met Éireann T1)
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3), IT Load (4: it_load_mw, rack_count, rack_density_kw, pue), Room Cooling (4: cooling_type, has_free_cooling, has_containment, supply_temp_c), Plant (3: chiller_count, chiller_kw_each, chiller_type), Refrigerants & Water (3: refrigerant_type, refrigerant_charge_kg, has_water_meter), Commercial (2: ppa_pct, total_floor_m2)
+- [BUILD] SECTIONS: 6 sections — Facility Identity, IT Load, Room Cooling, Plant, Refrigerants & Water, Commercial
+- [BUILD] LOADING_MESSAGES: 5 cooling-specific messages — airflow/containment, free cooling potential, chiller plant capacity, F-Gas exposure, cooling chain risk profile
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values (Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, 400 racks, 6 kW/rack, PUE 1.50, DX CRAC, no free cooling, no containment, 18°C supply, 3 chillers × 500 kW, air-cooled, R410A 192 kg, no water meter, 45% renewable, 1800 m²)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — DC-TOOL-000, Factory Template, mic_kva, voltage_kv, redundancy_level, generator_fuel, generator_hours, hall_config all purged
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — 'should'/'must' in UI caveat-box boilerplate only (inherited template); DOMAIN_PROMPT instruction rules correctly scoped
+- [BUILD] Babel check: PASS (1 text/babel block, @babel/parser jsx+flow)
+- [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export inherited unchanged from factory template
+- [DEPLOY] Branch: claude/setup-cooling-chain-screener-QwRVQ | tools/DC-TOOL-002_v1_0_0.html
 
 ---
