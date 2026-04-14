@@ -129,3 +129,24 @@
 - [BUILD] Babel parse check (@babel/parser, jsx+flow plugins): **16/16 PASS** — dc-learn-000 through dc-learn-015
 
 ---
+
+---
+
+## 2026-04-14 | Sonnet | DC-TOOL-004 | Build — Compliance Checker v1.0.0
+- [BUILD] DC-TOOL-004_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] /tools/ directory created in repo root
+- [BUILD] TOOL_ID = 'DC-TOOL-004' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Compliance Checker' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror) updated: 'DC-TOOL-004 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary) updated: 'DC-TOOL-004 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: full compliance analyst prompt — EU Taxonomy, EED 2023/1791, CRU/2025236, F-Gas 2024/573, ASHRAE TC 9.9, EN 50600-4-2, EN 50600-2-3, HSA Legionella, SFDR
+- [BUILD] INPUT_SCHEMA: 19 fields across Facility Identity, Energy & Efficiency, Cooling & Refrigerants, Water, Renewables & Carbon, Reporting & Compliance
+- [BUILD] SECTIONS: 6 sections matching INPUT_SCHEMA (replaced 5-section Power/Cooling template)
+- [BUILD] LOADING_MESSAGES: 5 compliance-specific messages (EU Taxonomy, CRU, F-Gas, carbon, EED)
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values (Clonshaugh DC, Dublin 17, 2013, 2.4 MW, 400 racks, PUE 1.50, DX CRAC, no free cooling, R410A, 192 kg, 45% renewable, EED not started)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — mic_kva, voltage_kv, redundancy_level, hall_config all removed
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — Stranding Year and compliant references are instruction-only (inside DOMAIN_PROMPT rules)
+- [BUILD] Babel check: PASS (1 block, @babel/parser jsx+flow)
+- [DECISION] Primary persona: Sarah (ESG Analyst) — per DC-TOOL-004 spec
+- [DECISION] OUTPUT_FORMAT includes 7 findings areas: EU Taxonomy PUE, CRU Renewables, EED Reporting, F-Gas, Carbon Cost, CRREM, Free Cooling
+- [COMMIT] Branch: claude/build-compliance-checker-HaNNQ | tools/DC-TOOL-004_v1_0_0.html
