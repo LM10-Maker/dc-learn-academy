@@ -381,3 +381,23 @@
 - [DEFECT-2] Field Challenges persona filter: `PERSONA_FILTERS` used narrative keys (conor/helena/eoin/rachel/padraig) and filtered on non-existent `l.scenario.whoShouldCare`, returning "0 of 9 challenges". Fixed: updated to DC-AI rhetoric takeaway keys (asset_management/technology/technical/compliance/cost); filter condition checks `RHETORIC_TAKEAWAYS[l.id][filterPersona]`.
 - [BUILD] DC-AI-001_v4_0_0.html patched in-place (9 lines changed).
 - [DEPLOY] Branch: claude/fix-assessment-colors-Bwlnj | commit 96cebe7
+
+---
+
+## 2026-04-14 | Sonnet 4.6 | DC-TOOL-004 v2.0.0 | Build — Compliance Checker
+- [BUILD] tools/DC-TOOL-004_v2_0_0.html — copied from DC-TOOL-000_v2_0_0.html factory template; all engines replaced for compliance-specific use case
+- [BUILD] TOOL_ID: DC-TOOL-004 | TOOL_NAME: Compliance Checker | TOOL_VERSION: 2.0.0 | All 4 version points updated (title tag, TOOL_VERSION const, BSG L1, BSG L2, ErrorBoundary)
+- [BUILD] CALC_ENGINE: 22 deterministic calculations — facility_load_mw, annual_energy_mwh, it_energy_mwh, overhead_mwh, annual_energy_cost, pue_gap, taxonomy_aligned, overhead_cost_at_target, renewable_gap_pct, unmatched_mwh, co2_scope2, carbon_cost_now, carbon_cost_2030, carbon_escalation, carbon_10yr_incremental, fgas_co2eq, fgas_leak_check_freq, fgas_annual_leak_cost, wue, cooling_upgrade_min, cooling_upgrade_max, pue_payback_years
+- [BUILD] FINDINGS_ENGINE: 6 rule-based findings — pue_taxonomy (EU Taxonomy Delegated Act 2021/2139), cru_renewable (CRU/2025236), carbon_trajectory (SEAI 2026; Finance Act), fgas_exposure (F-Gas Regulation EU 2024/573), eed_reporting (EED 2023/1791 Art 12), free_cooling (Met Éireann 30-yr; EN 50600-2-3)
+- [BUILD] INPUT_SCHEMA: 19 fields — Facility Identity (3: facility_name, location, build_year), Energy & Efficiency (5: it_load_mw, rack_count, rack_density_kw, pue, pue_measurement), Cooling & Refrigerants (4: cooling_type, has_free_cooling, refrigerant_type, refrigerant_charge_kg), Water (2: has_water_meter, water_litres_yr), Renewables & Carbon (3: ppa_pct, generator_fuel, generator_hours), Reporting & Compliance (2: eed_reporting, total_floor_m2)
+- [BUILD] SECTIONS: 6 sections matching INPUT_SCHEMA groups above
+- [BUILD] INTERPRETATION_PROMPT: compliance-scoped — EU Taxonomy, CRU/2025236, EED 2023/1791, F-Gas (EU) 2024/573, CRREM, ASHRAE TC 9.9, EN 50600; DO NOT perform any arithmetic rule included
+- [BUILD] LOADING_MESSAGES: 6 compliance-specific messages — energy profile, EU Taxonomy PUE, CRU renewable, F-Gas, carbon trajectory, AI interpretation
+- [SWEEP] Stale value sweep: 0 matches — 83,050 | 0.295 | 63.50 purged
+- [SWEEP] DC-TOOL-000 reference sweep: 0 matches — all replaced
+- [SWEEP] Clonshaugh reference sweep: 0 matches
+- [SWEEP] PI-safe sweep: 0 output-side violations — 'compliant'/'should'/'must' in INTERPRETATION_PROMPT instruction text only
+- [BUILD] Babel check: PASS — brace depth 0, 53,534 chars, text/babel block valid
+- [BUILD] CalculationsTab and ReportTab calc ID references updated (carbon_cost_current→carbon_cost_now, co2_tonnes→co2_scope2)
+- [DECISION] WHY: v2.0 deterministic calc engine — LLM never calculates; numbers are JavaScript, narrative is AI
+- [COMMIT] Branch: claude/copy-dc-tool-template-jTJoJ | commit bb1d070 | tools/DC-TOOL-004_v2_0_0.html
