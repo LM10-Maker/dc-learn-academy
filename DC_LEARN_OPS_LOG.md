@@ -355,5 +355,21 @@
 - [BUILD] Babel check: PASS — 1 text/babel block, 522/522 brace balance, 28 backticks (even), all new field IDs and constants verified
 - [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export, PERSONAS, CANONICAL_DATA inherited unchanged from factory template
 - [DEPLOY] Branch: claude/build-cru-screener-XPxB4 | tools/DC-TOOL-014_v1_0_0.html
+## 2026-04-14 | Sonnet | DC-TOOL-011 | Build — Security Assessment Tool v1.0.0
+- [BUILD] DC-TOOL-011_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-011' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Security Assessment Tool' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-011 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-011 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: physical security consultant — EN 50600-2-5 zones (1–4) and protection classes (1–4); HVM (PAS 68/IWA 14-1 bollards/barriers); PIDS (fence sensors, CCTV analytics); mantrap/airlock; biometric; anti-passback; NIS2 Directive (EU) 2022/2555 essential entity obligations; 24/7 SOC; CCTV retention 90 days; visitor management
+- [BUILD] INPUT_SCHEMA: 18 fields — Facility Identity (5: facility_name, location, build_year, it_load_mw, rack_count), Target Standard (1: target_protection_class), Perimeter Zone 1 (5: fence_type, fence_height_m, has_anticlimb, has_hvm, has_pids), Building & Data Hall Access Zones 2–4 (3: building_entry, datahall_entry, visitor_policy), Surveillance (3: cctv_coverage, cctv_retention_days, has_soc), Commercial (1: ppa_pct)
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Target Standard, Perimeter (Zone 1), Building & Data Hall Access (Zones 2–4), Surveillance, Commercial
+- [BUILD] LOADING_MESSAGES: 5 security-specific messages — perimeter, access control, CCTV, NIS2 alignment, security gap profile
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values — Clonshaugh DC, Dublin 17, 2013, 2.4 MW IT, Class 2, steel palisade 2.4m, no anti-climb, no HVM, no PIDS, card entry (building + data hall), partial CCTV, 30 days retention, no SOC, log book visitor policy, 400 racks, 45% renewable
+- [SWEEP] QG-2 stale value sweep: 0 matches — DC-TOOL-000, Factory Template, cooling_type, generator_fuel, generator_hours, hall_config, total_floor_m2, rack_density_kw, mic_kva, voltage_kv, redundancy_level all purged; inputs.pue replaced with inputs.target_protection_class in report header
+- [SWEEP] QG-3 PI-safe sweep: 0 output-side violations — 'should'/'must' in DOMAIN_PROMPT instruction rules and UI caveat-box boilerplate only (inherited template); all PI-safe elements present (indicative, screening-level, LBE disclosure)
+- [BUILD] Babel check: PASS — 1 text/babel block, @babel/parser jsx+flow, brace balance verified
+- [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, JSON import/export inherited unchanged from factory template
+- [COMMIT] Branch: claude/setup-security-tool-nBZST | tools/DC-TOOL-011_v1_0_0.html
 
 ---
