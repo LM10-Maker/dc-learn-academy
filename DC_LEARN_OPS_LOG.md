@@ -146,7 +146,6 @@
 - [BUILD] Babel parse check (@babel/parser, jsx+flow plugins): **PASS** — DC-TOOL-003_v1_0_0.html
 - [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, and JSON import/export inherited unchanged from factory template
 - [DEPLOY] Branch: claude/build-redundancy-gap-tool-Xo2S1
-- [DEPLOY] main
 
 ---
 
@@ -189,5 +188,26 @@
 - [DECISION] Primary persona: Ann (Fund Manager) — per DC-TOOL-006 spec
 - [DECISION] OUTPUT_FORMAT: 7 assessment areas — MIC Utilisation, Grid Headroom, Connection Voltage, Planning Risk, Generation Licence, CRM Revenue, Expansion Timeline
 - [COMMIT] Branch: main | tools/DC-TOOL-006_v1_0_0.html
+
+---
+
+## 2026-04-14 | Sonnet | DC-TOOL-005 | Build — UPS Adequacy Tool v1.0.0
+- [BUILD] DC-TOOL-005_v1_0_0.html created from DC-TOOL-004_v1_0_0.html (inherits factory CSS, BSG, tab architecture)
+- [BUILD] TOOL_ID = 'DC-TOOL-005' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'UPS Adequacy Tool'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-005 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-005 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: UPS/backup power assessment — topology, battery tech, bridge time, generator start sequence, fuel autonomy, EPA/MCPD, carbon tax
+- [BUILD] CANONICAL_DATA: 11 entries — grid_ef, carbon_tax_current, carbon_tax_2030, electricity_price, diesel_ef, gas_ef, epa_standby_limit, vrla_design_life, li_ion_design_life, diesel_sfc, gen_start_time
+- [BUILD] INPUT_SCHEMA: 21 fields — Facility Identity (3), Load Profile (2), UPS System (4), Batteries (4), Generator Fleet (6), Commercial (1)
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Load Profile, UPS System, Batteries, Generator Fleet, Commercial
+- [BUILD] LOADING_MESSAGES: 5 UPS-specific messages (UPS capacity, battery health, generator fleet, fuel autonomy, EPA/MCPD)
+- [BUILD] DEMO_DATA: auto-derived from INPUT_SCHEMA demo values (Clonshaugh DC, 2.4 MW IT, PUE 1.50, 2× 1500 kVA online double-conversion N+1, VRLA 4yr, 2× 2000 kW diesel, 20,000 L tank, 200 hr/yr)
+- [SWEEP] Stale value sweep: 0 matches — no DC-TOOL-004 or compliance-specific refs remaining
+- [SWEEP] PI-safe sweep: 0 output-side violations (instruction-only text excluded)
+- [BUILD] Primary persona: Mark (MEP Engineer) — per DC-TOOL-005 spec
+- [BUILD] Findings areas: UPS Capacity, Battery Health, Generator Fleet, Fuel Chain, EPA/MCPD, Transfer Sequence
+- [DECISION] No deviations from task scope — CSS, BSG, tab architecture, JSON import/export all inherited
+- [COMMIT] Branch: main | tools/DC-TOOL-005_v1_0_0.html
 
 ---
