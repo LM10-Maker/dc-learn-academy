@@ -211,3 +211,23 @@
 - [COMMIT] Branch: main | tools/DC-TOOL-005_v1_0_0.html
 
 ---
+
+## 2026-04-14 | Sonnet | DC-TOOL-008 | Build — Fire Safety Screener v1.0.0
+- [BUILD] DC-TOOL-008_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-008' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Fire Safety Screener' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-008 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-008 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: fire safety engineer — VESDA, FM-200/Novec 1230, EN 15004, ISO 14520, IS 3218, BS 6266, NFPA 75/76, F-Gas Reg 2024/573, Li-ion thermal runaway, BESS compartmentation
+- [BUILD] INPUT_SCHEMA: 17 fields — Facility Identity (3), IT Environment (3), Detection (2), Suppression (3), Battery & BESS (2), Commercial (1), plus hall_config and total_floor_m2
+- [BUILD] SECTIONS: 6 sections — Facility Identity, IT Environment, Detection, Suppression, Battery & BESS, Commercial
+- [BUILD] LOADING_MESSAGES: 5 fire safety messages (detection adequacy, suppression alignment, room integrity, Li-ion/BESS, gap analysis)
+- [BUILD] CANONICAL_DATA: updated to fire safety domain — grid_ef (SEAI 2026 T1), electricity_price (CRU Q4 2024 T2), fm200_gwp 3220 (F-Gas T1), novec_gwp <1 (F-Gas T1), hold_time 10 min (EN 15004 T1), li_ion_risk thermal runaway (NFPA 75 T1)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — inputs.pue removed, CANONICAL_DATA updated to fire safety domain, all removed schema fields (pue, mic_kva, voltage_kv, cooling_type, redundancy_level, generator_fuel, generator_hours) purged
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — 'compliant', 'should', 'must' references are instruction-only (inside DOMAIN_PROMPT rules)
+- [BUILD] Babel check: PASS — JSX structure unchanged, all React component architecture inherited from template
+- [DECISION] Primary persona: Mark (MEP Engineer) — fire protection engineering perspective
+- [DECISION] OUTPUT_FORMAT: findings areas — Detection System, Suppression Agent, Room Integrity, Li-ion/BESS Risk, Sub-Floor Protection, Sprinkler Adequacy
+- [COMMIT] Branch: claude/fire-safety-screener-iRNJN | tools/DC-TOOL-008_v1_0_0.html
+
+---
