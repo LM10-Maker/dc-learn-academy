@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>DC-TOOL-000 v2.0.0 | Factory Template | Legacy Business Engineers</title>
+<title>DC-TOOL-004 v2.0.0 | Compliance Checker | Legacy Business Engineers</title>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -240,7 +240,7 @@ select.input-field{appearance:auto}
 window.onerror=function(msg,src,line,col,err){
   var el=document.getElementById('root');
   if(el){el.innerHTML='<div style="padding:32px;font-family:monospace;background:#1a1a1a;color:#f85149;border-radius:8px;margin:24px">'
-    +'<h2 style="color:#f0f6fc">DC-TOOL-000 v2.0.0 — Blank Screen Guard</h2>'
+    +'<h2 style="color:#f0f6fc">DC-TOOL-004 v2.0.0 — Blank Screen Guard</h2>'
     +'<p style="margin:12px 0">Error: '+msg+'</p>'
     +'<p>Line: '+line+' Col: '+col+'</p>'
     +'<p style="font-size:12px;color:#8b949e;margin-top:12px">Copy this error and send to LM at info@legacybe.ie</p>'
@@ -254,14 +254,14 @@ var LOGO_SRC="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHL
 </script>
 <script type="text/babel">
 /* ================================================================
-   DC-TOOL-000 v2.0.0 | Factory Template — Deterministic Calc Engine
+   DC-TOOL-004 v2.0.0 | Compliance Checker — Deterministic Calc Engine
    DC_TOOL_FACTORY_SPEC v2.0 | Legacy Business Engineers Ltd
    RULE: The LLM never calculates. Numbers are JavaScript. Narrative is AI.
    ================================================================ */
 
-const TOOL_ID = 'DC-TOOL-000';
+const TOOL_ID = 'DC-TOOL-004';
 const TOOL_VERSION = '2.0.0';
-const TOOL_NAME = 'Factory Template — Facility Screener';
+const TOOL_NAME = 'Compliance Checker';
 
 /* ================================================================
    CANONICAL DATA (Locked — same as v1.0)
@@ -290,8 +290,7 @@ const CALC_ENGINE = [
     name: 'Total Facility Load',
     formula: 'IT Load × PUE',
     calc: (inp) => inp.it_load_mw * inp.pue,
-    unit: 'MW',
-    format: (v) => v.toFixed(2),
+    unit: 'MW', format: (v) => v.toFixed(2),
     inputs_used: [
       { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
       { id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' }
@@ -299,145 +298,240 @@ const CALC_ENGINE = [
   },
   {
     id: 'annual_energy_mwh',
-    name: 'Annual Energy Consumption',
+    name: 'Annual Facility Energy',
     formula: 'Facility Load × 8,760 hours',
-    calc: (inp, res) => res.facility_load_mw * 8760,
-    unit: 'MWh/yr',
-    format: (v) => Math.round(v).toLocaleString(),
+    calc: (inp, r) => r.facility_load_mw * 8760,
+    unit: 'MWh/yr', format: (v) => Math.round(v).toLocaleString(),
+    inputs_used: [{ ref: 'facility_load_mw', label: 'Facility Load', source: 'Step above' }]
+  },
+  {
+    id: 'it_energy_mwh',
+    name: 'Annual IT Energy',
+    formula: 'IT Load × 8,760 hours',
+    calc: (inp) => inp.it_load_mw * 8760,
+    unit: 'MWh/yr', format: (v) => Math.round(v).toLocaleString(),
+    inputs_used: [{ id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' }]
+  },
+  {
+    id: 'overhead_mwh',
+    name: 'Overhead Energy (non-IT)',
+    formula: 'Facility Energy − IT Energy',
+    calc: (inp, r) => r.annual_energy_mwh - r.it_energy_mwh,
+    unit: 'MWh/yr', format: (v) => Math.round(v).toLocaleString(),
     inputs_used: [
-      { ref: 'facility_load_mw', label: 'Facility Load', source: 'Step above' }
+      { ref: 'annual_energy_mwh', label: 'Facility Energy', source: 'Step above' },
+      { ref: 'it_energy_mwh', label: 'IT Energy', source: 'Step above' }
     ]
   },
   {
-    id: 'co2_tonnes',
-    name: 'Annual CO₂ Emissions (Scope 2)',
-    formula: 'Annual Energy × Grid Emission Factor',
-    calc: (inp, res) => res.annual_energy_mwh * CANONICAL_DATA.grid_ef.value,
-    unit: 'tCO₂/yr',
-    format: (v) => Math.round(v).toLocaleString(),
+    id: 'annual_energy_cost',
+    name: 'Annual Electricity Cost',
+    formula: 'Facility Energy × Electricity Price',
+    calc: (inp, r) => r.annual_energy_mwh * CANONICAL_DATA.electricity_price.value * 1000,
+    unit: '€/yr', format: (v) => '€' + Math.round(v).toLocaleString(),
     inputs_used: [
-      { ref: 'annual_energy_mwh', label: 'Annual Energy', source: 'Step above' },
-      { id: 'grid_ef', label: 'Grid EF', tier: 'T1', source: CANONICAL_DATA.grid_ef.source }
-    ]
-  },
-  {
-    id: 'carbon_cost_current',
-    name: 'Current Annual Carbon Cost',
-    formula: 'CO₂ Emissions × Carbon Tax (€71/tCO₂)',
-    calc: (inp, res) => res.co2_tonnes * CANONICAL_DATA.carbon_tax_current.value,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'co2_tonnes', label: 'CO₂ Emissions', source: 'Step above' },
-      { id: 'carbon_tax_current', label: 'Carbon Tax', tier: 'T1', source: CANONICAL_DATA.carbon_tax_current.source }
-    ]
-  },
-  {
-    id: 'carbon_cost_2030',
-    name: '2030 Annual Carbon Cost',
-    formula: 'CO₂ Emissions × Carbon Tax 2030 (€100/tCO₂)',
-    calc: (inp, res) => res.co2_tonnes * CANONICAL_DATA.carbon_tax_2030.value,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'co2_tonnes', label: 'CO₂ Emissions', source: 'Step above' },
-      { id: 'carbon_tax_2030', label: 'Carbon Tax 2030', tier: 'T1', source: CANONICAL_DATA.carbon_tax_2030.source }
-    ]
-  },
-  {
-    id: 'carbon_cost_escalation',
-    name: 'Annual Carbon Cost Escalation by 2030',
-    formula: '2030 Carbon Cost − Current Carbon Cost',
-    calc: (inp, res) => res.carbon_cost_2030 - res.carbon_cost_current,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'carbon_cost_2030', label: '2030 Cost', source: 'Step above' },
-      { ref: 'carbon_cost_current', label: 'Current Cost', source: 'Step above' }
+      { ref: 'annual_energy_mwh', label: 'Facility Energy', source: 'Step above' },
+      { id: 'electricity_price', label: 'Electricity Price', tier: 'T2', source: 'CRU Q4 2024' }
     ]
   },
   {
     id: 'pue_gap',
     name: 'PUE Gap to EU Taxonomy',
-    formula: 'Current PUE − Taxonomy Threshold (1.3)',
-    calc: (inp) => Math.max(0, inp.pue - CANONICAL_DATA.taxonomy_pue.value),
-    unit: 'PUE points',
-    format: (v) => v.toFixed(2),
+    formula: 'Current PUE − 1.3',
+    calc: (inp) => Math.max(0, inp.pue - 1.3),
+    unit: 'PUE points', format: (v) => v.toFixed(2),
     inputs_used: [
       { id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' },
-      { id: 'taxonomy_pue', label: 'EU Taxonomy Threshold', tier: 'T1', source: CANONICAL_DATA.taxonomy_pue.source }
+      { id: 'taxonomy_pue', label: 'EU Taxonomy Threshold', tier: 'T1', source: 'Delegated Act 2021/2139' }
     ]
   },
   {
     id: 'taxonomy_aligned',
     name: 'EU Taxonomy PUE Alignment',
     formula: 'PUE ≤ 1.3?',
-    calc: (inp) => inp.pue <= CANONICAL_DATA.taxonomy_pue.value,
-    unit: 'Yes/No',
-    format: (v) => v ? 'ALIGNED' : 'NOT ALIGNED',
+    calc: (inp) => inp.pue <= 1.3,
+    unit: 'Yes/No', format: (v) => v ? 'ALIGNED' : 'NOT ALIGNED',
+    inputs_used: [{ id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' }]
+  },
+  {
+    id: 'overhead_cost_at_target',
+    name: 'Annual Saving if PUE Reduced to 1.3',
+    formula: '(Current Overhead − Target Overhead) × Electricity Price',
+    calc: (inp, r) => {
+      const targetOverhead = (inp.it_load_mw * 1.3 - inp.it_load_mw) * 8760;
+      return Math.max(0, (r.overhead_mwh - targetOverhead) * CANONICAL_DATA.electricity_price.value * 1000);
+    },
+    unit: '€/yr', format: (v) => '€' + Math.round(v).toLocaleString(),
     inputs_used: [
-      { id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' },
-      { id: 'taxonomy_pue', label: 'Threshold', tier: 'T1', source: CANONICAL_DATA.taxonomy_pue.source }
+      { ref: 'overhead_mwh', label: 'Current Overhead', source: 'Step above' },
+      { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
+      { id: 'electricity_price', label: 'Electricity Price', tier: 'T2', source: 'CRU Q4 2024' }
     ]
   },
   {
-    id: 'renewable_gap',
-    name: 'Renewable Energy Gap to CRU Obligation',
-    formula: 'CRU Obligation (80%) − Current Renewable %',
-    calc: (inp) => Math.max(0, CANONICAL_DATA.cru_renewable.value - (inp.ppa_pct || 0)),
-    unit: '% points',
-    format: (v) => v.toFixed(0),
+    id: 'renewable_gap_pct',
+    name: 'Renewable Energy Gap',
+    formula: '80% − Current Renewable %',
+    calc: (inp) => Math.max(0, 80 - (inp.ppa_pct || 0)),
+    unit: '% points', format: (v) => v.toFixed(0),
     inputs_used: [
       { id: 'ppa_pct', label: 'Current Renewable %', tier: 'T1', source: 'User input' },
-      { id: 'cru_renewable', label: 'CRU Obligation', tier: 'T1', source: CANONICAL_DATA.cru_renewable.source }
+      { id: 'cru_renewable', label: 'CRU Obligation', tier: 'T1', source: 'CRU/2025236' }
     ]
   },
   {
-    id: 'overhead_mwh',
-    name: 'Overhead Energy (non-IT)',
-    formula: '(Facility Load − IT Load) × 8,760',
-    calc: (inp, res) => (res.facility_load_mw - inp.it_load_mw) * 8760,
-    unit: 'MWh/yr',
-    format: (v) => Math.round(v).toLocaleString(),
+    id: 'unmatched_mwh',
+    name: 'Unmatched Consumption',
+    formula: 'Renewable Gap % × Annual Facility Energy',
+    calc: (inp, r) => r.renewable_gap_pct / 100 * r.annual_energy_mwh,
+    unit: 'MWh/yr', format: (v) => Math.round(v).toLocaleString(),
     inputs_used: [
-      { ref: 'facility_load_mw', label: 'Facility Load', source: 'Step above' },
-      { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' }
+      { ref: 'renewable_gap_pct', label: 'Renewable Gap', source: 'Step above' },
+      { ref: 'annual_energy_mwh', label: 'Facility Energy', source: 'Step above' }
     ]
   },
   {
-    id: 'overhead_cost',
-    name: 'Overhead Energy Cost',
-    formula: 'Overhead Energy × Electricity Price (€0.12/kWh)',
-    calc: (inp, res) => res.overhead_mwh * CANONICAL_DATA.electricity_price.value * 1000,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
+    id: 'co2_scope2',
+    name: 'Annual CO₂ Emissions (Scope 2)',
+    formula: 'Facility Energy × Grid EF',
+    calc: (inp, r) => r.annual_energy_mwh * CANONICAL_DATA.grid_ef.value,
+    unit: 'tCO₂/yr', format: (v) => Math.round(v).toLocaleString(),
     inputs_used: [
-      { ref: 'overhead_mwh', label: 'Overhead Energy', source: 'Step above' },
-      { id: 'electricity_price', label: 'Electricity Price', tier: 'T2', source: CANONICAL_DATA.electricity_price.source }
+      { ref: 'annual_energy_mwh', label: 'Facility Energy', source: 'Step above' },
+      { id: 'grid_ef', label: 'Grid EF', tier: 'T1', source: 'SEAI 2026' }
     ]
   },
   {
-    id: 'retrofit_cost_min',
-    name: 'Indicative Retrofit Cost (low)',
-    formula: 'IT Load × €500,000/MW',
-    calc: (inp) => inp.it_load_mw * CANONICAL_DATA.retrofit_capex_min.value,
-    unit: '€',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
+    id: 'carbon_cost_now',
+    name: 'Current Carbon Cost',
+    formula: 'CO₂ × €71/tCO₂',
+    calc: (inp, r) => r.co2_scope2 * 71,
+    unit: '€/yr', format: (v) => '€' + Math.round(v).toLocaleString(),
+    inputs_used: [
+      { ref: 'co2_scope2', label: 'CO₂ Emissions', source: 'Step above' },
+      { id: 'carbon_tax_current', label: 'Carbon Tax', tier: 'T1', source: 'Budget 2025' }
+    ]
+  },
+  {
+    id: 'carbon_cost_2030',
+    name: '2030 Carbon Cost',
+    formula: 'CO₂ × €100/tCO₂',
+    calc: (inp, r) => r.co2_scope2 * 100,
+    unit: '€/yr', format: (v) => '€' + Math.round(v).toLocaleString(),
+    inputs_used: [
+      { ref: 'co2_scope2', label: 'CO₂ Emissions', source: 'Step above' },
+      { id: 'carbon_tax_2030', label: 'Carbon Tax 2030', tier: 'T1', source: 'Finance Act' }
+    ]
+  },
+  {
+    id: 'carbon_escalation',
+    name: 'Carbon Cost Escalation',
+    formula: '2030 Cost − Current Cost',
+    calc: (inp, r) => r.carbon_cost_2030 - r.carbon_cost_now,
+    unit: '€/yr', format: (v) => '€' + Math.round(v).toLocaleString(),
+    inputs_used: [
+      { ref: 'carbon_cost_2030', label: '2030 Cost', source: 'Step above' },
+      { ref: 'carbon_cost_now', label: 'Current Cost', source: 'Step above' }
+    ]
+  },
+  {
+    id: 'carbon_10yr_incremental',
+    name: '10-Year Incremental Carbon Cost',
+    formula: 'Escalation × 7 (linear ramp approximation)',
+    calc: (inp, r) => r.carbon_escalation * 7,
+    unit: '€', format: (v) => '€' + Math.round(v).toLocaleString(),
+    inputs_used: [{ ref: 'carbon_escalation', label: 'Annual Escalation', source: 'Step above' }]
+  },
+  {
+    id: 'fgas_co2eq',
+    name: 'Refrigerant CO₂-Equivalent',
+    formula: 'Charge (kg) × GWP',
+    calc: (inp) => {
+      const gwp = { r410a: 2088, r407c: 1774, r134a: 1430, r32: 675, r1234ze: 7, none: 0 };
+      return (inp.refrigerant_charge_kg || 0) * (gwp[inp.refrigerant_type] || 0) / 1000;
+    },
+    unit: 'tCO₂-eq', format: (v) => Math.round(v).toLocaleString(),
+    inputs_used: [
+      { id: 'refrigerant_charge_kg', label: 'Charge', tier: 'T1', source: 'User input' },
+      { id: 'refrigerant_type', label: 'Refrigerant (GWP)', tier: 'T1', source: 'EU F-Gas Reg Annex I' }
+    ]
+  },
+  {
+    id: 'fgas_leak_check_freq',
+    name: 'Required Leak Check Frequency',
+    formula: 'CO₂-eq thresholds per EU 2024/573 Art 4',
+    calc: (inp, r) => {
+      if (r.fgas_co2eq >= 500) return 3;
+      if (r.fgas_co2eq >= 50) return 6;
+      if (r.fgas_co2eq >= 5) return 12;
+      return 0;
+    },
+    unit: 'months', format: (v) => v === 0 ? 'Not required' : 'Every ' + v + ' months',
+    inputs_used: [{ ref: 'fgas_co2eq', label: 'CO₂-Equivalent', source: 'Step above' }]
+  },
+  {
+    id: 'fgas_annual_leak_cost',
+    name: 'Annual Leak Cost (5% rate assumption)',
+    formula: '5% × Charge × Price/kg + Compliance Programme',
+    calc: (inp) => {
+      const prices = { r410a: 45, r407c: 40, r134a: 35, r32: 25, r1234ze: 80, none: 0 };
+      const leak = (inp.refrigerant_charge_kg || 0) * 0.05;
+      const topup = leak * (prices[inp.refrigerant_type] || 0);
+      const compliance = (inp.refrigerant_charge_kg || 0) > 0 ? 4000 : 0;
+      return topup + compliance;
+    },
+    unit: '€/yr', format: (v) => '€' + Math.round(v).toLocaleString(),
+    inputs_used: [
+      { id: 'refrigerant_charge_kg', label: 'Charge', tier: 'T1', source: 'User input' },
+      { id: 'refrigerant_type', label: 'Price/kg', tier: 'T3', source: 'F-Gas distributor market 2025' }
+    ]
+  },
+  {
+    id: 'wue',
+    name: 'Water Usage Effectiveness',
+    formula: 'Annual Water ÷ IT Energy',
+    calc: (inp, r) => inp.water_litres_yr && r.it_energy_mwh ? inp.water_litres_yr / (r.it_energy_mwh * 1000) : null,
+    unit: 'L/kWh', format: (v) => v === null ? 'No data' : v.toFixed(2),
+    inputs_used: [
+      { id: 'water_litres_yr', label: 'Annual Water', tier: 'T1', source: 'User input' },
+      { ref: 'it_energy_mwh', label: 'IT Energy', source: 'Step above' }
+    ]
+  },
+  {
+    id: 'cooling_upgrade_min',
+    name: 'Cooling Upgrade Cost (low)',
+    formula: 'IT Load × €400,000/MW',
+    calc: (inp) => inp.it_load_mw * 400000,
+    unit: '€', format: (v) => '€' + Math.round(v).toLocaleString(),
     inputs_used: [
       { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
-      { id: 'retrofit_capex_min', label: 'Low cost rate', tier: 'T3', source: CANONICAL_DATA.retrofit_capex_min.source }
+      { val: 400000, label: 'Cost rate', tier: 'T3', source: 'RICS NRM1 — DC cooling retrofit, adiabatic + controls' }
     ]
   },
   {
-    id: 'retrofit_cost_max',
-    name: 'Indicative Retrofit Cost (high)',
-    formula: 'IT Load × €1,500,000/MW',
-    calc: (inp) => inp.it_load_mw * CANONICAL_DATA.retrofit_capex_max.value,
-    unit: '€',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
+    id: 'cooling_upgrade_max',
+    name: 'Cooling Upgrade Cost (high)',
+    formula: 'IT Load × €1,200,000/MW',
+    calc: (inp) => inp.it_load_mw * 1200000,
+    unit: '€', format: (v) => '€' + Math.round(v).toLocaleString(),
     inputs_used: [
       { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
-      { id: 'retrofit_capex_max', label: 'High cost rate', tier: 'T3', source: CANONICAL_DATA.retrofit_capex_max.source }
+      { val: 1200000, label: 'Cost rate', tier: 'T3', source: 'RICS NRM1 — DC full chiller + CRAH replacement' }
+    ]
+  },
+  {
+    id: 'pue_payback_years',
+    name: 'Simple Payback — Cooling Upgrade',
+    formula: 'Average Cost ÷ Annual PUE Saving',
+    calc: (inp, r) => {
+      if (r.overhead_cost_at_target <= 0) return null;
+      return ((r.cooling_upgrade_min + r.cooling_upgrade_max) / 2) / r.overhead_cost_at_target;
+    },
+    unit: 'years', format: (v) => v === null ? 'N/A' : v.toFixed(1),
+    inputs_used: [
+      { ref: 'cooling_upgrade_min', label: 'Low Cost', source: 'Step above' },
+      { ref: 'cooling_upgrade_max', label: 'High Cost', source: 'Step above' },
+      { ref: 'overhead_cost_at_target', label: 'Annual Saving', source: 'Step above' }
     ]
   }
 ];
@@ -452,76 +546,127 @@ const FINDINGS_ENGINE = [
     area: 'EU Taxonomy PUE Alignment',
     source: 'EU Taxonomy Delegated Act 2021/2139',
     tier: 'T1',
-    evaluate: (inp, res) => ({
-      status: res.taxonomy_aligned ? 'PASS' : 'FAIL',
-      detail: res.taxonomy_aligned
-        ? 'PUE ' + inp.pue + ' is within the EU Taxonomy threshold of ≤' + CANONICAL_DATA.taxonomy_pue.value + '.'
-        : 'PUE ' + inp.pue + ' exceeds the EU Taxonomy threshold of ≤' + CANONICAL_DATA.taxonomy_pue.value + ' by ' + res.pue_gap.toFixed(2) + ' points. Overhead energy: ' + Math.round(res.overhead_mwh).toLocaleString() + ' MWh/yr costing ' + CALC_ENGINE.find(c=>c.id==='overhead_cost').format(res.overhead_cost) + '.',
-      cost_range: res.taxonomy_aligned ? null :
-        CALC_ENGINE.find(c=>c.id==='retrofit_cost_min').format(res.retrofit_cost_min) + ' – ' + CALC_ENGINE.find(c=>c.id==='retrofit_cost_max').format(res.retrofit_cost_max) + ' (T3 indicative — cooling infrastructure upgrade, subject to detailed design and tender)'
+    evaluate: (inp, r) => ({
+      status: r.taxonomy_aligned ? 'PASS' : 'FAIL',
+      detail: r.taxonomy_aligned
+        ? 'PUE ' + inp.pue + ' meets the EU Taxonomy threshold of ≤1.3.'
+        : 'PUE ' + inp.pue + ' exceeds EU Taxonomy threshold by ' + r.pue_gap.toFixed(2) + ' points. Overhead energy: ' + Math.round(r.overhead_mwh).toLocaleString() + ' MWh/yr. Annual saving at PUE 1.3: ' + CALC_ENGINE.find(function(c){return c.id==='overhead_cost_at_target'}).format(r.overhead_cost_at_target) + '.',
+      cost_range: r.taxonomy_aligned ? null :
+        CALC_ENGINE.find(function(c){return c.id==='cooling_upgrade_min'}).format(r.cooling_upgrade_min) + ' – ' + CALC_ENGINE.find(function(c){return c.id==='cooling_upgrade_max'}).format(r.cooling_upgrade_max) + ' (T3 — RICS NRM1 DC cooling retrofit). Payback: ' + CALC_ENGINE.find(function(c){return c.id==='pue_payback_years'}).format(r.pue_payback_years) + '.'
     })
   },
   {
     id: 'cru_renewable',
-    area: 'CRU Renewable Obligation',
+    area: 'CRU Renewable Energy Obligation',
     source: 'CRU/2025236',
     tier: 'T1',
-    evaluate: (inp, res) => {
-      const gap = res.renewable_gap;
-      const unmatched = Math.round(gap / 100 * res.annual_energy_mwh);
+    evaluate: (inp, r) => ({
+      status: r.renewable_gap_pct === 0 ? 'PASS' : r.renewable_gap_pct <= 20 ? 'FLAG' : 'FAIL',
+      detail: r.renewable_gap_pct === 0
+        ? 'Renewable energy at ' + inp.ppa_pct + '% meets the CRU 80% obligation.'
+        : 'Renewable energy at ' + (inp.ppa_pct||0) + '% is ' + r.renewable_gap_pct + ' points below the CRU 80% obligation. Unmatched: ' + Math.round(r.unmatched_mwh).toLocaleString() + ' MWh/yr.',
+      cost_range: r.renewable_gap_pct === 0 ? null :
+        '€50,000 – €250,000/yr (T3 — RE-Source Platform PPA/GO market rates)'
+    })
+  },
+  {
+    id: 'carbon_trajectory',
+    area: 'Carbon Cost Trajectory (2025–2030)',
+    source: 'SEAI 2026; Finance Act carbon tax schedule',
+    tier: 'T1',
+    evaluate: (inp, r) => {
+      var pct = r.carbon_cost_now > 0 ? Math.round(r.carbon_escalation / r.carbon_cost_now * 100) : 0;
       return {
-        status: gap === 0 ? 'PASS' : gap <= 20 ? 'FLAG' : 'FAIL',
-        detail: gap === 0
-          ? 'Renewable energy at ' + inp.ppa_pct + '% meets the CRU 80% obligation.'
-          : 'Renewable energy at ' + (inp.ppa_pct||0) + '% is ' + gap + ' percentage points below the CRU 80% obligation. Unmatched consumption: ' + unmatched.toLocaleString() + ' MWh/yr.',
-        cost_range: gap === 0 ? null : '€50,000 – €250,000/yr (T3 indicative — PPA/GO procurement over hold period)'
+        status: r.carbon_escalation < 50000 ? 'PASS' : r.carbon_escalation < 150000 ? 'FLAG' : 'FAIL',
+        detail: 'Current: ' + CALC_ENGINE.find(function(c){return c.id==='carbon_cost_now'}).format(r.carbon_cost_now) + '/yr. 2030: ' + CALC_ENGINE.find(function(c){return c.id==='carbon_cost_2030'}).format(r.carbon_cost_2030) + '/yr (+' + pct + '%). 10-year incremental: ' + CALC_ENGINE.find(function(c){return c.id==='carbon_10yr_incremental'}).format(r.carbon_10yr_incremental) + '.',
+        cost_range: CALC_ENGINE.find(function(c){return c.id==='carbon_10yr_incremental'}).format(r.carbon_10yr_incremental) + ' over 10-year hold (T1 — policy-confirmed)'
       };
     }
   },
   {
-    id: 'carbon_trajectory',
-    area: 'Carbon Cost Trajectory',
-    source: 'SEAI 2026 (grid EF); Finance Act (carbon tax)',
+    id: 'fgas_exposure',
+    area: 'F-Gas Regulatory Exposure',
+    source: 'F-Gas Regulation (EU) 2024/573',
     tier: 'T1',
-    evaluate: (inp, res) => {
-      const esc = res.carbon_cost_escalation;
-      const pct = Math.round(esc / res.carbon_cost_current * 100);
-      const tenYr = Math.round(esc * 7);
+    evaluate: (inp, r) => {
+      var noFgas = !inp.refrigerant_type || inp.refrigerant_type === 'none' || r.fgas_co2eq === 0;
+      var lowGwp = inp.refrigerant_type === 'r1234ze' || inp.refrigerant_type === 'r32';
       return {
-        status: esc < 50000 ? 'PASS' : esc < 150000 ? 'FLAG' : 'FAIL',
-        detail: 'Current carbon cost: ' + CALC_ENGINE.find(c=>c.id==='carbon_cost_current').format(res.carbon_cost_current) + '/yr. 2030 projection: ' + CALC_ENGINE.find(c=>c.id==='carbon_cost_2030').format(res.carbon_cost_2030) + '/yr. Escalation: ' + CALC_ENGINE.find(c=>c.id==='carbon_cost_escalation').format(esc) + '/yr (+' + pct + '%).',
-        cost_range: '€' + tenYr.toLocaleString() + ' incremental carbon cost over 10-year hold (T1 — policy-confirmed escalation, not indicative)'
+        status: noFgas ? 'PASS' : lowGwp ? 'FLAG' : 'FAIL',
+        detail: noFgas
+          ? 'No high-GWP refrigerant exposure.'
+          : (inp.refrigerant_type||'').toUpperCase() + ', ' + (inp.refrigerant_charge_kg||0) + ' kg. CO₂-eq: ' + Math.round(r.fgas_co2eq).toLocaleString() + ' tCO₂-eq. Leak checks: ' + CALC_ENGINE.find(function(c){return c.id==='fgas_leak_check_freq'}).format(r.fgas_leak_check_freq) + '. Annual leak cost: ' + CALC_ENGINE.find(function(c){return c.id==='fgas_annual_leak_cost'}).format(r.fgas_annual_leak_cost) + '.',
+        cost_range: noFgas ? null : '€150,000 – €400,000 (T3 — Airedale/Stulz low-GWP CRAH conversion ranges)'
+      };
+    }
+  },
+  {
+    id: 'eed_reporting',
+    area: 'EED Article 12 Reporting',
+    source: 'EU Energy Efficiency Directive 2023/1791 Art 12',
+    tier: 'T1',
+    evaluate: (inp, r) => {
+      var s = inp.eed_reporting || 'not_started';
+      return {
+        status: s === 'current' ? 'PASS' : s === 'partial' ? 'FLAG' : 'FAIL',
+        detail: s === 'current'
+          ? 'EED Article 12 reporting current. In scope at ' + inp.it_load_mw + ' MW IT (>0.5 MW threshold).'
+          : 'EED reporting: ' + s.replace(/_/g,' ') + '. At ' + inp.it_load_mw + ' MW IT, facility is in scope. Required: PUE, WUE' + (r.wue !== null ? ' (currently ' + r.wue.toFixed(2) + ' L/kWh)' : ' (no water data)') + ', REF, CUE.',
+        cost_range: s === 'current' ? null : '€30,000 – €120,000 setup + €15,000 – €40,000/yr ongoing (T3 — RICS NRM1)'
+      };
+    }
+  },
+  {
+    id: 'free_cooling',
+    area: 'Free Cooling Utilisation',
+    source: 'Met Éireann 30-year; EN 50600-2-3',
+    tier: 'T1',
+    evaluate: (inp, r) => {
+      var has = inp.has_free_cooling === 'yes';
+      return {
+        status: has ? 'PASS' : inp.has_free_cooling === 'partial' ? 'FLAG' : 'FAIL',
+        detail: has
+          ? 'Free cooling installed. Dublin: ~7,200 hrs/yr below 18°C (82% of hours).'
+          : 'Free cooling: ' + (inp.has_free_cooling||'no') + '. Dublin: 7,200 free cooling hrs/yr available. ' + (inp.cooling_type === 'air_crac' ? 'DX CRAC runs compressors year-round — significant waste.' : 'Current system may not fully exploit available hours.'),
+        cost_range: has ? null : '€200,000 – €500,000 (T3 — Airedale/Stulz economiser retrofit ranges)'
       };
     }
   }
 ];
 
 /* ================================================================
-   INPUT_SCHEMA — Same as v1.0 (DC-Screen aligned)
+   INPUT_SCHEMA — Compliance Checker fields
    ================================================================ */
 const INPUT_SCHEMA = [
   { id:'facility_name',    label:'Facility Name',           type:'text',   required:true,  demo:'Example Facility',  hint:'Internal reference name', unit:null },
-  { id:'location',         label:'Location',                type:'text',   required:false, demo:'Dublin',            hint:'City or area',            unit:null },
-  { id:'build_year',       label:'Year Built',              type:'number', required:true,  demo:2013,                hint:'Original commissioning',  unit:null, min:1990, max:2026 },
+  { id:'location',         label:'Location',                type:'text',   required:false, demo:'Dublin',            hint:'City or area', unit:null },
+  { id:'build_year',       label:'Year Built',              type:'number', required:true,  demo:2013,                hint:'Original commissioning', unit:null, min:1990, max:2026 },
   { id:'it_load_mw',       label:'IT Load',                 type:'number', required:true,  demo:2.4,                 hint:'Total IT load', unit:'MW', min:0, max:200, step:0.1 },
-  { id:'rack_count',       label:'Rack Count',              type:'number', required:true,  demo:400,                 hint:'Total populated racks',   unit:'racks', min:1, max:10000 },
-  { id:'rack_density_kw',  label:'Average Rack Density',    type:'number', required:false, demo:6,                   hint:'Average kW per rack',     unit:'kW/rack', min:1, max:100, step:0.5 },
+  { id:'rack_count',       label:'Rack Count',              type:'number', required:true,  demo:400,                 hint:'Total populated racks', unit:'racks', min:1, max:10000 },
+  { id:'rack_density_kw',  label:'Average Rack Density',    type:'number', required:false, demo:6,                   hint:'Average kW per rack', unit:'kW/rack', min:1, max:100, step:0.5 },
   { id:'pue',              label:'Current PUE',             type:'number', required:true,  demo:1.50,                hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
-  { id:'mic_kva',          label:'MIC',                     type:'number', required:false, demo:5000,                hint:'Maximum Import Capacity', unit:'kVA', min:0, max:200000, step:100 },
-  { id:'voltage_kv',       label:'Supply Voltage',          type:'select', required:false, demo:'10',                hint:'ESB Networks supply',  unit:'kV', options:['10','20','38','110'] },
-  { id:'cooling_type',     label:'Primary Cooling',         type:'select', required:true,  demo:'air_crac',          hint:'Main cooling technology', unit:null, options:[
-    {value:'air_crac',label:'DX CRAC'},{value:'air_free',label:'Air-side Free Cooling'},{value:'chilled_water',label:'Chilled Water'},{value:'evaporative',label:'Evaporative/Adiabatic'},{value:'hybrid_dlc',label:'Hybrid DLC'},{value:'full_dlc',label:'Full DLC'},{value:'immersion',label:'Immersion'}
+  { id:'pue_measurement',  label:'PUE Measurement Level',   type:'select', required:false, demo:'basic',             hint:'Per Green Grid categories', unit:null, options:[
+    {value:'basic',label:'Basic (billing data)'},{value:'intermediate',label:'Intermediate (sub-metered)'},{value:'advanced',label:'Advanced (real-time)'}
   ]},
-  { id:'redundancy_level', label:'Power Redundancy',        type:'select', required:true,  demo:'n_plus_1',          hint:'UPS/generator topology',  unit:null, options:[
-    {value:'n',label:'N'},{value:'n_plus_1',label:'N+1'},{value:'two_n',label:'2N'},{value:'two_n_plus_1',label:'2N+1'}
+  { id:'cooling_type',     label:'Primary Cooling',         type:'select', required:true,  demo:'air_crac',          hint:'Cooling technology', unit:null, options:[
+    {value:'air_crac',label:'DX CRAC'},{value:'air_free',label:'Air-side Free Cooling'},{value:'chilled_water',label:'Chilled Water'},{value:'evaporative',label:'Evaporative'},{value:'hybrid_dlc',label:'Hybrid DLC'},{value:'full_dlc',label:'Full DLC'},{value:'immersion',label:'Immersion'}
   ]},
+  { id:'has_free_cooling', label:'Free Cooling Installed?',  type:'select', required:true, demo:'no',                hint:'Economiser or free cooling mode', unit:null, options:[{value:'yes',label:'Yes'},{value:'no',label:'No'},{value:'partial',label:'Partial'}] },
+  { id:'refrigerant_type', label:'Primary Refrigerant',     type:'select', required:false, demo:'r410a',             hint:'Main cooling refrigerant', unit:null, options:[
+    {value:'r410a',label:'R410A (GWP 2088)'},{value:'r407c',label:'R407C (GWP 1774)'},{value:'r134a',label:'R134a (GWP 1430)'},{value:'r32',label:'R32 (GWP 675)'},{value:'r1234ze',label:'R1234ze (GWP 7)'},{value:'none',label:'No refrigerant'}
+  ]},
+  { id:'refrigerant_charge_kg',label:'Total Refrigerant Charge', type:'number', required:false, demo:192,           hint:'Total charge across all units', unit:'kg', min:0, max:10000 },
+  { id:'ppa_pct',          label:'Renewable Energy',        type:'number', required:true,  demo:45,                  hint:'% from PPA + onsite + grid', unit:'%', min:0, max:100 },
+  { id:'eed_reporting',    label:'EED Article 12 Reporting', type:'select', required:false, demo:'not_started',      hint:'Current reporting status', unit:null, options:[
+    {value:'not_started',label:'Not started'},{value:'partial',label:'Partial'},{value:'current',label:'Current'}
+  ]},
+  { id:'has_water_meter',  label:'Cooling Water Metered?',  type:'select', required:false, demo:'no',                hint:'Sub-meter on cooling water', unit:null, options:[{value:'yes',label:'Yes'},{value:'no',label:'No'}] },
+  { id:'water_litres_yr',  label:'Annual Water Use',        type:'number', required:false, demo:15000000,            hint:'Cooling water consumption', unit:'litres/yr', min:0, max:1000000000 },
   { id:'generator_fuel',   label:'Generator Fuel',          type:'select', required:false, demo:'diesel',            hint:'Backup fuel type', unit:null, options:[
     {value:'diesel',label:'Diesel'},{value:'gas',label:'Natural Gas'},{value:'hvo',label:'HVO'}
   ]},
-  { id:'generator_hours',  label:'Generator Run Hours',     type:'number', required:false, demo:200,                 hint:'Annual run hours', unit:'hrs/yr', min:0, max:8760, step:10 },
-  { id:'ppa_pct',          label:'Renewable Energy',        type:'number', required:false, demo:45,                  hint:'% from all renewable sources', unit:'%', min:0, max:100 },
-  { id:'hall_config',      label:'Hall Configuration',      type:'text',   required:false, demo:'Hall A, Hall B',    hint:'Hall names/layout',       unit:null },
-  { id:'total_floor_m2',   label:'Whitespace Area',         type:'number', required:false, demo:1800,                hint:'Total raised floor area', unit:'m²', min:0, max:100000 }
+  { id:'generator_hours',  label:'Generator Run Hours',     type:'number', required:false, demo:200,                 hint:'Annual run hours', unit:'hrs/yr', min:0, max:8760 },
+  { id:'total_floor_m2',   label:'Whitespace Area',         type:'number', required:false, demo:1800,                hint:'Total raised floor', unit:'m²', min:0, max:100000 }
 ];
 
 const DEMO_DATA = {};
@@ -539,37 +684,50 @@ const PERSONAS = {
    INTERPRETATION PROMPT — AI writes narrative only. Never calculates.
    Replace per tool.
    ================================================================ */
-const INTERPRETATION_PROMPT = `You are interpreting pre-calculated screening results for a data centre facility in Ireland. You work for Legacy Business Engineers Ltd (LBE), an independent technical advisory firm.
+const INTERPRETATION_PROMPT = `You are interpreting pre-calculated compliance screening results for a data centre facility in Ireland. You work for Legacy Business Engineers Ltd (LBE), an independent technical advisory firm.
 
 CRITICAL RULES:
-- DO NOT perform any arithmetic.
-- DO NOT estimate any costs.
-- DO NOT invent any numbers.
-- Every number you reference MUST come from the CALCULATED RESULTS below.
-- If you need a number that is not provided, say "not calculated in this screening."
-- Use "indicative" or "screening-level" for any cost reference.
-- Use "Misalignment Year" not "Stranding Year".
+- DO NOT perform any arithmetic. All numbers are pre-calculated and provided below.
+- DO NOT estimate any costs. Cost ranges are pre-calculated.
+- DO NOT invent any numbers. If a number is not in the results, say "not calculated."
+- Reference the provided calculated numbers exactly as given.
+- Use "Misalignment Year" not "Stranding Year" for CRREM.
+- CRREM DC pathway is LBE-derived (T3/T4), not published by CRREM Foundation.
 - Never say "compliant" — use "aligned" or "readiness".
 - Never say "should" or "must" — use "consider" or "investigate".
 - State: "This screening does not constitute a design deliverable or compliance determination."
 
-Your job is INTERPRETATION ONLY — explain what the calculated numbers mean.
+Your expertise: EU Taxonomy, CRU/2025236, EED 2023/1791, F-Gas (EU) 2024/573, CRREM, ASHRAE TC 9.9, EN 50600. You interpret what the calculated numbers mean for a fund manager holding this asset for 10 years.
 
-Respond ONLY with a JSON object. No preamble, no markdown fences.
+Respond ONLY with JSON. No preamble, no markdown fences.
 {
-  "executive_summary": "3 sentences in fund-manager language interpreting the results. Reference the actual calculated numbers.",
+  "executive_summary": "3 sentences in fund-manager language. Reference actual calculated numbers from the results.",
   "finding_interpretations": {
-    "finding_id": "1-2 sentence commercial/regulatory implication for the investor"
+    "pue_taxonomy": "1-2 sentences on commercial implication of PUE finding",
+    "cru_renewable": "1-2 sentences on renewable gap implication",
+    "carbon_trajectory": "1-2 sentences on carbon cost trajectory implication",
+    "fgas_exposure": "1-2 sentences on F-Gas implication",
+    "eed_reporting": "1-2 sentences on EED reporting implication",
+    "free_cooling": "1-2 sentences on free cooling implication"
   },
   "persona_views": {
-    "ann": "Fund manager — risk to hold thesis, cost context, exit implications",
-    "declan": "Ops manager — practical operational impact, what changes day-to-day",
-    "mark": "MEP engineer — technical path to close gaps, standards reference",
-    "sarah": "ESG analyst — reporting impact, taxonomy disclosure, SFDR alignment",
-    "tom": "QS/cost manager — capex phasing, payback context, benchmark comparison"
+    "ann": "Fund manager — risk, cost, hold thesis, exit universe",
+    "declan": "Ops manager — what changes operationally",
+    "mark": "MEP engineer — technical path to close gaps",
+    "sarah": "ESG analyst — reporting, taxonomy, SFDR alignment",
+    "tom": "QS/cost — capex phasing, payback, benchmarks"
   },
   "decision_gate": "DESKTOP_ASSESSMENT or MONITORING or DISPOSAL_ANALYSIS"
 }`;
+
+const LOADING_MESSAGES = [
+  'Calculating energy profile...',
+  'Checking PUE against EU Taxonomy...',
+  'Assessing CRU renewable obligation...',
+  'Evaluating F-Gas exposure...',
+  'Computing carbon cost trajectory...',
+  'Requesting AI interpretation...'
+];
 
 /* ================================================================
    BSG Layer 2
@@ -580,7 +738,7 @@ class ErrorBoundary extends React.Component {
   render(){
     if(this.state.hasError){
       return React.createElement('div',{style:{padding:32,fontFamily:'monospace',background:'#1a1a1a',color:'#f85149',borderRadius:8,margin:24}},
-        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-000 v2.0.0 — Error Boundary'),
+        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-004 v2.0.0 — Error Boundary'),
         React.createElement('p',{style:{margin:'12px 0'}},'Error: '+(this.state.error?.message||'Unknown')),
         React.createElement('p',{style:{fontSize:12,color:'#8b949e',marginTop:12}},'Copy this error and send to LM at info@legacybe.ie')
       );
@@ -654,10 +812,11 @@ function InputTab({ inputs, setInputs, onRun, loading }){
 
   const SECTIONS = [
     { title: 'Facility Identity', ids: ['facility_name','location','build_year'] },
-    { title: 'Power & IT Load', ids: ['it_load_mw','rack_count','rack_density_kw','mic_kva','voltage_kv'] },
-    { title: 'Cooling & Efficiency', ids: ['pue','cooling_type'] },
-    { title: 'Backup & Redundancy', ids: ['redundancy_level','generator_fuel','generator_hours'] },
-    { title: 'Commercial & ESG', ids: ['ppa_pct','hall_config','total_floor_m2'] }
+    { title: 'Energy & Efficiency', ids: ['it_load_mw','rack_count','rack_density_kw','pue','pue_measurement'] },
+    { title: 'Cooling & Refrigerants', ids: ['cooling_type','has_free_cooling','refrigerant_type','refrigerant_charge_kg'] },
+    { title: 'Water', ids: ['has_water_meter','water_litres_yr'] },
+    { title: 'Renewables & Carbon', ids: ['ppa_pct','generator_fuel','generator_hours'] },
+    { title: 'Reporting & Compliance', ids: ['eed_reporting','total_floor_m2'] }
   ];
 
   const renderField = (field) => {
@@ -747,7 +906,7 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
             <div className="calc-card-value"><span className={'traffic-light '+tlClass(trafficLight)} style={{marginRight:4}}></span>{trafficLight}</div>
             <div className="calc-card-unit">{failCount} fail, {flagCount} flag, {passCount} pass</div>
           </div>
-          {calcSteps.filter(s=>['carbon_cost_current','co2_tonnes','pue_gap'].includes(s.id)).map(s=>(
+          {calcSteps.filter(s=>['carbon_cost_now','co2_scope2','pue_gap'].includes(s.id)).map(s=>(
             <div className="calc-card" key={s.id}>
               <div className="calc-card-label">{s.name}</div>
               <div className="calc-card-value">{s.formatted}</div>
@@ -821,7 +980,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
           <div className="metric-value"><span className={'traffic-light '+tlClass(trafficLight)} style={{marginRight:6}}></span>{trafficLight}</div>
           <div className="metric-sub">{failCount} fail, {flagCount} flag, {passCount} pass</div>
         </div>
-        {calcSteps.filter(s=>s.id==='carbon_cost_current').map(s=>(
+        {calcSteps.filter(s=>s.id==='carbon_cost_now').map(s=>(
           <div className="metric-card" key={s.id}>
             <div className="metric-label">Carbon Cost</div>
             <div className="metric-value" style={{color:'var(--warn)'}}>{s.formatted}</div>
