@@ -231,3 +231,21 @@
 - [COMMIT] Branch: claude/fire-safety-screener-iRNJN | tools/DC-TOOL-008_v1_0_0.html
 
 ---
+## 2026-04-14 | Sonnet | DC-TOOL-012 | Build — Commissioning Readiness Tool v1.0.0
+- [BUILD] DC-TOOL-012_v1_0_0.html created from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-012' — updated in all 4 version points (title, BSG L1, spec comment, const)
+- [BUILD] TOOL_NAME = 'Commissioning Readiness Tool' — replaced 'Factory Template — Facility Screener'
+- [BUILD] BSG Layer 1 (window.onerror): 'DC-TOOL-012 v1.0.0 — Blank Screen Guard'
+- [BUILD] BSG Layer 2 (ErrorBoundary): 'DC-TOOL-012 v1.0.0 — Error Boundary'
+- [BUILD] DOMAIN_PROMPT: commissioning engineer — Cx Plan, CxA independence, FAT/SAT/IST, ATS transfer test, full-chain proving, PUE verification, O&M handover, ORR; CIBSE/RICS benchmark 2–5% M&E contract; electricity price €0.12/kWh (CRU Q4 2024 T2)
+- [BUILD] INPUT_SCHEMA: 20 fields — Facility Identity (4), Commissioning Programme (2), Testing (5), Performance Verification (3), Handover (4), Commercial (1) — ppa_pct retained; old factory fields (rack_count, rack_density_kw, mic_kva, voltage_kv, cooling_type, redundancy_level, generator_fuel, generator_hours, hall_config, total_floor_m2) removed
+- [BUILD] SECTIONS: 6 sections — Facility Identity, Commissioning Programme, Testing, Performance Verification, Handover, Commercial
+- [BUILD] LOADING_MESSAGES: 5 commissioning messages (commissioning programme, FAT/SAT documentation, integrated systems testing, PUE verification, operational readiness)
+- [BUILD] buildUserPrompt: updated framing to commissioning readiness; findings cover all 7 commissioning phases (Cx Plan, FAT, SAT, IST, PUE verification, O&M handover, operational readiness)
+- [SWEEP] Stale value sweep (QG-2): 0 matches — all factory template fields and messages replaced
+- [SWEEP] PI-safe sweep (QG-3): 0 output-side violations — 'should' in caveat boxes replaced with 'warrant validation'; 'compliant'/'must'/'should' in DOMAIN_PROMPT are instruction-only
+- [BUILD] Babel check: PASS — JSX structure unchanged, all React component architecture inherited from template
+- [DECISION] OUTPUT_FORMAT: findings areas — Cx Plan, FAT Documentation, SAT Completion, IST/Transfer Testing, PUE Verification, O&M Handover, Operational Readiness
+- [COMMIT] Branch: claude/build-commissioning-tool-uxWAX | tools/DC-TOOL-012_v1_0_0.html
+
+---
