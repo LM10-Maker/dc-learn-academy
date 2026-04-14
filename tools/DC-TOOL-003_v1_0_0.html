@@ -375,8 +375,31 @@ const INPUT_SCHEMA = [
 /* ================================================================
    DEMO DATA (Clonshaugh reference — pre-fills form)
    ================================================================ */
-const DEMO_DATA = {};
-INPUT_SCHEMA.forEach(f => { if(f.demo !== undefined && f.demo !== null) DEMO_DATA[f.id] = f.demo; });
+const DEMO_DATA = {
+  facility_name: 'Clonshaugh DC',
+  location: 'Dublin 17',
+  build_year: 2013,
+  it_load_mw: 2.4,
+  rack_count: 400,
+  pue: 1.50,
+  mic_kva: 5000,
+  voltage_kv: '10',
+  supply_feeds: '1',
+  transformer_config: '2 × 2MVA',
+  msb_config: '3200A single bus',
+  redundancy_level: 'n_plus_1',
+  ups_config: '2 × 1.5MVA',
+  ups_battery_age: 4,
+  generator_count: 2,
+  generator_fuel: 'diesel',
+  fuel_autonomy_hrs: 48,
+  cooling_type: 'air_crac',
+  cooling_redundancy: 'n_plus_1',
+  target_tier: 'tier_iii',
+  ppa_pct: 45,
+  hall_config: 'Hall A, Hall B',
+  total_floor_m2: 1800
+};
 
 /* ================================================================
    PERSONAS (same 5 as DC-LEARN, tool-specific framing)
