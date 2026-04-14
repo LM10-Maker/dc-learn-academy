@@ -129,3 +129,21 @@
 - [BUILD] Babel parse check (@babel/parser, jsx+flow plugins): **16/16 PASS** — dc-learn-000 through dc-learn-015
 
 ---
+
+## 2026-04-14 | Sonnet | DC-TOOL-003 | Build — Redundancy Gap Tool
+- [BUILD] /tools/ directory created — canonical location for DC-SCREEN tool suite
+- [BUILD] DC-TOOL-003_v1_0_0.html built from DC-TOOL-000_v1_0_0.html factory template
+- [BUILD] TOOL_ID = 'DC-TOOL-003', TOOL_VERSION = '1.0.0', TOOL_NAME = 'Redundancy Gap Tool'
+- [BUILD] DOMAIN_PROMPT replaced — redundancy/topology screening prompt; RBD methodology; SPOF identification; Uptime Institute Tier Standard; SEAI 2026 emission factor (0.2241 kgCO₂/kWh); Irish facility norms (Clonshaugh reference)
+- [BUILD] INPUT_SCHEMA replaced — 24 fields: facility identity, power supply (MIC, transformer, MSB, supply feeds), UPS & backup (UPS config, battery age, generators, fuel autonomy), cooling (type + redundancy), commercial (target tier, PPA, hall, floor area)
+- [BUILD] SECTIONS replaced — 5 groups: Facility Identity, Power Supply, UPS & Backup, Cooling, Commercial
+- [BUILD] LOADING_MESSAGES replaced — topology/SPOF/availability/cooling/gap-analysis sequence
+- [BUILD] DEMO_DATA auto-derived from INPUT_SCHEMA demo values (Clonshaugh: 2.4MW IT, 400 racks, PUE 1.50, 5MVA MIC, N+1 UPS, 2 generators, 48hr autonomy)
+- [SWEEP] QG-2 stale value sweep: 0 matches for 83,050 | 0.295 | 63.50
+- [SWEEP] QG-3 PI-safe sweep: 0 banned-term matches (excluding instruction text)
+- [SWEEP] DC-TOOL-000 / Factory Template refs: 0 remaining
+- [BUILD] Babel parse check (@babel/parser, jsx+flow plugins): **PASS** — DC-TOOL-003_v1_0_0.html
+- [DECISION] No deviations from task scope — CSS, BSG architecture, tab structure, and JSON import/export inherited unchanged from factory template
+- [DEPLOY] Branch: claude/build-redundancy-gap-tool-Xo2S1
+
+---
