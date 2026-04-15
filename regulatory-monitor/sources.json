@@ -1,0 +1,137 @@
+{
+  "sources": [
+    {
+      "id": "cru",
+      "name": "CRU — Decisions & Publications",
+      "url": "https://www.cru.ie/publications/",
+      "frequency": "weekly",
+      "watch_for": "New decisions affecting data centres, LEU connection policy updates, licence conditions",
+      "primary_modules": ["015", "007"],
+      "secondary_modules": ["006", "012"],
+      "snapshot_file": "cru.txt"
+    },
+    {
+      "id": "eirgrid",
+      "name": "EirGrid — News & Publications",
+      "url": "https://www.eirgrid.ie/news",
+      "frequency": "weekly",
+      "watch_for": "Connection process changes, capacity statements, generation adequacy, data centre engagement process",
+      "primary_modules": ["006", "015"],
+      "secondary_modules": ["012"],
+      "snapshot_file": "eirgrid.txt"
+    },
+    {
+      "id": "esb_networks",
+      "name": "ESB Networks — Connection Policy",
+      "url": "https://www.esbnetworks.ie/",
+      "frequency": "fortnightly",
+      "watch_for": "MIC policy changes, connection application process, DG conditions",
+      "primary_modules": ["006", "001"],
+      "secondary_modules": [],
+      "snapshot_file": "esb_networks.txt"
+    },
+    {
+      "id": "seai",
+      "name": "SEAI — Publications & Data",
+      "url": "https://www.seai.ie/data-and-insights/",
+      "frequency": "monthly",
+      "watch_for": "Grid emission factor updates, energy statistics, EED guidance",
+      "primary_modules": ["010", "004"],
+      "secondary_modules": ["007", "012", "015"],
+      "snapshot_file": "seai.txt"
+    },
+    {
+      "id": "eurlex_eed",
+      "name": "EUR-Lex — EED 2023/1791",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023L1791",
+      "frequency": "monthly",
+      "watch_for": "Amendments, corrigenda, delegated acts amending EED",
+      "primary_modules": ["007", "009"],
+      "secondary_modules": ["004", "015"],
+      "snapshot_file": "eurlex_eed.txt"
+    },
+    {
+      "id": "eurlex_taxonomy",
+      "name": "EUR-Lex — EU Taxonomy Delegated Act 2021/2139",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32021R2139",
+      "frequency": "monthly",
+      "watch_for": "Technical screening criteria changes, data centre thresholds",
+      "primary_modules": ["007", "010"],
+      "secondary_modules": ["004", "015"],
+      "snapshot_file": "eurlex_taxonomy.txt"
+    },
+    {
+      "id": "eurlex_fgas",
+      "name": "EUR-Lex — F-Gas Regulation 2024/573",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R0573",
+      "frequency": "monthly",
+      "watch_for": "Phase-down schedule changes, GWP threshold amendments, service ban dates",
+      "primary_modules": ["007", "002"],
+      "secondary_modules": ["008"],
+      "snapshot_file": "eurlex_fgas.txt"
+    },
+    {
+      "id": "eurlex_epbd",
+      "name": "EUR-Lex — EPBD Recast 2024/1275",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024L1275",
+      "frequency": "monthly",
+      "watch_for": "Energy performance requirements affecting data centres",
+      "primary_modules": ["007", "010"],
+      "secondary_modules": [],
+      "snapshot_file": "eurlex_epbd.txt"
+    },
+    {
+      "id": "eurlex_csrd",
+      "name": "EUR-Lex — CSRD 2022/2464",
+      "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022L2464",
+      "frequency": "monthly",
+      "watch_for": "Reporting standard amendments, sector-specific standards",
+      "primary_modules": ["007", "010"],
+      "secondary_modules": [],
+      "snapshot_file": "eurlex_csrd.txt"
+    },
+    {
+      "id": "epa",
+      "name": "EPA — Licensing",
+      "url": "https://www.epa.ie/",
+      "frequency": "monthly",
+      "watch_for": "IE licence threshold changes, guidance updates for data centres",
+      "primary_modules": ["007"],
+      "secondary_modules": ["012"],
+      "snapshot_file": "epa.txt"
+    },
+    {
+      "id": "semo",
+      "name": "SEMO — Capacity Market",
+      "url": "https://www.sem-o.com/",
+      "frequency": "quarterly",
+      "watch_for": "CRM auction results, T-4 clearing prices, capacity market rule changes",
+      "primary_modules": ["012", "015"],
+      "secondary_modules": ["006"],
+      "snapshot_file": "semo.txt"
+    },
+    {
+      "id": "crrem",
+      "name": "CRREM — Methodology",
+      "url": "https://www.crrem.eu/",
+      "frequency": "quarterly",
+      "watch_for": "Pathway updates, new asset class additions (data centre pathway watch), methodology version changes",
+      "primary_modules": ["010", "007"],
+      "secondary_modules": ["015"],
+      "snapshot_file": "crrem.txt"
+    }
+  ],
+  "canonical_values": [
+    {"name": "Grid EF", "value": "0.2241 kgCO\u2082/kWh", "source": "SEAI 2026", "modules": ["004", "007", "010", "012"]},
+    {"name": "Gas EF", "value": "0.205 kgCO\u2082/kWh", "source": "SEAI 2026", "modules": ["005", "007", "010", "012"]},
+    {"name": "Carbon tax", "value": "\u20ac71/tCO\u2082", "source": "Budget 2025", "modules": ["005", "007", "010", "012"]},
+    {"name": "Carbon tax 2030", "value": "\u20ac100/tCO\u2082", "source": "Finance Act", "modules": ["007", "010"]},
+    {"name": "CRM T-4", "value": "\u20ac149,960/MW/yr", "source": "SEMO PCAR2829T-4", "modules": ["006", "012", "015"]},
+    {"name": "Electricity price", "value": "\u20ac0.12/kWh", "source": "CRU Q4 2024", "modules": ["004", "005", "012"]},
+    {"name": "EU Taxonomy PUE", "value": "\u22641.3", "source": "Delegated Act 2021/2139", "modules": ["004", "007", "010", "015"]},
+    {"name": "CRU renewable obligation", "value": "80%", "source": "CRU/2025236", "modules": ["012", "015"]},
+    {"name": "F-Gas regulation", "value": "EU 2024/573", "source": "OJ", "modules": ["002", "007", "008"]},
+    {"name": "Dublin free cooling", "value": "7,200 hrs/yr", "source": "Met \u00c9ireann 30-year", "modules": ["002", "004"]},
+    {"name": "EPA IE threshold", "value": "50 MW thermal", "source": "EPA", "modules": ["007", "012"]}
+  ]
+}
