@@ -1,0 +1,11 @@
+{
+  "module_id": "DC-AI-001",
+  "title": "Power Density",
+  "version": "1.0.0",
+  "chain_tab_label": "Power Density Chain",
+  "hero_disclaimer": "Fictional reference facility (Clonshaugh DC). All figures are indicative and sourced — not a substitute for site-specific engineering assessment.",
+  "series_position": 1,
+  "series_total": 8,
+  "prev_module": null,
+  "next_module": "DC-AI-002"
+}

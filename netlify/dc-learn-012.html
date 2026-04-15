@@ -10,6 +10,7 @@
 <meta name="robots" content="index, follow">
 <title>DC-LEARN-012 v2.4.8 | Energy Centres & Microgrids | Legacy Business Engineers</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -133,6 +134,17 @@ header .sub{font-size:11px;font-family:var(--font-mono);color:var(--text-dim);ma
 .vg-filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;font:500 12px var(--font-sans);color:var(--text-dim);transition:all .15s}
 .vg-filter-btn:hover{background:var(--surface);color:var(--text)}
 .vg-filter-btn.active{background:transparent;border-color:var(--green);color:var(--green);font-weight:600}
+.dc-story-body{font-size:17px;line-height:1.9;color:var(--text)}
+.dc-story-body p{margin-bottom:22px !important;font-size:17px;line-height:1.9}
+.dc-story-body h2{font-family:Georgia,"Times New Roman",serif !important;font-size:26px !important;font-weight:400 !important;color:var(--text-bright) !important;margin-bottom:28px !important;text-align:center;letter-spacing:0.3px}
+.dc-story-body h3{font-family:Georgia,"Times New Roman",serif !important;font-size:19px !important;font-weight:500 !important;color:var(--text-bright) !important;margin:36px 0 16px !important}
+.dc-story-body blockquote{margin:32px 0 !important;padding:18px 24px 18px 28px !important;border-left:3px solid var(--green) !important;background:var(--green-dim) !important;border-radius:0 6px 6px 0;font-style:italic;color:var(--text-dim)}
+.dc-story-body blockquote p{margin-bottom:0 !important}
+.dc-story-body hr{margin:36px auto !important;width:80px;border:none !important;border-top:1px solid var(--border-light) !important}
+.dc-story-body em{font-style:italic}
+.dc-story-body strong{color:var(--text-bright)}
+.dc-story-body .dc-story-dropcap::first-letter{float:left;font-family:Georgia,"Times New Roman",serif;font-size:68px;line-height:0.85;padding-right:10px;padding-top:4px;color:var(--green);font-weight:400}
+@media(max-width:600px){.dc-authbtn-dropdown{position:fixed !important;top:68px !important;left:12px !important;right:12px !important;min-width:0 !important;width:auto !important}}
 </style>
 
 </head>
@@ -3405,7 +3417,7 @@ function AuthButton({ authState }) {
   const handleSend = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
     setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
     setLoading(false);
     if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
     else setSent(true);
@@ -3434,7 +3446,7 @@ function AuthButton({ authState }) {
         background:'transparent',border:'1px solid var(--accent)',borderRadius:4,
         padding:'3px 10px',cursor:'pointer'}}>Sign in</button>
       {showLogin && (
-        <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,
+        <div className="dc-authbtn-dropdown" style={{position:'absolute',top:'calc(100% + 8px)',right:0,
           background:'var(--surface)',border:'1px solid var(--border)',
           borderRadius:8,padding:16,zIndex:999,minWidth:280,
           boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
@@ -3486,7 +3498,7 @@ function LockedOverlay() {
   const handleSend = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
     setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
     setLoading(false);
     if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
     else setSent(true);
@@ -3507,42 +3519,45 @@ function LockedOverlay() {
           This module is part of DC-LEARN Professional
         </h2>
         <p style={{fontSize:14,color:'var(--text-dim)',lineHeight:1.6,marginBottom:24}}>
-          Modules 000–002 are free. Sign in below if you've already purchased access,
-          or visit legacybe.ie to get the full 16-module series.
+          Modules 000–002 are free. The full 16-module series is available at legacybe.ie.
         </p>
 
         <div style={{background:'var(--surface)',border:'1px solid var(--border)',
-          borderRadius:12,padding:24,marginBottom:20}}>
+          borderRadius:12,padding:20,marginBottom:20,textAlign:'left'}}>
           {!sent ? (
             <div>
-              <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:12}}>
-                Already have access? Enter your email for a sign-in link.
+              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6,marginBottom:12,textAlign:'center'}}>
+                Already purchased? Enter your email to sign in.
               </div>
               <input type="email" value={email}
                 onChange={e=>{setEmail(e.target.value);setError('');}}
                 onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
                 placeholder="your@email.com"
-                style={{width:'100%',padding:'10px 12px',fontSize:14,
+                style={{width:'100%',padding:'8px 10px',fontSize:13,
                 background:'var(--panel)',border:'1px solid var(--border)',
-                borderRadius:8,color:'var(--text-bright)',marginBottom:10,
+                borderRadius:6,color:'var(--text-bright)',marginBottom:8,
                 fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
-              {error && <div style={{fontSize:12,color:'var(--error)',marginBottom:8}}>{error}</div>}
+              {error && <div style={{fontSize:11,color:'var(--error)',marginBottom:6}}>{error}</div>}
               <button onClick={handleSend} disabled={loading}
-                style={{width:'100%',padding:'10px',fontSize:14,fontWeight:600,
+                style={{width:'100%',padding:'8px',fontSize:13,fontWeight:600,
                 background:'var(--lbe-green)',color:'#fff',border:'none',
-                borderRadius:8,cursor:'pointer',opacity:loading?0.7:1,marginBottom:8}}>
+                borderRadius:6,cursor:'pointer',opacity:loading?0.7:1}}>
                 {loading ? 'Sending…' : 'Send sign-in link'}
               </button>
+              <div style={{fontSize:11,color:'var(--text-muted)',marginTop:8,lineHeight:1.5,textAlign:'center'}}>
+                No password needed. Or contact{' '}
+                <a href="mailto:info@legacybe.ie"
+                  style={{color:'var(--accent)',textDecoration:'none'}}>info@legacybe.ie</a>.
+              </div>
             </div>
           ) : (
-            <div style={{padding:'8px 0',textAlign:'center'}}>
-              <div style={{fontSize:28,marginBottom:10}}>✓</div>
-              <div style={{fontSize:14,color:'var(--text-bright)',fontWeight:600,marginBottom:6}}>
+            <div style={{textAlign:'center',padding:'8px 0'}}>
+              <div style={{fontSize:22,marginBottom:8}}>✓</div>
+              <div style={{fontSize:13,color:'var(--text-bright)',fontWeight:600,marginBottom:4}}>
                 Check your email
               </div>
-              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.5}}>
-                Sign-in link sent to <strong style={{color:'var(--text-bright)'}}>{email}</strong>.<br/>
-                Click the link to access this module.
+              <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.5}}>
+                We sent a sign-in link to<br/><strong>{email}</strong>
               </div>
             </div>
           )}
@@ -3718,7 +3733,7 @@ function BookTab() {
     setLoading(true);
     fetch(CHAPTER_FILE)
       .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
-      .then(html => { setContent(html); setLoading(false); })
+      .then(html => { const processed = html.replace(/<p style="margin-bottom:14px">([A-Z])/, '<p class="dc-story-dropcap" style="margin-bottom:22px">$1'); setContent(processed); setLoading(false); })
       .catch(e => { setError('not-available'); setLoading(false); });
   }, []);
 
@@ -3727,7 +3742,7 @@ function BookTab() {
   const chLbl={fontSize:11,fontFamily:'var(--font-mono)',color:'var(--green)',letterSpacing:2,textTransform:'uppercase',marginBottom:8};
   const ttl={fontSize:22,fontWeight:700,color:'var(--text-bright)',marginBottom:6,lineHeight:1.3};
   const sub={fontSize:13,color:'var(--text-dim)',fontStyle:'italic'};
-  const cBox={background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'28px 32px',fontSize:15,lineHeight:1.85,color:'var(--text)',maxHeight:expanded?'none':600,overflow:expanded?'visible':'hidden',position:'relative'};
+  const cBox={background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'40px 48px',fontSize:17,lineHeight:1.9,color:'var(--text)',maxHeight:expanded?'none':600,overflow:expanded?'visible':'hidden',position:'relative'};
   const fade={position:'absolute',bottom:0,left:0,right:0,height:120,background:'linear-gradient(transparent, var(--panel))',pointerEvents:'none',display:expanded?'none':'block'};
   const btn={display:'block',margin:'16px auto 0',padding:'10px 28px',background:'transparent',border:'1px solid var(--green)',borderRadius:6,color:'var(--green)',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'var(--font-sans)'};
 
@@ -3735,7 +3750,7 @@ function BookTab() {
 
   if (error || !content) return (<div style={ctr}><div style={hdr}><div style={chLbl}>The Data Centre Clock</div><div style={ttl}>{CHAPTER_NUM ? 'Chapter '+CHAPTER_NUM+': '+CHAPTER_TITLE : (CHAPTER_TITLE || 'The Data Centre Clock')}</div>{MODULE_TITLE && <div style={sub}>Companion reading for {MODULE_TITLE}</div>}</div><div style={{background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'48px 32px',textAlign:'center'}}><div style={{fontSize:17,fontWeight:600,color:'var(--text-bright)',marginBottom:8}}>Chapter coming soon</div><div style={{fontSize:14,color:'var(--text-dim)',maxWidth:400,margin:'0 auto',lineHeight:1.7}}>This chapter of <em>The Data Centre Clock: Engineering the Irish Retrofit</em> is being finalised. It will appear here automatically when published.</div></div></div>);
 
-  return (<div style={ctr}><div style={hdr}><div style={chLbl}>{CHAPTER_NUM ? 'The Data Centre Clock — Chapter '+CHAPTER_NUM : 'The Data Centre Clock — '+CHAPTER_TITLE}</div><div style={ttl}>{CHAPTER_TITLE}</div><div style={sub}>Companion reading for {MODULE_TITLE}</div></div><div style={cBox}><div dangerouslySetInnerHTML={{__html: content}} />{!expanded && <div style={fade} />}</div>{!expanded && <button style={btn} onClick={() => setExpanded(true)}>Continue reading</button>}{expanded && <button style={{...btn,marginTop:24}} onClick={() => {setExpanded(false);window.scrollTo({top:0,behavior:'smooth'})}}>Collapse chapter</button>}</div>);
+  return (<div style={ctr}><div style={hdr}><div style={chLbl}>{CHAPTER_NUM ? 'The Data Centre Clock — Chapter '+CHAPTER_NUM : 'The Data Centre Clock — '+CHAPTER_TITLE}</div><div style={ttl}>{CHAPTER_TITLE}</div><div style={sub}>Companion reading for {MODULE_TITLE}</div></div><div style={cBox}><div className="dc-story-body" dangerouslySetInnerHTML={{__html: content}} />{!expanded && <div style={fade} />}</div>{!expanded && <button style={btn} onClick={() => setExpanded(true)}>Continue reading</button>}{expanded && <button style={{...btn,marginTop:24}} onClick={() => {setExpanded(false);window.scrollTo({top:0,behavior:'smooth'})}}>Collapse chapter</button>}</div>);
 }
 
 

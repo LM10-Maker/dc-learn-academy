@@ -1,0 +1,390 @@
+{
+  "so_what_map": {
+    "Rack Power Density": "Why it matters: the per-rack power figure determines every component in the distribution chain — transformer, bus section, cable, PDU. A 5× density increase means a 5× infrastructure redesign.",
+    "Nameplate Rating vs Actual Draw": "Why it matters: the gap between nameplate and actual draw represents stranded capacity that may be recapturable for higher-density racks — but only through measured redistribution, not assumption.",
+    "Power Usage Effectiveness (PUE)": "Why it matters: PUE determines both the energy cost overhead and EU Taxonomy alignment — at Clonshaugh's 1.50, nearly half the electricity bill goes to overhead, not computing.",
+    "Maximum Import Capacity (MIC)": "Why it matters: the MIC is the hard ceiling on total site power — exceeding it requires a grid connection upgrade that takes 12–24 months and costs €2M+, making it the longest lead time in any retrofit.",
+    "Power Distribution Unit (PDU)": "Why it matters: legacy 32A PDUs physically limit per-rack power delivery to approximately 7 kW — the first and cheapest bottleneck to identify and resolve in any density upgrade.",
+    "Hot Aisle Containment (HAC)": "Why it matters: HAC delivers the highest ROI of any single efficiency intervention — 30–40% cooling capacity improvement with payback often under 12 months.",
+    "Delta-T (ΔT)": "Why it matters: higher ΔT means more heat removed per unit of airflow — the efficiency lever that containment enables and that determines how far air cooling can be stretched.",
+    "Blanking Panel": "Why it matters: at €3–8 per panel, blanking is the cheapest airflow intervention in any data centre — eliminating the most common cause of hotspots that artificially limit rack density.",
+    "Computational Fluid Dynamics (CFD)": "Why it matters: CFD replaces guesswork with prediction — a €20K study prevents €200K of misplaced cooling infrastructure.",
+    "Cooling Redundancy (N+1)": "Why it matters: increasing density without reassessing cooling redundancy creates a hidden resilience risk — the same N+1 that worked at 8 kW provides less protection at 15 kW.",
+    "Volumetric Heat Capacity": "Why it matters: air's 3,450:1 disadvantage versus water is the immutable physics that creates the air cooling ceiling — no engineering can overcome this ratio.",
+    "ASHRAE Class H1": "Why it matters: H1's narrower temperature band (18–22°C) for AI/HPC hardware reduces operational flexibility and may limit free cooling hours — a hidden opex increase.",
+    "Fan Energy Penalty": "Why it matters: fan power scales with the cube of airflow — at 30 kW/rack the fans themselves consume more energy than the original IT load, making air cooling economically irrational.",
+    "Acoustic Limit": "Why it matters: noise regulations create a regulatory ceiling on air-cooled density that is lower than the thermal ceiling — even if the physics works at 35 kW, the noise may not comply.",
+    "Thermal Throttling": "Why it matters: throttling means you pay for full power but receive 70–90% performance — the gap is invisible to the electricity bill but very visible to the AI workload.",
+    "Total Cost of Ownership (TCO)": "Why it matters: TCO reveals that liquid cooling is cheaper than air above 25 kW over any lease term longer than 3 years — the capex advantage of air disappears in year 2.",
+    "Direct-to-Chip Cooling (DLC)": "Why it matters: DLC is no longer experimental — with 22% adoption and 23% annual growth, it is the production standard for AI density, and choosing against it means choosing against the industry.",
+    "Coolant Distribution Unit (CDU)": "Why it matters: the CDU requires floor space and piping that legacy facilities do not have — planning its location is one of the earliest and most impactful retrofit design decisions.",
+    "Hybrid Cooling Architecture": "Why it matters: every real retrofit operates hybrid (air + liquid) — planning for two cooling systems, two maintenance regimes, and two skill sets is essential and frequently underestimated.",
+    "Stranded Infrastructure Risk": "Why it matters: investing in air cooling above 15 kW carries escalating risk of stranding because the industry trajectory is irrevocably toward liquid.",
+    "Cold Plate": "Why it matters: cold plate quality directly determines GPU junction temperature and therefore performance — the component-level quality of the cooling determines the compute output.",
+    "Manifold": "Why it matters: manifold design determines whether individual servers can be maintained without disrupting adjacent equipment — a critical operational capability at production scale.",
+    "Secondary Cooling Loop": "Why it matters: the secondary loop volume determines leak consequence — a system holding 5,000 litres of coolant has a materially different risk profile than one holding 500 litres.",
+    "Coolant Selection": "Why it matters: coolant choice ripples through the entire system — dielectric fluids require 2–3× the flow rate of water-glycol, meaning larger pipes, larger pumps, and larger CDUs.",
+    "Leak Detection System": "Why it matters: leak detection is the safety system that enables liquid cooling in a live electrical environment — operating DLC without it is operating without a fire alarm.",
+    "GB300 NVL72 Rack Power Envelope": "Why it matters: at 135 kW typical per rack, a single GB300 draws 17× a legacy rack — deploying even 10 racks consumes 27% of Clonshaugh's entire grid connection.",
+    "Power Sloshing": "Why it matters: power sloshing means electrical distribution must handle 155 kW peak transients even though the average is 135 kW — sizing for average creates circuit protection failures.",
+    "50V DC Internal Busbar": "Why it matters: the 50V busbar at 2,700A is at its engineering limit — the imminent transition to 800V DC (Rubin, 2027) will change how power is delivered to every rack.",
+    "Rack Weight (Liquid-Cooled GPU)": "Why it matters: at 3,000–3,500 lbs, a GB300 rack exceeds standard 150 psf floor ratings by a factor of 13 — structural assessment is mandatory before placement.",
+    "1,400W Per GPU": "Why it matters: GPU power is doubling every 2 years — today's 135 kW rack becomes 200+ kW within one hardware generation, making future-proofing a present-day requirement.",
+    "Bus Section Rating": "Why it matters: the bus section is the most common binding constraint in AI retrofit distribution — it determines the maximum power that can flow from transformer to distribution boards.",
+    "Protection Coordination (Discrimination)": "Why it matters: a discrimination failure at AI density means a single rack fault cascades into a zone-wide outage — the financial exposure is orders of magnitude larger than at legacy density.",
+    "Cable Sizing (Current-Carrying Capacity)": "Why it matters: AI-density cables are 25–30× heavier per circuit than legacy — existing cable trays, floor voids, and containment are almost certainly insufficient.",
+    "Busbar Trunking System": "Why it matters: at AI density, busbar trunking becomes cost-competitive with cable because cable cross-sections make traditional cable management physically impractical.",
+    "Voltage Drop": "Why it matters: voltage drop constrains the maximum distance between sub-distribution and rack — at AI density, the electrical room may need to be inside the hall, consuming rack positions.",
+    "I²R Loss": "Why it matters: at AI density, distribution losses can exceed 1% of total IT load — voltage optimisation is the primary lever, because doubling voltage reduces I²R losses by 75%.",
+    "415V Three-Phase (European Standard)": "Why it matters: 415V is what Ireland has and what every supplier supports — but it becomes increasingly inefficient at densities above 50 kW per rack.",
+    "480V Three-Phase (US Standard)": "Why it matters: 480V offers 27% lower distribution losses versus 415V — a meaningful saving at scale, but with non-standard procurement overhead in the Irish market.",
+    "800V DC Distribution": "Why it matters: 800V DC eliminates 2–3 conversion stages and is the only viable approach at 400+ kW per rack — any retrofit designed today must plan pathways for this transition.",
+    "Conversion Efficiency Chain": "Why it matters: the cumulative conversion efficiency determines how much of the electricity purchased from the grid actually reaches the GPU — the difference between 87% and 95% is €710K/year.",
+    "Retrofit NPV (Net Present Value)": "Why it matters: NPV shows that the retrofit is strongly value-creating at any density above 40 kW with fill rates above 35% — the investment case is robust.",
+    "Fill Rate Risk": "Why it matters: fill rate is the single variable that can make a positive-NPV retrofit destroy value — phased deployment is the primary mitigation.",
+    "Phased Deployment": "Why it matters: phasing trades a 10% cost premium for a 36% reduction in peak capital at risk — a rational trade for any multi-asset fund.",
+    "Opportunity Cost of Inaction": "Why it matters: doing nothing costs €12M+ in revenue loss and asset devaluation over the lease — more than the most expensive retrofit scenario.",
+    "Density Scenario Selection": "Why it matters: higher density has lower breakeven fill rates because revenue scales faster than infrastructure cost — the seemingly riskier option is actually more resilient."
+  },
+  "rhetoric_takeaways": {
+    "L1": {
+      "asset_management": "AI tenants generate 5–17× the revenue per rack position but require a power chain that no legacy facility can deliver without investment.",
+      "technology": "Every component from transformer to PDU was sized for 8 kW — identify the binding constraint before designing the solution.",
+      "technical": "MIC headroom is misleading — measure utilisation at every stage of the distribution chain independently to find the actual bottleneck.",
+      "compliance": "PUE at 1.50 means 40% of electricity is overhead — any power chain upgrade that reduces overhead simultaneously improves Taxonomy trajectory.",
+      "cost": "A €15K power quality survey identifies the exact upgrade path before committing capital — the cheapest insurance against misdirected investment."
+    },
+    "L2": {
+      "asset_management": "Containment in Hall A delivered 230% ROI in year one from combined energy savings and density-enabled lease revenue.",
+      "technology": "HAC deploys in 14 days with zero tenant downtime — it is the fastest path to moderate density improvement while liquid cooling is planned.",
+      "technical": "Post-containment ΔT improved from 11°C to 19°C — consistent with ASHRAE TC 9.9 predictions for effective hot aisle containment.",
+      "compliance": "CRAH setpoint increase from 15°C to 23°C after containment reduced cooling energy by 14%, improving PUE from 1.50 toward 1.42.",
+      "cost": "Total containment project: €200K for 200 positions, with €95K/year energy savings and €320K/year additional lease revenue — payback under 5 months."
+    },
+    "L3": {
+      "asset_management": "At 30 kW air-cooled, fan energy costs nearly €20K/rack/year — liquid cooling at the same density costs €6–8K/rack/year.",
+      "technology": "The practical air ceiling in Hall B with 3.2m ceiling height is approximately 25 kW — not the theoretical 41 kW.",
+      "technical": "Airflow at 41 kW per rack requires 1.7 m³/s with fan power approaching 20 kW — the cooling system would consume as much energy as the IT load.",
+      "compliance": "Air cooling at 40 kW would push the AI zone PUE to approximately 1.45 — failing EU Taxonomy alignment and creating a SFDR reporting liability.",
+      "cost": "The economic crossover where liquid cooling operating cost undercuts air cooling occurs at approximately 25 kW/rack — well below the physics ceiling."
+    },
+    "L4": {
+      "asset_management": "DLC capex premium over air is approximately €660K for 50 racks — recovered in under 2 years from energy savings alone, before counting future-proofing value.",
+      "technology": "CDU lead time is 12–16 weeks — place orders within 4 months or risk missing the hyperscaler prospect's deployment timeline.",
+      "technical": "Coolant flow for 50 racks at 40 kW: 52.6 l/s through DN80/DN100 piping at under 2 m/s to prevent erosion.",
+      "compliance": "DLC delivers zone PUE of approximately 1.10–1.15 versus air at 1.35–1.50 — the difference between Taxonomy-aligned and non-aligned.",
+      "cost": "DLC capex premium of €660K has a simple payback under 2 years — the decision should be framed as TCO over the lease, not capex on day one."
+    },
+    "L5": {
+      "asset_management": "50-rack DLC zone at 100 kW: capex approximately €4–6M, revenue approximately €4.5–6M/year — payback under 12 months if racks are filled.",
+      "technology": "The DLC system connects to existing chilled water — no new chillers required if the current plant has capacity for the additional heat rejection.",
+      "technical": "Total secondary loop volume: approximately 4,000 litres for 50 racks — leak detection, containment, and drainage must be designed from the outset.",
+      "compliance": "The DLC zone at 1.08–1.12 PUE would bring facility-wide blended PUE below 1.30 for the first time, crossing the Taxonomy threshold.",
+      "cost": "DLC-specific infrastructure: approximately €2.43M for 50 racks at 100 kW — separate from power distribution and grid upgrades."
+    },
+    "L6": {
+      "asset_management": "Ten GB300 racks generate €2.4–3.2M/year from 10 positions that previously earned €172K — a 14–19× revenue multiplier per rack position.",
+      "technology": "800mm × 1200mm GB300 cabinets do not fit existing 600mm × 1000mm row spacing — aisle widths need complete re-evaluation.",
+      "technical": "Structural loading at 3,200 lbs per GB300 rack creates 2,000 psf point load — 13× the typical 150 psf raised floor rating, requiring slab-to-slab mounting.",
+      "compliance": "GB300 deployment adds 1.35 MW IT load, triggering CRU/2025236 renewable obligation for 80% of the additional capacity.",
+      "cost": "GB300-specific increment above base DLC: approximately €980K–1.05M for 10 racks — the premium for moving from 100 kW to 135 kW density."
+    },
+    "L7": {
+      "asset_management": "Power distribution redesign: €800K–1.5M, approximately 20–30% of total retrofit budget — it appears to duplicate existing infrastructure but the existing infrastructure cannot serve AI density.",
+      "technology": "Busbar trunking provides plug-and-play flexibility for rack redeployment during 2–3 year GPU hardware refresh cycles — a hidden operational benefit.",
+      "technical": "Bus section at 73% and PDUs at near-maximum are the two binding constraints in Hall B — both must be addressed simultaneously.",
+      "compliance": "All electrical redesign requires REC certification under IS 10101:2020+AC2:2025 — the AC2:2025 corrigendum must be applied.",
+      "cost": "Total power distribution redesign: €500K–730K at 40 kW density, scaling to €800K–1.2M at GB300 density."
+    },
+    "L8": {
+      "asset_management": "415V with 800V DC future-proofing costs €120K — insuring against a €1.5–2.5M re-wire that has over 65% probability within 10 years.",
+      "technology": "Deploy 415V now with three provisions: oversized trays, reserved electrical room space, and pre-installed empty conduits for 800V DC.",
+      "technical": "I²R loss at 415V: 1.34 kW per rack at 135 kW density — approximately 1% of IT load wasted as heat in conductors.",
+      "compliance": "480V installation in Ireland requires specialist IS 10101 engineering assessment — the standard is written for 230/400V nominal.",
+      "cost": "800V DC pathway future-proofing: €120K. Cost of not future-proofing if 800V DC is needed: €1.5–2.5M. Expected value ratio: 10:1 in favour."
+    },
+    "L9": {
+      "asset_management": "At 100 kW with 80% fill, NPV is €28M on €8M capex — a 3.5× return. Phase to limit peak capital at risk to €5M.",
+      "technology": "Build 100 kW infrastructure with 135 kW-capable pathways — the €800K premium eliminates a second infrastructure project when density increases.",
+      "technical": "All three density scenarios trigger MIC upgrade — grid connection is the critical path regardless of density choice.",
+      "compliance": "Doing nothing does not avoid regulatory obligations — it just reports worse numbers under EED, Taxonomy, and CRU/2025236.",
+      "cost": "Opportunity cost of inaction: €12M+ over the lease in lost revenue and asset devaluation — exceeding any retrofit scenario by a factor of 2."
+    }
+  },
+  "glossary": [
+    {
+      "term": "Rack Power Density",
+      "definition": "Electrical power consumed by IT equipment within a single rack, measured in kW/rack."
+    },
+    {
+      "term": "MIC (Maximum Import Capacity)",
+      "definition": "The contractual maximum power a site may draw from the grid, specified in the ESB Networks connection agreement."
+    },
+    {
+      "term": "PUE (Power Usage Effectiveness)",
+      "definition": "Ratio of total facility energy to IT equipment energy, per ISO/IEC 30134-2:2026."
+    },
+    {
+      "term": "Bus Section",
+      "definition": "The copper or aluminium conductors within a switchboard that carry the main current between incoming and outgoing circuits."
+    },
+    {
+      "term": "PDU (Power Distribution Unit)",
+      "definition": "A device distributing electrical power to IT equipment within a rack, providing metering and circuit protection."
+    },
+    {
+      "term": "Hot Aisle Containment (HAC)",
+      "definition": "Physical enclosure around the hot exhaust side of rack rows to prevent hot air recirculation."
+    },
+    {
+      "term": "Delta-T (ΔT)",
+      "definition": "Temperature difference between rack inlet and exhaust air, indicating heat removal effectiveness."
+    },
+    {
+      "term": "CFD (Computational Fluid Dynamics)",
+      "definition": "Numerical simulation of airflow and temperature distribution within a data centre space."
+    },
+    {
+      "term": "ASHRAE Class H1",
+      "definition": "ASHRAE TC 9.9 thermal class for high-density computing, recommended inlet 18–22°C."
+    },
+    {
+      "term": "Volumetric Heat Capacity",
+      "definition": "Thermal energy absorbed per unit volume per degree of temperature rise (kJ/m³·K)."
+    },
+    {
+      "term": "Fan Affinity Laws",
+      "definition": "Relationships governing fan performance: power scales with the cube of flow rate."
+    },
+    {
+      "term": "Thermal Throttling",
+      "definition": "Automatic reduction in processor speed when component temperatures exceed design limits."
+    },
+    {
+      "term": "TCO (Total Cost of Ownership)",
+      "definition": "Complete lifecycle cost including capex, opex, energy, maintenance, and end-of-life."
+    },
+    {
+      "term": "DLC (Direct-to-Chip Cooling)",
+      "definition": "Liquid cooling method using cold plates mounted directly on heat-generating components."
+    },
+    {
+      "term": "CDU (Coolant Distribution Unit)",
+      "definition": "Heat exchanger managing the secondary loop between facility cooling and liquid-cooled IT equipment."
+    },
+    {
+      "term": "Cold Plate",
+      "definition": "Thermally conductive block with internal micro-channels, mounted on GPUs/CPUs for direct heat absorption."
+    },
+    {
+      "term": "Manifold",
+      "definition": "Piping distribution assembly within/adjacent to a rack, splitting coolant supply to individual servers."
+    },
+    {
+      "term": "Secondary Cooling Loop",
+      "definition": "Closed piping circuit between CDU and rack manifolds, separated from facility primary loop."
+    },
+    {
+      "term": "Hybrid Cooling",
+      "definition": "Combined air and liquid cooling within a single facility or rack (e.g., GB300: 90% liquid, 10% air)."
+    },
+    {
+      "term": "Stranded Infrastructure",
+      "definition": "Capital invested in infrastructure that becomes economically unrecoverable due to technology change."
+    },
+    {
+      "term": "GB300 NVL72",
+      "definition": "NVIDIA rack-scale AI platform: 72 Blackwell Ultra GPUs, 132–142 kW TDP, 155 kW peak, fully liquid-cooled."
+    },
+    {
+      "term": "Power Sloshing",
+      "definition": "Dynamic power redistribution between compute trays in a GB300 rack based on workload phase."
+    },
+    {
+      "term": "50V DC Busbar",
+      "definition": "Internal rack power distribution at 50V DC in GB300, carrying 2,700A — at current engineering limits."
+    },
+    {
+      "term": "800V DC Distribution",
+      "definition": "Emerging architecture delivering medium-voltage DC to the rack, demonstrated for NVIDIA Rubin (2027)."
+    },
+    {
+      "term": "Protection Coordination",
+      "definition": "Arrangement of protective devices so that a fault is cleared by the nearest device without cascading trips."
+    },
+    {
+      "term": "IS 10101:2020+AC2:2025",
+      "definition": "Irish National Rules for Electrical Installations — the mandatory standard for all LV electrical work."
+    },
+    {
+      "term": "EN 61439",
+      "definition": "European standard for low-voltage switchgear and controlgear assemblies."
+    },
+    {
+      "term": "EN 50600",
+      "definition": "European standard series for data centre facilities and infrastructures."
+    },
+    {
+      "term": "I²R Loss",
+      "definition": "Power dissipated as heat in conductors, proportional to current squared times resistance."
+    },
+    {
+      "term": "Voltage Drop",
+      "definition": "Reduction in voltage along a conductor due to current flow through its resistance."
+    },
+    {
+      "term": "Busbar Trunking",
+      "definition": "Prefabricated modular power distribution system using rigid conductors in sealed housing."
+    },
+    {
+      "term": "NPV (Net Present Value)",
+      "definition": "Present value of future cash flows minus initial investment, discounted at the required rate of return."
+    },
+    {
+      "term": "Fill Rate",
+      "definition": "Percentage of available rack positions occupied by revenue-generating tenants."
+    },
+    {
+      "term": "Phased Deployment",
+      "definition": "Delivering infrastructure in sequential phases to reduce peak capital exposure."
+    },
+    {
+      "term": "Opportunity Cost of Inaction",
+      "definition": "Value lost by not investing — measured in tenant attrition, asset devaluation, and competitive decline."
+    },
+    {
+      "term": "CRU/2025236",
+      "definition": "CRU Large Energy User Connection Policy (Dec 2025) — 80% renewable sourcing obligation."
+    },
+    {
+      "term": "EU Taxonomy PUE ≤1.3",
+      "definition": "Data centre PUE threshold for Taxonomy alignment under Delegated Act 2021/2139 §8.1."
+    },
+    {
+      "term": "EED 2023/1791 Article 12",
+      "definition": "Recast Energy Efficiency Directive — mandatory annual energy reporting for DCs ≥500 kW IT."
+    },
+    {
+      "term": "SFDR",
+      "definition": "Sustainable Finance Disclosure Regulation — classifies funds (Article 6/8/9) based on sustainability."
+    },
+    {
+      "term": "Misalignment Year",
+      "definition": "The year a facility's carbon intensity exceeds its CRREM decarbonisation pathway (LBE term — CRREM does not publish a DC-specific pathway)."
+    }
+  ],
+  "bibliography": [
+    {
+      "title": "IS 10101:2020+AC2:2025 — National Rules for Electrical Installations",
+      "type": "standard",
+      "tier": "T1",
+      "year": "2025",
+      "usage": "LV distribution design, cable sizing, protection coordination (L1, L7, L8)"
+    },
+    {
+      "title": "IEC 60364-1:2025 — Low-voltage electrical installations, 6th Edition",
+      "type": "standard",
+      "tier": "T1",
+      "year": "2025",
+      "usage": "International LV standard, expanded DC provisions (L8)"
+    },
+    {
+      "title": "EN 50600-2-2:2019 — Data centre power supply and distribution",
+      "type": "standard",
+      "tier": "T1",
+      "year": "2019",
+      "usage": "DC power distribution design and availability classes (L1, L5, L7)"
+    },
+    {
+      "title": "EN 50600-2-3:2019 — Data centre environmental control",
+      "type": "standard",
+      "tier": "T1",
+      "year": "2019",
+      "usage": "Cooling infrastructure design and availability (L2, L3, L5)"
+    },
+    {
+      "title": "EN 61439-2:2011 — Low-voltage switchgear assemblies",
+      "type": "standard",
+      "tier": "T1",
+      "year": "2011",
+      "usage": "Bus section ratings, temperature rise verification (L7)"
+    },
+    {
+      "title": "ISO/IEC 30134-2:2026 — PUE measurement standard",
+      "type": "standard",
+      "tier": "T1",
+      "year": "2026",
+      "usage": "PUE definition and measurement methodology (L1, L3, L9)"
+    },
+    {
+      "title": "EU Taxonomy Climate Delegated Act 2021/2139",
+      "type": "regulation",
+      "tier": "T1",
+      "year": "2021",
+      "usage": "PUE ≤1.3 threshold for Taxonomy alignment (L3, L4, L9)"
+    },
+    {
+      "title": "EED 2023/1791 — Energy Efficiency Directive (recast)",
+      "type": "regulation",
+      "tier": "T1",
+      "year": "2023",
+      "usage": "Article 12 DC reporting obligation, Article 26.6 waste heat (L1, L9)"
+    },
+    {
+      "title": "CRU/2025236 — Large Energy User Connection Policy",
+      "type": "regulation",
+      "tier": "T1",
+      "year": "2025",
+      "usage": "80% renewable sourcing obligation for DCs in Ireland (L6, L9)"
+    },
+    {
+      "title": "ASHRAE TC 9.9 — Thermal Guidelines for Data Processing Environments, 5th Edition",
+      "type": "guidance",
+      "tier": "T2",
+      "year": "2021",
+      "usage": "Equipment classes A1–H1, recommended thermal envelopes (L2, L3)"
+    },
+    {
+      "title": "ASHRAE TC 9.9 — Liquid Cooling Resilience Technical Bulletin",
+      "type": "guidance",
+      "tier": "T2",
+      "year": "2024",
+      "usage": "DLC failure modes and resilience design guidance (L5)"
+    },
+    {
+      "title": "Grand View Research — DC Liquid Cooling Market Report 2025",
+      "type": "market_report",
+      "tier": "T2",
+      "year": "2025",
+      "usage": "DLC market size ($5.52B), CAGR (23.31%), D2C market share (47%) (L4)"
+    },
+    {
+      "title": "HPE — NVIDIA GB300 NVL72 Product Specifications",
+      "type": "manufacturer",
+      "tier": "T3",
+      "year": "2025",
+      "usage": "Rack power (132–140 kW), cooling split (90/10), power connections (L6)"
+    },
+    {
+      "title": "Lenovo — NVIDIA GB300 NVL72 Product Guide",
+      "type": "manufacturer",
+      "tier": "T3",
+      "year": "2026",
+      "usage": "TDP 135 kW, peak 155 kW, hybrid cooling architecture (L6)"
+    },
+    {
+      "title": "Schneider Electric — 'The 1 MW AI IT rack is coming, and it needs 800 VDC power'",
+      "type": "manufacturer",
+      "tier": "T3",
+      "year": "2025",
+      "usage": "800V DC analysis, GB300 at 142 kW, Rubin roadmap (L6, L8)"
+    },
+    {
+      "title": "Safety, Health and Welfare at Work (General Application) Regulations 2007, S.I. No. 299",
+      "type": "regulation",
+      "tier": "T1",
+      "year": "2007",
+      "usage": "Occupational noise limits: 80 dB(A) action level (L3)"
+    }
+  ]
+}
