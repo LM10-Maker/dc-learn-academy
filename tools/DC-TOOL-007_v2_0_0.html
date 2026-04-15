@@ -500,29 +500,33 @@ const FINDINGS_ENGINE = [
    INPUT_SCHEMA — Same as v1.0 (DC-Screen aligned)
    ================================================================ */
 const INPUT_SCHEMA = [
-  { id:'facility_name',    label:'Facility Name',           type:'text',   required:true,  demo:'Example Facility',  hint:'Internal reference name', unit:null },
-  { id:'location',         label:'Location',                type:'text',   required:false, demo:'Dublin',            hint:'City or area',            unit:null },
-  { id:'build_year',       label:'Year Built',              type:'number', required:true,  demo:2013,                hint:'Original commissioning',  unit:null, min:1990, max:2026 },
-  { id:'it_load_mw',       label:'IT Load',                 type:'number', required:true,  demo:2.4,                 hint:'Total IT load', unit:'MW', min:0, max:200, step:0.1 },
-  { id:'rack_count',       label:'Rack Count',              type:'number', required:true,  demo:400,                 hint:'Total populated racks',   unit:'racks', min:1, max:10000 },
-  { id:'rack_density_kw',  label:'Average Rack Density',    type:'number', required:false, demo:6,                   hint:'Average kW per rack',     unit:'kW/rack', min:1, max:100, step:0.5 },
-  { id:'pue',              label:'Current PUE',             type:'number', required:true,  demo:1.50,                hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
-  { id:'mic_kva',          label:'MIC',                     type:'number', required:false, demo:5000,                hint:'Maximum Import Capacity', unit:'kVA', min:0, max:200000, step:100 },
-  { id:'voltage_kv',       label:'Supply Voltage',          type:'select', required:false, demo:'10',                hint:'ESB Networks supply',  unit:'kV', options:['10','20','38','110'] },
-  { id:'cooling_type',     label:'Primary Cooling',         type:'select', required:true,  demo:'air_crac',          hint:'Main cooling technology', unit:null, options:[
-    {value:'air_crac',label:'DX CRAC'},{value:'air_free',label:'Air-side Free Cooling'},{value:'chilled_water',label:'Chilled Water'},{value:'evaporative',label:'Evaporative/Adiabatic'},{value:'hybrid_dlc',label:'Hybrid DLC'},{value:'full_dlc',label:'Full DLC'},{value:'immersion',label:'Immersion'}
+  { id:'facility_name',        label:'Facility Name',                  type:'text',   required:true,  demo:'Example Facility, Dublin', hint:'Internal reference name', unit:null },
+  { id:'location',             label:'Location',                       type:'text',   required:false, demo:'Dublin, Ireland',          hint:'City or area', unit:null },
+  { id:'build_year',           label:'Year Built',                     type:'number', required:true,  demo:2013,  hint:'Original commissioning year', unit:null, min:1990, max:2026 },
+  { id:'it_load_mw',           label:'IT Load',                        type:'number', required:true,  demo:2.4,   hint:'Total IT load', unit:'MW', min:0.1, max:100, step:0.1 },
+  { id:'pue',                  label:'Current PUE',                    type:'number', required:true,  demo:1.50,  hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
+  { id:'ppa_pct',              label:'Renewable PPA Coverage',         type:'number', required:true,  demo:0,     hint:'% covered by PPA or on-site renewable', unit:'%', min:0, max:100 },
+  { id:'gen_thermal_mwth',     label:'Generator Thermal Input',        type:'number', required:true,  demo:25,    hint:'Total generator fleet MW / 0.40 efficiency', unit:'MWth', min:0, max:200 },
+  { id:'gen_test_hrs_yr',      label:'Annual Generator Test Hours',    type:'number', required:true,  demo:200,   hint:'Planned annual run hours for testing', unit:'hrs/yr', min:0, max:500 },
+  { id:'fuel_type',            label:'Generator Fuel',                 type:'select', required:true,  demo:'diesel', hint:'Backup generator fuel type', unit:null, options:[
+    {value:'diesel',label:'Diesel'},{value:'HVO',label:'HVO'},{value:'gas',label:'Natural Gas'}
   ]},
-  { id:'redundancy_level', label:'Power Redundancy',        type:'select', required:true,  demo:'n_plus_1',          hint:'UPS/generator topology',  unit:null, options:[
-    {value:'n',label:'N'},{value:'n_plus_1',label:'N+1'},{value:'two_n',label:'2N'},{value:'two_n_plus_1',label:'2N+1'}
+  { id:'refrigerant_type',     label:'Primary Refrigerant',           type:'select', required:true,  demo:'R-134a', hint:'Primary cooling circuit refrigerant', unit:null, options:[
+    {value:'R-134a',  label:'R-134a (GWP 1,430)'},
+    {value:'R-410A',  label:'R-410A (GWP 2,088)'},
+    {value:'R-407C',  label:'R-407C (GWP 1,774)'},
+    {value:'R-32',    label:'R-32 (GWP 675)'},
+    {value:'R-1234ze',label:'R-1234ze (GWP 7)'},
+    {value:'R-290',   label:'R-290 Propane (GWP 3)'},
+    {value:'other',   label:'Other (specify GWP below)'}
   ]},
-  { id:'generator_fuel',   label:'Generator Fuel',          type:'select', required:false, demo:'diesel',            hint:'Backup fuel type', unit:null, options:[
-    {value:'diesel',label:'Diesel'},{value:'gas',label:'Natural Gas'},{value:'hvo',label:'HVO'}
-  ]},
-  { id:'generator_hours',  label:'Generator Run Hours',     type:'number', required:false, demo:200,                 hint:'Annual run hours', unit:'hrs/yr', min:0, max:8760, step:10 },
-  { id:'ppa_pct',          label:'Renewable Energy',        type:'number', required:false, demo:45,                  hint:'% from all renewable sources', unit:'%', min:0, max:100 },
-  { id:'hall_config',      label:'Hall Configuration',      type:'text',   required:false, demo:'Hall A, Hall B',    hint:'Hall names/layout',       unit:null },
-  { id:'total_floor_m2',   label:'Whitespace Area',         type:'number', required:false, demo:1800,                hint:'Total raised floor area', unit:'m²', min:0, max:100000 }
-];
+  { id:'refrigerant_gwp',      label:'Refrigerant GWP (if Other)',    type:'number', required:false, demo:null,  hint:'Enter GWP value if refrigerant not listed above', unit:null, min:1, max:5000 },
+  { id:'refrigerant_charge_kg',label:'Total Refrigerant Charge',      type:'number', required:true,  demo:600,   hint:'Total kg in system. Estimate: cooling MW x 120 kg/MW', unit:'kg', min:0, max:50000 },
+  { id:'planning_sid',         label:'Above 50 MW IT?',               type:'select', required:true,  demo:'false', hint:'Determines SID planning route via An Bord Pleanala', unit:null, options:[
+    {value:'false', label:'No - below 50 MW IT'},
+    {value:'true',  label:'Yes - 50+ MW IT'}
+  ]}
+]
 
 const DEMO_DATA = {};
 INPUT_SCHEMA.forEach(f => { if(f.demo !== undefined && f.demo !== null) DEMO_DATA[f.id] = f.demo; });
