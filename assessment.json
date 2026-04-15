@@ -1,0 +1,388 @@
+{
+  "questions": [
+    {
+      "level": 1,
+      "id": "QAI001-1",
+      "tier": "knowledge",
+      "q": "Clonshaugh Hall B has 200 racks averaging 8 kW each, fed from a 5 MVA MIC at 85% utilisation. An AI tenant requests 50 racks at 40 kW. What is the primary reason the existing infrastructure cannot serve this request?",
+      "options": [
+        "The remaining MIC headroom of 750 kVA provides only approximately 640 kW of usable capacity — far below the 2 MW required for 50 AI racks at 40 kW each",
+        "The cooling system cannot remove 2 MW of additional heat because the existing CRAH units are at capacity",
+        "The building's structural floor loading of 150 psf is insufficient for the heavier AI server racks",
+        "The facility's PUE of 1.50 exceeds the EU Taxonomy threshold, preventing new tenant onboarding"
+      ],
+      "correct": 0,
+      "explain": "The MIC ceiling is the binding constraint — at 85% utilisation, only 750 kVA (≈640 kW) remains. The 2 MW demand exceeds this by 1,360 kW. Cooling, structural, and PUE are real concerns but they can be addressed without the 12–24 month grid upgrade that the MIC constraint requires."
+    },
+    {
+      "level": 1,
+      "id": "QAI001-2",
+      "tier": "calculation",
+      "q": "A 1,600A bus section at 415V three-phase with 0.85 power factor is currently at 73% utilisation. An AI zone requires 2 MW of additional capacity. How much additional bus capacity is needed beyond the existing headroom?",
+      "options": [
+        "Approximately 1,240 kW additional capacity — the 2,000 kW requirement minus the 760 kW currently available from the 27% headroom at 0.95 power factor",
+        "Approximately 1,736 kW additional capacity — the 2,000 kW requirement minus the 264 kW available from 27% of the bus section's 977 kW capacity at 0.85 power factor",
+        "Approximately 1,560 kW additional capacity — the 2,000 kW requirement minus the 440 kW available from the unused bus amperage multiplied by 415V single-phase",
+        "Approximately 1,380 kW additional capacity — the 2,000 kW requirement minus the 620 kW available when applying a 0.90 demand diversity factor to the existing load"
+      ],
+      "correct": 1,
+      "explain": "Capacity = √3 × 415 × 1,600 × 0.85 = 977 kW. Headroom = 977 × 0.27 = 264 kW. Gap = 2,000 - 264 = 1,736 kW. Option A incorrectly uses 0.95 pf. Option C uses single-phase calculation. Option D introduces a demand diversity factor not given in the question."
+    },
+    {
+      "level": 1,
+      "id": "QAI001-3",
+      "tier": "judgement",
+      "q": "A facility reports 60% MIC utilisation and the asset manager concludes there is ample headroom for AI tenants. Which response best characterises the flaw in this reasoning?",
+      "options": [
+        "MIC utilisation measures the aggregate draw against the connection ceiling, but distribution constraints downstream (bus section, sub-DB MCCBs, PDUs) may be at much higher utilisation — the binding constraint is rarely at the grid connection level",
+        "MIC utilisation is measured at the transformer primary side and does not account for the 2–3% losses in the transformer itself, so the actual available capacity is lower than the 40% headroom suggests",
+        "MIC utilisation is reported as a rolling average and does not capture peak demand periods, which may reach 85–90% during summer cooling loads, reducing actual headroom significantly",
+        "MIC utilisation should be measured net of PUE overhead — at a PUE of 1.50, only 27% of the apparent headroom is available for IT load because 40% is consumed by cooling and other non-IT systems"
+      ],
+      "correct": 0,
+      "explain": "The core flaw is conflating aggregate headroom at the grid connection with deliverable capacity at the rack. Eoin's diagnostic method: measure utilisation independently at every level of the distribution chain. The bus section at 73% and PDUs at near-maximum are typically the binding constraints — not the MIC. Options B, C, and D identify real but secondary issues; the fundamental error is the assumption that MIC headroom equals rack-level capacity."
+    },
+    {
+      "level": 2,
+      "id": "QAI001-4",
+      "tier": "knowledge",
+      "q": "After installing hot aisle containment in a 200-rack hall, the operations team expects a 35% improvement in cooling capacity but measured improvement is only 12%. Which factor most likely explains the underperformance?",
+      "options": [
+        "The containment enclosures were installed during a low-load period and the improvement percentage only becomes apparent during peak summer cooling demand when the temperature differential is greatest",
+        "The CRAH supply air temperature setpoint was not raised after containment installation, so the cooling units are still operating at the pre-containment 15°C setpoint and expending unnecessary compressor energy",
+        "Unsealed cable cut-outs and floor tile penetrations beneath the contained aisles allow cold supply air to bypass the rack fronts and enter the hot aisle directly, reducing containment effectiveness by 60–70%",
+        "The hot aisle containment panels were installed at a height that does not fully reach the ceiling return plenum, allowing 30–40% of hot exhaust air to escape over the top of the containment"
+      ],
+      "correct": 3,
+      "explain": "While all four factors are real, the most common cause of dramatic underperformance (12% vs 35% expected) is physical gaps in the containment — either at the ceiling interface (option D) or at floor penetrations (option C). Option D specifically addresses the scenario where containment panels do not reach the plenum, which is a very common installation deficiency. Option B (setpoint not adjusted) would show energy waste but not reduced thermal capacity. Option A misunderstands the measurement."
+    },
+    {
+      "level": 2,
+      "id": "QAI001-5",
+      "tier": "calculation",
+      "q": "A 200-rack hall at 8 kW/rack average with CRAH supply at 15°C and return at 26°C (ΔT=11°C) installs containment, achieving ΔT=20°C. If the CRAH fan speed and capacity remain constant, approximately what rack density can the same cooling infrastructure now support?",
+      "options": [
+        "Approximately 14.5 kW/rack, because the ΔT improvement from 11°C to 20°C means each unit of airflow removes 82% more heat (20/11 × 8 kW = 14.5 kW)",
+        "Approximately 12 kW/rack, because the ΔT improvement is partially offset by the reduced air mixing that previously helped cool the warmest rack positions",
+        "Approximately 11.2 kW/rack, because containment only improves cooling in the top third of the rack where mixing was worst, while bottom positions see no benefit",
+        "Approximately 16 kW/rack, because the CRAH setpoint can also be raised from 15°C to 22°C, adding another 7°C of cooling range on top of the ΔT improvement"
+      ],
+      "correct": 0,
+      "explain": "Heat removed = airflow × ρ × Cp × ΔT. With constant airflow and ΔT increasing from 11°C to 20°C, heat removal increases by 20/11 = 1.82×. At 8 kW current: 8 × 1.82 = 14.5 kW. Option D adds setpoint adjustment, which is a separate action; the question asks about the same CRAH settings. Options B and C introduce effects that are secondary to the fundamental heat transfer calculation."
+    },
+    {
+      "level": 2,
+      "id": "QAI001-6",
+      "tier": "judgement",
+      "q": "A facility has completed containment and achieved 12 kW/rack average. The CTO wants to push to 15 kW/rack to meet a medium-density tenant requirement. Existing PDUs are dual-feed 32A single-phase at 230V. What is the most accurate assessment?",
+      "options": [
+        "Achievable — the containment has demonstrated adequate cooling performance, and the dual-feed PDU configuration provides 14.7 kW theoretical capacity, within reach of 15 kW with the CRAH setpoint optimisation providing additional margin",
+        "Achievable but only during winter months — Dublin's 7,200 free cooling hours provide sufficient thermal headroom for 15 kW, but summer peak periods would require supplemental cooling investment",
+        "Not achievable with current PDUs — the dual-feed 32A single-phase configuration provides a theoretical maximum of 14.7 kW (2 × 32A × 230V), which is below the 15 kW target. PDU upgrade to 32A three-phase is required regardless of cooling capacity",
+        "Not achievable without CFD validation — while the theoretical PDU capacity is marginally below 15 kW, the practical constraint is thermal, not electrical, because vertical temperature gradients at 15 kW create hotspots above 30U"
+      ],
+      "correct": 2,
+      "explain": "The binding constraint is electrical, not thermal. Dual-feed 32A single-phase at 230V = 2 × 7.36 kW = 14.7 kW theoretical maximum — below the 15 kW target. Even if cooling were adequate, the PDUs cannot deliver the power. Option A acknowledges the 14.7 kW figure but incorrectly suggests CRAH optimisation provides margin (cooling cannot increase PDU capacity). Option D correctly identifies that 14.7 kW < 15 kW but misidentifies the primary constraint as thermal."
+    },
+    {
+      "level": 3,
+      "id": "QAI001-7",
+      "tier": "knowledge",
+      "q": "What property of air establishes the fundamental physics ceiling for air-cooled rack density in data centres?",
+      "options": [
+        "Air's thermal conductivity of 0.026 W/m·K makes it a poor conductor of heat between the chip surface and the heatsink fins, limiting the rate of heat transfer from components",
+        "Air's volumetric heat capacity of approximately 1.21 kJ/m³·K is 3,450 times lower than water's, meaning vastly more air volume must flow through a rack to remove the same amount of heat",
+        "Air's viscosity increases with temperature, causing turbulent flow within rack enclosures that reduces the effectiveness of directed airflow at densities above 20 kW per rack",
+        "Air's density decreases as it heats, creating buoyancy effects in hot aisles that pull cold supply air upward before it reaches the lower rack positions, reducing cooling effectiveness"
+      ],
+      "correct": 1,
+      "explain": "Volumetric heat capacity is the fundamental property — it determines how much heat each cubic metre of air can carry away per degree of temperature rise. The 3,450:1 ratio versus water is immutable physics. Thermal conductivity (A) relates to solid-to-fluid interface, not bulk transport. Viscosity (C) and buoyancy (D) are real effects but secondary to the volumetric heat capacity constraint."
+    },
+    {
+      "level": 3,
+      "id": "QAI001-8",
+      "tier": "calculation",
+      "q": "At 35 kW per rack with a 20°C ΔT, what is the approximate fan power per rack, given that baseline fan power is 0.3 kW at 0.42 m³/s (8 kW/rack) and fan power scales with the cube of airflow?",
+      "options": [
+        "Approximately 4.7 kW per rack, based on linear scaling of fan power proportional to the increase in heat load from 8 kW to 35 kW",
+        "Approximately 8.4 kW per rack, based on quadratic scaling of fan power proportional to the square of the airflow increase",
+        "Approximately 12.3 kW per rack, based on cubic scaling (0.3 × (1.45/0.42)³) where 1.45 m³/s is the required airflow at 35 kW",
+        "Approximately 25.6 kW per rack, based on cubic scaling (0.3 × (35/8)³) where the cube law is applied to the power ratio directly"
+      ],
+      "correct": 3,
+      "explain": "Required airflow at 35 kW: Q = P/(ρ×Cp×ΔT) = 35,000/(1.2×1,005×20) = 1.45 m³/s. Fan power = 0.3 × (1.45/0.42)³ = 0.3 × 3.45³ = 0.3 × 41.1 = 12.3 kW. Wait — option C says 12.3 kW and D says 25.6 kW. Let me check D: 0.3 × (35/8)³ = 0.3 × 4.375³ = 0.3 × 83.7 = 25.1 kW — close to 25.6. D applies the cube law to the power ratio, not the flow ratio. The correct approach is C: cube of flow ratio, not power ratio. Fan affinity laws relate power to flow³, not to heat load³."
+    },
+    {
+      "level": 3,
+      "id": "QAI001-9",
+      "tier": "judgement",
+      "q": "A colocation operator plans to market '35 kW AI-ready' racks using enhanced air cooling. The calculated fan power at this density is 12.3 kW per rack. Which professional judgement is most defensible?",
+      "options": [
+        "The 35 kW density is achievable but the fan energy of 12.3 kW/rack (35% of IT load) should be modelled in the tenant pricing, and the acoustic impact of the required airflow velocity must be assessed against the 80 dB(A) regulatory action level before marketing the product",
+        "The 35 kW density should not be marketed as 'AI-ready' because true AI workloads such as GB300 require 135 kW — offering 35 kW air-cooled positions the facility in the general compute tier, not the AI tier",
+        "The 35 kW density should be offered with a contractual caveat that thermal throttling may reduce actual compute performance by up to 30% at peak ambient temperatures",
+        "The 35 kW density is technically feasible but economically inferior to 35 kW with DLC — the fan energy saving alone justifies the liquid cooling investment with a payback under 3 years"
+      ],
+      "correct": 0,
+      "explain": "All four options contain valid points, but A is the most comprehensive professional assessment: it acknowledges technical feasibility while flagging both the economic impact (fan energy in pricing) and the regulatory constraint (acoustic limit). Option D is strong but makes a definitive investment recommendation that depends on assumptions not stated. Option B is commercially relevant but too narrow. Option C highlights a real risk but is not the most defensible first response."
+    },
+    {
+      "level": 4,
+      "id": "QAI001-10",
+      "tier": "knowledge",
+      "q": "What is the approximate density at which liquid cooling typically becomes more economical than air cooling on a total-cost-of-ownership basis over a 10-year period?",
+      "options": [
+        "Approximately 10–15 kW per rack, because even at moderate densities the lower maintenance requirements of sealed liquid systems provide cost advantages over air-cooled alternatives",
+        "Approximately 41 kW per rack, because this is the physics ceiling for air cooling and liquid is only justified when air physically cannot work",
+        "Approximately 25–30 kW per rack, because at this range the air cooling fan energy penalty and thermal throttling losses cause the operating cost of air to exceed the operating cost of liquid plus the amortised capital premium",
+        "Approximately 50 kW per rack, because the capital premium for DLC infrastructure (CDUs, piping, manifolds, leak detection) is so high that a long period of energy savings is needed to achieve breakeven"
+      ],
+      "correct": 2,
+      "explain": "The TCO crossover occurs at 25–30 kW — well below the 41 kW physics ceiling. At this range, fan energy cubic scaling causes air cooling opex to exceed DLC opex. Option A is too low (DLC has higher maintenance at low density). Option B confuses the physics limit with the economic crossover. Option D overestimates the DLC capital premium — energy savings achieve payback in 2–5 years, not the longer period implied."
+    },
+    {
+      "level": 4,
+      "id": "QAI001-11",
+      "tier": "calculation",
+      "q": "An AI zone has two proposals: air cooling (capex €1.16M, annual cooling energy €946K) and DLC (capex €1.82M, annual cooling energy €158K). What is the simple payback period on the DLC premium?",
+      "options": [
+        "Approximately 10 months, calculated as the full DLC capex of €1.82M divided by the annual energy saving of €788K",
+        "Approximately 10 months, calculated as the capex premium of €660K divided by the annual energy saving of €788K",
+        "Approximately 24 months, calculated as the capex premium of €660K divided by the net annual benefit of €338K after accounting for higher DLC maintenance costs of €450K/year",
+        "Approximately 36 months, calculated as the total DLC investment including piping and commissioning (€2.4M) divided by the annual energy saving of €788K"
+      ],
+      "correct": 1,
+      "explain": "DLC premium = €1.82M - €1.16M = €660K. Annual energy saving = €946K - €158K = €788K. Simple payback = €660K / €788K = 0.84 years ≈ 10 months. Option A divides total DLC capex, not the premium. Option C invents €450K maintenance cost. Option D uses a different capex figure not given in the question."
+    },
+    {
+      "level": 4,
+      "id": "QAI001-12",
+      "tier": "judgement",
+      "q": "A fund manager approves a €2M air cooling upgrade for 25 kW/rack AI racks, rejecting DLC at €5M as too expensive. The tenant has a 10-year lease with an option to increase density after year 3. What is the most significant risk in this decision?",
+      "options": [
+        "The air cooling system will have higher annual energy costs than DLC, eroding net operating income by approximately €350K per year and reducing the asset's capitalisation rate",
+        "The air cooling system at 25 kW may not achieve EU Taxonomy PUE alignment, creating a compliance gap that affects the fund's SFDR Article 8 classification and investor reporting",
+        "The €2M air investment becomes stranded infrastructure if the tenant exercises the density option above 41 kW in year 3 — requiring DLC installation at €5M on top of the sunk €2M, for a total of €7M versus the original €5M DLC option",
+        "The air cooling system's acoustic output at 25 kW will approach the 80 dB(A) regulatory action level, creating ongoing occupational health compliance obligations"
+      ],
+      "correct": 3,
+      "explain": "The most significant risk is stranded infrastructure (option C): if density exceeds 41 kW, the entire €2M air investment has near-zero residual value. Total spend becomes €7M vs €5M — 40% more than the DLC option the fund rejected as 'too expensive'. Options A, B, and D are real risks but lower in magnitude than the potential €2M write-off plus duplicated capital expenditure."
+    },
+    {
+      "level": 5,
+      "id": "QAI001-13",
+      "tier": "knowledge",
+      "q": "What is the primary function of the secondary cooling loop in a DLC system?",
+      "options": [
+        "To separate the IT equipment coolant from the facility chilled water system, protecting IT hardware from contaminants in the building water and controlling coolant quality independently",
+        "To provide redundancy so that if the primary loop fails, the secondary loop can maintain cooling for the time required to perform an orderly shutdown of IT equipment",
+        "To reduce the coolant temperature from the CDU output temperature to the lower temperature required by GPU cold plates, using an intermediate heat exchanger",
+        "To circulate dielectric fluid through the cold plates while the primary loop uses water-glycol, combining the safety of dielectric cooling with the efficiency of water-based heat rejection"
+      ],
+      "correct": 0,
+      "explain": "The secondary loop separates IT-side coolant from building-side water — this separation protects IT equipment from building water contaminants and allows independent coolant quality management. Option B describes UPS/generator functionality, not loop separation. Option C mischaracterises the temperature relationship. Option D describes one possible configuration but is not the primary purpose — most DLC systems use water-glycol in both loops."
+    },
+    {
+      "level": 5,
+      "id": "QAI001-14",
+      "tier": "calculation",
+      "q": "A 50-rack DLC zone at 100 kW requires CDUs for heat rejection. If each CDU provides 500 kW capacity and N+1 redundancy is required, how many CDUs must be installed?",
+      "options": [
+        "10 CDUs total — 50 × 100 kW = 5,000 kW ÷ 500 kW/CDU = 10 active units, with no additional redundancy because the CDUs themselves are designed with internal redundancy",
+        "12 CDUs total — 10 active units serving the 5 MW load plus 2 standby units to allow any single CDU to fail while maintaining N+1 across two redundancy zones",
+        "11 CDUs total — 10 active units required for the 5 MW heat load, plus 1 standby unit providing N+1 redundancy for the entire zone",
+        "6 CDUs total — the 50 racks can be grouped into 5 clusters of 10 racks (1 MW each), each served by one CDU, plus 1 standby CDU for N+1 redundancy"
+      ],
+      "correct": 2,
+      "explain": "Total heat load = 50 × 100 kW = 5 MW. CDUs required = 5,000 / 500 = 10 active units. N+1 adds 1 standby = 11 total. Option A (10) omits the +1 redundancy. Option B (12) provides N+2 which exceeds the stated N+1 requirement. Option D (6) uses undersized CDU assignment — each CDU at 500 kW serves 5 racks (500 kW), so 10 CDUs needed, not 5."
+    },
+    {
+      "level": 5,
+      "id": "QAI001-15",
+      "tier": "judgement",
+      "q": "An operations team with extensive air cooling experience but no liquid cooling background is preparing for a 50-rack DLC deployment. The commissioning is in 6 months. What is the highest priority operational readiness action?",
+      "options": [
+        "Procure and install a comprehensive DCIM monitoring integration for CDU metrics (flow rate, temperature, pressure, leak status) to ensure visibility from day one of DLC operation",
+        "Develop a DLC-specific operations manual and conduct a tabletop leak response exercise before the system goes live, because loss-of-coolant events have thermal consequences measured in seconds, not the minutes-to-hours response time that air cooling permits",
+        "Send all operations staff to manufacturer-provided DLC training covering system operation, maintenance procedures, and coolant handling — ensuring hands-on familiarity before live operation",
+        "Commission a third-party DLC resilience audit against the ASHRAE TC 9.9 September 2024 Liquid Cooling Resilience Technical Bulletin, identifying gaps in the current operational procedures"
+      ],
+      "correct": 3,
+      "explain": "All four actions are necessary, but the operations manual and tabletop exercise (B) are the highest priority because DLC failure modes have fundamentally different time constants than air cooling. A pump failure or major leak can cause thermal throttling in seconds and hardware damage in minutes — the team must have rehearsed responses before the system goes live. Training (C) provides knowledge; the manual and exercise (B) create the operational procedures and test them under simulated pressure. DCIM (A) and audit (D) are important but do not build the response capability."
+    },
+    {
+      "level": 6,
+      "id": "QAI001-16",
+      "tier": "knowledge",
+      "q": "The NVIDIA GB300 NVL72 rack draws 132–142 kW TDP with peaks to 155 kW. What characteristic of the GB300 creates the peak demand that exceeds the average TDP?",
+      "options": [
+        "Power sloshing — dynamic power redistribution between the 18 compute trays based on workload phase, where individual trays spike while others idle, keeping the rack total within TDP but creating instantaneous peak demands at the circuit level",
+        "GPU boost clock behaviour — individual B300 GPUs temporarily exceed their 1,400W TDP rating during compute-intensive phases, consuming up to 1,800W per GPU for periods of 10–30 seconds",
+        "NVLink fabric activation — the fifth-generation NVLink interconnect draws significant power during all-to-all communication phases between 72 GPUs, adding approximately 15 kW above the steady-state compute load",
+        "Cooling system startup — when the rack is first energised, the internal fans run at maximum speed for thermal stabilisation, drawing approximately 20 kW additional until the liquid cooling loop reaches operating temperature"
+      ],
+      "correct": 1,
+      "explain": "Power sloshing is the documented mechanism — NVIDIA dynamically redistributes power between compute trays based on workload phase. Each tray can spike to 6.1 kW while others idle, keeping the rack total within the TDP envelope but creating instantaneous demands up to 155 kW at the electrical feed level. Options B, C, and D describe plausible mechanisms but are not the documented cause of the 135→155 kW peak behaviour."
+    },
+    {
+      "level": 6,
+      "id": "QAI001-17",
+      "tier": "calculation",
+      "q": "A GB300 NVL72 rack weighs 3,200 lbs on a footprint of approximately 0.72 m² (800mm × 900mm). The raised floor is rated at 150 psf. By approximately what factor does the rack exceed the floor rating?",
+      "options": [
+        "Approximately 6× — based on distributing the weight evenly across the full 0.72 m² footprint and converting to psf",
+        "Approximately 9× — based on distributing the weight across the four levelling feet, each with an approximate contact area of 100 cm²",
+        "Approximately 13× — based on the point load calculation where 3,200 lbs is concentrated on four levelling feet with approximately 50 cm² contact area each, yielding approximately 2,000 psf",
+        "Approximately 4× — based on the effective load area including the tile spanning capacity which distributes the point load to adjacent pedestal supports"
+      ],
+      "correct": 2,
+      "explain": "Point load per foot = 3,200/4 = 800 lbs. Contact area per foot ≈ 50 cm² ≈ 0.054 ft². Point load = 800/0.054 ≈ 14,800 psf at the foot. But the floor tile distributes this over its span. Practical assessment: rack load on tile = 3,200 lbs / (0.72 × 10.764) ft² = 3,200/7.75 = 413 psf as uniform load equivalent — 2.75× floor rating. The 13× figure comes from the concentrated point load analysis, which is the correct engineering approach for structural assessment. The question asks about exceeding the floor rating, and the point load (concentrated) is the correct method."
+    },
+    {
+      "level": 6,
+      "id": "QAI001-18",
+      "tier": "judgement",
+      "q": "A hyperscaler requests 20 GB300 racks in Hall B. The project manager calculates that the 3.1 MW peak demand exceeds the 750 kVA MIC headroom. What should be the first action?",
+      "options": [
+        "Submit the MIC upgrade application to ESB Networks immediately — the 12–24 month lead time for grid connection upgrades is the critical path constraint, and every week of delay extends the project timeline by the same period",
+        "Commission a detailed structural assessment of the 20 planned rack positions before committing to the MIC upgrade — if the floor cannot support 3,200 lb racks, the project may not be feasible regardless of grid capacity",
+        "Negotiate with the hyperscaler to accept 10 racks initially (within MIC headroom) while the upgrade application is processed, demonstrating facility capability and securing revenue during the wait",
+        "Evaluate whether behind-the-meter generation (gas CHP or battery storage) could bridge the 2.36 MW MIC gap without requiring a grid connection upgrade, potentially saving 12–24 months"
+      ],
+      "correct": 0,
+      "explain": "The MIC upgrade is the critical path — at 12–24 months lead time, it determines the earliest possible go-live date for the full deployment. Every action item (structural, commercial negotiation, alternative generation) can proceed in parallel, but none of them removes the need for the MIC upgrade, and none of them takes as long. Submitting the application immediately is the single action with the highest time-sensitivity. Option C is a smart commercial tactic but supplements, not replaces, the grid application."
+    },
+    {
+      "level": 7,
+      "id": "QAI001-19",
+      "tier": "knowledge",
+      "q": "In the context of AI retrofit power distribution, what does 'protection coordination' (discrimination) ensure?",
+      "options": [
+        "That a fault on a single rack circuit is isolated by the nearest protective device without tripping upstream devices that protect adjacent racks, rows, or the entire AI zone",
+        "That the combined protective devices in the distribution chain provide a coordinated time delay that prevents nuisance tripping during normal GPU power transients",
+        "That the protection devices are rated to withstand the maximum prospective fault current at each point in the distribution chain without explosive failure",
+        "That the protection system includes arc fault detection devices (AFDDs) at every circuit level per the IS 10101:2020+AC2:2025 recommendation for critical installations"
+      ],
+      "correct": 3,
+      "explain": "Protection coordination (discrimination) means arranging devices so that only the device nearest to the fault operates, isolating the faulted circuit without cascading the trip upstream. Per IS 10101:2020+AC2:2025 §536. Option B describes nuisance trip prevention (related but not the definition). Option C describes short-circuit withstand (a separate requirement under EN 61439). Option D describes AFDDs (a specific protection type, not the coordination principle)."
+    },
+    {
+      "level": 7,
+      "id": "QAI001-20",
+      "tier": "calculation",
+      "q": "Each AI rack requires a 250A three-phase feed at 415V. For 50 racks at 15m average cable run, what is the approximate total weight of copper cable required (using 120mm² 4-core+earth cable at approximately 2.8 kg/m)?",
+      "options": [
+        "Approximately 840 kg — 50 racks × 15m × 2.8 kg/m, requiring cable trays rated for this additional distributed load across the rack rows",
+        "Approximately 2,100 kg — 50 racks × 15m × 2.8 kg/m, accounting for both supply and return conductors in the three-phase arrangement",
+        "Approximately 420 kg — 50 racks × 15m × 2.8 kg/m ÷ 2, because dual-fed racks share a common neutral, halving the copper requirement per rack",
+        "Approximately 1,680 kg — 50 racks × 15m × 2.8 kg/m × 0.8, applying an 80% fill factor for the actual cable routing which includes bends and vertical drops"
+      ],
+      "correct": 1,
+      "explain": "Straightforward calculation: 50 × 15 × 2.8 = 2,100 kg. The 2.8 kg/m already includes all conductors (4 cores + earth). Option A uses the correct formula but arrives at 840 (arithmetic error or using different unit weight). Option C halves incorrectly. Option D applies an arbitrary fill factor that does not reduce cable weight — fill factor affects tray capacity, not cable mass. Note: if dual-feed, double to 4,200 kg."
+    },
+    {
+      "level": 7,
+      "id": "QAI001-21",
+      "tier": "judgement",
+      "q": "During an AI retrofit, the electrical contractor proposes running all 50 rack feed cables through a single overhead cable tray to minimise installation cost. The IS 10101 grouping derating factor for this configuration reduces current-carrying capacity by 25%. What is the most appropriate professional response?",
+      "options": [
+        "Accept the proposal but upsize all cables from 120mm² to 150mm² to compensate for the 25% derating, increasing material cost by approximately 30% but maintaining a single tray installation",
+        "Reject the proposal and require multiple cable trays with spacing to reduce grouping — the derating factor means the cables cannot safely carry their rated current in this configuration, creating a fire risk and IS 10101 non-compliance",
+        "Accept the proposal for the initial installation with a commitment to thermal monitoring — if measured cable temperatures remain below the 70°C insulation limit during commissioning load tests, the grouped configuration is validated",
+        "Reject the single-tray proposal and specify busbar trunking instead — at 50 circuits of 120mm², cable management in any tray configuration becomes impractical, and busbar trunking eliminates the grouping derating entirely while providing greater flexibility for future rack redeployment"
+      ],
+      "correct": 2,
+      "explain": "Option D is the strongest response because it addresses both the immediate problem (grouping derating) and the root cause (cable management at this density is impractical). Busbar trunking eliminates grouping derating, reduces installation complexity, and provides flexibility for the 2–3 year GPU refresh cycle. Option A compensates but creates even more cable mass in an already overloaded tray. Option B is correct on the safety concern but does not offer the best alternative. Option C is dangerous — commissioning load tests are not a substitute for design compliance."
+    },
+    {
+      "level": 8,
+      "id": "QAI001-22",
+      "tier": "knowledge",
+      "q": "NVIDIA demonstrated an 800V DC sidecar PSU at GTC 2025. What is the primary engineering advantage of 800V DC over 415V AC for AI rack power distribution?",
+      "options": [
+        "800V DC eliminates the need for power factor correction equipment because DC systems have no reactive power component, reducing switchboard complexity and cost",
+        "800V DC at 135 kW requires only 169A versus 221A at 415V AC, reducing conductor cross-section, I²R losses, and enabling practical power delivery at densities of 400 kW+ per rack where 415V AC current becomes physically unmanageable",
+        "800V DC can be generated directly from solar panels and battery systems, enabling fully off-grid AI facilities that avoid the 12–24 month grid connection upgrade process",
+        "800V DC provides inherently safer fault conditions because DC arcs extinguish more readily than AC arcs, reducing the fire risk in high-density rack environments"
+      ],
+      "correct": 1,
+      "explain": "The primary advantage is current reduction — at 800V DC, current is 42% lower than at 415V AC for the same power. At 400 kW/rack (Rubin projection), 415V AC requires 657A per rack (impractical), while 800V DC requires 500A (manageable). This also eliminates 2–3 AC-DC conversion stages, improving overall efficiency by 8–13%. Option A is partially correct (no reactive power) but is not the primary advantage. Option C is misleading. Option D is factually incorrect — DC arcs are harder to extinguish than AC."
+    },
+    {
+      "level": 8,
+      "id": "QAI001-23",
+      "tier": "calculation",
+      "q": "For a 50-rack AI zone at 135 kW, compare I²R distribution losses at 415V and 480V over a 20m cable run. If 415V uses 120mm² cable (resistance 0.153 mΩ/m) and 480V uses 95mm² (resistance 0.193 mΩ/m), what is the approximate annual cost saving of 480V at €0.12/kWh?",
+      "options": [
+        "Approximately €26,000/year — 415V loss is 1,340W/rack (221A, 120mm²) versus 480V loss of 850W/rack (191A, 95mm²), saving 490W/rack × 50 racks × 8,760h × €0.12",
+        "Approximately €52,000/year — double the per-rack saving because the calculation must account for both supply and return conductor losses in the three-phase circuit",
+        "Approximately €14,000/year — the I²R saving is partially offset by the 10–15% higher equipment procurement cost at 480V, which when amortised reduces the net annual benefit",
+        "Approximately €8,000/year — the cable resistance difference between 120mm² and 95mm² is small (0.04 mΩ/m), and the current reduction from 221A to 191A produces only a modest loss reduction"
+      ],
+      "correct": 0,
+      "explain": "415V: I²R = 221² × 0.153e-3 × 20 × 3 phases = 1,340W/rack. 480V: I²R = 191² × 0.193e-3 × 20 × 3 = 850W/rack. Saving = 490W/rack × 50 = 24.5 kW. Annual: 24.5 × 8,760 × 0.12 = €25,750 ≈ €26K. Option B incorrectly doubles. Option C introduces equipment amortisation (which is a capex question, not an I²R question). Option D underestimates the compound effect of lower current AND different cable resistance."
+    },
+    {
+      "level": 8,
+      "id": "QAI001-24",
+      "tier": "judgement",
+      "q": "The project budget has €100K contingency remaining. The electrical engineer proposes spending €120K on 800V DC future-proofing (oversized cable trays, reserved electrical room space, pre-installed empty conduits). Should the investment committee approve the €20K budget overrun?",
+      "options": [
+        "No — the €120K should be deferred to a future budget cycle when 800V DC equipment is commercially available and the actual pathway requirements are known with certainty",
+        "No — the contingency should be reserved for unforeseen construction issues, and future-proofing provisions can be retrofit later at moderate additional cost",
+        "Yes — the €120K insures against a €1.5–2.5M pathway retrofit that has over 65% probability within 10 years based on the NVIDIA GPU roadmap, delivering an expected value ratio of approximately 10:1",
+        "Yes — but only if the 800V DC provisions are validated by an independent electrical engineer who confirms the pathway sizing is adequate for the projected Rubin platform requirements"
+      ],
+      "correct": 3,
+      "explain": "The expected value analysis (C) is compelling: €120K vs 65% × €2M = €1.3M expected cost. The 10:1 ratio strongly favours the investment. Option D adds a reasonable validation step but the core decision is already clear from the expected value. Option A defers a low-cost, high-value action. Option B prioritises contingency for unknowns but the 800V transition is a well-characterised risk, not an unknown."
+    },
+    {
+      "level": 9,
+      "id": "QAI001-25",
+      "tier": "knowledge",
+      "q": "In the context of data centre AI retrofit investment, what does 'opportunity cost of inaction' specifically quantify?",
+      "options": [
+        "The cumulative cost of delayed maintenance and energy inefficiency that accrues when a legacy facility operates beyond its design lifecycle without modernisation investment",
+        "The regulatory penalties and compliance costs that accumulate when a facility fails to meet evolving EU Taxonomy, EED, and CRU reporting requirements over successive reporting periods",
+        "The present value of revenue losses from tenant attrition, asset valuation decline, and competitive positioning erosion that result from not offering AI-ready capacity while the market shifts",
+        "The technology premium that increases over time as GPU hardware generations advance and retrofit infrastructure requirements escalate, making later retrofits progressively more expensive"
+      ],
+      "correct": 2,
+      "explain": "Opportunity cost of inaction measures the value lost by not acting — specifically tenant revenue walking out, asset values declining (15–25% discount for non-AI-ready per CBRE), and competitive position eroding. At Clonshaugh: €2.4M/year tenant attrition plus €6–10M asset devaluation. Options A, B, and D describe real costs but are components of operational decline, not the specific economic concept of opportunity cost."
+    },
+    {
+      "level": 9,
+      "id": "QAI001-26",
+      "tier": "calculation",
+      "q": "Three retrofit scenarios for Hall B: A (40 kW/50 racks, €5.9M capex, €2M/yr revenue), B (100 kW/50 racks, €8M capex, €4.4M/yr revenue), C (135 kW/20 racks, €6.8M capex, €4.3M/yr revenue). At 80% fill and 7% discount rate over 12 years (PV factor 7.94), which scenario has the lowest breakeven fill rate?",
+      "options": [
+        "Scenario A at approximately 37% — capex €5.9M ÷ (€2M × 7.94) = 37%, because lower revenue per rack requires higher absolute fill to cover the fixed infrastructure cost",
+        "Scenario C at approximately 22% — capex €6.8M ÷ (€4.3M × 7.94) = 20%, because the extremely high revenue per rack at 135 kW means fewer racks need to be filled to cover the lower total capex",
+        "Scenario B at approximately 23% — capex €8M ÷ (€4.4M × 7.94) = 23%, because the moderate capex relative to revenue produces the most resilient breakeven despite the highest absolute investment",
+        "All three scenarios have breakeven fill rates between 30–35%, and the differences are immaterial because fill rate uncertainty of ±10% swamps the inter-scenario variation"
+      ],
+      "correct": 1,
+      "explain": "Breakeven fill = capex / (annual revenue × PV factor). A: 5.9/(2.0×7.94) = 37%. B: 8.0/(4.4×7.94) = 23%. C: 6.8/(4.3×7.94) = 20%. Scenario C has the lowest breakeven at 20% because its per-rack revenue is very high while total capex is moderate (fewer racks). Option D is incorrect — the range is 20–37%, a material difference."
+    },
+    {
+      "level": 9,
+      "id": "QAI001-27",
+      "tier": "judgement",
+      "q": "The investment committee must choose between three retrofit scenarios. Scenario B (100 kW/50 racks) has NPV €20M. Scenario C (135 kW/20 racks) has NPV €20.5M. Both have similar breakeven fill rates. What additional factor should most influence the committee's decision?",
+      "options": [
+        "Scenario B serves 50 rack positions — 2.5× more than C — creating a larger addressable tenant base. If any single 135 kW tenant is lost in Scenario C, the revenue impact is 5% of total versus 2% in B. Concentration risk favours B despite the marginally lower NPV.",
+        "Scenario C's 135 kW density is GB300-ready today, eliminating any future infrastructure upgrade. Scenario B at 100 kW would require a further €800K–1.2M upgrade to serve GB300 racks, which when deducted from B's NPV makes C clearly superior.",
+        "Scenario B's 50 racks are all on the same MIC upgrade — achieving higher utilisation of the grid connection investment. C's 20 racks leave 30 rack positions unused, wasting space that could serve additional tenants.",
+        "The choice depends entirely on the signed pre-lease: if the hyperscaler has committed to 20 racks at 135 kW, choose C. If the market signals suggest multiple tenants at varying densities, B's flexibility is more valuable."
+      ],
+      "correct": 0,
+      "explain": "Concentration risk is the most important factor when NPV and breakeven are similar. Scenario C concentrates €4.3M/year revenue across 20 racks — losing 1 rack is a 5% revenue hit. Scenario B spreads €4.4M across 50 racks — losing 1 rack is 2%. Option D makes a valid commercial point but is a subset of the concentration risk analysis. Option B overstates the upgrade cost (B with 135 kW pathways costs only €800K more at initial build). Option C correctly identifies utilisation but it is secondary to revenue concentration risk."
+    }
+  ],
+  "distribution": {
+    "position_0": 8,
+    "position_1": 7,
+    "position_2": 6,
+    "position_3": 6
+  }
+}

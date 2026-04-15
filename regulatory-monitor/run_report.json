@@ -1,0 +1,21 @@
+{
+  "run_date": "2026-04-13T09:02:54.229566+00:00",
+  "sources_checked": 12,
+  "sources_changed": 1,
+  "fetch_errors": 0,
+  "changes": [
+    {
+      "date": "2026-04-13",
+      "source_id": "crrem",
+      "source_name": "CRREM \u2014 Methodology",
+      "url": "https://www.crrem.eu/",
+      "priority": "P2",
+      "summary": "4 new lines detected. Examples:\n  + We're building a new home for CRREM \u00e2\u0080\u0094 science-based decarbonization pathways for real estate across 44 countries.\n66 lines removed. Examples:\n  - CRREM Pathways reflect the emissions and energy intensity levels buildings need to meet to stay within the global carbon\n  - CRREM accelerates global roll-out with launch of three Regional Advisory Committees.\n  - Welcoming members of CRREM\u2019s Technical Council\n  - Assess transition risks, model decarbonization cost",
+      "modules_affected": [
+        "010",
+        "007",
+        "015"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Les Murphy CEng, Legacy Business Engineers Ltd">
+<meta name="copyright" content="© 2026 Legacy Business Engineers Ltd. All rights reserved.">
+<meta name="dcterms.rights" content="Proprietary. Reproduction prohibited without licence.">
+<meta name="dcterms.rightsHolder" content="Legacy Business Engineers Ltd">
+<meta name="robots" content="index, follow">
+<title>DC-AI Template v2.0 | DC-AI Series | Legacy Business Engineers</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,[data-theme="dark"]{--bg:#0d1117;--surface:#161b22;--panel:#1c2333;--border:#30363d;--border-light:#484f58;--text:#e6edf3;--text-bright:#f0f6fc;--text-dim:#8b949e;--text-muted:#6e7681;--accent:#5b9bd5;--accent2:#79c0ff;--success:#78a840;--warn:#d4a026;--error:#ef4444;--lbe-green:#4a7c59;--dc-black:#1a1a1a;--green:#78a840;--green-dim:rgba(120,168,64,0.12);--green-glow:rgba(120,168,64,0.25);--red:#ef4444;--red-dim:rgba(239,68,68,0.15);--red-glow:rgba(239,68,68,0.3);--amber:#d4a026;--amber-dim:rgba(212,160,38,0.12);--amber-glow:rgba(212,160,38,0.25);--font-sans:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace;--grammar:#2563EB;--logic:#d97706;--rhetoric:#7c3aed}
+[data-theme="light"]{--bg:#fdfdfd;--surface:#f6f8fa;--panel:#f0f2f5;--border:#d0d7de;--border-light:#afb8c1;--text:#1f2328;--text-bright:#0a0a0a;--text-dim:#57606a;--text-muted:#8b949e;--accent:#2b6cb0;--accent2:#0550ae;--success:#4a7c59;--warn:#a67c1a;--error:#cf222e;--lbe-green:#2d5a3d;--dc-black:#1a1a1a;--green:#4a7c59;--green-dim:rgba(74,124,89,0.10);--green-glow:rgba(74,124,89,0.20);--red:#dc2626;--red-dim:rgba(220,38,38,0.08);--red-glow:rgba(220,38,38,0.15);--amber:#a67c1a;--amber-dim:rgba(166,124,26,0.08);--amber-glow:rgba(166,124,26,0.15);--grammar:#2563EB;--logic:#d97706;--rhetoric:#7c3aed}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.8;-webkit-font-smoothing:antialiased}
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 var(--green-glow)}50%{box-shadow:0 0 8px 2px var(--green-glow)}}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 var(--red-glow)}50%{box-shadow:0 0 8px 2px var(--red-glow)}}
+header{background:var(--dc-black);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px;position:relative}
+header img{width:48px;height:48px;border-radius:50%;overflow:hidden;flex-shrink:0}
+header h1{font-size:22px;font-weight:700;line-height:1.2}
+header .sub{font-size:11px;font-family:var(--font-mono);color:var(--text-dim);margin-top:2px}
+.theme-toggle{position:absolute;right:20px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-family:var(--font-sans)}
+.theme-toggle:hover{background:rgba(255,255,255,.2)}
+.main{max-width:1100px;margin:0 auto;padding:28px 20px 16px}
+.tab-row{display:flex;gap:4px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;-ms-overflow-style:none}
+.tab-row::-webkit-scrollbar{display:none}
+.tab-btn{padding:10px 18px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:14px;font-weight:500;font-family:var(--font-sans);white-space:nowrap;transition:all .2s}
+.tab-btn:hover{border-color:var(--green);color:var(--text)}
+.tab-btn.active{background:transparent;border-color:var(--green);color:var(--green);font-weight:600}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:18px}
+.card h2{font-size:17px;font-weight:700;color:var(--text-bright);margin-bottom:12px}
+.card h3{font-size:15px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+.level-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.level-btn{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:13px;font-family:var(--font-sans);transition:all .2s}
+.level-btn:hover{border-color:var(--green);color:var(--text)}
+.level-btn.active{background:transparent;border-color:var(--green);color:var(--green);font-weight:600}
+.trivium-tabs{display:flex;gap:8px;margin-bottom:16px}
+.triv-btn{flex:1;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:14px;font-weight:500;font-family:var(--font-sans);transition:all .2s;text-align:center}
+.triv-btn:hover{color:var(--text)}
+.triv-btn.active-grammar{background:rgba(91,155,213,.15);border-color:var(--grammar);color:var(--grammar);font-weight:600}
+.triv-btn.active-logic{background:rgba(212,160,38,.15);border-color:var(--logic);color:var(--logic);font-weight:600}
+.triv-btn.active-rhetoric{background:rgba(167,139,189,.15);border-color:var(--rhetoric);color:var(--rhetoric);font-weight:600}
+.triv-btn.done-grammar{border-color:var(--grammar);color:var(--grammar);background:transparent}
+.triv-btn.done-logic{border-color:var(--logic);color:var(--logic);background:transparent}
+.triv-btn.done-rhetoric{border-color:var(--rhetoric);color:var(--rhetoric);background:transparent}
+.fact-card{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--grammar);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s}
+.fact-card:hover{border-color:var(--grammar)}
+.term{font-weight:600;font-size:14px;color:var(--text-bright)}
+.def{font-size:13px;color:var(--text);margin-top:8px;line-height:1.8}
+.detail{font-size:12px;color:var(--text-dim);margin-top:6px;font-style:italic;line-height:1.7}
+.std{font-size:11px;font-family:var(--font-mono);color:var(--text-muted);margin-top:4px}
+.ce-card{background:var(--panel);border-left:3px solid var(--logic);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:10px}
+.cause{font-weight:600;font-size:13px;color:var(--text-bright)}
+.effect{font-size:13px;color:var(--text);margin-top:6px;line-height:1.8}
+.insight{font-size:12px;color:var(--text-dim);margin-top:6px;font-style:italic;line-height:1.7}
+.wl-box{border:1px solid var(--green);border-radius:10px;padding:16px;margin-top:14px;background:var(--green-dim)}
+.persona-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.persona-btn{padding:8px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:13px;font-family:var(--font-sans);transition:all .2s}
+.persona-btn.active{background:rgba(167,139,189,.15);border-color:var(--rhetoric);color:var(--rhetoric);font-weight:600}
+.persona-msg{font-size:14px;color:var(--text);line-height:1.8;padding:14px 16px;border-left:3px solid var(--rhetoric);background:var(--panel);border-radius:0 10px 10px 0}
+.challenge-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px}
+.fc-label{display:inline-block;font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:8px}
+.fc-situation .fc-label{background:var(--amber-dim);color:var(--amber)}
+.fc-challenge-q .fc-label{background:rgba(91,155,213,0.12);color:var(--accent)}
+.fc-fix .fc-label{background:var(--green-dim);color:var(--green)}
+.fc-challenge-q{font-weight:600;font-size:14px;color:var(--text-bright);margin-bottom:8px}
+.fc-fix-content{font-size:13px;color:var(--text);line-height:1.8;white-space:pre-line;margin-top:10px}
+.assess-option{padding:12px 16px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);cursor:pointer;font-size:14px;font-family:var(--font-sans);margin-bottom:8px;transition:all .2s}
+.assess-option:hover{border-color:var(--accent)}
+.assess-option.correct{border-color:var(--green);background:var(--green-dim);color:var(--green)}
+.assess-option.incorrect{border-color:var(--red);background:var(--red-dim);color:var(--red)}
+.assess-feedback{font-size:13px;color:var(--text-dim);margin-top:10px;padding:12px;background:var(--panel);border-radius:8px;line-height:1.7}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:var(--font-mono);text-transform:uppercase}
+.badge-grammar{background:rgba(91,155,213,.15);color:var(--grammar)}
+.badge-logic{background:rgba(212,160,38,.15);color:var(--logic)}
+.badge-rhetoric{background:rgba(167,139,189,.15);color:var(--rhetoric)}
+.badge-pass{background:var(--green-dim);color:var(--green)}
+.badge-fail{background:var(--red-dim);color:var(--red)}
+.progress-bar{height:8px;background:var(--panel);border-radius:4px;overflow:hidden;margin-top:6px}
+.fill{height:100%;border-radius:4px;transition:width .5s ease}
+.fill-grammar{background:var(--grammar)}.fill-logic{background:var(--logic)}.fill-rhetoric{background:var(--rhetoric)}.fill-green{background:var(--green)}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:12px;font-family:var(--font-sans);transition:all .2s}
+.filter-btn:hover{border-color:var(--accent);color:var(--text)}
+.filter-btn.active{background:transparent;border-color:var(--green);color:var(--green);font-weight:600}
+.completion-btn{padding:12px 28px;border:2px solid var(--border);border-radius:8px;background:transparent;color:var(--text-dim);cursor:pointer;font-size:14px;font-weight:600;font-family:var(--font-sans);margin-top:16px;transition:all .2s}
+.btn-grammar{background:var(--grammar);border-color:var(--grammar);color:#fff}
+.btn-logic{background:var(--logic);border-color:var(--logic);color:#000}
+.btn-rhetoric{background:var(--rhetoric);border-color:var(--rhetoric);color:#fff}
+.completion-btn.done{background:transparent!important}
+.completion-btn.done.btn-grammar{border-color:var(--grammar);color:var(--grammar)}
+.completion-btn.done.btn-logic{border-color:var(--logic);color:var(--logic)}
+.completion-btn.done.btn-rhetoric{border-color:var(--rhetoric);color:var(--rhetoric)}
+.chain-layout{display:grid;grid-template-columns:1fr 380px;gap:20px}
+.chain-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:1px solid var(--border);border-radius:10px;background:var(--surface);margin-bottom:8px;cursor:pointer;transition:all .2s}
+.chain-item:hover{border-color:var(--green)}
+.chain-item.fail{border-color:var(--red);background:var(--red-dim);animation:pulse-red 2s infinite}
+.chain-item.pass{border-color:var(--green);background:var(--green-dim)}
+.sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.calc-input{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:6px;background:var(--panel);color:var(--text);font-family:var(--font-sans);font-size:14px;margin-top:4px}
+.calc-btn{padding:10px 20px;border:none;border-radius:8px;background:var(--green);color:#fff;cursor:pointer;font-size:14px;font-weight:600;font-family:var(--font-sans);margin-top:8px;width:100%}
+.calc-btn:hover{opacity:.9}
+.assist-bar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.assist-btn{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text-dim);cursor:pointer;font-size:11px;font-family:var(--font-sans)}
+.assist-btn:hover{border-color:var(--accent);color:var(--text)}
+.clarify-box{flex-basis:100%;background:var(--panel);border:1px solid var(--grammar);border-radius:10px;padding:12px 14px;margin-top:8px}
+.series-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin:12px 0;border-top:1px solid var(--border)}
+.series-nav a{color:var(--green);text-decoration:none;font-size:13px}
+.series-nav a:hover{text-decoration:underline}
+.nav-footer{border-top:1px solid var(--border);padding:16px 0;margin-top:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--text-muted)}
+.nav-footer a{color:var(--green);text-decoration:none;margin-left:16px}
+.nav-footer a:hover{color:var(--green)}
+@media print{.no-print{display:none!important}}
+.selectable-text{user-select:text;-webkit-user-select:text;-moz-user-select:text;cursor:text}
+@media(max-width:900px){.chain-layout{grid-template-columns:1fr}}
+@media(max-width:768px){header{flex-wrap:wrap;padding:14px 16px}header h1{font-size:18px}.main{padding:16px 12px}.tab-btn{padding:8px 12px;font-size:13px}.card{padding:16px}.nav-footer{flex-direction:column;text-align:center}.nav-footer a{margin-left:0;margin-right:12px}}
+
+/* ═══ VISUAL GUIDE DIAGRAM STYLES ═══ */
+.step-row{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+.step-btn{padding:8px 16px;border-radius:6px;font:500 12px var(--font-sans);cursor:pointer;transition:all .15s;min-width:120px}
+.narrative-panel{margin-top:16px;padding:14px 18px;background:var(--panel);border:1px solid var(--border);border-radius:8px;font-size:13px;color:var(--text);line-height:1.7}
+.narrative-panel .np-title{font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+.narrative-panel .np-body{margin-bottom:8px}
+.narrative-panel .np-takeaway{font-weight:600;color:var(--text-bright)}
+.vg-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 16px}
+.vg-filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;font:500 12px var(--font-sans);color:var(--text-dim);transition:all .15s}
+.vg-filter-btn:hover{background:var(--surface);color:var(--text)}
+.vg-filter-btn.active{background:transparent;border-color:var(--green);color:var(--green);font-weight:600}
+.dc-story-body{font-size:17px;line-height:1.9;color:var(--text)}
+.dc-story-body p{margin-bottom:22px !important;font-size:17px;line-height:1.9}
+.dc-story-body h2{font-family:Georgia,"Times New Roman",serif !important;font-size:26px !important;font-weight:400 !important;color:var(--text-bright) !important;margin-bottom:28px !important;text-align:center;letter-spacing:0.3px}
+.dc-story-body h3{font-family:Georgia,"Times New Roman",serif !important;font-size:19px !important;font-weight:500 !important;color:var(--text-bright) !important;margin:36px 0 16px !important}
+.dc-story-body blockquote{margin:32px 0 !important;padding:18px 24px 18px 28px !important;border-left:3px solid var(--green) !important;background:var(--green-dim) !important;border-radius:0 6px 6px 0;font-style:italic;color:var(--text-dim)}
+.dc-story-body blockquote p{margin-bottom:0 !important}
+.dc-story-body hr{margin:36px auto !important;width:80px;border:none !important;border-top:1px solid var(--border-light) !important}
+.dc-story-body em{font-style:italic}
+.dc-story-body strong{color:var(--text-bright)}
+.dc-story-body .dc-story-dropcap::first-letter{float:left;font-family:Georgia,"Times New Roman",serif;font-size:68px;line-height:0.85;padding-right:10px;padding-top:4px;color:var(--green);font-weight:400}
+@media(max-width:600px){.dc-authbtn-dropdown{position:fixed !important;top:68px !important;left:12px !important;right:12px !important;min-width:0 !important;width:auto !important}}
+</style>
+</head>
+<body>
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var el = document.getElementById('root');
+  if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
+    el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-AI-001 v3.1.0</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM.</p>'
+      + '</div>';
+  }
+  return true;
+};
+const LOGO_SRC = "data:image/png;base64,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";
+var CHAPTER_FILE = 'dc-clock-ch02.html';
+var CHAPTER_NUM = 2;
+var CHAPTER_TITLE = 'The Power Question';
+var MODULE_TITLE = 'Power Density';
+</script>
+<div id="root"></div>
+<script type="text/babel">
+/* --- DC-AI-TEMPLATE v2.0.0 - DC-AI Series Blank Template ---
+   Architecture: DC-LEARN-011 v1.1.0 template
+   Content: Placeholder — replace with module content
+   Build: 14/04/2026 - stripped from DC-AI-001 v3.1.0
+   ------------------------------------------------------ */
+
+const TOOL_ID = "DC-AI-TEMPLATE";
+// Safe storage wrapper - handles file:// protocol where localStorage may be blocked
+const safeStore=(function(){var s;try{s=window.localStorage;}catch(e){s=null;}return{get:function(k){try{return s?s.getItem(k):null;}catch(e){return null;}},set:function(k,v){try{if(s)s.setItem(k,v);}catch(e){}},remove:function(k){try{if(s)s.removeItem(k);}catch(e){}}};})();
+const TOOL_VERSION = "2.0.0";
+const SUPA_URL = 'https://iphonednnnqhxvhypvwn.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwaG9uZWRubm5xaHh2aHlwdnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDU0MzMsImV4cCI6MjA4OTc4MTQzM30.VoexekmmKTbiLOBcROZl4YxUnx-A3EP8Rj7J72FBWAU';
+const supa = (typeof supabase !== 'undefined') ? supabase.createClient(SUPA_URL, SUPA_KEY) : null;
+
+// ── STAGE 1: Analytics Clock (B6) ───────────────────────────────────
+// Client-side timing instrumentation. Silent — no UI. localStorage now, Supabase Phase D.
+// Captures: tab_switch, level_change, stage_change, assess_q_start, assess_q_submit, module_open, module_close
+// Key: dc{NNN}_timing — array of {event, ts, ...data}
+const DC_TIMING_KEY = 'dc_ai_001_timing';
+const dcTimingLog = (function(){
+  var buf = [];
+  try { var s = safeStore.get(DC_TIMING_KEY); if(s) buf = JSON.parse(s); } catch(e){ buf = []; }
+  function flush(){ try { safeStore.set(DC_TIMING_KEY, JSON.stringify(buf)); } catch(e){} }
+  function log(event, data) {
+    buf.push(Object.assign({ event: event, ts: Date.now() }, data || {}));
+    if(buf.length > 2000) buf = buf.slice(-1500);
+    flush();
+  }
+  log('module_open', { module: TOOL_ID, version: TOOL_VERSION });
+  try { window.addEventListener('beforeunload', function(){ log('module_close', {}); flush(); }); } catch(e){}
+  return { log: log };
+})();
+
+function generateCertNumber(moduleId) {
+  var year = new Date().getFullYear(); var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; var rand = '';
+  for (var i = 0; i < 4; i++) { rand += chars[Math.floor(Math.random() * chars.length)]; }
+  return 'LBE-' + moduleId.replace('DC-LEARN-','') + '-' + year + '-' + rand;
+}
+function getCertType(pct) {
+  if (pct >= 90) return { type: 'Achievement', hours: 4 };
+  if (pct >= 80) return { type: 'Completion', hours: 3 };
+  return null;
+}
+async function issueCertificate(learnerName, learnerEmail, score, total) {
+  if (!supa) { console.warn('Supabase not loaded'); return null; }
+  var pct = Math.round(score / total * 100); var cert = getCertType(pct);
+  if (!cert) return null;
+  var certNumber = generateCertNumber(TOOL_ID);
+  var userId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'anon-' + Date.now();
+  var result = await supa.from('certificates').insert([{ user_id: userId, module_id: TOOL_ID, certificate_number: certNumber, cpd_hours: cert.hours, certificate_type: cert.type, score: pct, learner_name: learnerName, pdf_url: null }]).select().single();
+  if (result.error) { console.error('Certificate insert failed:', result.error.message); return null; }
+  safeStore.set('cert_' + TOOL_ID, JSON.stringify({ certNumber: certNumber, type: cert.type, hours: cert.hours, name: learnerName, score: pct, issued: new Date().toISOString() }));
+  return { certNumber: certNumber, type: cert.type, hours: cert.hours, pct: pct };
+}
+
+const LICENCE_HOLDER = "Legacy Business Engineers Ltd";
+const CONTENT_HASH = "LBE-DC-AI-TEMPLATE-2026Q1";
+// Fictional reference facility - Clonshaugh, Dublin. Engineering values for teaching only.
+// Source: Clonshaugh reference facility per DC_LEARN_SERIES_SPEC_v1_2 -2. PUE 1.50/1.20 per Rule 52.
+const CLONSHAUGH = {name:"Clonshaugh Reference DC",year:2012,racks:200,currentKW:8,targetKW:40,currentPUE:1.50,targetPUE:1.20,mic_mva:5,mic_util:0.85,bus_section_a:1600,bus_util:0.73,voltage:415,pf:0.85};
+
+
+
+// Source: 9 levels per Trivium method - DC_LEARN_SERIES_SPEC_v1_2 -3. Content from CIBSE Guide B2, ASHRAE TC 9.9, EN 50600-2-3.
+const LEVELS = [
+  {
+    "level": 1,
+    "id": "L1",
+    "title": "[LEVEL_TITLE]",
+    "icon": "[LEVEL_ICON]",
+    "subtitle": "[LEVEL_SUBTITLE]",
+    "plainEnglish": "[LEVEL_PLAIN_ENGLISH]",
+    "sourceNote": "[LEVEL_SOURCE_NOTE]",
+    "retrofitRelevance": "[LEVEL_RETROFIT_RELEVANCE]",
+    "clockQuote": "",
+    "crossRefs": [],
+    "userNeedStatement": "[LEVEL_USER_NEED]",
+    "grammar": {
+      "facts": [
+        {
+          "term": "[FACT_TERM]",
+          "definition": "[FACT_DEFINITION]",
+          "plain": "[FACT_PLAIN]",
+          "number": "[FACT_NUMBER]",
+          "standard": "[FACT_STANDARD]",
+          "soWhat": "[FACT_SO_WHAT]"
+        }
+      ],
+      "weakestLink": {
+        "whatsWrong": "[WEAKEST_LINK_WRONG]",
+        "whatsRight": "[WEAKEST_LINK_RIGHT]",
+        "howToGetThere": ["[WEAKEST_LINK_STEP]"]
+      }
+    },
+    "logic": {
+      "causeEffects": [
+        {
+          "cause": "[CAUSE]",
+          "effect": "[EFFECT]",
+          "insight": "[INSIGHT]"
+        }
+      ],
+      "constraintLesson": "[CONSTRAINT_LESSON]",
+      "weakestLink": {
+        "whatsWrong": "[WEAKEST_LINK_WRONG]",
+        "whatsRight": "[WEAKEST_LINK_RIGHT]",
+        "howToGetThere": ["[WEAKEST_LINK_STEP]"]
+      }
+    },
+    "rhetoric": {
+      "conor": "[PERSONA_CONOR]",
+      "helena": "[PERSONA_HELENA]",
+      "eoin": "[PERSONA_EOIN]",
+      "rachel": "[PERSONA_RACHEL]",
+      "padraig": "[PERSONA_PADRAIG]"
+    },
+    "scenario": {
+      "title": "[SCENARIO_TITLE]",
+      "situation": "[SCENARIO_SITUATION]",
+      "challenge": "[SCENARIO_CHALLENGE]",
+      "fix": "[SCENARIO_FIX]"
+    },
+    "cascadeCheck": "function(inputs) {
+  return { pass: true, reason: \'[CASCADE_CHECK_RESULT]\' };
+}
+"
+  }
+];
+
+// Source: 27 questions (9 per Trivium stage) per DC_LEARN_SERIES_SPEC_v1_2 -5. Distribution D1 verified.
+const ASSESSMENT_QUESTIONS = [
+  {
+    "level": 1,
+    "id": "[QUESTION_ID]",
+    "tier": "[QUESTION_TIER]",
+    "q": "[QUESTION_TEXT]",
+    "options": [
+      "[OPTION_A]",
+      "[OPTION_B]",
+      "[OPTION_C]",
+      "[OPTION_D]"
+    ],
+    "correct": 0,
+    "stage": "grammar",
+    "explain": "[QUESTION_EXPLANATION]"
+  }
+];
+// Source: 5 personas per DC_LEARN_SERIES_SPEC_v1_2 -3.2. Clonshaugh narrative arc.
+
+const GLOSSARY_002 = [];
+
+const BIBLIOGRAPHY_002 = [];
+const SO_WHAT_MAP = {
+  "Rack Power Density": "Why it matters: the per-rack power figure determines every component in the distribution chain — transformer, bus section, cable, PDU. A 5× density increase means a 5× infrastructure redesign.",
+  "Nameplate Rating vs Actual Draw": "Why it matters: the gap between nameplate and actual draw represents stranded capacity that may be recapturable for higher-density racks — but only through measured redistribution, not assumption.",
+  "Power Usage Effectiveness (PUE)": "Why it matters: PUE determines both the energy cost overhead and EU Taxonomy alignment — at Clonshaugh's 1.50, nearly half the electricity bill goes to overhead, not computing.",
+  "Maximum Import Capacity (MIC)": "Why it matters: the MIC is the hard ceiling on total site power — exceeding it requires a grid connection upgrade that takes 12–24 months and costs €2M+, making it the longest lead time in any retrofit.",
+  "Power Distribution Unit (PDU)": "Why it matters: legacy 32A PDUs physically limit per-rack power delivery to approximately 7 kW — the first and cheapest bottleneck to identify and resolve in any density upgrade.",
+  "Hot Aisle Containment (HAC)": "Why it matters: HAC delivers the highest ROI of any single efficiency intervention — 30–40% cooling capacity improvement with payback often under 12 months.",
+  "Delta-T (ΔT)": "Why it matters: higher ΔT means more heat removed per unit of airflow — the efficiency lever that containment enables and that determines how far air cooling can be stretched.",
+  "Blanking Panel": "Why it matters: at €3–8 per panel, blanking is the cheapest airflow intervention in any data centre — eliminating the most common cause of hotspots that artificially limit rack density.",
+  "Computational Fluid Dynamics (CFD)": "Why it matters: CFD replaces guesswork with prediction — a €20K study prevents €200K of misplaced cooling infrastructure.",
+  "Cooling Redundancy (N+1)": "Why it matters: increasing density without reassessing cooling redundancy creates a hidden resilience risk — the same N+1 that worked at 8 kW provides less protection at 15 kW.",
+  "Volumetric Heat Capacity": "Why it matters: air's 3,450:1 disadvantage versus water is the immutable physics that creates the air cooling ceiling — no engineering can overcome this ratio.",
+  "ASHRAE Class H1": "Why it matters: H1's narrower temperature band (18–22°C) for AI/HPC hardware reduces operational flexibility and may limit free cooling hours — a hidden opex increase.",
+  "Fan Energy Penalty": "Why it matters: fan power scales with the cube of airflow — at 30 kW/rack the fans themselves consume more energy than the original IT load, making air cooling economically irrational.",
+  "Acoustic Limit": "Why it matters: noise regulations create a regulatory ceiling on air-cooled density that is lower than the thermal ceiling — even if the physics works at 35 kW, the noise may not comply.",
+  "Thermal Throttling": "Why it matters: throttling means you pay for full power but receive 70–90% performance — the gap is invisible to the electricity bill but very visible to the AI workload.",
+  "Total Cost of Ownership (TCO)": "Why it matters: TCO reveals that liquid cooling is cheaper than air above 25 kW over any lease term longer than 3 years — the capex advantage of air disappears in year 2.",
+  "Direct-to-Chip Cooling (DLC)": "Why it matters: DLC is no longer experimental — with 22% adoption and 23% annual growth, it is the production standard for AI density, and choosing against it means choosing against the industry.",
+  "Coolant Distribution Unit (CDU)": "Why it matters: the CDU requires floor space and piping that legacy facilities do not have — planning its location is one of the earliest and most impactful retrofit design decisions.",
+  "Hybrid Cooling Architecture": "Why it matters: every real retrofit operates hybrid (air + liquid) — planning for two cooling systems, two maintenance regimes, and two skill sets is essential and frequently underestimated.",
+  "Stranded Infrastructure Risk": "Why it matters: investing in air cooling above 15 kW carries escalating risk of stranding because the industry trajectory is irrevocably toward liquid.",
+  "Cold Plate": "Why it matters: cold plate quality directly determines GPU junction temperature and therefore performance — the component-level quality of the cooling determines the compute output.",
+  "Manifold": "Why it matters: manifold design determines whether individual servers can be maintained without disrupting adjacent equipment — a critical operational capability at production scale.",
+  "Secondary Cooling Loop": "Why it matters: the secondary loop volume determines leak consequence — a system holding 5,000 litres of coolant has a materially different risk profile than one holding 500 litres.",
+  "Coolant Selection": "Why it matters: coolant choice ripples through the entire system — dielectric fluids require 2–3× the flow rate of water-glycol, meaning larger pipes, larger pumps, and larger CDUs.",
+  "Leak Detection System": "Why it matters: leak detection is the safety system that enables liquid cooling in a live electrical environment — operating DLC without it is operating without a fire alarm.",
+  "GB300 NVL72 Rack Power Envelope": "Why it matters: at 135 kW typical per rack, a single GB300 draws 17× a legacy rack — deploying even 10 racks consumes 27% of Clonshaugh's entire grid connection.",
+  "Power Sloshing": "Why it matters: power sloshing means electrical distribution must handle 155 kW peak transients even though the average is 135 kW — sizing for average creates circuit protection failures.",
+  "50V DC Internal Busbar": "Why it matters: the 50V busbar at 2,700A is at its engineering limit — the imminent transition to 800V DC (Rubin, 2027) will change how power is delivered to every rack.",
+  "Rack Weight (Liquid-Cooled GPU)": "Why it matters: at 3,000–3,500 lbs, a GB300 rack exceeds standard 150 psf floor ratings by a factor of 13 — structural assessment is mandatory before placement.",
+  "1,400W Per GPU": "Why it matters: GPU power is doubling every 2 years — today's 135 kW rack becomes 200+ kW within one hardware generation, making future-proofing a present-day requirement.",
+  "Bus Section Rating": "Why it matters: the bus section is the most common binding constraint in AI retrofit distribution — it determines the maximum power that can flow from transformer to distribution boards.",
+  "Protection Coordination (Discrimination)": "Why it matters: a discrimination failure at AI density means a single rack fault cascades into a zone-wide outage — the financial exposure is orders of magnitude larger than at legacy density.",
+  "Cable Sizing (Current-Carrying Capacity)": "Why it matters: AI-density cables are 25–30× heavier per circuit than legacy — existing cable trays, floor voids, and containment are almost certainly insufficient.",
+  "Busbar Trunking System": "Why it matters: at AI density, busbar trunking becomes cost-competitive with cable because cable cross-sections make traditional cable management physically impractical.",
+  "Voltage Drop": "Why it matters: voltage drop constrains the maximum distance between sub-distribution and rack — at AI density, the electrical room may need to be inside the hall, consuming rack positions.",
+  "I²R Loss": "Why it matters: at AI density, distribution losses can exceed 1% of total IT load — voltage optimisation is the primary lever, because doubling voltage reduces I²R losses by 75%.",
+  "415V Three-Phase (European Standard)": "Why it matters: 415V is what Ireland has and what every supplier supports — but it becomes increasingly inefficient at densities above 50 kW per rack.",
+  "480V Three-Phase (US Standard)": "Why it matters: 480V offers 27% lower distribution losses versus 415V — a meaningful saving at scale, but with non-standard procurement overhead in the Irish market.",
+  "800V DC Distribution": "Why it matters: 800V DC eliminates 2–3 conversion stages and is the only viable approach at 400+ kW per rack — any retrofit designed today must plan pathways for this transition.",
+  "Conversion Efficiency Chain": "Why it matters: the cumulative conversion efficiency determines how much of the electricity purchased from the grid actually reaches the GPU — the difference between 87% and 95% is €710K/year.",
+  "Retrofit NPV (Net Present Value)": "Why it matters: NPV shows that the retrofit is strongly value-creating at any density above 40 kW with fill rates above 35% — the investment case is robust.",
+  "Fill Rate Risk": "Why it matters: fill rate is the single variable that can make a positive-NPV retrofit destroy value — phased deployment is the primary mitigation.",
+  "Phased Deployment": "Why it matters: phasing trades a 10% cost premium for a 36% reduction in peak capital at risk — a rational trade for any multi-asset fund.",
+  "Opportunity Cost of Inaction": "Why it matters: doing nothing costs €12M+ in revenue loss and asset devaluation over the lease — more than the most expensive retrofit scenario.",
+  "Density Scenario Selection": "Why it matters: higher density has lower breakeven fill rates because revenue scales faster than infrastructure cost — the seemingly riskier option is actually more resilient."
+};
+const RHETORIC_TAKEAWAYS = {
+  "L1": {
+    "asset_management": "AI tenants generate 5–17× the revenue per rack position but require a power chain that no legacy facility can deliver without investment.",
+    "technology": "Every component from transformer to PDU was sized for 8 kW — identify the binding constraint before designing the solution.",
+    "technical": "MIC headroom is misleading — measure utilisation at every stage of the distribution chain independently to find the actual bottleneck.",
+    "compliance": "PUE at 1.50 means 40% of electricity is overhead — any power chain upgrade that reduces overhead simultaneously improves Taxonomy trajectory.",
+    "cost": "A €15K power quality survey identifies the exact upgrade path before committing capital — the cheapest insurance against misdirected investment."
+  },
+  "L2": {
+    "asset_management": "Containment in Hall A delivered 230% ROI in year one from combined energy savings and density-enabled lease revenue.",
+    "technology": "HAC deploys in 14 days with zero tenant downtime — it is the fastest path to moderate density improvement while liquid cooling is planned.",
+    "technical": "Post-containment ΔT improved from 11°C to 19°C — consistent with ASHRAE TC 9.9 predictions for effective hot aisle containment.",
+    "compliance": "CRAH setpoint increase from 15°C to 23°C after containment reduced cooling energy by 14%, improving PUE from 1.50 toward 1.42.",
+    "cost": "Total containment project: €200K for 200 positions, with €95K/year energy savings and €320K/year additional lease revenue — payback under 5 months."
+  },
+  "L3": {
+    "asset_management": "At 30 kW air-cooled, fan energy costs nearly €20K/rack/year — liquid cooling at the same density costs €6–8K/rack/year.",
+    "technology": "The practical air ceiling in Hall B with 3.2m ceiling height is approximately 25 kW — not the theoretical 41 kW.",
+    "technical": "Airflow at 41 kW per rack requires 1.7 m³/s with fan power approaching 20 kW — the cooling system would consume as much energy as the IT load.",
+    "compliance": "Air cooling at 40 kW would push the AI zone PUE to approximately 1.45 — failing EU Taxonomy alignment and creating a SFDR reporting liability.",
+    "cost": "The economic crossover where liquid cooling operating cost undercuts air cooling occurs at approximately 25 kW/rack — well below the physics ceiling."
+  },
+  "L4": {
+    "asset_management": "DLC capex premium over air is approximately €660K for 50 racks — recovered in under 2 years from energy savings alone, before counting future-proofing value.",
+    "technology": "CDU lead time is 12–16 weeks — place orders within 4 months or risk missing the hyperscaler prospect's deployment timeline.",
+    "technical": "Coolant flow for 50 racks at 40 kW: 52.6 l/s through DN80/DN100 piping at under 2 m/s to prevent erosion.",
+    "compliance": "DLC delivers zone PUE of approximately 1.10–1.15 versus air at 1.35–1.50 — the difference between Taxonomy-aligned and non-aligned.",
+    "cost": "DLC capex premium of €660K has a simple payback under 2 years — the decision should be framed as TCO over the lease, not capex on day one."
+  },
+  "L5": {
+    "asset_management": "50-rack DLC zone at 100 kW: capex approximately €4–6M, revenue approximately €4.5–6M/year — payback under 12 months if racks are filled.",
+    "technology": "The DLC system connects to existing chilled water — no new chillers required if the current plant has capacity for the additional heat rejection.",
+    "technical": "Total secondary loop volume: approximately 4,000 litres for 50 racks — leak detection, containment, and drainage must be designed from the outset.",
+    "compliance": "The DLC zone at 1.08–1.12 PUE would bring facility-wide blended PUE below 1.30 for the first time, crossing the Taxonomy threshold.",
+    "cost": "DLC-specific infrastructure: approximately €2.43M for 50 racks at 100 kW — separate from power distribution and grid upgrades."
+  },
+  "L6": {
+    "asset_management": "Ten GB300 racks generate €2.4–3.2M/year from 10 positions that previously earned €172K — a 14–19× revenue multiplier per rack position.",
+    "technology": "800mm × 1200mm GB300 cabinets do not fit existing 600mm × 1000mm row spacing — aisle widths need complete re-evaluation.",
+    "technical": "Structural loading at 3,200 lbs per GB300 rack creates 2,000 psf point load — 13× the typical 150 psf raised floor rating, requiring slab-to-slab mounting.",
+    "compliance": "GB300 deployment adds 1.35 MW IT load, triggering CRU/2025236 renewable obligation for 80% of the additional capacity.",
+    "cost": "GB300-specific increment above base DLC: approximately €980K–1.05M for 10 racks — the premium for moving from 100 kW to 135 kW density."
+  },
+  "L7": {
+    "asset_management": "Power distribution redesign: €800K–1.5M, approximately 20–30% of total retrofit budget — it appears to duplicate existing infrastructure but the existing infrastructure cannot serve AI density.",
+    "technology": "Busbar trunking provides plug-and-play flexibility for rack redeployment during 2–3 year GPU hardware refresh cycles — a hidden operational benefit.",
+    "technical": "Bus section at 73% and PDUs at near-maximum are the two binding constraints in Hall B — both must be addressed simultaneously.",
+    "compliance": "All electrical redesign requires REC certification under IS 10101:2020+AC2:2025 — the AC2:2025 corrigendum must be applied.",
+    "cost": "Total power distribution redesign: €500K–730K at 40 kW density, scaling to €800K–1.2M at GB300 density."
+  },
+  "L8": {
+    "asset_management": "415V with 800V DC future-proofing costs €120K — insuring against a €1.5–2.5M re-wire that has over 65% probability within 10 years.",
+    "technology": "Deploy 415V now with three provisions: oversized trays, reserved electrical room space, and pre-installed empty conduits for 800V DC.",
+    "technical": "I²R loss at 415V: 1.34 kW per rack at 135 kW density — approximately 1% of IT load wasted as heat in conductors.",
+    "compliance": "480V installation in Ireland requires specialist IS 10101 engineering assessment — the standard is written for 230/400V nominal.",
+    "cost": "800V DC pathway future-proofing: €120K. Cost of not future-proofing if 800V DC is needed: €1.5–2.5M. Expected value ratio: 10:1 in favour."
+  },
+  "L9": {
+    "asset_management": "At 100 kW with 80% fill, NPV is €28M on €8M capex — a 3.5× return. Phase to limit peak capital at risk to €5M.",
+    "technology": "Build 100 kW infrastructure with 135 kW-capable pathways — the €800K premium eliminates a second infrastructure project when density increases.",
+    "technical": "All three density scenarios trigger MIC upgrade — grid connection is the critical path regardless of density choice.",
+    "compliance": "Doing nothing does not avoid regulatory obligations — it just reports worse numbers under EED, Taxonomy, and CRU/2025236.",
+    "cost": "Opportunity cost of inaction: €12M+ over the lease in lost revenue and asset devaluation — exceeding any retrofit scenario by a factor of 2."
+  }
+};
+
+
+const PERSONAS = {conor:"Conor (Asset Manager)",helena:"Helena (Chief Technology Officer)",eoin:"Eoin (MEP Retrofit Engineer)",rachel:"Rachel (ESG & Regulatory Director)",padraig:"Padraig (Project QS / Cost Manager)"};
+const PERSONA_KEYS = ["conor","helena","eoin","rachel","padraig"];
+
+const {useState,useCallback,useMemo, useEffect} = React;
+
+// BSG Layer 2
+class ErrorBoundary extends React.Component {
+  constructor(p){super(p);this.state={hasError:false,error:null};}
+  static getDerivedStateFromError(e){return{hasError:true,error:e};}
+  render(){
+    if(this.state.hasError) return React.createElement('div',{style:{maxWidth:700,margin:'60px auto',padding:24,border:'2px solid #dc2626',borderRadius:12,background:'#fef2f2',fontFamily:'system-ui'}},
+      React.createElement('h2',{style:{color:'#dc2626'}},'⚠️ Runtime Error'),
+      React.createElement('p',null,'DC-AI-001 v3.1.0 · Data Centre Power Density'),
+      React.createElement('pre',{style:{fontSize:12,background:'#1f2937',color:'#f87171',padding:12,borderRadius:8,overflow:'auto',whiteSpace:'pre-wrap'}},String(this.state.error)),
+      React.createElement('p',{style:{color:'#6b7280',fontSize:13,marginTop:8}},'Copy this error and send to LM.')
+    );
+    return this.props.children;
+  }
+}
+
+// Source: SEAI 2026 GEF 0.2241 kgCO2/kWh. Met -ireann 30-year normals: 7,200 hrs <18-C. CRU Q4 2024: -0.12/kWh.
+// AssistBar - Clarify only (Grammar), no Read Aloud
+// Read Aloud REMOVED per 011 template
+function AssistBar({fact,level,stage}){
+  const [clarifyStep,setClarifyStep]=useState(-1);
+  const clarifyContent = [
+    {label:"Think of it like… (1/3)", text: fact && fact.feynman ? fact.feynman.analogy : (fact ? fact.plain : '')},
+    {label:"From the ground up… (2/3)", text: fact && fact.feynman ? fact.feynman.firstPrinciples : (fact ? fact.number : '')},
+    {label:"You understand this when… (3/3)", text: fact && fact.feynman ? fact.feynman.theTest : (fact ? fact.definition : '')}
+  ];
+  const handleClarify = (e) => {
+    e.stopPropagation();
+    setClarifyStep(prev => prev < 0 ? 0 : prev < 2 ? prev + 1 : -1);
+  };
+  if(stage !== 'grammar' || !fact) return null;
+  return (
+    <div className="assist-bar" onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+      <button className="assist-btn" onClick={handleClarify}>
+        {clarifyStep >= 0 ? (clarifyStep < 2 ? 'Try again →' : 'Got it') : '💡 Clarify'}
+      </button>
+      {clarifyStep >= 0 && clarifyStep < 3 && (
+        <div className="clarify-box fade-in" style={{flexBasis:'100%',userSelect:'text',cursor:'text'}}
+          onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+          <div style={{fontSize:11,fontFamily:'var(--font-mono)',color:'var(--grammar)',marginBottom:6}}>{clarifyContent[clarifyStep].label}</div>
+          <div style={{fontSize:13,color:'var(--text)',lineHeight:1.8}}>{clarifyContent[clarifyStep].text}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const hasTextSelection = () => { const sel = window.getSelection(); return sel && sel.toString().length > 0; };
+
+function Dot({done,stage}){
+  const colors={grammar:'var(--grammar)',logic:'var(--logic)',rhetoric:'var(--rhetoric)'};
+  return <span style={{display:'inline-block',width:10,height:10,borderRadius:'50%',background:done?colors[stage]:'var(--border)',border:'1px solid '+(done?colors[stage]:'var(--border-light)'),marginRight:4}} />;
+}
+
+function GrammarPanel({level,onComplete,done}){
+  const [expandedFact,setExpandedFact]=useState(null);
+  const [checkedItems,setCheckedItems]=useState({});
+  const toggleFact=(i)=>{ if(!hasTextSelection()) setExpandedFact(expandedFact===i?null:i); };
+  const toggleCheck=(i)=>setCheckedItems(prev=>({...prev,[i]:!prev[i]}));
+  return (
+    <div className="fade-in">
+      <h3 style={{color:'var(--grammar)',fontSize:16,fontWeight:600,marginBottom:12}}>📖 Grammar — What Is It?</h3>
+      {level.grammar.facts.map((f,i)=>(
+        <div key={i} className="fact-card" role="button" tabIndex={0} aria-expanded={expandedFact===i}
+          onClick={()=>toggleFact(i)} onKeyDown={e=>(e.key==='Enter'||e.key===' ')&&toggleFact(i)}>
+          <div className="term">{f.term}</div>
+          {expandedFact===i && (
+            <div className="fade-in selectable-text" onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()} style={{userSelect:'text',cursor:'text'}}>
+              <div className="def">{f.definition}</div>
+              <div className="detail">{f.plain}</div>
+              <div className="detail" style={{fontStyle:'normal'}}>📊 {f.number}</div>
+              <div className="std">{f.standard}</div>
+              {f.soWhat && <div style={{fontStyle:'italic',color:'var(--grammar)',fontSize:13,marginTop:8,lineHeight:1.6}}>{f.soWhat}</div>}
+              <AssistBar fact={f} stage="grammar" level={level} />
+            </div>
+          )}
+        </div>
+      ))}
+      {level.grammar.whatItLooksLike && (
+        <div className="card selectable-text" style={{marginTop:14}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+          <h4 style={{fontSize:13,fontWeight:600,color:'var(--text-bright)',marginBottom:8}}>What It Looks Like on Site</h4>
+          <div style={{fontSize:13,color:'var(--text)',lineHeight:1.8}}>{level.grammar.whatItLooksLike}</div>
+        </div>
+      )}
+      {level.grammar.siteChecklist && (
+        <div style={{marginTop:14}}>
+          <h4 style={{fontSize:13,fontWeight:600,color:'var(--text-bright)',marginBottom:8}}>Site Checklist</h4>
+          {level.grammar.siteChecklist.map((item,i)=>(
+            <label key={i} style={{display:'flex',gap:8,alignItems:'flex-start',marginBottom:6,fontSize:13,color:'var(--text)',cursor:'pointer'}}>
+              <input type="checkbox" checked={!!checkedItems[i]} onChange={()=>toggleCheck(i)} style={{marginTop:3}} />
+              <span>{item}</span>
+            </label>
+          ))}
+        </div>
+      )}
+      <button className={'completion-btn btn-grammar'+(done?' done':'')} onClick={onComplete}>
+        {done ? '✓ Key facts memorised' : "I've memorised the key facts"}
+      </button>
+      {level.sourceNote && (
+        <div style={{marginTop:14,fontSize:12,color:'var(--text-dim)',lineHeight:1.8,borderLeft:'3px solid var(--grammar)',paddingLeft:12}}>
+          {level.sourceNote}
+        </div>
+      )}
+      <div style={{marginTop:14,background:'var(--panel)',border:'1px solid var(--grammar)',borderRadius:10,padding:'12px 14px'}}>
+        <h4 style={{fontSize:13,fontWeight:600,color:'var(--grammar)',marginBottom:6}}>💡 Feynman Clarify</h4>
+        <div style={{fontSize:13,color:'var(--text)',lineHeight:1.8}}>Expand any Grammar fact and click <strong>💡 Clarify</strong> to cycle through three learning rounds: an everyday analogy, a first-principles explanation, and a self-test question. Each round uses original content — not a repetition of the visible definition.</div>
+      </div>
+    </div>
+  );
+}
+
+function LogicPanel({level,onComplete,done}){
+  return (
+    <div className="fade-in">
+      <h3 style={{color:'var(--logic)',fontSize:16,fontWeight:600,marginBottom:12}}>⚙️ Logic — Why Does It Matter?</h3>
+      {level.logic.causeAndEffect.map((ce,i)=>(
+        <div key={i} className="ce-card" style={{userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+          <div className="cause">⚡ {ce.cause}</div>
+          <div className="effect">→ {ce.effect}</div>
+          <div className="insight">💡 {ce.insight}</div>
+        </div>
+      ))}
+      {level.logic.constraintLesson && (
+        <div className="card" style={{marginTop:14,userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+          <h4 style={{fontSize:13,fontWeight:600,color:'var(--logic)',marginBottom:8}}>Constraint Lesson</h4>
+          <div style={{fontSize:13,color:'var(--text)',lineHeight:1.8,whiteSpace:'pre-line'}}>{level.logic.constraintLesson}</div>
+        </div>
+      )}
+      <div className="wl-box" style={{userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+        <h4 style={{fontSize:14,fontWeight:600,color:'var(--green)',marginBottom:10}}>🔗 Weakest Link</h4>
+        <div style={{marginBottom:10}}><span style={{fontSize:12,fontWeight:600,color:'var(--red)'}}>❌ What’s Wrong:</span><p style={{fontSize:13,color:'var(--text)',marginTop:4}}>{level.logic.weakestLink.whatsWrong}</p></div>
+        <div style={{marginBottom:10}}><span style={{fontSize:12,fontWeight:600,color:'var(--green)'}}>✅ What’s Right:</span><p style={{fontSize:13,color:'var(--text)',marginTop:4}}>{level.logic.weakestLink.whatsRight}</p></div>
+        <div><span style={{fontSize:12,fontWeight:600,color:'var(--accent)'}}>➡️ How To Get There:</span><p style={{fontSize:13,color:'var(--text)',marginTop:4}}>{level.logic.weakestLink.howToGetThere}</p></div>
+      </div>
+      {level.crossRefs && level.crossRefs.length > 0 && (
+        <div style={{marginTop:14}} className="selectable-text" onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+          <h4 style={{fontSize:12,fontWeight:600,color:'var(--text-dim)',marginBottom:6}}>Cross-References</h4>
+          {level.crossRefs.map((cr,i)=>(<div key={i} style={{fontSize:12,color:'var(--text-muted)',marginBottom:4}}>↔️ {cr.module} {cr.level}: {cr.topic}</div>))}
+        </div>
+      )}
+      <button className={'completion-btn btn-logic'+(done?' done':'')} onClick={onComplete}>
+        {done ? '✓ Consequences understood' : 'I understand the consequences'}
+      </button>
+    </div>
+  );
+}
+
+function RhetoricPanel({level,onComplete,done,initialPersona}){
+  const [activePersona,setActivePersona]=useState(initialPersona||'conor');
+  const pData=level.rhetoric[activePersona];
+  const pText=typeof pData==='object'?pData.text:pData;
+  const pTakeaway=typeof pData==='object'?pData.takeaway:(level.rhetoricTakeaways?level.rhetoricTakeaways[activePersona]:null);
+  return (
+    <div className="fade-in">
+      <h3 style={{color:'var(--rhetoric)',fontSize:16,fontWeight:600,marginBottom:12}}>💬 Rhetoric — How Do I Explain It?</h3>
+      <div className="persona-row">
+        {PERSONA_KEYS.map(k=>(<button key={k} className={'persona-btn'+(activePersona===k?' active':'')} aria-label={PERSONAS[k]} onClick={()=>setActivePersona(k)}>{PERSONAS[k]}</button>))}
+      </div>
+      <div className="persona-msg selectable-text" style={{userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+        {pText}
+        {pTakeaway && <div style={{fontStyle:'italic',color:'var(--rhetoric)',marginTop:10,fontSize:13,lineHeight:1.6}}>{pTakeaway}</div>}
+      </div>
+      <button className={'completion-btn btn-rhetoric'+(done?' done':'')} onClick={onComplete} style={{marginTop:16}}>
+        {done ? '✓ Can explain to stakeholders' : 'I can explain it to each stakeholder'}
+      </button>
+    </div>
+  );
+}
+
+function PersonaHeatMap({persona, onPersonaLevel, PERSONA_MAP}) {
+  const [sel, setSel] = React.useState(null); // {pKey, lIdx}
+  const [tip, setTip] = React.useState(null); // {text, x, y}
+
+  const PKEYS = ['conor','helena','eoin','rachel','padraig'];
+
+  // Compute rhetoric text lengths per persona per level
+  const raw = React.useMemo(() => {
+    return PKEYS.map(pk =>
+      LEVELS.map(lvl => {
+        const r = lvl.rhetoric[pk];
+        return typeof r === 'object' ? (r.text||'').length : (r||'').length;
+      })
+    );
+  }, []);
+
+  // Normalise per row (per persona) — min/max within that persona's row
+  const norm = React.useMemo(() => {
+    return raw.map(row => {
+      const mn = Math.min(...row), mx = Math.max(...row);
+      return row.map(v => (mx === mn) ? 0.5 : (v - mn) / (mx - mn));
+    });
+  }, [raw]);
+
+  const PINFO = [
+    {key:'conor',  icon:'💼',label:'Conor',  role:'Asset Manager'},
+    {key:'helena', icon:'🖥',label:'Helena', role:'CTO'},
+    {key:'eoin',   icon:'🔧',label:'Eoin',   role:'MEP Engineer'},
+    {key:'rachel', icon:'🌱',label:'Rachel', role:'ESG Director'},
+    {key:'padraig',icon:'📊',label:'Padraig',role:'QS / Cost'},
+  ];
+
+  const cellStyle = (pi, li) => {
+    const intensity = norm[pi][li];
+    const isSel = sel && sel.pIdx === pi && sel.lIdx === li;
+    return {
+      height: 32,
+      borderRadius: 4,
+      cursor: 'pointer',
+      background: `rgba(124,58,237,${(0.12 + intensity * 0.75).toFixed(2)})`,
+      border: isSel ? '2px solid var(--green)' : '1.5px solid transparent',
+      transition: 'transform .1s',
+    };
+  };
+
+  const handleSelect = (pi, li) => {
+    setSel(prev => (prev && prev.pIdx === pi && prev.lIdx === li) ? null : {pIdx:pi, lIdx:li});
+  };
+
+  const handleGo = () => {
+    if (!sel) return;
+    onPersonaLevel(PINFO[sel.pIdx].key, sel.lIdx);
+  };
+
+  const selP = sel ? PINFO[sel.pIdx] : null;
+  const selL = sel ? LEVELS[sel.lIdx] : null;
+  const selText = sel ? (() => {
+    const r = LEVELS[sel.lIdx].rhetoric[PINFO[sel.pIdx].key];
+    return typeof r === 'object' ? (r.text||'') : (r||'');
+  })() : '';
+
+  return React.createElement('div', {style:{marginTop:8}},
+    // Label
+    React.createElement('div', {style:{fontSize:12,color:'var(--text-dim)',marginBottom:8,fontFamily:'var(--font-mono)'}},
+      'PERSONA RELEVANCE MAP — click a cell to navigate'),
+
+    // Grid — scrollable wrapper
+    React.createElement('div', {style:{overflowX:'auto'}},
+      React.createElement('div', {style:{
+        display:'grid',
+        gridTemplateColumns:'90px repeat(9,1fr)',
+        gap:3,
+        minWidth:520,
+      }},
+        // Header row
+        React.createElement('div', null),
+        ...LEVELS.map((lvl,li) =>
+          React.createElement('div', {key:lvl.id, style:{
+            fontSize:9, textAlign:'center', color:'var(--text-muted)',
+            fontFamily:'var(--font-mono)', lineHeight:1.3, padding:'0 2px'
+          }},
+            React.createElement('div', {style:{fontWeight:600, color:'var(--text-dim)', fontSize:10}}, `L${li+1}`),
+            lvl.title.split(' ').slice(0,2).join(' ')
+          )
+        ),
+        // Persona rows
+        ...PINFO.map((p, pi) => [
+          // Row label
+          React.createElement('div', {key:`rl-${pi}`, style:{
+            display:'flex', alignItems:'center', gap:5,
+            fontSize:11, color:'var(--text-bright)', paddingRight:4,
+            fontWeight: persona===p.key ? 600 : 400,
+            opacity: persona && persona!==p.key ? 0.6 : 1,
+          }},
+            React.createElement('span', {style:{fontSize:13}}, p.icon),
+            React.createElement('div', null,
+              React.createElement('div', {style:{fontWeight:500}}, p.label),
+              React.createElement('div', {style:{fontSize:9,color:'var(--text-muted)'}}, p.role)
+            )
+          ),
+          // Cells
+          ...LEVELS.map((lvl, li) =>
+            React.createElement('div', {
+              key:`c-${pi}-${li}`,
+              style:cellStyle(pi, li),
+              title:`${p.icon} ${p.label} on ${lvl.title}`,
+              onClick: () => handleSelect(pi, li),
+            })
+          )
+        ]).flat()
+      )
+    ),
+
+    // Selected preview
+    sel && React.createElement('div', {style:{
+      marginTop:10, padding:'10px 12px',
+      background:'var(--panel)', borderRadius:8,
+      borderLeft:'3px solid var(--rhetoric)',
+      fontSize:12, lineHeight:1.7, color:'var(--text)',
+    }},
+      React.createElement('div', {style:{
+        fontSize:10, fontFamily:'var(--font-mono)',
+        color:'var(--rhetoric)', marginBottom:4
+      }},
+        `${selP.icon} ${selP.label} — L${sel.lIdx+1}: ${selL.name}`),
+      selText.length > 120 ? selText.slice(0,120)+'…' : selText
+    ),
+
+    // Action buttons
+    React.createElement('div', {style:{display:'flex',gap:8,marginTop:10,flexWrap:'wrap'}},
+      React.createElement('button', {
+        onClick: handleGo,
+        disabled: !sel,
+        style:{
+          padding:'6px 14px', fontSize:12,
+          background: sel ? 'var(--green-dim)' : 'var(--surface)',
+          color: sel ? 'var(--green)' : 'var(--text-muted)',
+          border: `1px solid ${sel ? 'var(--green)' : 'var(--border)'}`,
+          borderRadius:6, cursor: sel ? 'pointer' : 'not-allowed',
+          fontFamily:'var(--font-sans)',
+        }
+      }, sel ? `Go to L${sel.lIdx+1} as ${selP.label} →` : 'Select a cell to navigate'),
+      React.createElement('button', {
+        onClick: () => setSel(null),
+        style:{
+          padding:'6px 14px', fontSize:12,
+          background:'var(--surface)', color:'var(--text-muted)',
+          border:'1px solid var(--border)', borderRadius:6,
+          cursor:'pointer', fontFamily:'var(--font-sans)',
+        }
+      }, 'Clear')
+    )
+  );
+}
+
+function PersonaEntryCard({setActiveTab, setSelectedLevel}) {
+  const STORAGE_KEY = 'dc_persona_' + (typeof TOOL_VERSION !== 'undefined' ? TOOL_VERSION.split('.')[0] : '002');
+  const [activePersona, setActivePersona] = React.useState(() => {
+    try { return localStorage.getItem(STORAGE_KEY) || null; } catch(e) { return null; }
+  });
+
+  const selectPersona = (key) => {
+    const next = activePersona === key ? null : key;
+    setActivePersona(next);
+    try {
+      if (next) localStorage.setItem(STORAGE_KEY, next);
+      else localStorage.removeItem(STORAGE_KEY);
+    } catch(e) {}
+  };
+
+  const PINFO = [
+    {key:'conor',   label:'Conor',   role:'Asset Manager',   color:'var(--accent)'},
+    {key:'helena',  label:'Helena',  role:'CTO',             color:'#e879a0'},
+    {key:'eoin',    label:'Eoin',    role:'MEP Engineer',    color:'var(--green)'},
+    {key:'rachel',  label:'Rachel',  role:'ESG Director',    color:'#2dd4bf'},
+    {key:'padraig', label:'Padraig', role:'QS / Cost',       color:'#fb923c'},
+  ];
+
+  const pkeys = ['conor','helena','eoin','rachel','padraig'];
+
+  // Compute top 3 levels per persona by rhetoric text length
+  const top3 = React.useMemo(() => {
+    const result = {};
+    pkeys.forEach(pk => {
+      const all = LEVELS.map((lvl, idx) => {
+        const r = lvl.rhetoric && lvl.rhetoric[pk];
+        const text = typeof r === 'object' ? (r.hook || r.text || '') : (r || '');
+        return {idx, lvl, text, len: text.length};
+      });
+      const avg = all.reduce((s,x) => s + x.len, 0) / all.length;
+      const threshold = avg * 0.5;
+      // Filter levels above threshold, cap at 5, sort by level number ascending
+      const filtered = all
+        .filter(x => x.len >= threshold)
+        .sort((a,b) => b.len - a.len)
+        .slice(0, 5)
+        .sort((a,b) => a.idx - b.idx);
+      result[pk] = filtered.length >= 2 ? filtered : all.sort((a,b) => b.len - a.len).slice(0,2).sort((a,b) => a.idx - b.idx);
+    });
+    return result;
+  }, []);
+
+  const goToLevel = (idx) => {
+    setSelectedLevel(idx);
+    setActiveTab('learn');
+    // Navigate to rhetoric stage — store in sessionStorage for LearnTab to pick up
+    sessionStorage.setItem('dc_persona_stage', 'rhetoric');
+    if (activePersona) sessionStorage.setItem('dc_persona_key', activePersona);
+  };
+
+  const activePInfo = activePersona ? PINFO.find(p => p.key === activePersona) || null : null;
+  const activeTop3 = (activePersona && activePInfo) ? top3[activePersona] : null;
+
+  return React.createElement('div', {
+    style:{
+      background:'var(--surface)', border:'1px solid var(--border)',
+      borderRadius:12, padding:'16px 20px', marginBottom:18,
+    }
+  },
+
+    // Header row
+    React.createElement('div', {style:{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:12}},
+      React.createElement('span', {style:{fontSize:14, fontWeight:600, color:'var(--text-bright)'}},
+        (activePersona && activePInfo) ? `Viewing as ${activePInfo.label} — ${activePInfo.role}` : 'Your professional angle on this module →'
+      ),
+      (activePersona && activePInfo) && React.createElement('button', {
+        onClick: () => selectPersona(null),
+        style:{
+          fontSize:11, color:'var(--text-muted)', background:'none',
+          border:'none', cursor:'pointer', fontFamily:'var(--font-sans)',
+          padding:'2px 6px', borderRadius:4,
+        }
+      }, 'Clear')
+    ),
+
+    // Persona buttons
+    React.createElement('div', {style:{display:'flex', gap:8, flexWrap:'wrap', marginBottom: activePersona ? 16 : 0}},
+      PINFO.map(p =>
+        React.createElement('button', {
+          key: p.key,
+          onClick: () => selectPersona(p.key),
+          style:{
+            padding:'6px 14px', fontSize:12, fontWeight:500,
+            borderRadius:6, cursor:'pointer', fontFamily:'var(--font-sans)',
+            background: activePersona === p.key ? p.color : 'var(--surface)',
+            color: activePersona === p.key ? '#fff' : 'var(--text-dim)',
+            border: `1px solid ${activePersona === p.key ? p.color : 'var(--border)'}`,
+            transition:'all .15s', textAlign:'center', lineHeight:1.3,
+          }
+        },
+          React.createElement('div', {style:{fontWeight:600}}, p.label),
+          React.createElement('div', {style:{fontSize:9, opacity:0.8, marginTop:1}}, p.role)
+        )
+      )
+    ),
+
+    // Top 3 panel — only when persona selected
+    (activePersona && activePInfo && activeTop3) && React.createElement('div', {style:{borderTop:'1px solid var(--border)', paddingTop:14}},
+      React.createElement('div', {style:{fontSize:11, color:'var(--text-muted)', fontFamily:'var(--font-mono)', marginBottom:10}},
+        'WHERE YOUR PROFESSIONAL PERSPECTIVE IS RICHEST'
+      ),
+      activeTop3.map((item, i) =>
+        React.createElement('div', {
+          key: item.idx,
+          style:{
+            display:'flex', alignItems:'flex-start', gap:12,
+            padding:'10px 12px', marginBottom:6, borderRadius:8,
+            background:'var(--panel)',
+            borderLeft:`3px solid ${activePInfo.color}`,
+            cursor:'pointer',
+          },
+          onClick: () => goToLevel(item.idx),
+        },
+          React.createElement('div', {style:{
+            fontSize:10, fontFamily:'var(--font-mono)', fontWeight:700,
+            color: activePInfo.color, minWidth:28, paddingTop:2,
+          }}, `L${item.lvl.level}`),
+          React.createElement('div', {style:{flex:1}},
+            React.createElement('div', {style:{fontSize:13, fontWeight:600, color:'var(--text-bright)', marginBottom:3}},
+              item.lvl.title
+            ),
+            LEVELS[item.idx].rhetoric[activePersona]?.hook && React.createElement('div', {style:{fontSize:12, color:'var(--text-dim)', lineHeight:1.4, fontStyle:'italic', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical'}},
+              '\u201c' + LEVELS[item.idx].rhetoric[activePersona].hook + '\u201d'
+            )
+          ),
+          React.createElement('div', {style:{fontSize:11, color:'var(--rhetoric)', whiteSpace:'nowrap', paddingTop:2, fontFamily:'var(--font-mono)'}},
+            'Rhetoric →'
+          )
+        )
+      ),
+
+      // Primary CTA — go to top level
+      React.createElement('button', {
+        onClick: () => goToLevel(activeTop3[0].idx),
+        style:{
+          marginTop:10, padding:'8px 18px', fontSize:13, fontWeight:600,
+          background: activePInfo.color, color:'#fff',
+          border:'none', borderRadius:7, cursor:'pointer',
+          fontFamily:'var(--font-sans)',
+        }
+      }, `Go to L${activeTop3[0].lvl.level} — Rhetoric →`)
+    )
+  );
+}
+
+
+function ChainTab({setActiveTab,setSelectedLevel,selectedLevel,progress,persona,onPersona,onPersonaLevel,PERSONA_MAP,cascadeResults,onCascadeResult}){
+  const [activeChainLevel,setActiveChainLevel]=useState(null);
+  const goToLevel = (lvl) => { setSelectedLevel(lvl.level - 1); setActiveTab("learn"); };
+
+  return (
+    <div>
+      <div style={{borderRadius:12,overflow:'hidden',marginBottom:20,position:'relative',height:220,background:'linear-gradient(135deg,#1a2a3a 0%,#2a3a4a 50%,#1a1a2a 100%)'}}>
+            <div style={{position:'absolute',bottom:0,left:0,right:0,padding:'40px 24px 20px',background:'linear-gradient(transparent,rgba(0,0,0,0.85))'}}>
+              <h2 style={{margin:0,fontSize:22,color:'#fff'}}>[MODULE_HERO_TITLE]</h2>
+              <p style={{margin:'6px 0 0',fontSize:13,color:'rgba(255,255,255,0.7)'}}>[MODULE_HERO_SUBTITLE]</p>
+            </div>
+          </div>
+    <div className="chain-layout">
+      <div>
+        <div className="card">
+
+          {LEVELS.map((lvl,i)=>{
+            const p = progress[lvl.id]||{};
+            const cr = cascadeResults ? cascadeResults[i] : null;
+            return (
+              <div key={lvl.id} className={'chain-item'+(cr?(cr.pass?' pass':' fail'):'')}
+                role="button" tabIndex={0}
+                onClick={()=>{ if(!hasTextSelection()) setActiveChainLevel(activeChainLevel===lvl.level?null:lvl.level); }}
+                onKeyDown={e=>(e.key==='Enter'||e.key===' ')&&setActiveChainLevel(activeChainLevel===lvl.level?null:lvl.level)}>
+                <div style={{fontSize:24,lineHeight:1}}>{lvl.icon}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:600,fontSize:14,color:'var(--text-bright)'}}>L{lvl.level}: {lvl.title}</div>
+                  <div style={{fontSize:12,color:'var(--text-muted)',fontFamily:'var(--font-mono)'}}>{lvl.subtitle}</div>
+                  {cr && (<div style={{marginTop:6,fontSize:12}}><span className={cr.pass?'badge badge-pass':'badge badge-fail'}>{cr.pass?'PASS':'FAIL'}</span><span style={{color:'var(--text-dim)',marginLeft:8}}>{cr.detail}</span></div>)}
+                  {activeChainLevel===lvl.level && (
+                    <div className="fade-in selectable-text" style={{marginTop:10,paddingTop:10,borderTop:'1px solid var(--border)',userSelect:'text',cursor:'text'}}
+                      onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+                      <p style={{fontSize:13,color:'var(--text)',lineHeight:1.8,marginBottom:8}}>{lvl.plainEnglish}</p>
+                      <p style={{fontSize:12,color:'var(--green)',fontStyle:'italic',marginBottom:8}}>User Need: {lvl.userNeedStatement}</p>
+                      <button style={{padding:'6px 14px',border:'1px solid var(--green)',borderRadius:6,background:'var(--green-dim)',color:'var(--green)',cursor:'pointer',fontSize:12,fontFamily:'var(--font-sans)'}}
+                        onClick={(e)=>{e.stopPropagation();goToLevel(lvl);}}>Open in Learn tab →</button>
+                    </div>
+                  )}
+                </div>
+                <div style={{display:'flex',gap:4,alignItems:'center',paddingTop:4}}><Dot done={p.grammar} stage="grammar"/><Dot done={p.logic} stage="logic"/><Dot done={p.rhetoric} stage="rhetoric"/></div>
+              </div>
+            );
+          })}
+        </div>
+        <PersonaEntryCard setActiveTab={setActiveTab} setSelectedLevel={setSelectedLevel} />
+      </div>
+      <div>
+        <SidebarCalculator selectedLevel={selectedLevel} onCascadeResult={onCascadeResult} />
+        <SidebarFacility />
+        <div className="sidebar-card">
+          <h3 style={{fontSize:14,fontWeight:600,color:'var(--text-bright)',marginBottom:8}}>📐 Methodology</h3>
+          <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.8}}>
+            <strong>Trivium Method:</strong> Grammar (definitions) → Logic (cause/effect) → Rhetoric (stakeholder perspectives).
+            <br/><strong>Feynman Clarify:</strong> Every fact has three layers — analogy (no jargon), first principles (from universal knowledge), and a test (can you answer this?).
+            <br/><strong>Weakest Link:</strong> Each level identifies a common misconception and the corrective path.
+            <br/><strong>Five Personas:</strong> Same finding → five different professional perspectives (Conor, Helena, Eoin, Rachel, Padraig).
+            <br/><strong>Your Angle:</strong> Time-pressured or returning? Click your role to find where your professional perspective is richest in this module — direct entry to the Rhetoric layer.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  );
+}
+
+function LearnTab({selectedLevel,setSelectedLevel,progress,setProgress}){
+  const [stage,setStage]=useState('grammar');
+  const [rhetPersonaInit,setRhetPersona]=useState(null);
+  // Read persona stage + persona key from Chain tab persona entry card
+  React.useEffect(()=>{
+    try {
+      const req = sessionStorage.getItem('dc_persona_stage');
+      if(req){ setStage(req); sessionStorage.removeItem('dc_persona_stage'); }
+      const pk = sessionStorage.getItem('dc_persona_key');
+      if(pk){ setRhetPersona(pk); sessionStorage.removeItem('dc_persona_key'); }
+    } catch(e){}
+  },[selectedLevel]);
+  React.useEffect(()=>{ dcTimingLog.log('stage_change', { stage: stage, level: selectedLevel }); },[stage, selectedLevel]);
+  const lvl = LEVELS[selectedLevel];
+  const p = progress[lvl.id]||{};
+  const handleComplete = (s) => { setProgress(prev=>({...prev,[lvl.id]:{...prev[lvl.id],[s]:true}})); };
+  const stageClass = (s) => { const active=stage===s; const done=p[s]; if(active) return 'triv-btn active-'+s; if(done) return 'triv-btn done-'+s; return 'triv-btn'; };
+
+  return (
+    <div>
+    {lvl.clockQuote && (
+      <div style={{background:"var(--surface)",border:"1px solid var(--border)",borderLeft:"4px solid var(--lbe-green)",borderRadius:8,padding:"16px 20px",marginBottom:20}}>
+        <div style={{fontSize:13,fontWeight:700,color:"var(--lbe-green)",marginBottom:8,fontFamily:"var(--font-mono)",letterSpacing:1}}>FROM THE DATA CENTRE CLOCK</div>
+        <div style={{fontSize:14,fontStyle:"italic",color:"var(--text-bright)",lineHeight:1.6,marginBottom:8}}>"{lvl.clockQuote}"</div>
+        <div style={{fontSize:12,color:"var(--text-muted)"}}>— Level {lvl.level}: {lvl.title}</div>
+      </div>
+    )}
+      <div className="level-nav">
+        {LEVELS.map((l,i)=>(<button key={l.id} className={'level-btn'+(selectedLevel===i?' active':'')} onClick={()=>{setSelectedLevel(i);setStage('grammar');}}>L{l.level}</button>))}
+      </div>
+      <div className="card selectable-text">
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:4}}>
+          <span style={{fontSize:32}}>{lvl.icon}</span>
+          <div><h2 style={{fontSize:22,fontWeight:700,margin:0}}>Level {lvl.level}: {lvl.title}</h2><div style={{fontSize:12,fontFamily:'var(--font-mono)',color:'var(--text-muted)'}}>{lvl.subtitle}</div></div>
+        </div>
+        <p style={{fontSize:12,color:'var(--green)',fontStyle:'italic',margin:'8px 0'}}>User Need: {lvl.userNeedStatement}</p>
+        <p style={{fontSize:13,color:'var(--text-dim)',marginBottom:16}}>{lvl.plainEnglish}</p>
+        <div className="trivium-tabs">
+          <button className={stageClass('grammar')} onClick={()=>setStage('grammar')}>{p.grammar?'✓ ':''}Grammar</button>
+          <button className={stageClass('logic')} onClick={()=>setStage('logic')}>{p.logic?'✓ ':''}Logic</button>
+          <button className={stageClass('rhetoric')} onClick={()=>setStage('rhetoric')}>{p.rhetoric?'✓ ':''}Rhetoric</button>
+        </div>
+        {stage==='grammar' && <GrammarPanel level={lvl} onComplete={()=>handleComplete('grammar')} done={p.grammar}/>}
+        {stage==='logic' && <LogicPanel level={lvl} onComplete={()=>handleComplete('logic')} done={p.logic}/>}
+        {stage==='rhetoric' && <RhetoricPanel level={lvl} onComplete={()=>handleComplete('rhetoric')} done={p.rhetoric} initialPersona={rhetPersonaInit}/>}
+      </div>
+      <div style={{marginTop:20}}>
+        <GlossaryBibToggle/>
+      </div>
+    </div>
+  );
+}
+
+function GlossaryBibToggle(){
+  const [show,setShow]=useState(null);
+  return (
+    <div style={{display:'flex',gap:8,flexDirection:'column'}}>
+      <div style={{display:'flex',gap:8}}>
+        <button style={{flex:1,padding:'10px 16px',border:'1px solid var(--border)',borderRadius:8,background:show==='glossary'?'var(--green-dim)':'var(--surface)',color:show==='glossary'?'var(--green)':'var(--text-dim)',cursor:'pointer',fontSize:13,fontWeight:600,fontFamily:'var(--font-sans)'}} onClick={()=>setShow(show==='glossary'?null:'glossary')}>
+          {show==='glossary'?'▾':'▸'} Glossary ({GLOSSARY_002.length} terms)
+        </button>
+        <button style={{flex:1,padding:'10px 16px',border:'1px solid var(--border)',borderRadius:8,background:show==='bib'?'var(--green-dim)':'var(--surface)',color:show==='bib'?'var(--green)':'var(--text-dim)',cursor:'pointer',fontSize:13,fontWeight:600,fontFamily:'var(--font-sans)'}} onClick={()=>setShow(show==='bib'?null:'bib')}>
+          {show==='bib'?'▾':'▸'} Bibliography ({BIBLIOGRAPHY_002.length} sources)
+        </button>
+      </div>
+      {show==='glossary' && <div className="card fade-in"><GlossaryPanel/></div>}
+      {show==='bib' && <div className="card fade-in"><BibliographyPanel/></div>}
+    </div>
+  );
+}
+
+function FieldChallengesTab(){
+  const [filterLevel,setFilterLevel]=useState(0);
+  const [filterPersona,setFilterPersona]=useState('all');
+  const [revealed,setRevealed]=useState({});
+  const PERSONA_FILTERS=[
+    {key:'all',   label:'All',    role:''},
+    {key:'conor',   label:'Conor',   role:'Asset Manager'},
+    {key:'helena',  label:'Helena',  role:'CTO'},
+    {key:'eoin',    label:'Eoin',    role:'MEP Engineer'},
+    {key:'rachel',  label:'Rachel',  role:'ESG Director'},
+    {key:'padraig', label:'Padraig', role:'QS / Cost'},
+  ];
+  const filtered = LEVELS.filter(l=>{
+    if(filterLevel>0 && l.level!==filterLevel) return false;
+    if(filterPersona!=='all' && !((l.scenario&&l.scenario.whoShouldCare||l.whoShouldCare)||[]).includes(filterPersona)) return false;
+    return true;
+  });
+  return (
+    <div>
+      <div className="card" style={{marginBottom:16,padding:12,borderLeft:'3px solid var(--amber)'}}>
+        <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.6}}>Fictional reference facility — Clonshaugh, Dublin. These field challenges are based on engineering scenarios encountered in Irish DC retrofit programmes. Apply the knowledge from the Learn tab to solve real-world problems.</div>
+      </div>
+      <div className="filter-row">
+        <button className={'filter-btn'+(filterLevel===0?' active':'')} onClick={()=>setFilterLevel(0)}>All Levels</button>
+        {LEVELS.map(l=>(<button key={l.id} className={'filter-btn'+(filterLevel===l.level?' active':'')} onClick={()=>setFilterLevel(l.level)}>L{l.level}</button>))}
+      </div>
+      <div className="filter-row" style={{marginTop:6}}>
+        {PERSONA_FILTERS.map(p=>(
+          <button key={p.key} className={'filter-btn'+(filterPersona===p.key?' active':'')} onClick={()=>setFilterPersona(p.key)} style={{textAlign:'center',lineHeight:1.2}}>
+            <div style={{fontWeight:600}}>{p.label}</div>
+            {p.role && <div style={{fontSize:9,opacity:0.75,marginTop:1}}>{p.role}</div>}
+          </button>
+        ))}
+        {filterPersona!=='all' && <span style={{fontSize:11,color:'var(--text-muted)',marginLeft:8,alignSelf:'center'}}>Showing {filtered.length} of {LEVELS.length} challenges</span>}
+      </div>
+      {filtered.length===0 && <div style={{padding:'20px',textAlign:'center',fontSize:13,color:'var(--text-muted)'}}>No challenges tagged for this persona.</div>}
+      {filtered.map(lvl=>(
+        <div key={lvl.id} className="challenge-card selectable-text" onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>
+          <div style={{fontSize:12,color:'var(--text-muted)',marginBottom:6}}>{lvl.icon} Level {lvl.level}: {lvl.title}</div>
+          <h3 style={{fontSize:15,fontWeight:600,color:'var(--text-bright)',marginBottom:12}}>{lvl.scenario.title}</h3>
+          <div className="fc-situation" style={{marginBottom:12}}>
+            <div className="fc-label">Situation</div>
+            <p style={{fontSize:13,color:'var(--text)',lineHeight:1.8,margin:0}}>{lvl.scenario.narrative}</p>
+          </div>
+          <div className="fc-challenge-q" style={{marginBottom:8}}>
+            <div className="fc-label" style={{marginBottom:6}}>Challenge</div>
+            <div>{lvl.scenario.question}</div>
+          </div>
+          {!revealed[lvl.id] ? (
+            <button style={{marginTop:8,padding:'8px 16px',border:'1px solid var(--green)',borderRadius:8,background:'var(--green-dim)',color:'var(--green)',cursor:'pointer',fontSize:13,fontFamily:'var(--font-sans)'}}
+              onClick={()=>setRevealed(prev=>({...prev,[lvl.id]:true}))}>Show the Fix</button>
+          ) : (
+            <div className="fc-fix fade-in" style={{marginTop:10}}>
+              <div className="fc-label">Show the Fix</div>
+              <div className="fc-fix-content selectable-text" style={{userSelect:'text',cursor:'text'}} onClick={e=>e.stopPropagation()} onMouseDown={e=>e.stopPropagation()}>{lvl.scenario.answer}</div>
+              {lvl.sourceNote&&<div style={{fontSize:11,fontFamily:'var(--font-mono)',color:'var(--text-muted)',marginTop:10}}>Sources: {lvl.sourceNote}</div>}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+/* --- VISUAL GUIDE DIAGRAM COMPONENTS (from showcase v2.0) --- */
+const AD = () => (
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </marker>
+  </defs>
+);
+
+function NarrativePanel({text, takeaway}) {
+  return (
+    <div className="narrative-panel">
+      <div className="np-title">📋 What this diagram shows</div>
+      <div className="np-body">{text}</div>
+      <div className="np-takeaway">Key takeaway: {takeaway}</div>
+    </div>
+  );
+}
+
+function Walkthrough({title, subtitle, steps, insight, narrative, takeaway, children}) {
+  const [step, setStep] = useState(0);
+  return (
+    <div className="card">
+      <div style={{fontSize:14,fontWeight:600,color:'var(--text-bright)',marginBottom:2}}>{title}</div>
+      <div style={{fontSize:11,color:'var(--text-dim)',marginBottom:14}}>{subtitle}</div>
+      <div className="step-row">
+        {steps.map((s,i) => (
+          <button key={i} onClick={() => setStep(i)} className="step-btn"
+            style={{border:step===i?'1px solid var(--accent)':'1px solid var(--border)',
+              background:step===i?'rgba(88,166,255,0.15)':'transparent',
+              color:step===i?'var(--accent)':'var(--text-dim)',fontWeight:step===i?600:400}}>
+            {i+1}. {s}
+          </button>
+        ))}
+      </div>
+      {typeof children === 'function' ? children(step) : children}
+      {insight && step === steps.length - 1 && (
+        <div className="fade-in" style={{marginTop:12,padding:'10px 14px',background:'var(--amber-dim)',border:'1px solid var(--amber)',
+          borderRadius:8,fontSize:12,color:'var(--text-bright)',lineHeight:1.6}}>
+          {insight}
+        </div>
+      )}
+      {narrative && <NarrativePanel text={narrative} takeaway={takeaway}/>}
+    </div>
+  );
+}
+
+/* --- 1. CHAIN OVERVIEW --- */
+/* --- VISUAL GUIDE — PLACEHOLDER (Power Density diagrams TBD) --- */
+
+function VisualGuideTab(){
+  return (
+    <div>
+      <div className="card" style={{textAlign:'center',padding:'40px 24px'}}>
+        <div style={{fontSize:48,marginBottom:16}}>⚡</div>
+        <h3 style={{fontSize:18,fontWeight:700,color:'var(--text-bright)',marginBottom:8}}>Power Density Visual Guide</h3>
+        <p style={{fontSize:14,color:'var(--text-dim)',maxWidth:480,margin:'0 auto',lineHeight:1.7}}>
+          Interactive engineering diagrams for the power density chain are in development.
+          These will cover legacy distribution, busbar vs cable, voltage optimisation,
+          and the retrofit investment decision framework.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* --- END VISUAL GUIDE --- */
+
+
+function ClockFace({remaining,total,active,overtime}){
+  const size=64,cx=size/2,cy=size/2,r=26;
+  const pct=overtime?1:Math.max(0,1-remaining/total);
+  const angle=pct*360;
+  const handLen=20;
+  const handAngle=(pct*360-90)*Math.PI/180;
+  const hx=cx+handLen*Math.cos(handAngle);
+  const hy=cy+handLen*Math.sin(handAngle);
+  const col=overtime?'var(--red)':active?'var(--green)':'var(--text-muted)';
+  const trackCol=overtime?'var(--red-dim)':'var(--green-dim)';
+  const arcEnd=((angle-90)*Math.PI/180);
+  const arcStart=((-90)*Math.PI/180);
+  const sx=cx+r*Math.cos(arcStart),sy=cy+r*Math.sin(arcStart);
+  const ex=cx+r*Math.cos(arcEnd),ey=cy+r*Math.sin(arcEnd);
+  const large=angle>180?1:0;
+  const arcPath=angle>0&&angle<360?`M${sx},${sy}A${r},${r},0,${large},1,${ex},${ey}`:'';
+  // Tick marks
+  const ticks=[];
+  for(let i=0;i<12;i++){const a=(i*30-90)*Math.PI/180;const ix=cx+(r+3)*Math.cos(a);const iy=cy+(r+3)*Math.sin(a);const ox=cx+(r+6)*Math.cos(a);const oy=cy+(r+6)*Math.sin(a);ticks.push(<line key={i} x1={ix} y1={iy} x2={ox} y2={oy} stroke="var(--border-light)" strokeWidth={i%3===0?1.5:0.5}/>);}
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{display:'block'}}>
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="var(--border)" strokeWidth="2"/>
+      {arcPath && <path d={arcPath} fill="none" stroke={trackCol} strokeWidth="4" strokeLinecap="round"/>}
+      {ticks}
+      <circle cx={cx} cy={cy} r="2.5" fill={col}/>
+      {(active||overtime) && <line x1={cx} y1={cy} x2={hx} y2={hy} stroke={col} strokeWidth="2" strokeLinecap="round"/>}
+      {!active&&!overtime && <line x1={cx} y1={cy} x2={cx} y2={cy-handLen} stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4"/>}
+    </svg>
+  );
+}
+
+function CertModal(props) {
+  var score = props.score; var total = props.total; var onClose = props.onClose;
+  var pct = Math.round(score / total * 100); var cert = getCertType(pct);
+  var ns = React.useState(''); var name = ns[0]; var setName = ns[1];
+  var es = React.useState(''); var email = es[0]; var setEmail = es[1];
+  var ss = React.useState('form'); var state = ss[0]; var setState = ss[1];
+  var rs = React.useState(null); var result = rs[0]; var setResult = rs[1];
+  if (!cert) return null;
+  function validEmail(e) { return /\S+@\S+\.\S+/.test(e); }
+  function handleSubmit() {
+    if (!name.trim() || !validEmail(email)) return;
+    setState('loading');
+    issueCertificate(name.trim(), email.trim(), score, total).then(function(res) {
+      if (res) { setResult(res); setState('done'); } else { setState('error'); }
+    });
+  }
+  var inp = { width:'100%', padding:'8px 12px', borderRadius:6, border:'1px solid var(--border)', background:'var(--surface)', color:'var(--text)', fontSize:14, boxSizing:'border-box' };
+  var gbtn = { width:'100%', padding:'10px 0', borderRadius:8, border:'none', background:'var(--green)', color:'#fff', fontWeight:600, fontSize:14, cursor:'pointer' };
+  var cbtn = { width:'100%', padding:'10px 0', borderRadius:8, border:'1px solid var(--border)', background:'transparent', color:'var(--text)', fontWeight:600, fontSize:14, cursor:'pointer' };
+  var E = React.createElement;
+  return E('div', { style:{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:9999 }},
+    E('div', { style:{ background:'var(--bg)', border:'1px solid var(--border)', borderRadius:12, padding:32, maxWidth:440, width:'90%', position:'relative' }},
+      E('button', { onClick:onClose, style:{ position:'absolute', top:12, right:16, background:'none', border:'none', color:'var(--text-dim)', fontSize:20, cursor:'pointer' }}, 'x'),
+      state === 'form' && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--green)', fontWeight:700, fontSize:18, marginBottom:4 }}, cert.type === 'Achievement' ? 'Achievement Certificate' : 'Completion Certificate'),
+        E('div', { style:{ color:'var(--text-dim)', fontSize:13, marginBottom:20 }}, pct + '% - ' + cert.hours + ' CPD hours - ' + TOOL_ID),
+        E('div', { style:{ marginBottom:12 }}, E('label', { style:{ fontSize:12, color:'var(--text-dim)', display:'block', marginBottom:4 }}, 'Full name'), E('input', { value:name, onChange:function(e){ setName(e.target.value); }, placeholder:'Full name', style:inp })),
+        E('div', { style:{ marginBottom:20 }}, E('label', { style:{ fontSize:12, color:'var(--text-dim)', display:'block', marginBottom:4 }}, 'Work email'), E('input', { value:email, type:'email', onChange:function(e){ setEmail(e.target.value); }, placeholder:'you@firm.ie', style:inp })),
+        E('button', { onClick:handleSubmit, disabled:!name.trim()||!validEmail(email), style:Object.assign({}, gbtn, { opacity:(!name.trim()||!validEmail(email))?0.5:1 })}, 'Issue Certificate'),
+        E('div', { style:{ fontSize:11, color:'var(--text-dim)', marginTop:12, textAlign:'center' }}, 'Verifiable at learn.legacybe.ie/verify')),
+      state === 'loading' && E('div', { style:{ textAlign:'center', padding:'32px 0', color:'var(--text-dim)' }}, 'Issuing certificate...'),
+      state === 'done' && result && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--green)', fontWeight:700, fontSize:18, marginBottom:8 }}, 'Certificate issued'),
+        E('div', { style:{ fontFamily:'var(--font-mono)', fontSize:13, background:'var(--panel)', padding:'10px 14px', borderRadius:6, marginBottom:16 }}, result.certNumber),
+        E('div', { style:{ fontSize:13, color:'var(--text-dim)', marginBottom:20 }}, result.type + ' - ' + result.hours + ' CPD hours. Verifiable at learn.legacybe.ie/verify'),
+        E('button', { onClick:onClose, style:cbtn }, 'Close')),
+      state === 'error' && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--error)', fontWeight:700, fontSize:16, marginBottom:8 }}, 'Certificate could not be issued'),
+        E('div', { style:{ fontSize:13, color:'var(--text-dim)', marginBottom:20 }}, 'Please contact learn@legacybe.ie with your score of ' + pct + '% on ' + TOOL_ID + '.'),
+        E('button', { onClick:onClose, style:cbtn }, 'Close'))
+    )
+  );
+}
+
+function AssessmentTab(){
+  // P2 — Option shuffle (deterministic per session via seeded LCG per question)
+  const SHUFFLED_QUESTIONS = useMemo(() => {
+    function seedRand(seed) {
+      let s = seed;
+      return function() { s = (s * 1664525 + 1013904223) & 0xFFFFFFFF; return (s >>> 0) / 0xFFFFFFFF; };
+    }
+    function strHash(str) {
+      let h = 5381;
+      for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
+      return h >>> 0;
+    }
+    return ASSESSMENT_QUESTIONS.map(function(q) {
+      const rand = seedRand(strHash(q.id));
+      const indices = [0,1,2,3];
+      for (let i = 3; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        const tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
+      }
+      const newOptions = indices.map(function(i) { return q.options[i]; });
+      const newCorrect = indices.indexOf(q.correct);
+      return Object.assign({}, q, { options: newOptions, correct: newCorrect });
+    });
+  }, []);
+
+  const TIER_SECONDS = { grammar: 60, logic: 120, rhetoric: 90 };
+
+  const [filterStage,setFilterStage]=useState('all');
+  const [filterLevel,setFilterLevel]=useState(0);
+  const [answers,setAnswers]=useState({});
+  const [score,setScore]=useState({correct:0,total:0});
+  const [timedOut,setTimedOut]=useState({});
+  const [timerActive,setTimerActive]=useState(false);
+  // B5: per-question start timestamps {qi: Date.now()} — resets per question
+  const [qStartTimes,setQStartTimes]=useState({});
+  // Tick counter drives per-question countdown display (1s resolution)
+  const [tick,setTick]=useState(0);
+  // Global session elapsed (for the 15:00 overview clock only)
+  const [elapsed,setElapsed]=useState(0);
+  const intervalRef=React.useRef(null);
+  const sessionStartRef=React.useRef(null);
+
+  // Master 1s tick — drives both global elapsed and per-question countdowns
+  React.useEffect(()=>{
+    if(timerActive){
+      if(!sessionStartRef.current) sessionStartRef.current=Date.now()-elapsed*1000;
+      intervalRef.current=setInterval(()=>{
+        const now=Date.now();
+        setElapsed(Math.floor((now-sessionStartRef.current)/1000));
+        setTick(t=>t+1);
+      },1000);
+    } else {
+      if(intervalRef.current) clearInterval(intervalRef.current);
+    }
+    return ()=>{if(intervalRef.current)clearInterval(intervalRef.current);};
+  },[timerActive]);
+
+  // Visibility change — pause on tab switch
+  React.useEffect(()=>{
+    function handleVis(){
+      if(document.hidden && timerActive){
+        setTimerActive(false);
+        if(intervalRef.current) clearInterval(intervalRef.current);
+      }
+    }
+    document.addEventListener('visibilitychange',handleVis);
+    return ()=>document.removeEventListener('visibilitychange',handleVis);
+  },[timerActive]);
+
+  // Per-question timeout check on every tick
+  React.useEffect(()=>{
+    if(!timerActive) return;
+    const now=Date.now();
+    const newTimeouts={};
+    SHUFFLED_QUESTIONS.forEach(function(q,qi){
+      if(answers[qi]!==undefined||timedOut[qi]) return;
+      if(qStartTimes[qi]===undefined) return; // not yet started
+      const limit=TIER_SECONDS[q.stage]||60;
+      const qElapsed=Math.floor((now-qStartTimes[qi])/1000);
+      if(qElapsed>=limit){
+        newTimeouts[qi]=true;
+        dcTimingLog.log('assess_q_timeout',{qi,stage:q.stage,level:q.level,limit});
+      }
+    });
+    if(Object.keys(newTimeouts).length>0){
+      setTimedOut(prev=>Object.assign({},prev,newTimeouts));
+      setScore(prev=>({correct:prev.correct,total:prev.total+Object.keys(newTimeouts).length}));
+      setAnswers(prev=>{
+        const next=Object.assign({},prev);
+        Object.keys(newTimeouts).forEach(qi=>{next[qi]=-1;});
+        return next;
+      });
+      // Start timer for next unanswered question
+      setQStartTimes(prev=>{
+        const next=Object.assign({},prev);
+        const timedOutSet=Object.assign({},newTimeouts);
+        for(let qi=0;qi<SHUFFLED_QUESTIONS.length;qi++){
+          if(answers[qi]===undefined&&!timedOut[qi]&&!timedOutSet[qi]&&next[qi]===undefined){
+            next[qi]=Date.now();
+            break;
+          }
+        }
+        return next;
+      });
+    }
+  },[tick,timerActive]);
+
+  const allAnswered=score.total>=SHUFFLED_QUESTIONS.length;
+  const COUNTDOWN_TOTAL=900;
+  const remaining=Math.max(0,COUNTDOWN_TOTAL-elapsed);
+  const overtime=elapsed>COUNTDOWN_TOTAL;
+  const overtimeAmt=overtime?elapsed-COUNTDOWN_TOTAL:0;
+
+  React.useEffect(()=>{
+    if(allAnswered&&timerActive){
+      setTimerActive(false);
+      if(intervalRef.current) clearInterval(intervalRef.current);
+    }
+  },[allAnswered]);
+
+  const filtered=SHUFFLED_QUESTIONS.filter(q=>{
+    if(filterStage!=='all'&&q.stage!==filterStage) return false;
+    if(filterLevel>0&&q.level!==filterLevel) return false;
+    return true;
+  });
+
+  var cms=React.useState(false); var showCertModal=cms[0]; var setShowCertModal=cms[1];
+  var assessPct=allAnswered?Math.round(score.correct/score.total*100):0;
+
+  const handleAnswer=(qi,oi)=>{
+    if(answers[qi]!==undefined||timedOut[qi]) return;
+    // Start session on first answer
+    if(!timerActive){
+      setTimerActive(true);
+      sessionStartRef.current=Date.now();
+      dcTimingLog.log('assess_start',{module:TOOL_ID});
+      // Start timer for this question and the next unanswered one after answering
+      setQStartTimes({[qi]:Date.now()});
+    }
+    dcTimingLog.log('assess_q_submit',{qi,stage:SHUFFLED_QUESTIONS[qi].stage,level:SHUFFLED_QUESTIONS[qi].level,correct:SHUFFLED_QUESTIONS[qi].correct===oi});
+    setAnswers(prev=>({...prev,[qi]:oi}));
+    setScore(prev=>({correct:prev.correct+(SHUFFLED_QUESTIONS[qi].correct===oi?1:0),total:prev.total+1}));
+    // Start timer for next unanswered question
+    setQStartTimes(prev=>{
+      const next=Object.assign({},prev);
+      for(let i=0;i<SHUFFLED_QUESTIONS.length;i++){
+        if(i!==qi&&next[i]===undefined&&answers[i]===undefined&&!timedOut[i]){
+          next[i]=Date.now()+100; // slight delay so previous answer registers first
+          break;
+        }
+      }
+      return next;
+    });
+  };
+
+  const globalIdx=(q)=>SHUFFLED_QUESTIONS.indexOf(q);
+  const stageColours={grammar:'var(--grammar)',logic:'var(--logic)',rhetoric:'var(--rhetoric)'};
+  const stageScore=(st)=>{const qs=SHUFFLED_QUESTIONS.filter(q=>q.stage===st);let c=0,t=0;qs.forEach(q=>{const gi=globalIdx(q);if(answers[gi]!==undefined){t++;if(answers[gi]===q.correct)c++;}});return {c,t,total:qs.length};};
+
+  const handleReset=()=>{
+    setAnswers({});setScore({correct:0,total:0});setElapsed(0);
+    setTimerActive(false);setTimedOut({});setQStartTimes({});setTick(0);
+    sessionStartRef.current=null;
+    if(intervalRef.current) clearInterval(intervalRef.current);
+    try{safeStore.remove('dc_ai_001_assess');}catch(e){}
+  };
+  const handlePause=()=>{setTimerActive(false);if(intervalRef.current)clearInterval(intervalRef.current);};
+  const handleResume=()=>{
+    // Offset all qStartTimes by pause duration
+    const pausedAt=Date.now();
+    setTimerActive(true);
+  };
+
+  // Persist / restore
+  React.useEffect(()=>{
+    if(score.total>0){try{safeStore.set('dc_ai_001_assess',JSON.stringify({answers,score,elapsed,filterStage,filterLevel,timedOut,qStartTimes}));}catch(e){}}
+  },[answers,score,elapsed]);
+  React.useEffect(()=>{
+    try{const saved=safeStore.get('dc_ai_001_assess');if(saved){const s=JSON.parse(saved);if(s.answers)setAnswers(s.answers);if(s.score)setScore(s.score);if(s.elapsed)setElapsed(s.elapsed);if(s.filterStage)setFilterStage(s.filterStage);if(s.filterLevel!==undefined)setFilterLevel(s.filterLevel);if(s.timedOut)setTimedOut(s.timedOut);if(s.qStartTimes)setQStartTimes(s.qStartTimes);}}catch(e){}
+  },[]);
+
+  const fmtTime=(s)=>{const m=Math.floor(s/60);const ss=s%60;return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');};
+  const fmtCountdown=(s)=>{const m=Math.floor(s/60);const ss=s%60;return m+':'+String(ss).padStart(2,'0');};
+
+  return (
+    <div>
+      <div className="card" style={{marginBottom:16,padding:12,borderLeft:'3px solid var(--green)'}}>
+        <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.8}}>
+          27 questions across three Trivium stages — 9 per stage, one per chain level.
+          <strong> Knowledge Check</strong> (Grammar): can you recall the key facts? <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--green)'}}>60s</span>
+          <strong> Eng. Calculation</strong> (Logic): can you work through the consequences? <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--green)'}}>120s</span>
+          <strong> Prof. Judgement</strong> (Rhetoric): can you explain it to each stakeholder? <span style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--green)'}}>90s</span>
+        </div>
+      </div>
+      <div style={{position:'sticky',top:0,zIndex:20,background:'var(--bg)',borderBottom:'1px solid var(--border)',padding:'10px 0',marginBottom:16}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{display:'flex',alignItems:'center',gap:12}}>
+            <ClockFace remaining={remaining} total={COUNTDOWN_TOTAL} active={timerActive} overtime={overtime}/>
+            <div>
+              <div style={{fontFamily:'var(--font-mono)',fontSize:20,fontWeight:700,color:overtime?'var(--red)':timerActive?'var(--green)':allAnswered?'var(--grammar)':'var(--text-muted)',letterSpacing:2}}>
+                {overtime ? '+'+fmtTime(overtimeAmt) : fmtTime(remaining)}
+              </div>
+              <div style={{fontSize:11,color:'var(--text-muted)',marginTop:2}}>
+                {!timerActive&&!allAnswered&&elapsed===0 ? '15:00 — starts on first answer' : overtime ? 'Over time' : allAnswered ? 'Complete' : score.total+'/'+SHUFFLED_QUESTIONS.length+' answered'}
+              </div>
+            </div>
+          </div>
+          <div style={{display:'flex',gap:8}}>
+            {timerActive && <button style={{padding:'5px 12px',border:'1px solid var(--border)',borderRadius:6,background:'transparent',color:'var(--text-dim)',cursor:'pointer',fontSize:11,fontFamily:'var(--font-sans)'}} onClick={handlePause}>Pause</button>}
+            {!timerActive&&elapsed>0&&!allAnswered && <button style={{padding:'5px 12px',border:'1px solid var(--green)',borderRadius:6,background:'transparent',color:'var(--green)',cursor:'pointer',fontSize:11,fontFamily:'var(--font-sans)'}} onClick={handleResume}>Resume</button>}
+          </div>
+        </div>
+      </div>
+      <div className="filter-row">
+        <button className={'filter-btn'+(filterStage==='all'?' active':'')} onClick={()=>setFilterStage('all')}>All</button>
+        <button className={'filter-btn'+(filterStage==='grammar'?' active':'')} onClick={()=>setFilterStage('grammar')}>Knowledge Check</button>
+        <button className={'filter-btn'+(filterStage==='logic'?' active':'')} onClick={()=>setFilterStage('logic')}>Eng. Calculation</button>
+        <button className={'filter-btn'+(filterStage==='rhetoric'?' active':'')} onClick={()=>setFilterStage('rhetoric')}>Prof. Judgement</button>
+      </div>
+      <div className="filter-row">
+        <button className={'filter-btn'+(filterLevel===0?' active':'')} onClick={()=>setFilterLevel(0)}>All Levels</button>
+        {LEVELS.map(l=>(<button key={l.id} className={'filter-btn'+(filterLevel===l.level?' active':'')} onClick={()=>setFilterLevel(l.level)}>L{l.level}</button>))}
+      </div>
+      {score.total>0 && (
+        <div className="card" style={{marginBottom:16}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <div style={{fontSize:14,fontWeight:600}}>Score: {score.correct}/{score.total} ({Math.round(score.correct/score.total*100)}%)</div>
+            {allAnswered && <div style={{fontFamily:'var(--font-mono)',fontSize:13,color:elapsed<=COUNTDOWN_TOTAL?'var(--grammar)':'var(--red)'}}>{elapsed<=COUNTDOWN_TOTAL?'Completed in '+fmtTime(elapsed)+' (under time)':'Completed in '+fmtTime(elapsed)+' ('+fmtTime(elapsed-COUNTDOWN_TOTAL)+' over)'}</div>}
+          </div>
+          <div className="progress-bar" style={{marginTop:8}}><div className="fill fill-green" style={{width:Math.round(score.correct/score.total*100)+'%'}}></div></div>
+          <div style={{display:'flex',gap:16,marginTop:10,flexWrap:'wrap'}}>
+            {['grammar','logic','rhetoric'].map(st=>{const s=stageScore(st);const labels={grammar:'Knowledge Check',logic:'Eng. Calculation',rhetoric:'Prof. Judgement'};return s.t>0&&(<div key={st} style={{fontSize:12,color:stageColours[st]}}><strong>{labels[st]}:</strong> {s.c}/{s.t}</div>);})}
+          </div>
+          {allAnswered&&assessPct>=80&&React.createElement('button',{onClick:function(){setShowCertModal(true);},style:{marginTop:12,padding:'10px 0',borderRadius:8,border:'none',background:'var(--green)',color:'#fff',fontWeight:600,fontSize:14,cursor:'pointer',display:'block',width:'100%'}},assessPct>=90?'Get Achievement Certificate':'Get Completion Certificate')}
+          {showCertModal&&React.createElement(CertModal,{score:score.correct,total:score.total,onClose:function(){setShowCertModal(false);}})}
+          <button style={{marginTop:10,padding:'6px 14px',border:'1px solid var(--border)',borderRadius:8,background:'transparent',color:'var(--text-dim)',cursor:'pointer',fontSize:12,fontFamily:'var(--font-sans)'}} onClick={handleReset}>Reset Assessment</button>
+        </div>
+      )}
+      {filtered.map((q,fi)=>{
+        const gi=globalIdx(q);
+        const answered=answers[gi]!==undefined;
+        const isTimedOut=timedOut[gi];
+        const qLimit=TIER_SECONDS[q.stage]||60;
+        // B5: per-question independent countdown
+        const qStarted=qStartTimes[gi]!==undefined;
+        const qElapsedSec=qStarted?Math.floor((Date.now()-qStartTimes[gi])/1000):0;
+        const qRemain=Math.max(0,qLimit-qElapsedSec);
+        const qFrac=qLimit>0?qRemain/qLimit:0;
+        const barCol=qFrac>0.33?'var(--green)':qFrac>0.15?'var(--logic)':'var(--red,#dc2626)';
+        const countdownCol=qFrac>0.33?'var(--green)':qFrac>0.15?'var(--logic)':'var(--red,#dc2626)';
+        return (
+          <div key={gi} className="card" style={{marginBottom:12,borderLeft:'3px solid '+stageColours[q.stage],borderRadius:'0 10px 10px 0',opacity:isTimedOut&&!answered?0.7:1}}>
+            <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:8}}>
+              <span>{q.icon}</span>
+              <span className={'badge badge-'+q.stage}>{q.stage}</span>
+              <span style={{fontSize:12,color:'var(--text-muted)'}}>Level {q.level}</span>
+              {/* B5: per-question countdown top-right */}
+              {timerActive&&!answered&&!isTimedOut&&qStarted&&(
+                <span style={{marginLeft:'auto',fontFamily:'var(--font-mono)',fontSize:13,fontWeight:700,color:countdownCol,minWidth:36,textAlign:'right'}}>
+                  {fmtCountdown(qRemain)}
+                </span>
+              )}
+              {isTimedOut&&<span style={{fontSize:11,fontFamily:'var(--font-mono)',color:'var(--red,#dc2626)',marginLeft:'auto'}}>⏱ TIMED OUT</span>}
+              {!timerActive&&!answered&&!isTimedOut&&elapsed>0&&<span style={{fontSize:11,color:'var(--text-muted)',marginLeft:'auto',fontFamily:'var(--font-mono)'}}>paused</span>}
+            </div>
+            <div style={{fontSize:14,fontWeight:600,color:'var(--text-bright)',marginBottom:4}}>{q.q}</div>
+            {timerActive&&!answered&&!isTimedOut&&qStarted&&(
+              <div style={{height:3,background:'var(--border)',borderRadius:2,marginBottom:8,overflow:'hidden'}}>
+                <div style={{height:'100%',width:(qFrac*100)+'%',background:barCol,borderRadius:2,transition:'width 0.9s linear, background 0.3s'}}/>
+              </div>
+            )}
+            {(!timerActive||!qStarted)&&!answered&&!isTimedOut&&<div style={{height:3,marginBottom:8}}/>}
+            {q.options.map((opt,oi)=>{
+              let cls='assess-option';
+              if(answered){if(oi===q.correct)cls+=' correct';else if(answers[gi]===oi&&answers[gi]!==-1)cls+=' incorrect';}
+              if(isTimedOut&&!answered)cls+=' timed-out';
+              return(<div key={oi} className={cls} style={isTimedOut?{pointerEvents:'none',opacity:0.5}:{}} onClick={()=>handleAnswer(gi,oi)}>{String.fromCharCode(65+oi)}. {opt}</div>);
+            })}
+            {isTimedOut&&<div className="assess-feedback" style={{borderLeftColor:'var(--red,#dc2626)'}}>⏱ Time expired ({qLimit}s). {q.explain}</div>}
+            {answered&&!isTimedOut&&<div className="assess-feedback">{q.explain}</div>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function issueEngageCertificate(learnerName, learnerEmail) {
+  if (!supa) { console.warn('Supabase not loaded'); return Promise.resolve(null); }
+  var certNumber = generateCertNumber(TOOL_ID);
+  var userId = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'anon-' + Date.now();
+  var checkResult = supa.from('certificates').select('certificate_number').eq('module_id', TOOL_ID).eq('learner_name', learnerName).maybeSingle();
+  return checkResult.then(function(existing) {
+    if (existing.data) { return { duplicate: true, certNumber: existing.data.certificate_number }; }
+    return supa.from('certificates').insert([{
+      user_id: userId, module_id: TOOL_ID, certificate_number: certNumber,
+      cpd_hours: 2, certificate_type: 'Engagement', score: null,
+      learner_name: learnerName, pdf_url: null
+    }]).select().single().then(function(result) {
+      if (result.error) { console.error('Engagement cert failed:', result.error.message); return null; }
+      return { certNumber: certNumber, type: 'Engagement', hours: 2, pct: null };
+    });
+  });
+}
+
+function EngageCertModal(props) {
+  var onClose = props.onClose; var onIssued = props.onIssued;
+  var ns = React.useState(''); var name = ns[0]; var setName = ns[1];
+  var es = React.useState(''); var email = es[0]; var setEmail = es[1];
+  var ss = React.useState('form'); var state = ss[0]; var setState = ss[1];
+  var rs = React.useState(null); var result = rs[0]; var setResult = rs[1];
+  function validEmail(e) { return /\S+@\S+\.\S+/.test(e); }
+  function handleSubmit() {
+    if (!name.trim() || !validEmail(email)) return;
+    setState('loading');
+    issueEngageCertificate(name.trim(), email.trim()).then(function(res) {
+      if (res && res.duplicate) { setResult(res); setState('duplicate'); }
+      else if (res) { setResult(res); setState('done'); if(onIssued) onIssued(res.certNumber); }
+      else { setState('error'); }
+    });
+  }
+  var inp = { width:'100%', padding:'8px 12px', borderRadius:6, border:'1px solid var(--border)', background:'var(--surface)', color:'var(--text)', fontSize:14, boxSizing:'border-box' };
+  var gbtn = { width:'100%', padding:'10px 0', borderRadius:8, border:'none', background:'var(--grammar)', color:'#fff', fontWeight:600, fontSize:14, cursor:'pointer' };
+  var cbtn = { width:'100%', padding:'10px 0', borderRadius:8, border:'1px solid var(--border)', background:'transparent', color:'var(--text)', fontWeight:600, fontSize:14, cursor:'pointer' };
+  var E = React.createElement;
+  return E('div', { style:{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:9999 }},
+    E('div', { style:{ background:'var(--bg)', border:'1px solid var(--border)', borderRadius:12, padding:32, maxWidth:440, width:'90%', position:'relative' }},
+      E('button', { onClick:onClose, style:{ position:'absolute', top:12, right:16, background:'none', border:'none', color:'var(--text-dim)', fontSize:20, cursor:'pointer' }}, 'x'),
+      state === 'form' && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--grammar)', fontWeight:700, fontSize:18, marginBottom:4 }}, 'Engagement Certificate'),
+        E('div', { style:{ color:'var(--text-dim)', fontSize:13, marginBottom:20 }}, '2 CPD hours - All 27 stages completed - ' + TOOL_ID),
+        E('div', { style:{ marginBottom:12 }}, E('label', { style:{ fontSize:12, color:'var(--text-dim)', display:'block', marginBottom:4 }}, 'Full name'), E('input', { value:name, onChange:function(e){ setName(e.target.value); }, placeholder:'Full name', style:inp })),
+        E('div', { style:{ marginBottom:20 }}, E('label', { style:{ fontSize:12, color:'var(--text-dim)', display:'block', marginBottom:4 }}, 'Work email'), E('input', { value:email, type:'email', onChange:function(e){ setEmail(e.target.value); }, placeholder:'you@firm.ie', style:inp })),
+        E('button', { onClick:handleSubmit, disabled:!name.trim()||!validEmail(email), style:Object.assign({}, gbtn, { opacity:(!name.trim()||!validEmail(email))?0.5:1 })}, 'Issue Certificate'),
+        E('div', { style:{ fontSize:11, color:'var(--text-dim)', marginTop:12, textAlign:'center' }}, 'Verifiable at learn.legacybe.ie/verify')),
+      state === 'loading' && E('div', { style:{ textAlign:'center', padding:'32px 0', color:'var(--text-dim)' }}, 'Issuing certificate...'),
+      state === 'done' && result && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--grammar)', fontWeight:700, fontSize:18, marginBottom:8 }}, 'Certificate issued'),
+        E('div', { style:{ fontFamily:'var(--font-mono)', fontSize:13, background:'var(--panel)', padding:'10px 14px', borderRadius:6, marginBottom:16 }}, result.certNumber),
+        E('div', { style:{ fontSize:13, color:'var(--text-dim)', marginBottom:20 }}, 'Engagement - 2 CPD hours. Verifiable at learn.legacybe.ie/verify'),
+        E('button', { onClick:onClose, style:cbtn }, 'Close')),
+      state === 'duplicate' && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--grammar)', fontWeight:700, fontSize:16, marginBottom:8 }}, 'Certificate already issued'),
+        E('div', { style:{ fontFamily:'var(--font-mono)', fontSize:13, background:'var(--panel)', padding:'10px 14px', borderRadius:6, marginBottom:12 }}, result && result.certNumber ? result.certNumber : ''),
+        E('div', { style:{ fontSize:13, color:'var(--text-dim)', marginBottom:20 }}, 'An Engagement certificate for this module has already been issued to this name. Verify it at learn.legacybe.ie/verify'),
+        E('button', { onClick:onClose, style:cbtn }, 'Close')),
+      state === 'error' && E(React.Fragment, null,
+        E('div', { style:{ color:'var(--error)', fontWeight:700, fontSize:16, marginBottom:8 }}, 'Certificate could not be issued'),
+        E('div', { style:{ fontSize:13, color:'var(--text-dim)', marginBottom:20 }}, 'Please contact learn@legacybe.ie'),
+        E('button', { onClick:onClose, style:cbtn }, 'Close'))
+    )
+  );
+}
+
+// ── STAGE 4: Client-Side Certificate (B4) ──────────────────────────
+function CertificateGenerator({assessData}){
+  const certKey='dc_ai_001_cert_name';
+  const [name,setName]=useState(()=>{try{return safeStore.get(certKey)||'';}catch(e){return '';}});
+  const [issued,setIssued]=useState(false);
+  const today=new Date().toLocaleDateString('en-IE',{day:'numeric',month:'long',year:'numeric'});
+  const assessScore=assessData&&assessData.score&&assessData.score.total>=ASSESSMENT_QUESTIONS.length?Math.round(assessData.score.correct/assessData.score.total*100):null;
+  const handleIssue=()=>{if(!name.trim())return;try{safeStore.set(certKey,name.trim());}catch(e){} dcTimingLog.log('cert_issued',{module:TOOL_ID,name:name.trim(),score:assessScore}); setIssued(true);};
+  const handlePrint=()=>{window.print();};
+  if(!issued) return (
+    <div className="card no-print" style={{marginTop:16,borderLeft:'4px solid var(--lbe-green)'}}>
+      <h2 style={{marginBottom:8,color:'var(--lbe-green)'}}>Certificate of Completion</h2>
+      <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:12}}>All {LEVELS.length*3} Trivium stages completed. Enter your name to generate a printable certificate.</div>
+      <input value={name} onChange={e=>setName(e.target.value)} placeholder="Your full name" style={{width:'100%',padding:'10px 14px',border:'1px solid var(--border)',borderRadius:8,background:'var(--surface)',color:'var(--text)',fontSize:14,fontFamily:'var(--font-sans)',boxSizing:'border-box',marginBottom:10}}/>
+      <button onClick={handleIssue} disabled={!name.trim()} style={{width:'100%',padding:'10px 0',borderRadius:8,border:'none',background:name.trim()?'var(--lbe-green)':'var(--border)',color:'#fff',fontWeight:600,fontSize:14,cursor:name.trim()?'pointer':'default',opacity:name.trim()?1:0.5}}>Generate Certificate</button>
+    </div>
+  );
+  return (
+    <div>
+      <div className="no-print" style={{marginTop:16,marginBottom:8,textAlign:'right'}}>
+        <button onClick={handlePrint} style={{padding:'8px 20px',border:'1px solid var(--lbe-green)',borderRadius:8,background:'transparent',color:'var(--lbe-green)',cursor:'pointer',fontWeight:600,fontSize:13,fontFamily:'var(--font-sans)'}}>Print Certificate</button>
+      </div>
+      <div id="lbe-certificate" style={{background:'#fff',color:'#1a1a1a',border:'2px solid #78a840',borderRadius:16,padding:'48px 40px',maxWidth:700,margin:'0 auto',textAlign:'center',fontFamily:'IBM Plex Sans, system-ui, sans-serif'}}>
+        <img src={LOGO_SRC} alt="LBE" style={{width:72,height:72,borderRadius:'50%',marginBottom:16}}/>
+        <div style={{fontSize:11,letterSpacing:3,color:'#78a840',fontWeight:700,marginBottom:4}}>LEGACY BUSINESS ENGINEERS LTD</div>
+        <h1 style={{fontSize:26,fontWeight:700,color:'#1a1a1a',margin:'12px 0 4px'}}>Certificate of Completion</h1>
+        <div style={{fontSize:13,color:'#666',marginBottom:24}}>DC-AI Series</div>
+        <div style={{fontSize:14,color:'#333',marginBottom:4}}>This certifies that</div>
+        <div style={{fontSize:22,fontWeight:700,color:'#1a1a1a',margin:'8px 0 16px',borderBottom:'2px solid #78a840',display:'inline-block',padding:'0 24px 4px'}}>{name}</div>
+        <div style={{fontSize:14,color:'#333',marginBottom:4}}>has completed all {LEVELS.length*3} Trivium stages of</div>
+        <div style={{fontSize:18,fontWeight:700,color:'#1a1a1a',margin:'8px 0'}}>{TOOL_ID} — {document.querySelector&&document.querySelector('h1')?document.querySelector('h1').textContent:TOOL_ID}</div>
+        <div style={{fontSize:13,color:'#666',marginBottom:4}}>{LEVELS.length} chain levels × Grammar + Logic + Rhetoric</div>
+        {assessScore!==null&&<div style={{fontSize:13,color:'#78a840',fontWeight:600,marginTop:8}}>Assessment score: {assessScore}%</div>}
+        <div style={{fontSize:13,color:'#666',marginTop:16}}>{today}</div>
+        <div style={{marginTop:24,padding:'12px 0',borderTop:'1px solid #e5e7eb',fontSize:11,color:'#999',lineHeight:1.8}}>
+          This certificate confirms completion of the learning module. It does not constitute a professional qualification or design competency certification.<br/>
+          Legacy Business Engineers Ltd · legacybe.ie · {TOOL_ID} v{TOOL_VERSION}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProgressTab({progress,tabTimes}){
+  const total=LEVELS.length*3; let complete=0;
+  LEVELS.forEach(l=>{const p=progress[l.id]||{};if(p.grammar)complete++;if(p.logic)complete++;if(p.rhetoric)complete++;});
+  const pct=Math.round(complete/total*100);
+  const moduleComplete=complete===total;
+  var ecs=React.useState(false); var showEngageCert=ecs[0]; var setShowEngageCert=ecs[1];
+  var engageIssued=safeStore.get("dc_ai_001_engage");
+  const fmtT=(s)=>{if(!s||s<1)return '0s';if(s<60)return s+'s';const m=Math.floor(s/60);const ss=s%60;return m+'m '+ss+'s';};
+  const fmtTime=(s)=>{if(!s)return '00:00';const m=Math.floor(s/60);const ss=s%60;return String(m).padStart(2,'0')+':'+String(ss).padStart(2,'0');};
+  const totalTime=tabTimes?Object.values(tabTimes).reduce((a,b)=>a+b,0):0;
+  const tabLabels={chain:'Power Density',learn:'Learn',visual:'Visual Guide',challenges:'Field Challenges',assessment:'Assessment',book:'The Story',progress:'Progress'};
+  const maxTime=tabTimes?Math.max(...Object.values(tabTimes),1):1;
+  // Read assessment results from localStorage
+  const [assessData,setAssessData]=useState(null);
+  React.useEffect(()=>{try{const s=safeStore.get('dc_ai_001_assess');if(s)setAssessData(JSON.parse(s));}catch(e){}},[]);
+  const stageLabels={grammar:'Knowledge Check',logic:'Eng. Calculation',rhetoric:'Prof. Judgement'};
+  const stageColours={grammar:'var(--grammar)',logic:'var(--logic)',rhetoric:'var(--rhetoric)'};
+  const assessStageScore=(st)=>{
+    if(!assessData||!assessData.answers)return null;
+    const qs=ASSESSMENT_QUESTIONS.filter(q=>q.stage===st);
+    let c=0,t=0;
+    qs.forEach(q=>{const gi=ASSESSMENT_QUESTIONS.indexOf(q);if(assessData.answers[gi]!==undefined){t++;if(assessData.answers[gi]===q.correct)c++;}});
+    return t>0?{c,t}:null;
+  };
+  return (
+    <div>
+      {moduleComplete && (
+        <div className="card" style={{borderLeft:'4px solid var(--green)',background:'var(--green-dim)',marginBottom:16}}>
+          <h2 style={{color:'var(--green)',marginBottom:6}}>Module Complete</h2>
+          <div style={{fontSize:14,color:'var(--text-bright)',marginBottom:4}}>All {total} Trivium stages completed across 9 chain levels.</div>
+          {assessData&&assessData.score&&assessData.score.total>=ASSESSMENT_QUESTIONS.length && (
+            <div style={{fontSize:13,color:'var(--text-dim)',marginTop:8}}>
+              Assessment: {assessData.score.correct}/{assessData.score.total} ({Math.round(assessData.score.correct/assessData.score.total*100)}%) in {fmtTime(assessData.elapsed)}
+            </div>
+          )}
+          {totalTime>0 && <div style={{fontSize:12,color:'var(--text-muted)',marginTop:4}}>Total time invested: {fmtT(totalTime)}</div>}
+          {!engageIssued && (
+            <button onClick={function(){
+              setShowEngageCert(true);
+            }} style={{marginTop:14,padding:'10px 0',borderRadius:8,border:'none',
+              background:'var(--grammar)',color:'#fff',fontWeight:600,fontSize:14,
+              cursor:'pointer',display:'block',width:'100%'}}>
+              Get Engagement Certificate (2 CPD hours)
+            </button>
+          )}
+          {engageIssued && (
+            <div style={{marginTop:12,padding:'10px 14px',background:'rgba(37,99,235,0.08)',
+              borderRadius:6,fontSize:13,color:'var(--grammar)'}}>
+              Engagement certificate issued
+            </div>
+          )}
+          {showEngageCert && React.createElement(EngageCertModal, {
+            onClose: function(){ setShowEngageCert(false); },
+            onIssued: function(num){
+              safeStore.set("dc_ai_001_engage", num);
+              setShowEngageCert(false);
+            }
+          })}
+        </div>
+      )}
+      <div className="card"><h2>Overall Progress</h2><div style={{fontSize:14,fontWeight:600,marginBottom:8}}>{complete}/{total} stages complete ({pct}%)</div><div className="progress-bar" style={{height:12}}><div className="fill fill-green" style={{width:pct+'%'}}></div></div></div>
+      {assessData&&assessData.score&&assessData.score.total>0 && (
+        <div className="card" style={{marginTop:16}}>
+          <h2 style={{marginBottom:8}}>Assessment Results</h2>
+          <div style={{fontSize:14,fontWeight:600,marginBottom:4}}>Score: {assessData.score.correct}/{assessData.score.total} ({Math.round(assessData.score.correct/assessData.score.total*100)}%)</div>
+          <div className="progress-bar" style={{height:8,marginBottom:10}}><div className="fill fill-green" style={{width:Math.round(assessData.score.correct/assessData.score.total*100)+'%'}}></div></div>
+          {assessData.elapsed>0 && <div style={{fontSize:12,fontFamily:'var(--font-mono)',color:assessData.elapsed<=900?'var(--grammar)':'var(--red)',marginBottom:8}}>{assessData.elapsed<=900?'Completed in '+fmtTime(assessData.elapsed)+' (under time)':'Completed in '+fmtTime(assessData.elapsed)+' ('+fmtTime(assessData.elapsed-900)+' over)'}</div>}
+          <div style={{display:'flex',gap:16,flexWrap:'wrap'}}>
+            {['grammar','logic','rhetoric'].map(st=>{
+              const s=assessStageScore(st);
+              return s && (
+                <div key={st} style={{fontSize:12,color:stageColours[st]}}>
+                  <strong>{stageLabels[st]}:</strong> {s.c}/{s.t}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {LEVELS.map(lvl=>{const p=progress[lvl.id]||{};return (
+        <div key={lvl.id} className="card" style={{padding:16}}><div style={{display:'flex',alignItems:'center',gap:10}}><span style={{fontSize:20}}>{lvl.icon}</span><div style={{flex:1}}><div style={{fontWeight:600,fontSize:14}}>Level {lvl.level}: {lvl.title}</div><div style={{display:'flex',gap:8,marginTop:6}}><Dot done={p.grammar} stage="grammar"/><span style={{fontSize:11,color:'var(--text-muted)'}}>Grammar</span><Dot done={p.logic} stage="logic"/><span style={{fontSize:11,color:'var(--text-muted)'}}>Logic</span><Dot done={p.rhetoric} stage="rhetoric"/><span style={{fontSize:11,color:'var(--text-muted)'}}>Rhetoric</span></div></div></div></div>
+      );})}
+      {tabTimes && totalTime>0 && (
+        <div className="card" style={{marginTop:16}}>
+          <h2 style={{marginBottom:4}}>Session Insights</h2>
+          <div style={{fontSize:12,color:'var(--text-muted)',marginBottom:14}}>Time spent per tab across sessions. For continuous improvement — not visible to other users.</div>
+          <div style={{fontSize:13,fontWeight:600,color:'var(--text-bright)',marginBottom:12}}>Total time: {fmtT(totalTime)}</div>
+          {Object.keys(tabLabels).map(k=>{
+            const t=tabTimes[k]||0;
+            const w=Math.round(t/maxTime*100);
+            return (
+              <div key={k} style={{marginBottom:8}}>
+                <div style={{display:'flex',justifyContent:'space-between',fontSize:12,marginBottom:3}}>
+                  <span style={{color:'var(--text-dim)'}}>{tabLabels[k]}</span>
+                  <span style={{fontFamily:'var(--font-mono)',color:t>0?'var(--text-bright)':'var(--text-muted)'}}>{fmtT(t)}</span>
+                </div>
+                <div className="progress-bar" style={{height:6}}><div className="fill fill-green" style={{width:w+'%',transition:'width 0.3s'}}></div></div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {moduleComplete && <CertificateGenerator assessData={assessData}/>}
+    </div>
+  );
+}
+
+
+function GlossaryPanel(){
+  const [search,setSearch]=useState('');
+  const filtered=search?GLOSSARY_002.filter(g=>g.term.toLowerCase().includes(search.toLowerCase())||g.def.toLowerCase().includes(search.toLowerCase())):GLOSSARY_002;
+  return (
+    <div>
+      <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search terms..." style={{width:'100%',padding:'8px 12px',border:'1px solid var(--border)',borderRadius:8,background:'var(--surface)',color:'var(--text)',fontSize:13,fontFamily:'var(--font-sans)',marginBottom:12,boxSizing:'border-box'}}/>
+      <div style={{fontSize:12,color:'var(--text-muted)',marginBottom:12}}>{filtered.length} of {GLOSSARY_002.length} terms</div>
+      {filtered.map((g,i)=>(
+        <div key={i} style={{marginBottom:8,paddingBottom:8,borderBottom:'1px solid var(--border)'}}>
+          <div style={{fontSize:13,fontWeight:600,color:'var(--text-bright)'}}>{g.term}</div>
+          <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.6,marginTop:2}}>{g.def}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BibliographyPanel(){
+  return (
+    <div>
+      <div style={{fontSize:12,color:'var(--text-muted)',marginBottom:12}}>Sources referenced in this module. Tier 1 = published standard or regulatory instrument. Tier 2 = industry benchmark or guidance document.</div>
+      {BIBLIOGRAPHY_002.map((b,i)=>(
+        <div key={i} style={{marginBottom:10,paddingBottom:10,borderBottom:'1px solid var(--border)'}}>
+          <div style={{display:'flex',gap:8,alignItems:'baseline'}}>
+            <span className={'badge badge-'+(b.tier==='T1'?'pass':'logic')} style={{fontSize:10}}>{b.tier}</span>
+            <div style={{fontSize:13,fontWeight:600,color:'var(--text-bright)'}}>{b.title}</div>
+          </div>
+          <div style={{fontSize:12,color:'var(--text-dim)',marginTop:3,lineHeight:1.6}}>
+            <span style={{fontFamily:'var(--font-mono)'}}>{b.year}</span> — {b.usage}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+
+function BookTab() {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!CHAPTER_FILE) { setError('no-chapter'); return; }
+    setLoading(true);
+    fetch(CHAPTER_FILE)
+      .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(html => { const processed = html.replace(/<p style="margin-bottom:14px">([A-Z])/, '<p class="dc-story-dropcap" style="margin-bottom:22px">$1'); setContent(processed); setLoading(false); })
+      .catch(e => { setError('not-available'); setLoading(false); });
+  }, []);
+
+  const ctr={maxWidth:720,margin:'0 auto',padding:'24px 0'};
+  const hdr={textAlign:'center',marginBottom:32,paddingBottom:24,borderBottom:'1px solid var(--border)'};
+  const chLbl={fontSize:11,fontFamily:'var(--font-mono)',color:'var(--green)',letterSpacing:2,textTransform:'uppercase',marginBottom:8};
+  const ttl={fontSize:22,fontWeight:700,color:'var(--text-bright)',marginBottom:6,lineHeight:1.3};
+  const sub={fontSize:13,color:'var(--text-dim)',fontStyle:'italic'};
+  const cBox={background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'40px 48px',fontSize:17,lineHeight:1.9,color:'var(--text)',maxHeight:expanded?'none':600,overflow:expanded?'visible':'hidden',position:'relative'};
+  const fade={position:'absolute',bottom:0,left:0,right:0,height:120,background:'linear-gradient(transparent, var(--panel))',pointerEvents:'none',display:expanded?'none':'block'};
+  const btn={display:'block',margin:'16px auto 0',padding:'10px 28px',background:'transparent',border:'1px solid var(--green)',borderRadius:6,color:'var(--green)',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'var(--font-sans)'};
+
+  if (loading) return (<div style={ctr}><div style={hdr}><div style={chLbl}>The Data Centre Clock</div><div style={ttl}>Loading chapter...</div></div><div style={{textAlign:'center',padding:48,color:'var(--text-dim)'}}><div>Loading...</div></div></div>);
+
+  if (error || !content) return (<div style={ctr}><div style={hdr}><div style={chLbl}>The Data Centre Clock</div><div style={ttl}>{CHAPTER_NUM ? 'Chapter '+CHAPTER_NUM+': '+CHAPTER_TITLE : (CHAPTER_TITLE || 'The Data Centre Clock')}</div>{MODULE_TITLE && <div style={sub}>Companion reading for {MODULE_TITLE}</div>}</div><div style={{background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'48px 32px',textAlign:'center'}}><div style={{fontSize:17,fontWeight:600,color:'var(--text-bright)',marginBottom:8}}>Chapter coming soon</div><div style={{fontSize:14,color:'var(--text-dim)',maxWidth:400,margin:'0 auto',lineHeight:1.7}}>This chapter of <em>The Data Centre Clock: Engineering the Irish Retrofit</em> is being finalised. It will appear here automatically when published.</div></div></div>);
+
+  return (<div style={ctr}><div style={hdr}><div style={chLbl}>{CHAPTER_NUM ? 'The Data Centre Clock — Chapter '+CHAPTER_NUM : 'The Data Centre Clock — '+CHAPTER_TITLE}</div><div style={ttl}>{CHAPTER_TITLE}</div><div style={sub}>Companion reading for {MODULE_TITLE}</div></div><div style={cBox}><div className="dc-story-body" dangerouslySetInnerHTML={{__html: content}} />{!expanded && <div style={fade} />}</div>{!expanded && <button style={btn} onClick={() => setExpanded(true)}>Continue reading</button>}{expanded && <button style={{...btn,marginTop:24}} onClick={() => {setExpanded(false);window.scrollTo({top:0,behavior:'smooth'})}}>Collapse chapter</button>}</div>);
+}
+
+
+/* ═══ DC-LEARN STAGE 5 AUTH + SYNC ═════════════════════════════════════════
+   Built: 09/04/2026 — Stage 5 Session 2
+   Layer 1 (localStorage) never depends on Layer 2 (Supabase).
+   If Supabase is blocked, offline, or errors, the module works exactly as
+   it did before: IS_FREE_MODULE or localStorage.dc_learn_paid decides access.
+   =========================================================================*/
+
+const IS_FREE_MODULE = (TOOL_ID === 'DC-LEARN-000' || TOOL_ID === 'DC-LEARN-001' || TOOL_ID === 'DC-AI-001');
+const DC_PROGRESS_KEY = 'dc' + TOOL_ID.replace('DC-LEARN-','') + '_progress';
+
+const dcAuth = {
+  async sendMagicLink(email) {
+    if (!supa) return { error: 'Not connected' };
+    try {
+      const { error } = await supa.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.href },
+      });
+      return { error };
+    } catch(e) { return { error: (e && e.message) || 'Network error' }; }
+  },
+  async signOut() {
+    if (!supa) return;
+    try { await supa.auth.signOut(); } catch(e) {}
+    try { localStorage.removeItem('dc_learn_paid'); } catch(e) {}
+  },
+  isPaid() { try { return localStorage.getItem('dc_learn_paid') === 'true'; } catch(e) { return false; } },
+  setPaid() { try { localStorage.setItem('dc_learn_paid', 'true'); } catch(e) {} },
+  isAdminUser(user) {
+    try { return !!(user && user.user_metadata && user.user_metadata.role === 'admin'); }
+    catch(e) { return false; }
+  },
+  async checkLicence(userId) {
+    if (!supa || !userId) return null;
+    try {
+      const { data, error } = await supa.from('licences')
+        .select('id, tier, status')
+        .eq('user_id', userId)
+        .eq('status', 'active')
+        .limit(1);
+      if (error) throw error;
+      return !!(data && data.length > 0);
+    } catch(e) {
+      console.warn('DC-LEARN: licence check failed, falling through', (e && e.message) || e);
+      return null;
+    }
+  },
+  hasAccess() { return IS_FREE_MODULE || this.isPaid(); },
+};
+
+function AuthButton({ authState }) {
+  const [showLogin, setShowLogin] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [sent, setSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const handleSend = async () => {
+    if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
+    setLoading(true); setError('');
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
+    setLoading(false);
+    if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
+    else setSent(true);
+  };
+
+  if (!supa) return null;
+
+  if (authState && authState.user) {
+    return (
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--text-muted)'}}>
+          {authState.user.email}{authState.isAdmin ? ' · admin' : ''}
+        </span>
+        <button onClick={()=>dcAuth.signOut().then(()=>window.location.reload())}
+          style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--text-dim)',
+          background:'transparent',border:'1px solid var(--border)',borderRadius:4,
+          padding:'3px 8px',cursor:'pointer'}}>Sign out</button>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{position:'relative'}}>
+      <button onClick={()=>setShowLogin(v=>!v)}
+        style={{fontFamily:'var(--font-mono)',fontSize:'0.65rem',color:'var(--accent)',
+        background:'transparent',border:'1px solid var(--accent)',borderRadius:4,
+        padding:'3px 10px',cursor:'pointer'}}>Sign in</button>
+      {showLogin && (
+        <div className="dc-authbtn-dropdown" style={{position:'absolute',top:'calc(100% + 8px)',right:0,
+          background:'var(--surface)',border:'1px solid var(--border)',
+          borderRadius:8,padding:16,zIndex:999,minWidth:280,
+          boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
+          {!sent ? (
+            <div>
+              <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:10,lineHeight:1.5}}>
+                Enter your email — we'll send a sign-in link.<br/>
+                <span style={{fontSize:11,color:'var(--text-muted)'}}>No password needed.</span>
+              </div>
+              <input type="email" value={email}
+                onChange={e=>{setEmail(e.target.value);setError('');}}
+                onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
+                placeholder="your@email.com"
+                style={{width:'100%',padding:'8px 10px',fontSize:13,
+                background:'var(--panel)',border:'1px solid var(--border)',
+                borderRadius:6,color:'var(--text-bright)',marginBottom:8,
+                fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
+              {error && <div style={{fontSize:11,color:'var(--error)',marginBottom:6}}>{error}</div>}
+              <button onClick={handleSend} disabled={loading}
+                style={{width:'100%',padding:'8px',fontSize:13,fontWeight:600,
+                background:'var(--lbe-green)',color:'#fff',border:'none',
+                borderRadius:6,cursor:'pointer',opacity:loading?0.7:1}}>
+                {loading ? 'Sending…' : 'Send sign-in link'}
+              </button>
+            </div>
+          ) : (
+            <div style={{textAlign:'center',padding:'8px 0'}}>
+              <div style={{fontSize:22,marginBottom:8}}>✓</div>
+              <div style={{fontSize:13,color:'var(--text-bright)',fontWeight:600,marginBottom:4}}>
+                Check your email
+              </div>
+              <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.5}}>
+                We sent a sign-in link to<br/><strong>{email}</strong>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LockedOverlay() {
+  return (
+    <div style={{position:'fixed',inset:0,zIndex:9999,
+      background:'rgba(13,17,23,0.97)',
+      display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+      padding:24}}>
+      <div style={{maxWidth:480,width:'100%',textAlign:'center'}}>
+        <img src={LOGO_SRC} alt="LBE" style={{width:56,height:56,borderRadius:'50%',marginBottom:20}}/>
+        <div style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'var(--lbe-green)',
+          letterSpacing:'0.12em',textTransform:'uppercase',marginBottom:12}}>
+          DC-AI Series — {TOOL_ID}
+        </div>
+        <h2 style={{fontSize:22,fontWeight:700,color:'var(--text-bright)',marginBottom:8,lineHeight:1.3}}>
+          This module is part of DC-LEARN Professional
+        </h2>
+        <p style={{fontSize:14,color:'var(--text-dim)',lineHeight:1.6,marginBottom:24}}>
+          Modules 000–002 are free. The full 16-module series is available at legacybe.ie.
+        </p>
+
+        <div style={{background:'var(--surface)',border:'1px solid var(--border)',
+          borderRadius:12,padding:20,marginBottom:20}}>
+          <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6}}>
+            Already purchased? Check your email for your access link, or contact{' '}
+            <a href="mailto:info@legacybe.ie"
+              style={{color:'var(--accent)',textDecoration:'none'}}>info@legacybe.ie</a>.
+          </div>
+        </div>
+
+        <a href="https://legacybe.ie/dc-learn/"
+          target="_blank" rel="noopener"
+          style={{display:'block',padding:'12px',fontSize:14,fontWeight:600,
+          color:'var(--accent)',border:'1px solid var(--accent)',borderRadius:8,
+          textDecoration:'none',marginBottom:12}}>
+          Get full access — from €995 →
+        </a>
+        <a href="./dc-learn-000.html"
+          style={{fontSize:12,color:'var(--text-muted)',textDecoration:'none'}}>
+          ← Back to free modules (000–002)
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function useAuth() {
+  const [state, setState] = React.useState({
+    loading: !!supa,
+    user: null,
+    isAdmin: false,
+    hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+  });
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    async function resolve(session) {
+      if (!mounted) return;
+      try {
+        if (session && session.user) {
+          const user = session.user;
+          if (dcAuth.isAdminUser(user)) {
+            dcAuth.setPaid();
+            setState({ loading: false, user: user, isAdmin: true, hasAccess: true });
+            return;
+          }
+          const licenceOk = await dcAuth.checkLicence(user.id);
+          if (licenceOk === true) {
+            dcAuth.setPaid();
+            setState({ loading: false, user: user, isAdmin: false, hasAccess: true });
+          } else {
+            // licenceOk === null (error: fall through) or false (no row)
+            setState({
+              loading: false, user: user, isAdmin: false,
+              hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+            });
+          }
+          return;
+        }
+        setState({
+          loading: false, user: null, isAdmin: false,
+          hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+        });
+      } catch(e) {
+        console.warn('DC-LEARN: auth resolve failed, falling through', (e && e.message) || e);
+        setState({
+          loading: false, user: null, isAdmin: false,
+          hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+        });
+      }
+    }
+
+    if (!supa) {
+      setState({
+        loading: false, user: null, isAdmin: false,
+        hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+      });
+      return () => { mounted = false; };
+    }
+
+    (async () => {
+      try {
+        const { data: { session } } = await supa.auth.getSession();
+        await resolve(session);
+      } catch(e) {
+        console.warn('DC-LEARN: getSession failed, falling through', (e && e.message) || e);
+        if (mounted) setState({
+          loading: false, user: null, isAdmin: false,
+          hasAccess: IS_FREE_MODULE || dcAuth.isPaid(),
+        });
+      }
+    })();
+
+    let sub = null;
+    try {
+      const r = supa.auth.onAuthStateChange((_ev, session) => { resolve(session); });
+      sub = r && r.data && r.data.subscription;
+    } catch(e) {}
+
+    return () => {
+      mounted = false;
+      try { if (sub) sub.unsubscribe(); } catch(e) {}
+    };
+  }, []);
+
+  return state;
+}
+
+function PlatformSync({ user, progress }) {
+  React.useEffect(() => {
+    if (!supa || !user || !user.id) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        // 1. Flush timing buffer → learner_analytics, then clear on success
+        const raw = safeStore.get(DC_TIMING_KEY);
+        if (raw) {
+          let events = [];
+          try { events = JSON.parse(raw); } catch(e) { events = []; }
+          if (!cancelled && Array.isArray(events) && events.length) {
+            const rows = events.slice(0, 500).map(function(ev) {
+              return {
+                user_id: user.id,
+                module_id: TOOL_ID,
+                event_type: (ev && ev.event) || 'unknown',
+                event_data: ev || {},
+                recorded_at: new Date((ev && ev.ts) || Date.now()).toISOString(),
+              };
+            });
+            const { error } = await supa.from('learner_analytics').insert(rows);
+            if (!error) safeStore.remove(DC_TIMING_KEY);
+            else console.warn('DC-LEARN: analytics flush failed', error.message);
+          }
+        }
+        // 2. Upsert progress → learner_progress (keeps localStorage as cache)
+        if (!cancelled && progress && typeof progress === 'object') {
+          const keys = Object.keys(progress);
+          const rows = keys.map(function(levelId) {
+            const p = progress[levelId] || {};
+            return {
+              user_id: user.id,
+              module_id: TOOL_ID,
+              level_id: String(levelId),
+              grammar_complete: !!p.grammar,
+              logic_complete: !!p.logic,
+              rhetoric_complete: !!p.rhetoric,
+              updated_at: new Date().toISOString(),
+            };
+          });
+          if (rows.length) {
+            const { error } = await supa.from('learner_progress').upsert(rows, {
+              onConflict: 'user_id,module_id,level_id',
+            });
+            if (error) console.warn('DC-LEARN: progress upsert failed', error.message);
+          }
+        }
+      } catch(e) {
+        console.warn('DC-LEARN: PlatformSync error', (e && e.message) || e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user && user.id, JSON.stringify(progress || {})]);
+  return null;
+}
+
+/* ═══ END DC-LEARN STAGE 5 AUTH + SYNC ═════════════════════════════════════*/
+
+
+function SidebarCalculator({ selectedLevel, onCascadeResult }) {
+  var [rackCount, setRackCount] = React.useState(50);
+  var [targetKW, setTargetKW] = React.useState(40);
+  var [allResults, setAllResults] = React.useState(null);
+  function runCheck() {
+    var results = [];
+    LEVELS.forEach(function(lvl, idx) {
+      var fnSrc = lvl.cascadeCheck || '';
+      var fn = null;
+      try { fn = fnSrc ? new Function('inputs', fnSrc.replace(/^function\s*\(inputs\)\s*\{/, '').replace(/\}\s*$/, '')) : null; } catch(e) {}
+      var r;
+      if (!fn) { r = {pass:false,reason:'No cascade check for this level.'}; }
+      else { try { r = fn({rackCount:Number(rackCount),targetKW:Number(targetKW)}); } catch(e) { r = {pass:false,reason:'Error: '+e.message}; } }
+      results.push(r);
+      if (onCascadeResult) onCascadeResult(idx, r);
+    });
+    setAllResults(results);
+  }
+  var failCount = allResults ? allResults.filter(function(r){return !r.pass;}).length : 0;
+  var iStyle = {display:'block',width:'100%',padding:'5px 8px',marginTop:'3px',background:'var(--panel)',border:'1px solid var(--border)',borderRadius:'6px',color:'var(--text)',fontSize:'0.8rem',fontFamily:'var(--font-mono)'};
+  return (
+    <div className="sidebar-card">
+      <div style={{fontWeight:700,fontSize:14,color:'var(--text-bright)',marginBottom:10}}>AI Readiness Calculator</div>
+      <label style={{fontSize:'0.72rem',color:'var(--text-dim)'}}>Rack count<input type="number" value={rackCount} onChange={function(e){setRackCount(e.target.value);}} style={iStyle} /></label>
+      <label style={{fontSize:'0.72rem',color:'var(--text-dim)',marginTop:'0.5rem',display:'block'}}>Target kW/rack<input type="number" value={targetKW} onChange={function(e){setTargetKW(e.target.value);}} style={iStyle} /></label>
+      <button onClick={runCheck} style={{marginTop:'0.75rem',width:'100%',padding:'7px',background:'var(--lbe-green)',color:'#fff',border:'none',borderRadius:'6px',fontWeight:600,fontSize:'0.8rem',cursor:'pointer'}}>Find Bottlenecks →</button>
+      {allResults && (<div style={{marginTop:'0.6rem'}}>
+        <div style={{fontSize:'0.8rem',fontWeight:700,color:failCount>0?'var(--red)':'var(--green)',marginBottom:'0.4rem',padding:'4px 8px',borderRadius:'6px',background:failCount>0?'var(--red-dim)':'var(--green-dim)'}}>{failCount} bottleneck{failCount!==1?'s':''} found</div>
+        {allResults.map(function(r,idx){var lvl=LEVELS[idx];return (<div key={idx} style={{padding:'5px 7px',marginBottom:'3px',borderRadius:'6px',background:'var(--panel)',border:'1px solid var(--border)',fontSize:'0.72rem'}}><div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:4}}><span style={{color:'var(--text-bright)',fontWeight:600}}>L{lvl.level}: {lvl.title}</span><span style={{fontWeight:700,padding:'1px 5px',borderRadius:3,background:r.pass?'var(--green-dim)':'var(--red-dim)',color:r.pass?'var(--green)':'var(--red)',whiteSpace:'nowrap'}}>{r.pass?'PASS':'FAIL'}</span></div><div style={{color:'var(--text-muted)',marginTop:'2px',lineHeight:1.4}}>{r.reason}</div></div>);})}
+      </div>)}
+    </div>
+  );
+}
+
+function SidebarFacility() {
+  var rows = [['Facility','Clonshaugh Reference DC (2012)'],['Racks','200 (Hall B)'],['Avg Density','8 kW/rack'],['IT Load','1.6 MW'],['PUE','1.50 (target 1.20)'],['MIC','5 MVA @ 10 kV ESB Networks'],['MIC Util.','~85%'],['Bus Section','1,600A @ 415V'],['Bus Util.','~73%'],['PDUs','Dual 32A single-phase'],['Voltage','415V 3-phase'],['PF','0.85']];
+  return (
+    <div className="sidebar-card">
+      <div style={{fontWeight:700,fontSize:14,color:'var(--text-bright)',marginBottom:10}}>Facility Profile</div>
+      <table style={{width:'100%',borderCollapse:'collapse',fontSize:'0.73rem'}}><tbody>{rows.map(function(r,i){return (<tr key={i} style={{borderBottom:'1px solid var(--border)',background:i%2===0?'transparent':'var(--panel)'}}><td style={{padding:'3px 6px',color:'var(--text-muted)',whiteSpace:'nowrap'}}>{r[0]}</td><td style={{padding:'3px 6px',color:'var(--text)',fontFamily:'var(--font-mono)',fontSize:'0.7rem'}}>{r[1]}</td></tr>);})}</tbody></table>
+    </div>
+  );
+}
+function App(){
+  const authState = useAuth();
+  const [activeTab,setActiveTab]=useState('chain');
+  const [selectedLevel,setSelectedLevel]=useState(0);
+  const [progress,setProgress]=useState(()=>{try{const s=safeStore.get('dc_ai_001_progress');return s?JSON.parse(s):{};}catch(e){return{};}});
+  React.useEffect(()=>{try{safeStore.set('dc_ai_001_progress',JSON.stringify(progress));}catch(e){}},[progress]);
+  const [cascadeResults, setCascadeResults] = React.useState(() => { try { var s = safeStore.get('dc_ai_001_cascadeResults'); return s ? JSON.parse(s) : {}; } catch(e) { return {}; } });
+  function onCascadeResult(lvlIdx, res) { setCascadeResults(function(p) { var n = Object.assign({}, p); n[lvlIdx] = res; safeStore.set('dc_ai_001_cascadeResults', JSON.stringify(n)); return n; }); }
+  const [theme,setTheme]=useState('dark');
+  // ── STAGE 3: Persona Entry (C2) ───────────────────────────────────
+  const PERSONA_MAP = {conor:{label:'Asset Manager',icon:'💼',stage:'rhetoric',preview:true},helena:{label:'Chief Technology Officer',icon:'🖥',stage:'grammar',preview:false},eoin:{label:'MEP Retrofit Engineer',icon:'🔧',stage:'grammar',preview:false},rachel:{label:'ESG & Regulatory Director',icon:'🌱',stage:'rhetoric',preview:true},padraig:{label:'Project QS / Cost Manager',icon:'📊',stage:'logic',preview:true}};
+  const [persona,setPersona]=useState(()=>{try{const s=safeStore.get('dc_ai_001_persona');return s||null;}catch(e){return null;}});
+  const handlePersona = (key) => { setPersona(key); try{safeStore.set('dc_ai_001_persona',key);}catch(e){} dcTimingLog.log('persona_select',{persona:key}); setSelectedLevel(0); setActiveTab('learn'); };
+  const handlePersonaLevel = (key, levelIdx) => { setPersona(key); try{safeStore.set('dc_ai_001_persona',key);}catch(e){} dcTimingLog.log('persona_select',{persona:key,level:levelIdx}); setSelectedLevel(levelIdx); setActiveTab('learn'); };
+  const [tabTimes,setTabTimes]=useState(()=>{try{const s=safeStore.get('dc_ai_001_tabTimes');return s?JSON.parse(s):{chain:0,learn:0,visual:0,challenges:0,assessment:0,progress:0};}catch(e){return{chain:0,learn:0,visual:0,challenges:0,assessment:0,progress:0};}});
+  const tabStartRef=React.useRef(Date.now());
+  const prevTabRef=React.useRef('chain');
+  React.useEffect(()=>{
+    const now=Date.now();
+    const prev=prevTabRef.current;
+    const dt=Math.floor((now-tabStartRef.current)/1000);
+    if(dt>0){setTabTimes(prev2=>({...prev2,[prev]:prev2[prev]+dt}));}
+    tabStartRef.current=now;
+    prevTabRef.current=activeTab;
+  },[activeTab]);
+  React.useEffect(()=>{try{safeStore.set('dc_ai_001_tabTimes',JSON.stringify(tabTimes));}catch(e){}},[tabTimes]);
+  // Analytics clock hooks (Stage 1 / B6)
+  React.useEffect(()=>{ dcTimingLog.log('tab_switch', { tab: activeTab }); },[activeTab]);
+  React.useEffect(()=>{ dcTimingLog.log('level_change', { level: selectedLevel }); },[selectedLevel]);
+  const toggleTheme = () => { const next=theme==='dark'?'light':'dark'; setTheme(next); document.documentElement.setAttribute('data-theme',next); };
+  const tabs = [{id:'chain',label:'Power Density'},{id:'learn',label:'Learn'},{id:'visual',label:'Visual Guide'},{id:'challenges',label:'Field Challenges'},{id:'assessment',label:'Assessment'},{id:'book',label:'The Story'},{id:'progress',label:'Progress'}];
+
+  return (
+    <div>
+      {!IS_FREE_MODULE && !authState.hasAccess && !authState.loading && <LockedOverlay/>}
+      <PlatformSync user={authState.user} progress={progress}/>
+      <div id="lbe-audience-bar" className="no-print" style={{background:'linear-gradient(135deg,#1a1a1a,#2a2a2a)',padding:'8px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:8}}>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'#78a840'}}>AUDIENCE: Data Centre Professionals — Operators, Engineers, Fund Managers, ESG Analysts, Cost Managers</span>
+        <span style={{fontFamily:'var(--font-mono)',fontSize:'0.7rem',color:'#78a840'}}>DC-AI SERIES</span>
+      </div>
+      <header>
+        <img src={LOGO_SRC} alt="LBE Logo" style={{borderRadius:'50%',overflow:'hidden'}} />
+        <div><h1>Data Centre Power Density</h1><div className="sub">{TOOL_ID} v{TOOL_VERSION} · DC-AI Series · Legacy Business Engineers Ltd</div><div className="sub" style={{marginTop:4,fontSize:11,opacity:0.7}}>[MODULE_DESCRIPTION] — [N] levels from entry to mastery</div></div>
+        <AuthButton authState={authState} onAuthChange={()=>{}}/>
+        <button className="theme-toggle" onClick={toggleTheme}>{theme==='dark'?'☀️ Light':'🌙 Dark'}</button>
+      </header>
+      <div className="main">
+        <div className="tab-row no-print" role="tablist">
+          {tabs.map(t=>(<button key={t.id} className={'tab-btn'+(activeTab===t.id?' active':'')} role="tab" aria-selected={activeTab===t.id} onClick={()=>setActiveTab(t.id)}>{t.label}</button>))}
+        </div>
+        {activeTab==='chain' && <ChainTab setActiveTab={setActiveTab} setSelectedLevel={setSelectedLevel} selectedLevel={selectedLevel} progress={progress} persona={persona} onPersona={handlePersona} onPersonaLevel={handlePersonaLevel} PERSONA_MAP={PERSONA_MAP} cascadeResults={cascadeResults} onCascadeResult={onCascadeResult}/>}
+        {activeTab==='learn' && <LearnTab selectedLevel={selectedLevel} setSelectedLevel={setSelectedLevel} progress={progress} setProgress={setProgress}/>}
+        {activeTab==='visual'&&<VisualGuideTab/>}
+      {activeTab==='challenges' && <FieldChallengesTab/>}
+        {activeTab==='assessment' && <AssessmentTab/>}
+        {activeTab==='book' && <BookTab/>}
+        {activeTab==='progress' && <ProgressTab progress={progress} tabTimes={tabTimes}/>}
+      </div>
+      <div style={{display:'flex',gap:12,flexWrap:'wrap',margin:'0 auto',maxWidth:1100,padding:'0 20px'}} className="no-print">
+        <div style={{flex:'1 1 300px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'18px 22px',boxShadow:'0 2px 8px rgba(0,0,0,.15)'}}>
+          <div style={{fontWeight:600,fontSize:15,color:'var(--text-bright)',marginBottom:6}}>From learning to practice</div>
+          <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6}}>The real-world version of what this module teaches is a DC Performance Assessment — an independent screening of a facility's cooling chain against CRU, EED, Taxonomy, and EPA requirements. It turns the theory into measured performance data and a prioritised action list.</div>
+        </div>
+        <div style={{flex:'1 1 300px',background:'var(--surface)',border:'1px solid var(--border)',borderRadius:12,padding:'18px 22px',display:'flex',flexDirection:'column',justifyContent:'space-between',boxShadow:'0 2px 8px rgba(0,0,0,.15)'}}>
+          <div><div style={{fontWeight:600,fontSize:15,color:'var(--text-bright)',marginBottom:6}}>Questions or feedback on this content?</div><div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6}}>Technical corrections, suggestions, or industry perspective welcome.</div></div>
+          <a href="https://legacybe.ie/contact/" target="_blank" rel="noopener" style={{display:'inline-block',padding:'10px 24px',background:'var(--lbe-green)',color:'#fff',borderRadius:8,textDecoration:'none',fontWeight:600,fontSize:14,marginTop:12,textAlign:'center'}}>Send Us a Message</a>
+        </div>
+      </div>
+      <div className="series-nav no-print" style={{maxWidth:1100,margin:'0 auto',padding:'16px 20px'}}>
+        <span style={{color:'var(--text-muted)'}}>← No previous module</span>
+        <span style={{color:'var(--text-muted)',fontSize:12}}>Module 1 of 8 · DC-AI Series v1.0</span>
+        <a href="./dc-ai-002.html">DC-AI-002: Power Distribution →</a>
+      </div>
+      <div className="nav-footer no-print" style={{maxWidth:1100,margin:'0 auto',padding:'16px 20px'}}>
+        <span>© 2026 Legacy Business Engineers Ltd</span>
+        <div><a href="https://legacybe.ie" target="_blank" rel="noopener">legacybe.ie</a><a href="https://legacybe.ie/tools/" target="_blank" rel="noopener">Tools</a><a href="https://legacybe.ie/contact/" target="_blank" rel="noopener">Contact</a><a href="https://legacybe.ie/services/" target="_blank" rel="noopener">Services</a></div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<ErrorBoundary><App/></ErrorBoundary>, document.getElementById('root'));
+
+</script>
+</body>
+</html>
