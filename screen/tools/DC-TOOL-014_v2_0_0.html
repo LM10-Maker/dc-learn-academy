@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DC-TOOL-014 v2.0.0 | CRU Readiness Screener | Legacy Business Engineers</title>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+/* === THEME VARIABLES (inherited from DC-LEARN Canonical Architecture v1.1) === */
+:root,[data-theme="dark"]{
+  --bg:#0d1117;--surface:#161b22;--panel:#1c2333;
+  --border:#30363d;--border-light:#484f58;
+  --text:#e6edf3;--text-bright:#f0f6fc;--text-dim:#8b949e;--text-muted:#6e7681;
+  --accent:#58a6ff;--accent2:#79c0ff;--success:#3fb950;--warn:#d29922;--error:#f85149;
+  --lbe-green:#4a7c59;--dc-black:#1a1a1a;
+  --green:#22c55e;--green-dim:rgba(34,197,94,0.15);--green-glow:rgba(34,197,94,0.3);
+  --red:#ef4444;--red-dim:rgba(239,68,68,0.15);--red-glow:rgba(239,68,68,0.3);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,0.15);--amber-glow:rgba(245,158,11,0.3);
+  --font-sans:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace;
+}
+[data-theme="light"]{
+  --bg:#ffffff;--surface:#f6f8fa;--panel:#f0f2f5;
+  --border:#d0d7de;--border-light:#afb8c1;
+  --text:#1f2328;--text-bright:#000;--text-dim:#57606a;--text-muted:#8b949e;
+  --accent:#0969da;--accent2:#0550ae;--success:#1a7f37;--warn:#9a6700;--error:#cf222e;
+  --lbe-green:#3a6147;--dc-black:#1a1a1a;
+  --green:#16a34a;--green-dim:rgba(22,163,74,0.1);--green-glow:rgba(22,163,74,0.2);
+  --red:#dc2626;--red-dim:rgba(220,38,38,0.08);--red-glow:rgba(220,38,38,0.15);
+  --amber:#d97706;--amber-dim:rgba(217,119,6,0.08);--amber-glow:rgba(217,119,6,0.15);
+}
+
+/* === BASE === */
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);line-height:1.6;min-height:100vh}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* === HEADER === */
+header{background:var(--dc-black);padding:16px 24px;display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--lbe-green)}
+header img{height:40px;width:40px;border-radius:50%}
+header h1{font-size:18px;font-weight:700;color:#fff;flex:1}
+header .sub{font-size:12px;color:var(--text-muted);font-family:var(--font-mono)}
+.theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-family:var(--font-sans)}
+
+/* === LAYOUT === */
+.main{max-width:900px;margin:0 auto;padding:24px 16px}
+
+/* === TABS === */
+.tab-row{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:24px;overflow-x:auto}
+.tab-btn{background:transparent;border:none;color:var(--text-dim);padding:10px 18px;font-size:14px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;font-family:var(--font-sans);transition:color .2s,border-color .2s}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--text-bright);border-bottom-color:var(--green)}
+
+/* === CARDS === */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px}
+.card h2{font-size:16px;font-weight:700;color:var(--text-bright);margin-bottom:12px}
+.card h3{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+
+/* === FORM === */
+.input-group{margin-bottom:16px}
+.input-label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:4px;font-family:var(--font-mono)}
+.input-field{width:100%;padding:10px 12px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--text);font-family:var(--font-sans);font-size:14px}
+.input-field:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(88,166,255,0.15)}
+.input-field:disabled{opacity:0.5;cursor:not-allowed}
+.input-hint{font-size:11px;color:var(--text-muted);margin-top:2px}
+select.input-field{appearance:auto}
+
+/* === BUTTONS === */
+.run-btn{background:var(--lbe-green);color:#fff;border:none;padding:12px 32px;border-radius:6px;font-size:15px;font-weight:600;cursor:pointer;width:100%;font-family:var(--font-sans);transition:opacity .2s}
+.run-btn:hover{opacity:0.9}
+.run-btn:disabled{opacity:0.5;cursor:not-allowed}
+.btn-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:var(--font-sans)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+
+/* === RESULTS === */
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px}
+.traffic-light{display:inline-block;width:14px;height:14px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.tl-green{background:var(--green);box-shadow:0 0 6px var(--green-glow)}
+.tl-amber{background:var(--amber);box-shadow:0 0 6px var(--amber-glow)}
+.tl-red{background:var(--red);box-shadow:0 0 6px var(--red-glow)}
+.status-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:0.5px}
+.status-pass{background:var(--green-dim);color:var(--green)}
+.status-flag{background:var(--amber-dim);color:var(--amber)}
+.status-fail{background:var(--red-dim);color:var(--red)}
+.tier-badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:6px;font-family:var(--font-mono);vertical-align:middle}
+.tier-1{background:var(--green-dim);color:var(--green)}
+.tier-2{background:rgba(88,166,255,0.15);color:var(--accent)}
+.tier-3{background:var(--amber-dim);color:var(--amber)}
+.tier-4{background:var(--red-dim);color:var(--red)}
+
+/* === CAVEAT === */
+.caveat-box{background:var(--amber-dim);border:1px solid var(--amber);border-radius:6px;padding:12px 16px;margin:16px 0;font-size:13px;color:var(--text)}
+
+/* === PERSONA === */
+.persona-lens{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+.persona-name{font-weight:700;font-size:14px;color:var(--text-bright)}
+.persona-role{font-size:12px;color:var(--text-muted);font-family:var(--font-mono)}
+
+/* === CONFIDENCE === */
+.confidence-bar{height:8px;border-radius:4px;background:var(--panel);overflow:hidden;margin-top:4px;display:flex}
+.confidence-fill{height:100%;transition:width 0.5s}
+.conf-t1{background:var(--green)}
+.conf-t2{background:var(--accent)}
+.conf-t3{background:var(--amber)}
+.conf-t4{background:var(--red)}
+.conf-legend{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+.conf-legend-item{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim)}
+.conf-dot{width:8px;height:8px;border-radius:50%}
+
+/* === LOADING === */
+.loading-container{text-align:center;padding:48px 20px}
+.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-step{font-size:14px;color:var(--text-dim);margin-top:8px;font-family:var(--font-mono)}
+
+/* === SIGN-OFF === */
+.signoff{border-top:2px solid var(--lbe-green);padding-top:16px;margin-top:24px}
+.signoff-name{font-weight:700;font-size:15px;color:var(--text-bright)}
+.signoff-title{font-size:13px;color:var(--text-dim)}
+.signoff-pi{font-size:12px;color:var(--text-muted);font-style:italic;margin-top:4px}
+
+/* === SOFT CTA === */
+.soft-cta{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-top:24px;text-align:center}
+.soft-cta p{font-size:14px;color:var(--text-dim);margin-bottom:8px}
+.soft-cta a{color:var(--lbe-green);font-weight:600}
+
+/* === FOOTER === */
+.nav-footer{text-align:center;padding:24px 16px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);margin-top:32px}
+
+/* === ERROR === */
+.error-box{background:var(--red-dim);border:1px solid var(--red);border-radius:6px;padding:12px 16px;margin:16px 0;font-size:13px;color:var(--text)}
+
+/* === PRINT === */
+@media print{
+  .no-print{display:none!important}
+  body{background:#fff;color:#000}
+  header{background:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .result-card,.card,.persona-lens{border:1px solid #ccc;break-inside:avoid}
+  .caveat-box{background:#fff3cd;border:1px solid #d29922;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .status-pass,.status-flag,.status-fail,.tier-badge,.tl-green,.tl-amber,.tl-red{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  header{padding:12px 16px}
+  header h1{font-size:15px}
+  .main{padding:16px 12px}
+  .tab-btn{padding:8px 12px;font-size:13px}
+  .btn-row{flex-direction:column}
+  .metric-row{flex-direction:column}
+}
+
+/* === A+ INPUT SECTIONS === */
+.input-section{margin-bottom:24px}
+.input-section-header{font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:16px;font-family:var(--font-mono)}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+@media(max-width:600px){.input-grid{grid-template-columns:1fr}}
+.input-field.invalid{border-color:var(--red);box-shadow:0 0 0 2px var(--red-dim)}
+.field-error{font-size:11px;color:var(--red);margin-top:2px}
+.confirm-panel{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:20px;margin:20px 0}
+.confirm-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.confirm-row:last-child{border-bottom:none}
+.confirm-label{color:var(--text-dim)}
+.confirm-value{color:var(--text-bright);font-family:var(--font-mono);font-weight:500}
+.confirm-missing{color:var(--amber);font-style:italic}
+
+/* === A+ METRIC CARDS === */
+.metric-row{display:flex;gap:12px;margin-bottom:20px}
+.metric-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.metric-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;font-family:var(--font-mono);margin-bottom:6px}
+.metric-value{font-size:22px;font-weight:700;color:var(--text-bright)}
+.metric-sub{font-size:12px;color:var(--text-dim);margin-top:4px}
+
+/* === A+ FINDINGS CHART === */
+.findings-chart{margin:20px 0}
+.chart-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chart-bar-label{width:140px;font-size:12px;color:var(--text-dim);text-align:right;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chart-bar-track{flex:1;height:24px;background:var(--panel);border-radius:4px;overflow:hidden;position:relative}
+.chart-bar-fill{height:100%;border-radius:4px;transition:width 0.6s ease;display:flex;align-items:center;padding-left:8px}
+.chart-bar-fill span{font-size:11px;font-weight:600;color:#fff;white-space:nowrap}
+.bar-pass{background:var(--green)}
+.bar-flag{background:var(--amber)}
+.bar-fail{background:var(--red)}
+
+/* === A+ FINDING CARD === */
+.finding-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:12px;border-left:4px solid var(--border)}
+.finding-card.f-pass{border-left-color:var(--green)}
+.finding-card.f-flag{border-left-color:var(--amber)}
+.finding-card.f-fail{border-left-color:var(--red)}
+
+/* === A+ DONUT CHART === */
+.donut-container{display:flex;align-items:center;gap:32px;flex-wrap:wrap;justify-content:center}
+.donut-legend{display:flex;flex-direction:column;gap:10px}
+.donut-legend-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.donut-legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.donut-legend-count{font-family:var(--font-mono);font-weight:600;color:var(--text-bright);min-width:24px}
+
+/* === A+ PROGRESS STEPS === */
+.progress-steps{display:flex;flex-direction:column;gap:12px;max-width:400px;margin:0 auto}
+.progress-step{display:flex;align-items:center;gap:12px;font-size:14px}
+.step-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;border:2px solid var(--border);color:var(--text-muted)}
+.step-icon.done{background:var(--green-dim);border-color:var(--green);color:var(--green)}
+.step-icon.active{border-color:var(--accent);color:var(--accent);animation:pulse-step 1.5s infinite}
+.step-label{color:var(--text-dim)}
+.step-label.active{color:var(--text-bright);font-weight:500}
+.step-label.done{color:var(--text)}
+@keyframes pulse-step{0%,100%{opacity:1}50%{opacity:0.5}}
+
+/* === AUDIT TRAIL === */
+.audit-step{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:12px;font-family:var(--font-mono);font-size:13px}
+.audit-step-name{font-weight:700;font-size:14px;color:var(--text-bright);margin-bottom:8px;font-family:var(--font-sans)}
+.audit-formula{color:var(--accent);margin-bottom:6px}
+.audit-input-row{display:flex;justify-content:space-between;padding:2px 0;color:var(--text-dim)}
+.audit-input-val{color:var(--text-bright);font-weight:500}
+.audit-input-src{font-size:11px;color:var(--text-muted)}
+.audit-result{margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-weight:700;color:var(--green);font-size:15px}
+.audit-result.fail{color:var(--red)}
+.audit-result.flag{color:var(--amber)}
+.calc-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.calc-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.calc-card-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.8px;font-family:var(--font-mono);margin-bottom:4px}
+.calc-card-value{font-size:20px;font-weight:700;color:var(--text-bright)}
+.calc-card-unit{font-size:12px;color:var(--text-dim)}
+.calc-card.pass{border-color:var(--green)}
+.calc-card.fail{border-color:var(--red)}
+.calc-card.flag{border-color:var(--amber)}
+.finding-detail-calc{background:var(--panel);border-radius:6px;padding:10px 14px;margin:8px 0;font-family:var(--font-mono);font-size:12px;color:var(--text);line-height:1.8}
+.interp-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.interp-text{font-size:14px;color:var(--text);line-height:1.7;font-style:italic}
+
+</style>
+</head>
+<body>
+<script>
+window.onerror=function(msg,src,line,col,err){
+  var el=document.getElementById('root');
+  if(el){el.innerHTML='<div style="padding:32px;font-family:monospace;background:#1a1a1a;color:#f85149;border-radius:8px;margin:24px">'
+    +'<h2 style="color:#f0f6fc">DC-TOOL-014 v2.0.0 — Blank Screen Guard</h2>'
+    +'<p style="margin:12px 0">Error: '+msg+'</p>'
+    +'<p>Line: '+line+' Col: '+col+'</p>'
+    +'<p style="font-size:12px;color:#8b949e;margin-top:12px">Copy this error and send to LM at info@legacybe.ie</p>'
+    +'</div>';}
+  return true;
+};
+</script>
+<div id="root"></div>
+<script>
+var LOGO_SRC="data:image/png;base64,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";
+</script>
+<script type="text/babel">
+/* ================================================================
+   DC-TOOL-014 v2.0.0 | CRU Readiness Screener — Deterministic Calc Engine
+   DC_TOOL_FACTORY_SPEC v2.0 | Legacy Business Engineers Ltd
+   RULE: The LLM never calculates. Numbers are JavaScript. Narrative is AI.
+   ================================================================ */
+
+const TOOL_ID = 'DC-TOOL-014';
+const TOOL_VERSION = '2.0.0';
+const TOOL_NAME = 'CRU Readiness Screener';
+
+/* ================================================================
+   CANONICAL DATA (Locked — same as v1.0)
+   ================================================================ */
+const CANONICAL_DATA = {
+  grid_ef:            { value: 0.2241, unit: 'kgCO₂/kWh',  source: 'SEAI 2026',              tier: 'T1' },
+  carbon_tax_current: { value: 71,     unit: '€/tCO₂',      source: 'Budget 2025',             tier: 'T1' },
+  carbon_tax_2030:    { value: 100,    unit: '€/tCO₂',      source: 'Finance Act',             tier: 'T1' },
+  cru_renewable:      { value: 80,     unit: '%',            source: 'CRU/2025236',            tier: 'T1' },
+  crm_t4:             { value: 149960, unit: '€/MW/yr',      source: 'SEMO PCAR2829T-4',       tier: 'T1' },
+  electricity_price:  { value: 0.12,   unit: '€/kWh',        source: 'CRU Q4 2024',            tier: 'T2' },
+  taxonomy_pue:       { value: 1.3,    unit: 'threshold',    source: 'Delegated Act 2021/2139',tier: 'T1' },
+  epa_threshold:      { value: 50,     unit: 'MWth',         source: 'EPA (IE Licence)',       tier: 'T1' },
+  gas_ef:             { value: 0.205,  unit: 'tCO₂/MWh',    source: 'SEAI 2026',              tier: 'T1' },
+  ppa_price_low:      { value: 75,     unit: '€/MWh',        source: 'BNEF 2025',              tier: 'T3' },
+  ppa_price_high:     { value: 95,     unit: '€/MWh',        source: 'BNEF 2025',              tier: 'T3' }
+};
+
+/* ================================================================
+   CALC_ENGINE — CRU Readiness Screener
+   Implemented as runCalcEngine() function below (see CALC ENGINE RUNNER section).
+   10 calculations: C01–C10.
+   ================================================================ */
+
+/* ================================================================
+   FINDINGS_ENGINE — CRU Readiness Screener
+   Implemented as runFindingsEngine() function below.
+   6 findings: F01–F06. Statuses: GREEN / AMBER / RED.
+   ================================================================ */
+/* ================================================================
+   INPUT_SCHEMA — Same as v1.0 (DC-Screen aligned)
+   ================================================================ */
+const INPUT_SCHEMA = [
+  { id:'facility_name',      label:'Facility Name',              type:'text',   required:true,  demo:'Example Facility, Dublin', hint:'Internal reference name', unit:null },
+  { id:'location',           label:'Location',                   type:'text',   required:false, demo:'Dublin, Ireland',          hint:'City or area',            unit:null, default:'Dublin, Ireland' },
+  { id:'build_year',         label:'Year Built',                 type:'number', required:true,  demo:2013,                       hint:'Original commissioning',  unit:null, min:1990, max:2026 },
+  { id:'it_load_mw',         label:'IT Load',                    type:'number', required:true,  demo:2.4,                        hint:'Total IT load',           unit:'MW',  min:0.1, max:100,   step:0.1 },
+  { id:'pue',                label:'Current PUE',                type:'number', required:true,  demo:1.50,                       hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01, default:1.50 },
+  { id:'ppa_pct',            label:'Renewable PPA Coverage',     type:'number', required:true,  demo:0,                          hint:'% from renewable PPA/GOs',    unit:'%',  min:0, max:100, default:0 },
+  { id:'gen_installed_mw',   label:'Installed Generation',       type:'number', required:true,  demo:0,                          hint:'On-site generation capacity', unit:'MW',  min:0, max:200, step:0.1, default:0 },
+  { id:'gen_fuel',           label:'Generation Fuel',            type:'select', required:true,  demo:'diesel',                   hint:'Primary on-site fuel type',   unit:null, options:[
+    {value:'diesel',label:'Diesel'},{value:'gas',label:'Natural Gas'},{value:'hvo',label:'HVO'},{value:'none',label:'No on-site generation'}
+  ], default:'none' },
+  { id:'gen_gas_fraction',   label:'Gas Fraction of Generation', type:'number', required:false, demo:0,                          hint:'If mixed — gas share of generation', unit:'%', min:0, max:100, default:0 },
+  { id:'has_bess',           label:'BESS Installed?',            type:'select', required:true,  demo:'false',                    hint:'Battery Energy Storage on site',    unit:null, options:[
+    {value:'true',label:'Yes'},{value:'false',label:'No'}
+  ], default:'false' },
+  { id:'bess_mw',            label:'BESS Capacity',              type:'number', required:false, demo:0,                          hint:'Installed BESS MW (if any)',  unit:'MW',  min:0, max:100, step:0.1, default:0 }
+];
+
+const DEMO_DATA = {};
+INPUT_SCHEMA.forEach(f => { if(f.demo !== undefined && f.demo !== null) DEMO_DATA[f.id] = f.demo; });
+
+const PERSONAS = {
+  ann:    { name:'Ann',    role:'Fund Manager',      icon:'💼', color:'var(--rhetoric)' },
+  declan: { name:'Declan', role:'Ops Manager',       icon:'👷', color:'var(--logic)' },
+  mark:   { name:'Mark',   role:'MEP Engineer',      icon:'🔧', color:'var(--grammar)' },
+  sarah:  { name:'Sarah',  role:'ESG Analyst',       icon:'🌱', color:'var(--success)' },
+  tom:    { name:'Tom',    role:'QS / Cost Manager', icon:'📊', color:'var(--warn)' }
+};
+
+/* ================================================================
+   INTERPRETATION PROMPT — AI writes narrative only. Never calculates.
+   CRU Readiness Screener — Domain-specific prompt.
+   ================================================================ */
+const INTERPRETATION_PROMPT = `You are a CRU data centre policy specialist working for Legacy Business Engineers Ltd (LBE). You are interpreting pre-calculated CRU readiness screening results for a data centre facility in Ireland.
+
+CRITICAL RULES:
+- DO NOT perform any arithmetic.
+- DO NOT estimate any costs.
+- DO NOT invent any numbers.
+- Every number you reference MUST come from the CALCULATED RESULTS below.
+- Use "CRU Readiness" not "CRU Compliance."
+- Use "indicative" or "screening-level" for any cost reference.
+- Fund-manager language throughout.
+- Never say "compliant" — use "aligned" or "readiness."
+- Never say "should" or "must" — use "consider" or "investigate."
+- State: "This screening does not constitute a design deliverable or compliance determination."
+
+KEY POLICY CONTEXT (for interpretation only — do not recalculate):
+- CRU renewable obligation: 80% (CRU/2025236)
+- EU Taxonomy PUE threshold: ≤1.3 (Delegated Act 2021/2139)
+- EPA IE Licence threshold: 50 MWth
+- Carbon tax: €71/tCO₂ (2025), €100/tCO₂ (2030)
+- CRM: €149,960/MW/yr (SEMO PCAR2829T-4)
+- Decision gate: RED/AMBER → Desktop Assessment €10,000–€15,000
+
+LBE identifies and quantifies. Decision gate for next steps.
+
+Respond ONLY with a JSON object. No preamble, no markdown fences.
+{
+  "executive_summary": "3 sentences in fund-manager language interpreting the CRU readiness results. Reference the actual calculated numbers.",
+  "key_findings": "2-3 sentences on the most material CRU readiness gaps.",
+  "commercial_implications": "2-3 sentences on SEM revenue, carbon tax trajectory, and compliance cost implications.",
+  "finding_interpretations": {
+    "F01": "1-2 sentence commercial/regulatory implication for the investor",
+    "F02": "1-2 sentence implication",
+    "F03": "1-2 sentence implication",
+    "F04": "1-2 sentence implication",
+    "F05": "1-2 sentence implication",
+    "F06": "1-2 sentence implication"
+  },
+  "persona_views": {
+    "ann": "Fund manager — risk to hold thesis, cost context, exit implications",
+    "declan": "Ops manager — practical operational impact, what changes day-to-day",
+    "mark": "MEP engineer — technical path to close gaps, standards reference",
+    "sarah": "ESG analyst — reporting impact, taxonomy disclosure, SFDR alignment",
+    "tom": "QS/cost manager — capex phasing, payback context, benchmark comparison"
+  },
+  "recommended_next_step": "DESKTOP_ASSESSMENT or MONITORING",
+  "caveats": "1-2 sentences on screening limitations."
+}`;
+
+/* ================================================================
+   BSG Layer 2
+   ================================================================ */
+class ErrorBoundary extends React.Component {
+  constructor(props){ super(props); this.state = { hasError:false, error:null }; }
+  static getDerivedStateFromError(error){ return { hasError:true, error }; }
+  render(){
+    if(this.state.hasError){
+      return React.createElement('div',{style:{padding:32,fontFamily:'monospace',background:'#1a1a1a',color:'#f85149',borderRadius:8,margin:24}},
+        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-014 v2.0.0 — Error Boundary'),
+        React.createElement('p',{style:{margin:'12px 0'}},'Error: '+(this.state.error?.message||'Unknown')),
+        React.createElement('p',{style:{fontSize:12,color:'#8b949e',marginTop:12}},'Copy this error and send to LM at info@legacybe.ie')
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const { useState, useEffect, useCallback, useMemo, useRef } = React;
+
+/* ================================================================
+   CALC ENGINE RUNNER — CRU Readiness Screener (10 calcs: C01–C10)
+   Deterministic JavaScript. No AI. No network.
+   ================================================================ */
+function runCalcEngine(inputs) {
+  const it_load_mw    = Number(inputs.it_load_mw) || 0;
+  const pue           = Number(inputs.pue) || 1.5;
+  const ppa_pct       = Number(inputs.ppa_pct) || 0;
+  const gen_installed_mw = Number(inputs.gen_installed_mw) || 0;
+  const gen_fuel      = inputs.gen_fuel || 'none';
+  const gen_gas_fraction = Number(inputs.gen_gas_fraction) || 0;
+  const has_bess      = inputs.has_bess === true || inputs.has_bess === 'true';
+  const bess_mw       = Number(inputs.bess_mw) || 0;
+
+  const CRU_RENEW = 80; const GRID_EF = 0.2241; const GAS_EF = 0.205;
+  const CARBON_TAX = 71; const CARBON_TAX_30 = 100;
+  const CRM_PRICE = 149960; const TAX_PUE = 1.3; const EPA_THRESHOLD = 50;
+
+  const facility_mw  = it_load_mw * pue;
+  const facility_mwh = facility_mw * 8760;
+
+  const calcs = {};
+
+  // C01: CRU generation tier
+  const tier = facility_mw < 1 ? 'Exempt' : facility_mw < 10 ? 'Autoproducer (1–10 MVA)' : 'Full Generation Licence';
+  calcs.C01 = {
+    id:'C01', label:'CRU Generation Tier',
+    formula:'Facility MVA: <1 exempt, 1–10 autoproducer, >10 full licence',
+    inputs:{ facility_mw: Math.round(facility_mw*100)/100 },
+    result:{ tier, requires_licence: facility_mw >= 10 },
+    unit:'MVA', tier_src:'T1 — CRU'
+  };
+
+  // C02: Renewable PPA gap
+  const gap_pct = Math.max(0, CRU_RENEW - ppa_pct);
+  const gap_mwh = facility_mwh * gap_pct / 100;
+  const ppa_cost_low  = gap_mwh * 75;
+  const ppa_cost_high = gap_mwh * 95;
+  calcs.C02 = {
+    id:'C02', label:'CRU Renewable Energy Gap',
+    formula:'80% − PPA%. Gap MWh = facility × gap%. Cost = MWh × €75–95/MWh',
+    inputs:{ ppa_pct, cru_target: CRU_RENEW, facility_mwh: Math.round(facility_mwh) },
+    result:{ gap_pct, gap_mwh: Math.round(gap_mwh), compliant: ppa_pct >= CRU_RENEW, cost_low: Math.round(ppa_cost_low), cost_high: Math.round(ppa_cost_high) },
+    unit:'% / MWh / €', tier_src:'T1 — CRU/2025236, T3 — PPA pricing'
+  };
+
+  // C03: SEM revenue potential
+  const gen_mw = gen_installed_mw > 0 ? gen_installed_mw : facility_mw * 0.95;
+  const crm_low  = Math.round(gen_mw * 30000);
+  const crm_high = Math.round(gen_mw * 70000);
+  const ds3_low  = Math.round(gen_mw * 0.5 * 15000);
+  const ds3_high = Math.round(gen_mw * 0.5 * 25000);
+  calcs.C03 = {
+    id:'C03', label:'SEM Revenue Potential',
+    formula:'CRM: gen MW × €30K–70K/yr. DS3: gen MW × 0.5 × €15K–25K/yr',
+    inputs:{ gen_mw: Math.round(gen_mw*10)/10, crm_price: CRM_PRICE },
+    result:{ crm_low, crm_high, ds3_low, ds3_high, total_low: crm_low+ds3_low, total_high: crm_high+ds3_high },
+    unit:'€/yr', tier_src:'T1 — SEMO PCAR2829T-4, T3 — DS3 estimate'
+  };
+
+  // C04: Carbon trajectory (Scope 2 + Scope 1)
+  // MWh × kgCO₂/kWh = tCO₂ (1 kgCO₂/kWh × 1000 kWh/MWh / 1000 kg/t = 1 tCO₂/MWh)
+  const scope2_t = facility_mwh * GRID_EF;
+  const gas_fraction = gen_gas_fraction / 100;
+  const gas_mwh  = gen_fuel === 'gas' ? facility_mwh * gas_fraction : 0;
+  const scope1_t = gas_mwh * GAS_EF;
+  const total_t  = scope2_t + scope1_t;
+  calcs.C04 = {
+    id:'C04', label:'Carbon Trajectory',
+    formula:'Scope 2 = facility MWh × 0.2241 kgCO₂/kWh. Scope 1 = gas MWh × 0.205 tCO₂/MWh.',
+    inputs:{ facility_mwh: Math.round(facility_mwh), grid_ef: GRID_EF, gas_ef: GAS_EF },
+    result:{ scope2_t: Math.round(scope2_t), scope1_t: Math.round(scope1_t), total_t: Math.round(total_t), tax_current: Math.round(total_t*CARBON_TAX), tax_2030: Math.round(total_t*CARBON_TAX_30) },
+    unit:'tCO₂/yr', tier_src:'T1 — SEAI 2026'
+  };
+
+  // C05: EPA IE Licence check
+  const gen_thermal = gen_installed_mw / 0.40;
+  calcs.C05 = {
+    id:'C05', label:'EPA IE Licence Check',
+    formula:'Gen MW ÷ 0.40 efficiency = MWth. ≥50 MWth triggers IE Licence.',
+    inputs:{ gen_installed_mw, efficiency: 0.40, threshold: EPA_THRESHOLD },
+    result:{ thermal_mw: Math.round(gen_thermal*10)/10, exceeds: gen_thermal >= EPA_THRESHOLD },
+    unit:'MWth', tier_src:'T1 — EPA'
+  };
+
+  // C06: EU Taxonomy PUE check
+  calcs.C06 = {
+    id:'C06', label:'EU Taxonomy PUE',
+    formula:'PUE ≤1.3 (EU Taxonomy Delegated Act 2021/2139)',
+    inputs:{ pue, threshold: TAX_PUE },
+    result:{ aligned: pue <= TAX_PUE, gap: Math.round((pue - TAX_PUE)*100)/100 },
+    unit:'PUE', tier_src:'T1 — Delegated Act 2021/2139'
+  };
+
+  // C07: BESS opportunity
+  const bess_target    = Math.max(2, Math.round(facility_mw * 0.3));
+  const bess_installed = has_bess ? bess_mw : 0;
+  const bess_gap       = Math.max(0, bess_target - bess_installed);
+  calcs.C07 = {
+    id:'C07', label:'BESS Opportunity',
+    formula:'Target = max(2, facility MW × 0.3). Gap = target − installed.',
+    inputs:{ facility_mw: Math.round(facility_mw*100)/100, has_bess, bess_mw: bess_installed },
+    result:{ target: bess_target, installed: bess_installed, gap: bess_gap },
+    unit:'MW', tier_src:'T3 — BNEF'
+  };
+
+  // C08: Generation technology comparison
+  const genOpts = [
+    { name:'Gas CHP',     capex_pm: 800000, eff: 0.85, co2_pm: Math.round(0.205*1000/0.85) },
+    { name:'Gas Turbine', capex_pm: 600000, eff: 0.35, co2_pm: Math.round(0.205*1000/0.35) },
+    { name:'BESS',        capex_pm: 500000, eff: 0.90, co2_pm: 0 },
+    { name:'Diesel Gen',  capex_pm: 400000, eff: 0.40, co2_pm: Math.round(2.68*0.27*1000) }
+  ];
+  calcs.C08 = {
+    id:'C08', label:'Generation Technology Comparison',
+    formula:'4-way: Gas CHP / Gas Turbine / BESS / Diesel. CapEx = €/MW × gen MW.',
+    inputs:{ gen_mw: Math.round(gen_mw*10)/10 },
+    result: genOpts.map(o => ({ name:o.name, capex: Math.round(o.capex_pm*gen_mw), co2_per_mwh: o.co2_pm, eff_pct: Math.round(o.eff*100) })),
+    unit:'€ / kgCO₂/MWh', tier_src:'T3 — Jenbacher/Wartsila/BNEF/Caterpillar'
+  };
+
+  // C09: Compliance programme cost
+  const pue_capex  = pue > TAX_PUE ? Math.round(it_load_mw * 1000 * 1100) : 0;
+  const ppa_annual = gap_mwh > 0 ? Math.round((ppa_cost_low + ppa_cost_high) / 2) : 0;
+  calcs.C09 = {
+    id:'C09', label:'CRU Compliance Programme Cost',
+    formula:'PUE retrofit: IT MW × 1,000 kW/MW × €1,100/kW. PPA: gap MWh × €85/MWh avg.',
+    inputs:{ pue_capex, ppa_annual },
+    result:{ total_capex: pue_capex, annual_ppa: ppa_annual, payback_note: 'Offset by SEM revenue + energy savings' },
+    unit:'€', tier_src:'T3 — screening-level'
+  };
+
+  // C10: CRU readiness score (5 criteria)
+  let score = 0;
+  if (ppa_pct >= CRU_RENEW) score++;
+  if (pue <= TAX_PUE) score++;
+  if (gen_thermal < EPA_THRESHOLD) score++;
+  if (gen_fuel !== 'diesel' && gen_fuel !== '' && gen_fuel !== 'none') score++;
+  if (has_bess) score++;
+  calcs.C10 = {
+    id:'C10', label:'CRU Readiness Score',
+    formula:'5 criteria: PPA ≥80%, PUE ≤1.3, EPA clear (<50 MWth), non-diesel gen, BESS installed.',
+    inputs:{ criteria: 5 },
+    result:{ score, total: 5, pct: Math.round(score/5*100) },
+    unit:'/ 5', tier_src:'Derived'
+  };
+
+  // Build audit steps (template-compatible for AuditTrailTab)
+  const fmtResult = (c) => {
+    const r = c.result;
+    if (c.id==='C01') return r.tier + (r.requires_licence ? ' — Licence required' : '');
+    if (c.id==='C02') return 'Gap: '+r.gap_pct+'% | '+r.gap_mwh.toLocaleString()+' MWh | €'+Math.round(r.cost_low/1000)+'k–€'+Math.round(r.cost_high/1000)+'k/yr';
+    if (c.id==='C03') return '€'+Math.round(r.total_low/1000)+'k–€'+Math.round(r.total_high/1000)+'k/yr';
+    if (c.id==='C04') return r.total_t.toLocaleString()+' tCO₂/yr | Tax: €'+r.tax_current.toLocaleString()+'/yr → €'+r.tax_2030.toLocaleString()+'/yr (2030)';
+    if (c.id==='C05') return r.thermal_mw+' MWth — '+(r.exceeds ? 'EXCEEDS 50 MWth threshold' : 'Below 50 MWth threshold');
+    if (c.id==='C06') return r.aligned ? 'PUE '+c.inputs.pue+' — Aligned (≤1.3)' : 'PUE '+c.inputs.pue+' — Not aligned (gap '+r.gap+')';
+    if (c.id==='C07') return 'Target '+r.target+' MW | Installed '+r.installed+' MW | Gap '+r.gap+' MW';
+    if (c.id==='C08') return r.map(o=>''+o.name+': €'+Math.round(o.capex/1000)+'k').join(' | ');
+    if (c.id==='C09') return 'CapEx: €'+r.total_capex.toLocaleString()+' | Annual PPA: €'+r.annual_ppa.toLocaleString()+'/yr';
+    if (c.id==='C10') return r.score+'/'+r.total+' ('+r.pct+'%)';
+    return JSON.stringify(r).substring(0,80);
+  };
+
+  const steps = Object.values(calcs).map(c => ({
+    id: c.id, name: c.label, formula: c.formula,
+    value: c.result, formatted: fmtResult(c), unit: c.unit,
+    inputs_used: Object.entries(c.inputs||{}).map(([k,v]) => ({
+      label: k.replace(/_/g,' '),
+      value: typeof v==='object' ? JSON.stringify(v).substring(0,60) : v,
+      tier: (c.tier_src||'Derived').split(' ')[0],
+      source: c.tier_src||'Derived'
+    }))
+  }));
+
+  return { results: calcs, steps };
+}
+
+/* ================================================================
+   FINDINGS ENGINE — CRU Readiness Screener (6 findings: F01–F06)
+   Statuses: GREEN / AMBER / RED
+   ================================================================ */
+function runFindingsEngine(calcs) {
+  const findings = [];
+  const c = calcs;
+
+  // F01: Renewable PPA Coverage
+  const f01s = c.C02.result.compliant ? 'GREEN' : c.C02.result.gap_pct > 40 ? 'RED' : 'AMBER';
+  findings.push({
+    id:'F01', area:'Renewable PPA Coverage', category:'CRU',
+    source:'CRU/2025236', tier:'T1', status:f01s,
+    detail: c.C02.result.compliant
+      ? 'Renewable PPA at '+c.C02.inputs.ppa_pct+'% meets the CRU 80% obligation (CRU/2025236).'
+      : 'Renewable PPA at '+c.C02.inputs.ppa_pct+'% is '+c.C02.result.gap_pct+'% below the CRU 80% obligation. Gap: '+c.C02.result.gap_mwh.toLocaleString()+' MWh/yr.',
+    cost_range: c.C02.result.compliant ? null :
+      '€'+Math.round(c.C02.result.cost_low/1000)+'k–€'+Math.round(c.C02.result.cost_high/1000)+'k/yr (T3 — PPA procurement, BNEF 2025)'
+  });
+
+  // F02: EU Taxonomy PUE
+  findings.push({
+    id:'F02', area:'EU Taxonomy PUE', category:'Compliance',
+    source:'EU Taxonomy Delegated Act 2021/2139', tier:'T1',
+    status: c.C06.result.aligned ? 'GREEN' : 'RED',
+    detail: c.C06.result.aligned
+      ? 'PUE '+c.C06.inputs.pue+' is within the EU Taxonomy threshold of ≤1.3.'
+      : 'PUE '+c.C06.inputs.pue+' exceeds the EU Taxonomy threshold of ≤1.3 by '+c.C06.result.gap+' points. Cooling retrofit required.',
+    cost_range: c.C06.result.aligned ? null :
+      '€'+Math.round(c.C09.result.total_capex/1000)+'k indicative cooling retrofit (T3 — screening-level, subject to design and tender)'
+  });
+
+  // F03: EPA IE Licence
+  const f03s = c.C05.result.exceeds ? 'RED' : c.C05.result.thermal_mw > 40 ? 'AMBER' : 'GREEN';
+  findings.push({
+    id:'F03', area:'EPA IE Licence', category:'Regulatory',
+    source:'EPA (IE Licence threshold — 50 MWth)', tier:'T1', status:f03s,
+    detail: c.C05.result.exceeds
+      ? 'Installed generation of '+c.C05.inputs.gen_installed_mw+' MW = '+c.C05.result.thermal_mw+' MWth — exceeds 50 MWth EPA IE Licence threshold. Application required.'
+      : 'Installed generation = '+c.C05.result.thermal_mw+' MWth — below 50 MWth threshold. Monitor as capacity grows.',
+    cost_range: null
+  });
+
+  // F04: SEM Revenue Opportunity
+  findings.push({
+    id:'F04', area:'SEM Revenue Opportunity', category:'Commercial',
+    source:'SEMO PCAR2829T-4 (CRM) + T3 DS3 estimate', tier:'T1/T3',
+    status: c.C03.result.total_high > 500000 ? 'GREEN' : 'AMBER',
+    detail: 'SEM revenue potential: €'+Math.round(c.C03.result.total_low/1000)+'k–€'+Math.round(c.C03.result.total_high/1000)+'k/yr (CRM + DS3). Requires generation licence and dispatch capability.',
+    cost_range: null
+  });
+
+  // F05: Carbon Tax Trajectory
+  const f05s = c.C04.result.tax_2030 > 500000 ? 'RED' : c.C04.result.tax_2030 > 100000 ? 'AMBER' : 'GREEN';
+  findings.push({
+    id:'F05', area:'Carbon Tax Trajectory', category:'Carbon',
+    source:'SEAI 2026 (grid EF 0.2241); Finance Act (carbon tax)', tier:'T1', status:f05s,
+    detail: 'Carbon: '+c.C04.result.total_t.toLocaleString()+' tCO₂/yr. Tax: €'+c.C04.result.tax_current.toLocaleString()+'/yr (2025) → €'+c.C04.result.tax_2030.toLocaleString()+'/yr (2030). PPA + PUE retrofit reduce Scope 2; fuel switch reduces Scope 1.',
+    cost_range: null
+  });
+
+  // F06: CRU Readiness Score
+  const sc = c.C10.result;
+  const f06s = sc.pct >= 80 ? 'GREEN' : sc.pct >= 40 ? 'AMBER' : 'RED';
+  findings.push({
+    id:'F06', area:'CRU Readiness Score', category:'Summary',
+    source:'Derived — 5 criteria', tier:'Derived', status:f06s,
+    detail: 'CRU Readiness Score: '+sc.score+'/'+sc.total+' ('+sc.pct+'%). '+(sc.score===sc.total ? 'Fully ready.' : (sc.total-sc.score)+' area(s) require attention: PPA ≥80%, PUE ≤1.3, EPA clear, non-diesel generation, BESS installed.'),
+    cost_range: sc.pct < 80 ? 'Desktop Assessment: €10,000–€15,000 (T3 — LBE)' : null
+  });
+
+  const rc = findings.filter(f=>f.status==='RED').length;
+  const ac = findings.filter(f=>f.status==='AMBER').length;
+  return { findings, summary: { red_count:rc, amber_count:ac, green_count:findings.length-rc-ac, overall:rc>0?'RED':ac>0?'AMBER':'GREEN' } };
+}
+
+function deriveTrafficLight(findings) {
+  if (findings.some(f => f.status === 'RED')) return 'RED';
+  if (findings.some(f => f.status === 'AMBER')) return 'AMBER';
+  return 'GREEN';
+}
+
+/* ================================================================
+   HELPERS
+   ================================================================ */
+function tlClass(s){ if(!s)return''; s=s.toUpperCase(); return s==='GREEN'||s==='PASS'?'tl-green':s==='AMBER'||s==='FLAG'?'tl-amber':'tl-red'; }
+function statusClass(s){ if(!s)return''; s=s.toUpperCase(); return s==='GREEN'||s==='PASS'?'status-pass':s==='AMBER'||s==='FLAG'?'status-flag':'status-fail'; }
+function tierClass(t){ if(!t)return'tier-3'; return 'tier-'+t.replace('T',''); }
+
+/* ================================================================
+   COMPONENT: InputTab (same A+ pattern as v1.0)
+   ================================================================ */
+function InputTab({ inputs, setInputs, onRun, loading }){
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [touched, setTouched] = useState({});
+  const handleChange = (id, value) => { setInputs(prev => ({...prev, [id]: value})); setTouched(prev => ({...prev, [id]: true})); };
+  const loadDemo = () => { setInputs({...DEMO_DATA}); setTouched({}); setShowConfirm(false); };
+  const handleExport = () => { const b=new Blob([JSON.stringify(inputs,null,2)],{type:'application/json'}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download=TOOL_ID+'_inputs.json'; a.click(); URL.revokeObjectURL(u); };
+  const handleImport = () => { const i=document.createElement('input'); i.type='file'; i.accept='.json'; i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{setInputs(prev=>({...prev,...JSON.parse(ev.target.result)}))}catch(err){alert('Invalid JSON')}};r.readAsText(f)}; i.click(); };
+
+  const missingRequired = INPUT_SCHEMA.filter(f=>f.required).filter(f=>{const v=inputs[f.id];return v===undefined||v===null||v==='';});
+  const allValid = missingRequired.length === 0;
+  const filledCount = INPUT_SCHEMA.filter(f=>{const v=inputs[f.id];return v!==undefined&&v!==null&&v!=='';}).length;
+
+  const SECTIONS = [
+    { title: 'Facility Identity',     ids: ['facility_name','location','build_year'] },
+    { title: 'IT Load & Efficiency',  ids: ['it_load_mw','pue'] },
+    { title: 'Renewable Energy',      ids: ['ppa_pct'] },
+    { title: 'On-Site Generation',    ids: ['gen_installed_mw','gen_fuel','gen_gas_fraction'] },
+    { title: 'Energy Storage (BESS)', ids: ['has_bess','bess_mw'] }
+  ];
+
+  const renderField = (field) => {
+    const isEmpty = field.required && touched[field.id] && (inputs[field.id]===undefined||inputs[field.id]===null||inputs[field.id]==='');
+    return (
+      <div className="input-group" key={field.id}>
+        <label className="input-label">{field.label}{field.unit?' ('+field.unit+')':''}{field.required?' *':''}</label>
+        {field.type==='select'?(
+          <select className={'input-field'+(isEmpty?' invalid':'')} value={inputs[field.id]||''} onChange={e=>handleChange(field.id,e.target.value)}>
+            <option value="">— Select —</option>
+            {(field.options||[]).map(opt=>{const val=typeof opt==='object'?opt.value:opt;const lab=typeof opt==='object'?opt.label:opt;return <option key={val} value={val}>{lab}</option>;})}
+          </select>
+        ):(
+          <input className={'input-field'+(isEmpty?' invalid':'')} type={field.type==='number'?'number':'text'}
+            value={inputs[field.id]!==undefined&&inputs[field.id]!==null?inputs[field.id]:''}
+            onChange={e=>handleChange(field.id,field.type==='number'?(e.target.value===''?'':Number(e.target.value)):e.target.value)}
+            min={field.min} max={field.max} step={field.step} placeholder={field.hint}/>
+        )}
+        {isEmpty&&<div className="field-error">Required</div>}
+        {!isEmpty&&field.hint&&<div className="input-hint">{field.hint}</div>}
+      </div>
+    );
+  };
+
+  if(showConfirm) return (
+    <div>
+      <div className="confirm-panel">
+        <h2 style={{fontSize:16,fontWeight:700,color:'var(--text-bright)',marginBottom:16}}>Confirm Screening</h2>
+        <p style={{fontSize:13,color:'var(--text-dim)',marginBottom:16}}>{filledCount} of {INPUT_SCHEMA.length} fields provided.</p>
+        {INPUT_SCHEMA.map(f=>{const v=inputs[f.id];const has=v!==undefined&&v!==null&&v!=='';return(
+          <div className="confirm-row" key={f.id}><span className="confirm-label">{f.label}</span>{has?<span className="confirm-value">{v}{f.unit?' '+f.unit:''}</span>:<span className="confirm-missing">not provided</span>}</div>
+        );})}
+      </div>
+      <div style={{display:'flex',gap:12}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={()=>setShowConfirm(false)}>Edit Inputs</button>
+        <button className="run-btn" style={{flex:2}} onClick={()=>{setShowConfirm(false);onRun();}}>Run Screening</button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="btn-row no-print">
+        <button className="btn-secondary" onClick={loadDemo}>Load Demo Data</button>
+        <button className="btn-secondary" onClick={handleImport}>Import JSON</button>
+        <button className="btn-secondary" onClick={handleExport}>Export JSON</button>
+      </div>
+      {SECTIONS.map(sec=>(
+        <div className="input-section" key={sec.title}>
+          <div className="input-section-header">{sec.title}</div>
+          <div className="input-grid">{sec.ids.map(id=>{const field=INPUT_SCHEMA.find(f=>f.id===id);return field?renderField(field):null;})}</div>
+        </div>
+      ))}
+      <button className="run-btn" disabled={loading} onClick={()=>{if(!allValid){const t={};INPUT_SCHEMA.filter(f=>f.required).forEach(f=>t[f.id]=true);setTouched(prev=>({...prev,...t}));return;}setShowConfirm(true);}}>
+        {loading?'Running...':'Review & Run Screening'}
+      </button>
+      {!allValid&&Object.keys(touched).length>0&&<div style={{textAlign:'center',marginTop:8,fontSize:13,color:'var(--red)'}}>{missingRequired.length} required field{missingRequired.length>1?'s':''} missing</div>}
+    </div>
+  );
+}
+
+/* ================================================================
+   COMPONENT: CalculationsTab — INSTANT. No API. Deterministic.
+   ================================================================ */
+function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
+  if(!calcSteps) return (
+    <div className="card" style={{textAlign:'center',padding:48}}>
+      <div style={{fontSize:32,marginBottom:12}}>🔢</div>
+      <div style={{fontSize:16,color:'var(--text-dim)'}}>Enter facility data and run screening to see calculations</div>
+    </div>
+  );
+
+  const passCount = findings.filter(f=>f.status==='GREEN').length;
+  const flagCount = findings.filter(f=>f.status==='AMBER').length;
+  const failCount = findings.filter(f=>f.status==='RED').length;
+
+  return (
+    <div>
+      <div className="card">
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
+          <span style={{fontSize:11,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'1px',fontFamily:'var(--font-mono)'}}>Deterministic Results</span>
+          <span style={{fontSize:11,color:'var(--text-muted)'}}>— calculated by JavaScript, not AI</span>
+        </div>
+        <div className="calc-summary">
+          <div className={'calc-card '+(trafficLight==='GREEN'?'pass':trafficLight==='RED'?'fail':'flag')}>
+            <div className="calc-card-label">Risk Level</div>
+            <div className="calc-card-value"><span className={'traffic-light '+tlClass(trafficLight)} style={{marginRight:4}}></span>{trafficLight}</div>
+            <div className="calc-card-unit">{failCount} red, {flagCount} amber, {passCount} green</div>
+          </div>
+          {calcSteps.filter(s=>['C04','C06','C10'].includes(s.id)).map(s=>(
+            <div className="calc-card" key={s.id}>
+              <div className="calc-card-label">{s.name}</div>
+              <div className="calc-card-value">{s.formatted}</div>
+              <div className="calc-card-unit">{s.unit}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <h2>Findings (Rule-Based)</h2>
+        {findings.map(f=>(
+          <div className={'finding-card'+(f.status==='GREEN'?' f-pass':f.status==='RED'?' f-fail':' f-flag')} key={f.id}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+              <span className={'status-badge '+statusClass(f.status)}>{f.status}</span>
+              <span style={{fontWeight:600,color:'var(--text-bright)',fontSize:15,flex:1}}>{f.area}</span>
+              <span className={'tier-badge '+tierClass(f.tier)}>{f.tier}</span>
+            </div>
+            <div className="finding-detail-calc">{f.detail}</div>
+            {f.cost_range&&<p style={{fontSize:13,color:'var(--warn)',fontFamily:'var(--font-mono)',marginTop:8}}>Indicative cost: {f.cost_range}</p>}
+            <p style={{fontSize:11,color:'var(--text-muted)',fontFamily:'var(--font-mono)',marginTop:4}}>Source: {f.source}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="caveat-box">
+        All calculations above are deterministic JavaScript — same inputs always produce same outputs. Verify with any calculator. AI interpretation (next tab) does not modify any calculated value.
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   COMPONENT: ReportTab — JS numbers + AI narrative combined
+   ================================================================ */
+function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, interpreting }){
+  if(!calcSteps) return (
+    <div className="card" style={{textAlign:'center',padding:48}}>
+      <div style={{fontSize:32,marginBottom:12}}>📊</div>
+      <div style={{fontSize:16,color:'var(--text-dim)'}}>Run a screening to generate the report</div>
+    </div>
+  );
+
+  const today = new Date().toLocaleDateString('en-IE',{day:'numeric',month:'long',year:'numeric'});
+  const passCount = findings.filter(f=>f.status==='GREEN').length;
+  const flagCount = findings.filter(f=>f.status==='AMBER').length;
+  const failCount = findings.filter(f=>f.status==='RED').length;
+
+  return (
+    <div>
+      <div className="btn-row no-print"><button className="btn-secondary" onClick={()=>window.print()}>Print / Save PDF</button></div>
+
+      {/* Header */}
+      <div className="card">
+        <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
+          <img src={LOGO_SRC} alt="LBE" style={{height:40,width:40,borderRadius:'50%'}}/>
+          <div>
+            <div style={{fontWeight:700,fontSize:16,color:'var(--text-bright)'}}>DC Screening Assessment</div>
+            <div style={{fontSize:12,color:'var(--text-muted)',fontFamily:'var(--font-mono)'}}>{TOOL_ID} v{TOOL_VERSION} | {today}</div>
+          </div>
+        </div>
+        <div style={{fontSize:14,color:'var(--text)'}}>
+          <strong>Facility:</strong> {inputs.facility_name||'—'}{inputs.location?' | '+inputs.location:''}{inputs.it_load_mw?' | '+inputs.it_load_mw+' MW IT':''}{inputs.pue?' | PUE '+inputs.pue:''}
+        </div>
+      </div>
+
+      {/* Metrics */}
+      <div className="metric-row">
+        <div className="metric-card">
+          <div className="metric-label">Risk Level</div>
+          <div className="metric-value"><span className={'traffic-light '+tlClass(trafficLight)} style={{marginRight:6}}></span>{trafficLight}</div>
+          <div className="metric-sub">{failCount} red, {flagCount} amber, {passCount} green</div>
+        </div>
+        {calcSteps.filter(s=>s.id==='C10').map(s=>(
+          <div className="metric-card" key={s.id}>
+            <div className="metric-label">CRU Readiness</div>
+            <div className="metric-value" style={{color:'var(--warn)'}}>{s.formatted}</div>
+            <div className="metric-sub">score (deterministic)</div>
+          </div>
+        ))}
+        <div className="metric-card">
+          <div className="metric-label">Next Step</div>
+          <div className="metric-value" style={{fontSize:14}}>{interpretation?.decision_gate?.replace(/_/g,' ')||'Awaiting interpretation...'}</div>
+          <div className="metric-sub">Decision gate</div>
+        </div>
+      </div>
+
+      {/* Executive Summary — AI narrative */}
+      <div className="result-card">
+        <div className="interp-label">AI Interpretation</div>
+        {interpreting ? <p style={{color:'var(--text-dim)',fontStyle:'italic'}}>Generating interpretation...</p>
+         : interpretation?.executive_summary ? <p className="interp-text">{interpretation.executive_summary}</p>
+         : <p style={{color:'var(--text-dim)'}}>Interpretation not available. Calculated results shown below.</p>}
+      </div>
+
+      <div className="caveat-box">
+        This screening does not constitute a design deliverable or compliance determination. All quantitative figures are deterministic calculations (see Audit Trail tab). AI interpretation provides qualitative context only and does not modify any calculated value.
+      </div>
+
+      {/* Findings with calcs + interpretation */}
+      {findings.map(f=>(
+        <div className={'finding-card'+(f.status==='GREEN'?' f-pass':f.status==='RED'?' f-fail':' f-flag')} key={f.id}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+            <span className={'status-badge '+statusClass(f.status)}>{f.status}</span>
+            <span style={{fontWeight:600,color:'var(--text-bright)',fontSize:15,flex:1}}>{f.area}</span>
+            <span className={'tier-badge '+tierClass(f.tier)}>{f.tier}</span>
+          </div>
+          <div className="finding-detail-calc">{f.detail}</div>
+          {interpretation?.finding_interpretations?.[f.id]&&(
+            <div style={{marginTop:8}}>
+              <div className="interp-label">Interpretation</div>
+              <p className="interp-text">{interpretation.finding_interpretations[f.id]}</p>
+            </div>
+          )}
+          {f.cost_range&&<p style={{fontSize:13,color:'var(--warn)',fontFamily:'var(--font-mono)',marginTop:8}}>Indicative cost: {f.cost_range}</p>}
+          <p style={{fontSize:11,color:'var(--text-muted)',fontFamily:'var(--font-mono)',marginTop:4}}>Source: {f.source}</p>
+        </div>
+      ))}
+
+      {/* Personas — AI narrative */}
+      {interpretation?.persona_views&&(
+        <div className="card">
+          <h2>Stakeholder Perspectives</h2>
+          <div className="interp-label" style={{marginBottom:12}}>AI Interpretation — qualitative context only</div>
+          {Object.entries(PERSONAS).map(([key,p])=>(
+            interpretation.persona_views[key]?(
+              <div className="persona-lens" key={key}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                  <span style={{fontSize:18}}>{p.icon}</span>
+                  <span className="persona-name">{p.name}</span>
+                  <span className="persona-role">{p.role}</span>
+                </div>
+                <p className="interp-text">{interpretation.persona_views[key]}</p>
+              </div>
+            ):null
+          ))}
+        </div>
+      )}
+
+      {/* Sign-off */}
+      <div className="signoff">
+        <div className="signoff-name">Les Murphy CEng MIEI</div>
+        <div className="signoff-title">Independent Technical Advisor</div>
+        <div className="signoff-title">Legacy Business Engineers Ltd</div>
+        <div className="signoff-pi">PI Insurance: confirmed</div>
+      </div>
+      <div className="soft-cta">
+        <p>Need a Desktop Assessment (€10,000–€15,000) or Disposal Analysis (€8,000–€12,000)?</p>
+        <a href="mailto:info@legacybe.ie">info@legacybe.ie</a>
+        <span style={{margin:'0 8px',color:'var(--text-muted)'}}>|</span>
+        <a href="https://legacybe.ie" target="_blank" rel="noopener">legacybe.ie</a>
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   COMPONENT: AuditTrailTab — Every formula, every step, printable
+   ================================================================ */
+function AuditTrailTab({ calcSteps, inputs }){
+  if(!calcSteps) return (
+    <div className="card" style={{textAlign:'center',padding:48}}>
+      <div style={{fontSize:32,marginBottom:12}}>📋</div>
+      <div style={{fontSize:16,color:'var(--text-dim)'}}>Run a screening to see the audit trail</div>
+    </div>
+  );
+
+  const today = new Date().toLocaleDateString('en-IE',{day:'numeric',month:'long',year:'numeric'});
+
+  return (
+    <div>
+      <div className="btn-row no-print"><button className="btn-secondary" onClick={()=>window.print()}>Print Audit Trail</button></div>
+
+      <div className="card">
+        <h2>Calculation Audit Trail</h2>
+        <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:16}}>
+          {TOOL_ID} v{TOOL_VERSION} | {inputs.facility_name||'—'} | {today}
+        </div>
+        <div className="caveat-box" style={{marginBottom:20}}>
+          Every calculation below is deterministic JavaScript. Same inputs always produce same outputs. AI interpretation does not modify any value. Verify with any calculator.
+        </div>
+
+        {calcSteps.map((step, i) => (
+          <div className="audit-step" key={step.id}>
+            <div className="audit-step-name">Step {i+1}: {step.name}</div>
+            <div className="audit-formula">Formula: {step.formula}</div>
+            {step.inputs_used.map((inp, j) => (
+              <div className="audit-input-row" key={j}>
+                <span>{inp.label}</span>
+                <span>
+                  <span className="audit-input-val">{inp.formatted || inp.value}{inp.value !== undefined && step.unit ? '' : ''}</span>
+                  {' '}
+                  <span className="audit-input-src">[{inp.tier || 'calc'} — {inp.source}]</span>
+                </span>
+              </div>
+            ))}
+            <div className={'audit-result' + (step.value === false ? ' fail' : '')}>
+              Result: {step.formatted} {step.unit}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <h2>Canonical Data Used</h2>
+        <div style={{overflowX:'auto'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:13}}>
+            <thead>
+              <tr style={{borderBottom:'2px solid var(--border)'}}>
+                {['Parameter','Value','Unit','Source','Tier'].map(h=>(
+                  <th key={h} style={{textAlign:'left',padding:'8px 12px',color:'var(--text-muted)',fontFamily:'var(--font-mono)',fontWeight:600,fontSize:11,textTransform:'uppercase'}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(CANONICAL_DATA).map(([key, cd]) => (
+                <tr key={key} style={{borderBottom:'1px solid var(--border)'}}>
+                  <td style={{padding:'8px 12px',color:'var(--text)'}}>{key.replace(/_/g,' ')}</td>
+                  <td style={{padding:'8px 12px',color:'var(--text-bright)',fontFamily:'var(--font-mono)',fontWeight:600}}>{cd.value}</td>
+                  <td style={{padding:'8px 12px',color:'var(--text-dim)'}}>{cd.unit}</td>
+                  <td style={{padding:'8px 12px',color:'var(--text-dim)'}}>{cd.source}</td>
+                  <td style={{padding:'8px 12px'}}><span className={'tier-badge '+tierClass(cd.tier)}>{cd.tier}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="nav-footer">
+        All calculations are deterministic. No AI involvement in any numerical output. Audit trail generated by {TOOL_ID} v{TOOL_VERSION}.
+      </div>
+    </div>
+  );
+}
+
+/* ================================================================
+   COMPONENT: App — Runs calcs (instant) + requests interpretation (API)
+   ================================================================ */
+function App(){
+  const [theme, setTheme] = useState('dark');
+  const [activeTab, setActiveTab] = useState('input');
+  const [inputs, setInputs] = useState({});
+  const [calcSteps, setCalcSteps] = useState(null);
+  const [findings, setFindings] = useState([]);
+  const [trafficLight, setTrafficLight] = useState(null);
+  const [interpretation, setInterpretation] = useState(null);
+  const [interpreting, setInterpreting] = useState(false);
+  const [error, setError] = useState(null);
+
+  const toggleTheme = () => { const n=theme==='dark'?'light':'dark'; setTheme(n); document.documentElement.setAttribute('data-theme',n); };
+
+  const runScreening = async () => {
+    // STEP 1: Run calcs INSTANTLY (no API)
+    const { results, steps } = runCalcEngine(inputs);
+    setCalcSteps(steps);
+
+    const { findings: fFindings } = runFindingsEngine(results);
+    setFindings(fFindings);
+
+    const tl = deriveTrafficLight(fFindings);
+    setTrafficLight(tl);
+
+    // Show calculations tab immediately
+    setActiveTab('calculations');
+
+    // STEP 2: Request AI interpretation (async, non-blocking)
+    setInterpreting(true);
+    setInterpretation(null);
+    setError(null);
+
+    try {
+      const calcSummary = steps.map(s => s.name + ': ' + s.formatted + ' ' + s.unit).join('\n');
+      const findingSummary = fResults.map(f => f.area + ': ' + f.status + ' — ' + f.detail).join('\n');
+
+      const userPrompt = 'FACILITY: ' + (inputs.facility_name||'Unknown') + ' | ' + (inputs.location||'') + ' | Built ' + (inputs.build_year||'?') + '\n\nCALCULATED RESULTS:\n' + calcSummary + '\n\nFINDINGS:\n' + findingSummary + '\n\nTraffic light: ' + tl + '\n\nInterpret these pre-calculated results. Do not perform any arithmetic.';
+
+      const response = await fetch('https://iphonednnnqhxvhypvwn.supabase.co/functions/v1/tool-interpret', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwaG9uZWRubm5xaHh2aHlwdnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDU0MzMsImV4cCI6MjA4OTc4MTQzM30.VoexekmmKTbiLOBcROZl4YxUnx-A3EP8Rj7J72FBWAU' },
+        body: JSON.stringify({
+          system_prompt: INTERPRETATION_PROMPT,
+          user_message: userPrompt,
+          max_tokens: 8000
+        })
+      });
+
+      if(!response.ok) throw new Error('API error: ' + response.status);
+      const data = await response.json();
+      const text = data.content.filter(i=>i.type==='text').map(i=>i.text).join('');
+      const clean = text.replace(/```json\s*/g,'').replace(/```\s*/g,'').trim();
+
+      // Try parse
+      try { setInterpretation(JSON.parse(clean)); }
+      catch(e) {
+        const first = text.indexOf('{'); const last = text.lastIndexOf('}');
+        if(first!==-1&&last>first) { try { setInterpretation(JSON.parse(text.substring(first,last+1))); } catch(e2) { setError('Interpretation parse failed. Calculated results are still valid.'); } }
+        else setError('Interpretation unavailable. Calculated results are still valid.');
+      }
+    } catch(err) {
+      setError('Interpretation unavailable: ' + err.message + '. Calculated results are still valid — see Calculations and Audit Trail tabs.');
+    } finally {
+      setInterpreting(false);
+    }
+  };
+
+  const TABS = [
+    { id:'input',        label:'📋 Input' },
+    { id:'calculations', label:'🔢 Calculations' },
+    { id:'report',       label:'📊 Report' },
+    { id:'audit',        label:'📋 Audit Trail' }
+  ];
+
+  return (
+    <div>
+      <header>
+        <img src={LOGO_SRC} alt="LBE" />
+        <div style={{flex:1}}>
+          <h1>{TOOL_NAME}</h1>
+          <div className="sub">{TOOL_ID} v{TOOL_VERSION} | Legacy Business Engineers</div>
+        </div>
+        <button className="theme-toggle no-print" onClick={toggleTheme}>{theme==='dark'?'☀️':'🌙'}</button>
+      </header>
+      <div className="main">
+        <div className="tab-row no-print">
+          {TABS.map(tab=>(<button key={tab.id} className={'tab-btn'+(activeTab===tab.id?' active':'')} onClick={()=>setActiveTab(tab.id)}>{tab.label}</button>))}
+        </div>
+
+        {activeTab==='input'&&<InputTab inputs={inputs} setInputs={setInputs} onRun={runScreening} loading={interpreting}/>}
+        {activeTab==='calculations'&&<CalculationsTab calcSteps={calcSteps} findings={findings} trafficLight={trafficLight} inputs={inputs}/>}
+        {activeTab==='report'&&<ReportTab calcSteps={calcSteps} findings={findings} trafficLight={trafficLight} interpretation={interpretation} inputs={inputs} interpreting={interpreting}/>}
+        {activeTab==='audit'&&<AuditTrailTab calcSteps={calcSteps} inputs={inputs}/>}
+
+        {error&&<div className="error-box no-print" style={{marginTop:16}}><strong>Note:</strong> {error}</div>}
+
+        <div className="nav-footer no-print">
+          <div>{TOOL_ID} v{TOOL_VERSION} | Calculations: deterministic JavaScript | Interpretation: AI (Sonnet)</div>
+          <div style={{marginTop:4}}>© 2026 Legacy Business Engineers Ltd | <a href="https://legacybe.ie">legacybe.ie</a></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('root'));
+</script>
+</body>
+</html>
