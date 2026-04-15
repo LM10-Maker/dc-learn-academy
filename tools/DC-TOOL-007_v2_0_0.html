@@ -281,351 +281,447 @@ const CANONICAL_DATA = {
 };
 
 /* ================================================================
-   CALC_ENGINE — Deterministic JavaScript. No AI. No network.
-   Replace per tool. Every formula visible and auditable.
+   CALC ENGINE — 15 calculations C01-C15. Deterministic. No AI.
+   DC-TOOL-007 v2.0.0 | Regulatory Gap Screener
+   Source: DC_TOOL_007_CALC_ENGINE_v2_0.md
    ================================================================ */
-const CALC_ENGINE = [
-  {
-    id: 'facility_load_mw',
-    name: 'Total Facility Load',
-    formula: 'IT Load × PUE',
-    calc: (inp) => inp.it_load_mw * inp.pue,
-    unit: 'MW',
-    format: (v) => v.toFixed(2),
-    inputs_used: [
-      { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
-      { id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' }
-    ]
-  },
-  {
-    id: 'annual_energy_mwh',
-    name: 'Annual Energy Consumption',
-    formula: 'Facility Load × 8,760 hours',
-    calc: (inp, res) => res.facility_load_mw * 8760,
-    unit: 'MWh/yr',
-    format: (v) => Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'facility_load_mw', label: 'Facility Load', source: 'Step above' }
-    ]
-  },
-  {
-    id: 'co2_tonnes',
-    name: 'Annual CO₂ Emissions (Scope 2)',
-    formula: 'Annual Energy × Grid Emission Factor',
-    calc: (inp, res) => res.annual_energy_mwh * CANONICAL_DATA.grid_ef.value,
-    unit: 'tCO₂/yr',
-    format: (v) => Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'annual_energy_mwh', label: 'Annual Energy', source: 'Step above' },
-      { id: 'grid_ef', label: 'Grid EF', tier: 'T1', source: CANONICAL_DATA.grid_ef.source }
-    ]
-  },
-  {
-    id: 'carbon_cost_current',
-    name: 'Current Annual Carbon Cost',
-    formula: 'CO₂ Emissions × Carbon Tax (€71/tCO₂)',
-    calc: (inp, res) => res.co2_tonnes * CANONICAL_DATA.carbon_tax_current.value,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'co2_tonnes', label: 'CO₂ Emissions', source: 'Step above' },
-      { id: 'carbon_tax_current', label: 'Carbon Tax', tier: 'T1', source: CANONICAL_DATA.carbon_tax_current.source }
-    ]
-  },
-  {
-    id: 'carbon_cost_2030',
-    name: '2030 Annual Carbon Cost',
-    formula: 'CO₂ Emissions × Carbon Tax 2030 (€100/tCO₂)',
-    calc: (inp, res) => res.co2_tonnes * CANONICAL_DATA.carbon_tax_2030.value,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'co2_tonnes', label: 'CO₂ Emissions', source: 'Step above' },
-      { id: 'carbon_tax_2030', label: 'Carbon Tax 2030', tier: 'T1', source: CANONICAL_DATA.carbon_tax_2030.source }
-    ]
-  },
-  {
-    id: 'carbon_cost_escalation',
-    name: 'Annual Carbon Cost Escalation by 2030',
-    formula: '2030 Carbon Cost − Current Carbon Cost',
-    calc: (inp, res) => res.carbon_cost_2030 - res.carbon_cost_current,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'carbon_cost_2030', label: '2030 Cost', source: 'Step above' },
-      { ref: 'carbon_cost_current', label: 'Current Cost', source: 'Step above' }
-    ]
-  },
-  {
-    id: 'pue_gap',
-    name: 'PUE Gap to EU Taxonomy',
-    formula: 'Current PUE − Taxonomy Threshold (1.3)',
-    calc: (inp) => Math.max(0, inp.pue - CANONICAL_DATA.taxonomy_pue.value),
-    unit: 'PUE points',
-    format: (v) => v.toFixed(2),
-    inputs_used: [
-      { id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' },
-      { id: 'taxonomy_pue', label: 'EU Taxonomy Threshold', tier: 'T1', source: CANONICAL_DATA.taxonomy_pue.source }
-    ]
-  },
-  {
-    id: 'taxonomy_aligned',
-    name: 'EU Taxonomy PUE Alignment',
-    formula: 'PUE ≤ 1.3?',
-    calc: (inp) => inp.pue <= CANONICAL_DATA.taxonomy_pue.value,
-    unit: 'Yes/No',
-    format: (v) => v ? 'ALIGNED' : 'NOT ALIGNED',
-    inputs_used: [
-      { id: 'pue', label: 'Current PUE', tier: 'T1', source: 'User input' },
-      { id: 'taxonomy_pue', label: 'Threshold', tier: 'T1', source: CANONICAL_DATA.taxonomy_pue.source }
-    ]
-  },
-  {
-    id: 'renewable_gap',
-    name: 'Renewable Energy Gap to CRU Obligation',
-    formula: 'CRU Obligation (80%) − Current Renewable %',
-    calc: (inp) => Math.max(0, CANONICAL_DATA.cru_renewable.value - (inp.ppa_pct || 0)),
-    unit: '% points',
-    format: (v) => v.toFixed(0),
-    inputs_used: [
-      { id: 'ppa_pct', label: 'Current Renewable %', tier: 'T1', source: 'User input' },
-      { id: 'cru_renewable', label: 'CRU Obligation', tier: 'T1', source: CANONICAL_DATA.cru_renewable.source }
-    ]
-  },
-  {
-    id: 'overhead_mwh',
-    name: 'Overhead Energy (non-IT)',
-    formula: '(Facility Load − IT Load) × 8,760',
-    calc: (inp, res) => (res.facility_load_mw - inp.it_load_mw) * 8760,
-    unit: 'MWh/yr',
-    format: (v) => Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'facility_load_mw', label: 'Facility Load', source: 'Step above' },
-      { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' }
-    ]
-  },
-  {
-    id: 'overhead_cost',
-    name: 'Overhead Energy Cost',
-    formula: 'Overhead Energy × Electricity Price (€0.12/kWh)',
-    calc: (inp, res) => res.overhead_mwh * CANONICAL_DATA.electricity_price.value * 1000,
-    unit: '€/yr',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { ref: 'overhead_mwh', label: 'Overhead Energy', source: 'Step above' },
-      { id: 'electricity_price', label: 'Electricity Price', tier: 'T2', source: CANONICAL_DATA.electricity_price.source }
-    ]
-  },
-  {
-    id: 'retrofit_cost_min',
-    name: 'Indicative Retrofit Cost (low)',
-    formula: 'IT Load × €500,000/MW',
-    calc: (inp) => inp.it_load_mw * CANONICAL_DATA.retrofit_capex_min.value,
-    unit: '€',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
-      { id: 'retrofit_capex_min', label: 'Low cost rate', tier: 'T3', source: CANONICAL_DATA.retrofit_capex_min.source }
-    ]
-  },
-  {
-    id: 'retrofit_cost_max',
-    name: 'Indicative Retrofit Cost (high)',
-    formula: 'IT Load × €1,500,000/MW',
-    calc: (inp) => inp.it_load_mw * CANONICAL_DATA.retrofit_capex_max.value,
-    unit: '€',
-    format: (v) => '€' + Math.round(v).toLocaleString(),
-    inputs_used: [
-      { id: 'it_load_mw', label: 'IT Load', tier: 'T1', source: 'User input' },
-      { id: 'retrofit_capex_max', label: 'High cost rate', tier: 'T3', source: CANONICAL_DATA.retrofit_capex_max.source }
-    ]
-  }
-];
 
-/* ================================================================
-   FINDINGS_ENGINE — Rule-based. Deterministic. No AI.
-   Replace per tool.
-   ================================================================ */
-const FINDINGS_ENGINE = [
-  {
-    id: 'pue_taxonomy',
-    area: 'EU Taxonomy PUE Alignment',
-    source: 'EU Taxonomy Delegated Act 2021/2139',
-    tier: 'T1',
-    evaluate: (inp, res) => ({
-      status: res.taxonomy_aligned ? 'PASS' : 'FAIL',
-      detail: res.taxonomy_aligned
-        ? 'PUE ' + inp.pue + ' is within the EU Taxonomy threshold of ≤' + CANONICAL_DATA.taxonomy_pue.value + '.'
-        : 'PUE ' + inp.pue + ' exceeds the EU Taxonomy threshold of ≤' + CANONICAL_DATA.taxonomy_pue.value + ' by ' + res.pue_gap.toFixed(2) + ' points. Overhead energy: ' + Math.round(res.overhead_mwh).toLocaleString() + ' MWh/yr costing ' + CALC_ENGINE.find(c=>c.id==='overhead_cost').format(res.overhead_cost) + '.',
-      cost_range: res.taxonomy_aligned ? null :
-        CALC_ENGINE.find(c=>c.id==='retrofit_cost_min').format(res.retrofit_cost_min) + ' – ' + CALC_ENGINE.find(c=>c.id==='retrofit_cost_max').format(res.retrofit_cost_max) + ' (T3 indicative — cooling infrastructure upgrade, subject to detailed design and tender)'
-    })
-  },
-  {
-    id: 'cru_renewable',
-    area: 'CRU Renewable Obligation',
-    source: 'CRU/2025236',
-    tier: 'T1',
-    evaluate: (inp, res) => {
-      const gap = res.renewable_gap;
-      const unmatched = Math.round(gap / 100 * res.annual_energy_mwh);
-      return {
-        status: gap === 0 ? 'PASS' : gap <= 20 ? 'FLAG' : 'FAIL',
-        detail: gap === 0
-          ? 'Renewable energy at ' + inp.ppa_pct + '% meets the CRU 80% obligation.'
-          : 'Renewable energy at ' + (inp.ppa_pct||0) + '% is ' + gap + ' percentage points below the CRU 80% obligation. Unmatched consumption: ' + unmatched.toLocaleString() + ' MWh/yr.',
-        cost_range: gap === 0 ? null : '€50,000 – €250,000/yr (T3 indicative — PPA/GO procurement over hold period)'
-      };
-    }
-  },
-  {
-    id: 'carbon_trajectory',
-    area: 'Carbon Cost Trajectory',
-    source: 'SEAI 2026 (grid EF); Finance Act (carbon tax)',
-    tier: 'T1',
-    evaluate: (inp, res) => {
-      const esc = res.carbon_cost_escalation;
-      const pct = Math.round(esc / res.carbon_cost_current * 100);
-      const tenYr = Math.round(esc * 7);
-      return {
-        status: esc < 50000 ? 'PASS' : esc < 150000 ? 'FLAG' : 'FAIL',
-        detail: 'Current carbon cost: ' + CALC_ENGINE.find(c=>c.id==='carbon_cost_current').format(res.carbon_cost_current) + '/yr. 2030 projection: ' + CALC_ENGINE.find(c=>c.id==='carbon_cost_2030').format(res.carbon_cost_2030) + '/yr. Escalation: ' + CALC_ENGINE.find(c=>c.id==='carbon_cost_escalation').format(esc) + '/yr (+' + pct + '%).',
-        cost_range: '€' + tenYr.toLocaleString() + ' incremental carbon cost over 10-year hold (T1 — policy-confirmed escalation, not indicative)'
-      };
-    }
-  }
-];
-
-/* ================================================================
-   INPUT_SCHEMA — Same as v1.0 (DC-Screen aligned)
-   ================================================================ */
-const INPUT_SCHEMA = [
-  { id:'facility_name',        label:'Facility Name',                  type:'text',   required:true,  demo:'Example Facility, Dublin', hint:'Internal reference name', unit:null },
-  { id:'location',             label:'Location',                       type:'text',   required:false, demo:'Dublin, Ireland',          hint:'City or area', unit:null },
-  { id:'build_year',           label:'Year Built',                     type:'number', required:true,  demo:2013,  hint:'Original commissioning year', unit:null, min:1990, max:2026 },
-  { id:'it_load_mw',           label:'IT Load',                        type:'number', required:true,  demo:2.4,   hint:'Total IT load', unit:'MW', min:0.1, max:100, step:0.1 },
-  { id:'pue',                  label:'Current PUE',                    type:'number', required:true,  demo:1.50,  hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
-  { id:'ppa_pct',              label:'Renewable PPA Coverage',         type:'number', required:true,  demo:0,     hint:'% covered by PPA or on-site renewable', unit:'%', min:0, max:100 },
-  { id:'gen_thermal_mwth',     label:'Generator Thermal Input',        type:'number', required:true,  demo:25,    hint:'Total generator fleet MW / 0.40 efficiency', unit:'MWth', min:0, max:200 },
-  { id:'gen_test_hrs_yr',      label:'Annual Generator Test Hours',    type:'number', required:true,  demo:200,   hint:'Planned annual run hours for testing', unit:'hrs/yr', min:0, max:500 },
-  { id:'fuel_type',            label:'Generator Fuel',                 type:'select', required:true,  demo:'diesel', hint:'Backup generator fuel type', unit:null, options:[
-    {value:'diesel',label:'Diesel'},{value:'HVO',label:'HVO'},{value:'gas',label:'Natural Gas'}
-  ]},
-  { id:'refrigerant_type',     label:'Primary Refrigerant',           type:'select', required:true,  demo:'R-134a', hint:'Primary cooling circuit refrigerant', unit:null, options:[
-    {value:'R-134a',  label:'R-134a (GWP 1,430)'},
-    {value:'R-410A',  label:'R-410A (GWP 2,088)'},
-    {value:'R-407C',  label:'R-407C (GWP 1,774)'},
-    {value:'R-32',    label:'R-32 (GWP 675)'},
-    {value:'R-1234ze',label:'R-1234ze (GWP 7)'},
-    {value:'R-290',   label:'R-290 Propane (GWP 3)'},
-    {value:'other',   label:'Other (specify GWP below)'}
-  ]},
-  { id:'refrigerant_gwp',      label:'Refrigerant GWP (if Other)',    type:'number', required:false, demo:null,  hint:'Enter GWP value if refrigerant not listed above', unit:null, min:1, max:5000 },
-  { id:'refrigerant_charge_kg',label:'Total Refrigerant Charge',      type:'number', required:true,  demo:600,   hint:'Total kg in system. Estimate: cooling MW x 120 kg/MW', unit:'kg', min:0, max:50000 },
-  { id:'planning_sid',         label:'Above 50 MW IT?',               type:'select', required:true,  demo:'false', hint:'Determines SID planning route via An Bord Pleanala', unit:null, options:[
-    {value:'false', label:'No - below 50 MW IT'},
-    {value:'true',  label:'Yes - 50+ MW IT'}
-  ]}
-]
-
-const DEMO_DATA = {};
-INPUT_SCHEMA.forEach(f => { if(f.demo !== undefined && f.demo !== null) DEMO_DATA[f.id] = f.demo; });
-
-const PERSONAS = {
-  ann:    { name:'Ann',    role:'Fund Manager',      icon:'💼', color:'var(--rhetoric)' },
-  declan: { name:'Declan', role:'Ops Manager',       icon:'👷', color:'var(--logic)' },
-  mark:   { name:'Mark',   role:'MEP Engineer',      icon:'🔧', color:'var(--grammar)' },
-  sarah:  { name:'Sarah',  role:'ESG Analyst',       icon:'🌱', color:'var(--success)' },
-  tom:    { name:'Tom',    role:'QS / Cost Manager', icon:'📊', color:'var(--warn)' }
-};
-
-/* ================================================================
-   INTERPRETATION PROMPT — AI writes narrative only. Never calculates.
-   Replace per tool.
-   ================================================================ */
-const INTERPRETATION_PROMPT = `You are interpreting pre-calculated screening results for a data centre facility in Ireland. You work for Legacy Business Engineers Ltd (LBE), an independent technical advisory firm.
-
-CRITICAL RULES:
-- DO NOT perform any arithmetic.
-- DO NOT estimate any costs.
-- DO NOT invent any numbers.
-- Every number you reference MUST come from the CALCULATED RESULTS below.
-- If you need a number that is not provided, say "not calculated in this screening."
-- Use "indicative" or "screening-level" for any cost reference.
-- Use "Misalignment Year" not "Stranding Year".
-- Never say "compliant" — use "aligned" or "readiness".
-- Never say "should" or "must" — use "consider" or "investigate".
-- State: "This screening does not constitute a design deliverable or compliance determination."
-
-Your job is INTERPRETATION ONLY — explain what the calculated numbers mean.
-
-Respond ONLY with a JSON object. No preamble, no markdown fences.
-{
-  "executive_summary": "3 sentences in fund-manager language interpreting the results. Reference the actual calculated numbers.",
-  "finding_interpretations": {
-    "finding_id": "1-2 sentence commercial/regulatory implication for the investor"
-  },
-  "persona_views": {
-    "ann": "Fund manager — risk to hold thesis, cost context, exit implications",
-    "declan": "Ops manager — practical operational impact, what changes day-to-day",
-    "mark": "MEP engineer — technical path to close gaps, standards reference",
-    "sarah": "ESG analyst — reporting impact, taxonomy disclosure, SFDR alignment",
-    "tom": "QS/cost manager — capex phasing, payback context, benchmark comparison"
-  },
-  "decision_gate": "DESKTOP_ASSESSMENT or MONITORING or DISPOSAL_ANALYSIS"
-}`;
-
-/* ================================================================
-   BSG Layer 2
-   ================================================================ */
-class ErrorBoundary extends React.Component {
-  constructor(props){ super(props); this.state = { hasError:false, error:null }; }
-  static getDerivedStateFromError(error){ return { hasError:true, error }; }
-  render(){
-    if(this.state.hasError){
-      return React.createElement('div',{style:{padding:32,fontFamily:'monospace',background:'#1a1a1a',color:'#f85149',borderRadius:8,margin:24}},
-        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-007 v2.0.0 — Error Boundary'),
-        React.createElement('p',{style:{margin:'12px 0'}},'Error: '+(this.state.error?.message||'Unknown')),
-        React.createElement('p',{style:{fontSize:12,color:'#8b949e',marginTop:12}},'Copy this error and send to LM at info@legacybe.ie')
-      );
-    }
-    return this.props.children;
-  }
-}
-
-const { useState, useEffect, useCallback, useMemo, useRef } = React;
-
-/* ================================================================
-   CALC ENGINE RUNNER — Deterministic. No AI.
-   ================================================================ */
 function runCalcEngine(inputs) {
-  const results = {};
-  const steps = [];
-  CALC_ENGINE.forEach(calc => {
-    try {
-      const value = calc.calc(inputs, results);
-      results[calc.id] = value;
-      steps.push({
-        id: calc.id, name: calc.name, formula: calc.formula,
-        value: value, formatted: calc.format(value), unit: calc.unit,
-        inputs_used: calc.inputs_used.map(inp => ({
-          ...inp,
-          value: inp.ref ? results[inp.ref] : (CANONICAL_DATA[inp.id] ? CANONICAL_DATA[inp.id].value : inputs[inp.id]),
-          formatted: inp.ref ? (CALC_ENGINE.find(c=>c.id===inp.ref)||{}).format?.(results[inp.ref]) : undefined
-        }))
-      });
-    } catch(e) { results[calc.id] = null; }
-  });
-  return { results, steps };
+  const { it_load_mw, pue, ppa_pct, gen_thermal_mwth, gen_test_hrs_yr,
+          fuel_type, refrigerant_type, refrigerant_gwp, refrigerant_charge_kg,
+          planning_sid, build_year } = inputs;
+
+  const GRID_EF       = 0.2241;
+  const CARBON_TAX    = 71;
+  const CARBON_TAX_30 = 100;
+  const ELEC_PRICE    = 0.12;
+  const TAX_PUE       = 1.3;
+  const CRU_RENEW     = 80;
+  const EED_THRESHOLD = 1;
+  const EPA_THRESHOLD = 50;
+  const FGAS_REPORT   = 50;
+  const SID_THRESHOLD = 50;
+  const CRREM_BAND    = 300;
+  const FREE_COOL_HRS = 7200;
+
+  const GWP_MAP = { 'R-134a':1430, 'R-410A':2088, 'R-407C':1774, 'R-32':675, 'R-1234ze':7, 'R-290':3 };
+  const gwp = refrigerant_type === 'other' ? (Number(refrigerant_gwp)||1430) : (GWP_MAP[refrigerant_type]||1430);
+
+  const calcs = {};
+
+  // C01: EED Art 26
+  calcs.eed_art26 = {
+    id:'C01', label:'EED Article 26 Applicability',
+    formula:'IT Load >= 1 MW -> EED Art 26 reporting required',
+    result:{ applies: it_load_mw >= EED_THRESHOLD, it_mw: it_load_mw },
+    unit:'MW', tier:'T1 - EED 2023/1791 Art 26'
+  };
+
+  // C02: EPA IE Licence
+  calcs.epa_licence = {
+    id:'C02', label:'EPA IE Licence Threshold',
+    formula:'Generator thermal input >= 50 MWth -> IE Licence required',
+    result:{ applies: gen_thermal_mwth >= EPA_THRESHOLD, thermal_mw: gen_thermal_mwth },
+    unit:'MWth', tier:'T1 - EPA Industrial Emissions Directive'
+  };
+
+  // C03: EU Taxonomy PUE gap
+  const pue_gap = pue - TAX_PUE;
+  const overhead_kw = it_load_mw * 1000 * Math.max(0, pue_gap);
+  const overhead_annual_kwh = overhead_kw * 8760;
+  const overhead_cost = overhead_annual_kwh * ELEC_PRICE;
+  calcs.taxonomy_pue = {
+    id:'C03', label:'EU Taxonomy PUE Gap',
+    formula:'PUE - 1.3 = gap. Overhead kW = IT x gap. Annual cost = kW x 8760 x 0.12',
+    result:{
+      gap: Math.round(pue_gap * 100) / 100,
+      aligned: pue <= TAX_PUE,
+      overhead_kw: Math.round(overhead_kw),
+      annual_excess_kwh: Math.round(overhead_annual_kwh),
+      annual_cost: Math.round(overhead_cost)
+    },
+    unit:'PUE / kW / EUR', tier:'T1 - Delegated Act 2021/2139'
+  };
+
+  // C04: Scope 2 carbon
+  const facility_kwh_yr = it_load_mw * 1000 * pue * 8760;
+  const scope2_tonnes = facility_kwh_yr * GRID_EF / 1000;
+  const it_mwh_yr = it_load_mw * 1000 * 8760 / 1000;
+  calcs.scope2_carbon = {
+    id:'C04', label:'Scope 2 Carbon Emissions',
+    formula:'IT x PUE x 8760 x grid EF = tCO2/yr',
+    result:{
+      facility_mwh_yr: Math.round(facility_kwh_yr / 1000),
+      scope2_tonnes: Math.round(scope2_tonnes),
+      it_mwh_yr: Math.round(it_mwh_yr)
+    },
+    unit:'tCO2/yr', tier:'T1 - SEAI 2026'
+  };
+
+  // C05: SFDR reporting
+  calcs.sfdr = {
+    id:'C05', label:'SFDR Reporting Obligation',
+    formula:'Any DC with measurable Scope 2 -> SFDR reporting applies (fund-level)',
+    result:{ tonnes: Math.round(scope2_tonnes), reporting_required: true },
+    unit:'tCO2/yr', tier:'T1 - SFDR Regulation (EU) 2019/2088'
+  };
+
+  // C06: F-Gas CO2 equivalent
+  const charge_kg = refrigerant_charge_kg > 0 ? refrigerant_charge_kg : (it_load_mw * (pue - 1) * 120);
+  const co2eq_tonnes = charge_kg * gwp / 1000;
+  calcs.fgas = {
+    id:'C06', label:'F-Gas Refrigerant CO2 Equivalent',
+    formula:'Charge (kg) x GWP / 1000 = tCO2eq',
+    result:{
+      co2eq_tonnes: Math.round(co2eq_tonnes),
+      exceeds_threshold: co2eq_tonnes >= FGAS_REPORT,
+      phase_down_risk: gwp > 750 ? 'HIGH' : gwp > 150 ? 'MEDIUM' : 'LOW',
+      gwp_used: gwp,
+      charge_kg_used: Math.round(charge_kg)
+    },
+    unit:'tCO2eq', tier:'T1 - Regulation (EU) 2024/573'
+  };
+
+  // C07: Planning route
+  const sid_applies = planning_sid === 'true' || planning_sid === true || it_load_mw >= SID_THRESHOLD;
+  calcs.planning = {
+    id:'C07', label:'Planning Route Determination',
+    formula:'>=50 MW IT -> SID via An Bord Pleanala. <50 MW -> Local Authority',
+    result:{
+      route: sid_applies ? 'SID (An Bord Pleanala)' : 'Local Authority',
+      sid_applies: sid_applies
+    },
+    unit:'', tier:'T1 - Planning and Development Act'
+  };
+
+  // C08: CRREM carbon intensity
+  const carbon_intensity = it_mwh_yr > 0 ? scope2_tonnes / it_mwh_yr * 1000 : 0;
+  calcs.crrem = {
+    id:'C08', label:'CRREM Carbon Intensity',
+    formula:'Scope 2 (tCO2) / IT MWh x 1000 = kgCO2/MWh_IT vs 300 pathway (LBE-derived)',
+    result:{
+      intensity: Math.round(carbon_intensity),
+      pathway: CRREM_BAND,
+      aligned: carbon_intensity <= CRREM_BAND,
+      gap_pct: carbon_intensity > CRREM_BAND ? Math.round(((carbon_intensity - CRREM_BAND) / CRREM_BAND) * 100) : 0
+    },
+    unit:'kgCO2/MWh_IT',
+    tier:'T3/T4 - LBE-derived (not published by CRREM Foundation)',
+    disclosure:'CRREM v2.01 does not include a published data centre pathway. The 300 kgCO2/MWh_IT band is LBE-derived.'
+  };
+
+  // C09: Carbon tax exposure (Scope 1 - generators)
+  const gen_mw = gen_thermal_mwth * 0.40;
+  const fuel_l_yr = gen_mw * 1000 * 0.27 * gen_test_hrs_yr;
+  const co2_t = fuel_type === 'HVO' ? fuel_l_yr * 2.68 / 1000 * 0.10 :
+                fuel_type === 'gas'  ? gen_mw * 1000 * 0.205 * gen_test_hrs_yr / 1000 :
+                fuel_l_yr * 2.68 / 1000;
+  calcs.carbon_tax = {
+    id:'C09', label:'Carbon Tax Exposure (Scope 1 - generators)',
+    formula:'Generator test fuel CO2 x carbon tax rate',
+    result:{
+      scope1_tonnes: Math.round(co2_t),
+      tax_current: Math.round(co2_t * CARBON_TAX),
+      tax_2030: Math.round(co2_t * CARBON_TAX_30),
+      fuel_litres_yr: Math.round(fuel_l_yr)
+    },
+    unit:'tCO2/yr, EUR/yr', tier:'T1 - Budget 2025, Finance Act, SEAI'
+  };
+
+  // C10: CRU renewable gap
+  const renewable_gap = CRU_RENEW - (ppa_pct || 0);
+  const gap_mwh = renewable_gap > 0 ? (facility_kwh_yr / 1000) * (renewable_gap / 100) : 0;
+  calcs.cru_renewable = {
+    id:'C10', label:'CRU Renewable Energy Gap',
+    formula:'80% CRU requirement - current PPA% = gap. Gap MWh = facility MWh x gap%',
+    result:{
+      gap_pct: Math.max(0, renewable_gap),
+      compliant: (ppa_pct || 0) >= CRU_RENEW,
+      gap_mwh: Math.round(gap_mwh),
+      indicative_ppa_cost: Math.round(gap_mwh * 0.08)
+    },
+    unit:'% / MWh', tier:'T1 - CRU/2025236'
+  };
+
+  // C11: PUE retrofit cost
+  calcs.pue_retrofit_cost = {
+    id:'C11', label:'Indicative PUE Retrofit Cost',
+    formula:'EUR 800-1,200/kW IT (cooling retrofit to achieve PUE <=1.3)',
+    result: pue_gap > 0 ? {
+      low:  Math.round(800  * it_load_mw * 1000),
+      high: Math.round(1200 * it_load_mw * 1000)
+    } : null,
+    unit:'EUR', tier:'T3 - RICS NRM1 DC benchmarks',
+    caveat:'Screening-level estimate. Subject to detailed design.'
+  };
+
+  // C12: Regulatory compliance score (9 domains)
+  let score = 0;
+  if (it_load_mw >= EED_THRESHOLD)            score++; // EED - awareness
+  if (gen_thermal_mwth < EPA_THRESHOLD)        score++; // EPA
+  if (pue <= TAX_PUE)                          score++; // EU Taxonomy
+  score++;                                               // SFDR - obligation only
+  if (co2eq_tonnes < FGAS_REPORT)              score++; // F-Gas
+  if (!sid_applies)                            score++; // Planning
+  if (carbon_intensity <= CRREM_BAND)          score++; // CRREM
+  if (co2_t * CARBON_TAX < 100000)             score++; // Carbon tax manageable
+  if ((ppa_pct || 0) >= CRU_RENEW)             score++; // CRU Readiness
+  calcs.compliance_score = {
+    id:'C12', label:'Regulatory Compliance Score',
+    formula:'Count of 9 domains where facility meets threshold or gap is minimal',
+    result:{ score, total:9, pct: Math.round(score / 9 * 100) },
+    unit:'/9', tier:'Derived'
+  };
+
+  // C13: Free cooling opportunity
+  calcs.free_cooling = {
+    id:'C13', label:'Dublin Free Cooling Opportunity',
+    formula:'7,200 hrs/yr <18 C x cooling load MW x electricity saved (70% capture)',
+    result:{
+      hours_available: FREE_COOL_HRS,
+      potential_saving_kwh: Math.round(it_load_mw * (pue - 1) * 1000 * FREE_COOL_HRS * 0.7),
+      potential_saving_eur: Math.round(it_load_mw * (pue - 1) * 1000 * FREE_COOL_HRS * 0.7 * ELEC_PRICE)
+    },
+    unit:'kWh/yr, EUR/yr', tier:'T1 (Met Eireann), T3 (capture rate)'
+  };
+
+  // C14: 10-year carbon tax trajectory
+  const trajectory = [];
+  for (let yr = 2026; yr <= 2035; yr++) {
+    const raw  = 71 + (yr - 2025) * ((100 - 71) / (2030 - 2025));
+    const rate = Math.min(Math.round(raw), 100);
+    trajectory.push({
+      year: yr, rate,
+      scope2_cost: Math.round(scope2_tonnes * rate),
+      scope1_cost: Math.round(co2_t * rate)
+    });
+  }
+  calcs.carbon_trajectory = {
+    id:'C14', label:'10-Year Carbon Tax Trajectory',
+    formula:'Linear interpolation EUR 71 (2025) -> EUR 100 (2030), flat thereafter',
+    result:{ trajectory },
+    unit:'EUR/yr', tier:'T1 - Finance Act'
+  };
+
+  // C15: Total annual regulatory cost exposure
+  const total_reg_cost = calcs.taxonomy_pue.result.annual_cost
+                       + calcs.carbon_tax.result.tax_current
+                       + calcs.cru_renewable.result.indicative_ppa_cost;
+  calcs.total_reg_exposure = {
+    id:'C15', label:'Total Annual Regulatory Cost Exposure',
+    formula:'PUE excess cost + carbon tax + PPA premium',
+    result: total_reg_cost,
+    unit:'EUR/yr', tier:'Derived',
+    caveat:'Screening-level aggregation. Individual items subject to detailed assessment.'
+  };
+
+  // Build steps array for audit trail / display
+  const steps = [
+    { id:'eed_art26',         name:calcs.eed_art26.label,         formula:calcs.eed_art26.formula,
+      value: calcs.eed_art26.result.applies ? 1 : 0,
+      formatted: calcs.eed_art26.result.applies ? 'APPLIES (' + it_load_mw + ' MW IT)' : 'BELOW THRESHOLD',
+      unit:'EED Art 26', tier:'T1' },
+    { id:'epa_licence',       name:calcs.epa_licence.label,       formula:calcs.epa_licence.formula,
+      value: gen_thermal_mwth,
+      formatted: calcs.epa_licence.result.applies ? 'IE LICENCE REQUIRED (' + gen_thermal_mwth + ' MWth)' : gen_thermal_mwth + ' MWth - below 50 MWth threshold',
+      unit:'MWth', tier:'T1' },
+    { id:'taxonomy_pue',      name:calcs.taxonomy_pue.label,      formula:calcs.taxonomy_pue.formula,
+      value: pue_gap,
+      formatted: calcs.taxonomy_pue.result.aligned
+        ? 'ALIGNED - PUE ' + pue + ' <= 1.3'
+        : 'GAP: ' + calcs.taxonomy_pue.result.gap.toFixed(2) + ' | Overhead: ' + calcs.taxonomy_pue.result.overhead_kw.toLocaleString() + ' kW | EUR ' + Math.round(overhead_cost/1000) + 'k/yr',
+      unit:'PUE gap', tier:'T1' },
+    { id:'scope2_carbon',     name:calcs.scope2_carbon.label,     formula:calcs.scope2_carbon.formula,
+      value: calcs.scope2_carbon.result.scope2_tonnes,
+      formatted: calcs.scope2_carbon.result.scope2_tonnes.toLocaleString() + ' tCO2/yr (' + calcs.scope2_carbon.result.facility_mwh_yr.toLocaleString() + ' MWh/yr)',
+      unit:'tCO2/yr', tier:'T1' },
+    { id:'sfdr',              name:calcs.sfdr.label,              formula:calcs.sfdr.formula,
+      value: 1,
+      formatted: 'REPORTING REQUIRED - ' + Math.round(scope2_tonnes).toLocaleString() + ' tCO2',
+      unit:'tCO2/yr', tier:'T1' },
+    { id:'fgas',              name:calcs.fgas.label,              formula:calcs.fgas.formula,
+      value: calcs.fgas.result.co2eq_tonnes,
+      formatted: calcs.fgas.result.co2eq_tonnes.toLocaleString() + ' tCO2eq | GWP ' + gwp + ' | ' + calcs.fgas.result.phase_down_risk + ' phase-down risk',
+      unit:'tCO2eq', tier:'T1' },
+    { id:'planning',          name:calcs.planning.label,          formula:calcs.planning.formula,
+      value: sid_applies ? 1 : 0,
+      formatted: calcs.planning.result.route,
+      unit:'route', tier:'T1' },
+    { id:'crrem',             name:calcs.crrem.label,             formula:calcs.crrem.formula,
+      value: calcs.crrem.result.intensity,
+      formatted: calcs.crrem.result.intensity.toLocaleString() + ' kgCO2/MWh_IT vs 300 pathway | ' + (calcs.crrem.result.aligned ? 'ALIGNED' : calcs.crrem.result.gap_pct + '% above'),
+      unit:'kgCO2/MWh_IT', tier:'T3' },
+    { id:'carbon_tax',        name:calcs.carbon_tax.label,        formula:calcs.carbon_tax.formula,
+      value: calcs.carbon_tax.result.tax_current,
+      formatted: 'EUR ' + calcs.carbon_tax.result.tax_current.toLocaleString() + '/yr (' + calcs.carbon_tax.result.scope1_tonnes + ' tCO2 Scope 1)',
+      unit:'EUR/yr', tier:'T1' },
+    { id:'cru_renewable',     name:calcs.cru_renewable.label,     formula:calcs.cru_renewable.formula,
+      value: calcs.cru_renewable.result.gap_pct,
+      formatted: calcs.cru_renewable.result.compliant
+        ? (ppa_pct||0) + '% - CRU Readiness MET (>=80%)'
+        : (ppa_pct||0) + '% - CRU Readiness GAP: ' + calcs.cru_renewable.result.gap_pct + '%',
+      unit:'%', tier:'T1' },
+    { id:'pue_retrofit_cost', name:calcs.pue_retrofit_cost.label, formula:calcs.pue_retrofit_cost.formula,
+      value: pue_gap > 0 ? calcs.pue_retrofit_cost.result.low : 0,
+      formatted: pue_gap > 0
+        ? 'EUR ' + Math.round(calcs.pue_retrofit_cost.result.low/1000) + 'k - EUR ' + Math.round(calcs.pue_retrofit_cost.result.high/1000) + 'k (T3 indicative)'
+        : 'N/A - PUE already aligned',
+      unit:'EUR', tier:'T3' },
+    { id:'compliance_score',  name:calcs.compliance_score.label,  formula:calcs.compliance_score.formula,
+      value: score,
+      formatted: score + '/9 (' + calcs.compliance_score.result.pct + '%)',
+      unit:'/9', tier:'Derived' },
+    { id:'free_cooling',      name:calcs.free_cooling.label,      formula:calcs.free_cooling.formula,
+      value: calcs.free_cooling.result.potential_saving_eur,
+      formatted: 'EUR ' + calcs.free_cooling.result.potential_saving_eur.toLocaleString() + '/yr potential saving (' + calcs.free_cooling.result.hours_available.toLocaleString() + ' hrs available)',
+      unit:'EUR/yr', tier:'T1/T3' },
+    { id:'carbon_trajectory', name:calcs.carbon_trajectory.label, formula:calcs.carbon_trajectory.formula,
+      value: trajectory[trajectory.length-1] ? trajectory[trajectory.length-1].scope2_cost : 0,
+      formatted: 'EUR ' + (trajectory[trajectory.length-1] ? trajectory[trajectory.length-1].scope2_cost.toLocaleString() : '0') + '/yr Scope 2 by 2035',
+      unit:'EUR/yr', tier:'T1' },
+    { id:'total_reg_exposure',name:calcs.total_reg_exposure.label,formula:calcs.total_reg_exposure.formula,
+      value: total_reg_cost,
+      formatted: 'EUR ' + total_reg_cost.toLocaleString() + '/yr total regulatory exposure',
+      unit:'EUR/yr', tier:'Derived' }
+  ];
+
+  return { results: calcs, steps };
 }
 
-function runFindingsEngine(inputs, results) {
-  return FINDINGS_ENGINE.map(f => {
-    try {
-      const ev = f.evaluate(inputs, results);
-      return { id: f.id, area: f.area, source: f.source, tier: f.tier, ...ev };
-    } catch(e) { return { id: f.id, area: f.area, status: 'FLAG', detail: 'Calculation error — insufficient data.', source: f.source, tier: f.tier, cost_range: null }; }
+/* ================================================================
+   FINDINGS ENGINE — 9 findings F01-F09. Rule-based. No AI.
+   Source: DC_TOOL_007_CALC_ENGINE_v2_0.md
+   ================================================================ */
+
+function runFindingsEngine(inputs, calcResults) {
+  const calcs = calcResults;
+  const findings = [];
+
+  // F01: EED Art 26
+  const eed = calcs.eed_art26.result;
+  findings.push({
+    id:'F01', area:'EED Article 26 Reporting', category:'Reporting',
+    source:'EED 2023/1791 Art 26', tier:'T1',
+    status: eed.applies ? 'AMBER' : 'GREEN',
+    detail: eed.applies
+      ? eed.it_mw + ' MW IT load - EED Art 26 reporting required by June 2025. Verify submission status.'
+      : eed.it_mw + ' MW IT - below 1 MW threshold. No EED Art 26 obligation.',
+    action: eed.applies ? 'Confirm EED Art 26 reporting submitted or in preparation.' : 'No action required.',
+    cost_range: null
   });
+
+  // F02: EPA IE Licence
+  const epa = calcs.epa_licence.result;
+  findings.push({
+    id:'F02', area:'EPA IE Licence', category:'Regulatory',
+    source:'EPA Industrial Emissions Directive', tier:'T1',
+    status: epa.applies ? 'RED' : epa.thermal_mw > 40 ? 'AMBER' : 'GREEN',
+    detail: epa.applies
+      ? epa.thermal_mw + ' MWth generator thermal input exceeds 50 MWth IE Licence threshold by ' + (epa.thermal_mw - 50).toFixed(1) + ' MWth.'
+      : epa.thermal_mw > 40
+        ? epa.thermal_mw + ' MWth - approaching 50 MWth EPA threshold. Monitor with any fleet expansion.'
+        : epa.thermal_mw + ' MWth - below 50 MWth threshold.',
+    action: epa.applies ? 'EPA IE Licence application required - 12+ month process.' : epa.thermal_mw > 40 ? 'Monitor generator capacity additions.' : 'No action required.',
+    cost_range: epa.applies ? 'EUR 150,000 - EUR 300,000 indicative IE Licence process cost (T3)' : null
+  });
+
+  // F03: EU Taxonomy PUE
+  const tax = calcs.taxonomy_pue.result;
+  findings.push({
+    id:'F03', area:'EU Taxonomy PUE Alignment', category:'Compliance',
+    source:'Delegated Act 2021/2139', tier:'T1',
+    status: tax.aligned ? 'GREEN' : tax.gap > 0.3 ? 'RED' : 'AMBER',
+    detail: tax.aligned
+      ? 'PUE ' + inputs.pue + ' meets EU Taxonomy threshold of <=1.3. Taxonomy-aligned.'
+      : 'PUE ' + inputs.pue + ' exceeds EU Taxonomy threshold of <=1.3 by ' + tax.gap.toFixed(2) + '. Excess overhead: ' + tax.overhead_kw.toLocaleString() + ' kW costing EUR ' + Math.round(tax.annual_cost/1000) + 'k/yr.',
+    action: tax.aligned ? 'Document Taxonomy alignment for investor reporting.' : 'Cooling system retrofit required to achieve PUE <=1.3.',
+    cost_range: !tax.aligned && calcs.pue_retrofit_cost.result
+      ? 'EUR ' + Math.round(calcs.pue_retrofit_cost.result.low/1000) + 'k - EUR ' + Math.round(calcs.pue_retrofit_cost.result.high/1000) + 'k indicative retrofit (T3 - RICS NRM1)'
+      : null
+  });
+
+  // F04: F-Gas risk
+  const fgas = calcs.fgas.result;
+  findings.push({
+    id:'F04', area:'F-Gas Phase-Down Risk', category:'Regulatory',
+    source:'Regulation (EU) 2024/573', tier:'T1',
+    status: fgas.phase_down_risk === 'HIGH' ? 'RED' : fgas.phase_down_risk === 'MEDIUM' ? 'AMBER' : 'GREEN',
+    detail: fgas.co2eq_tonnes.toLocaleString() + ' tCO2eq (' + inputs.refrigerant_type + ', GWP ' + fgas.gwp_used + '). '
+      + (fgas.phase_down_risk === 'HIGH' ? 'High-GWP refrigerant subject to EU 2024/573 phase-down schedule.'
+        : fgas.phase_down_risk === 'MEDIUM' ? 'Medium-GWP - monitor EU F-Gas phase-down schedule.'
+        : 'Low-GWP refrigerant - minimal phase-down risk.'),
+    action: fgas.phase_down_risk === 'HIGH' ? 'Plan refrigerant transition - 3 to 5 year replacement cycle.' : fgas.phase_down_risk === 'MEDIUM' ? 'Monitor EU F-Gas phase-down schedule.' : 'No action required.',
+    cost_range: fgas.phase_down_risk === 'HIGH' ? 'EUR 200,000 - EUR 800,000 indicative refrigerant transition cost (T3)' : null
+  });
+
+  // F05: CRREM misalignment (Misalignment Year - NEVER Stranding Year)
+  const crrem = calcs.crrem.result;
+  findings.push({
+    id:'F05', area:'CRREM Carbon Intensity', category:'ESG',
+    source:'LBE-derived DC pathway (not published by CRREM Foundation)', tier:'T3',
+    status: crrem.aligned ? 'GREEN' : crrem.gap_pct > 30 ? 'RED' : 'AMBER',
+    detail: crrem.intensity.toLocaleString() + ' kgCO2/MWh_IT vs LBE-derived 300 kgCO2/MWh_IT pathway. '
+      + (crrem.aligned ? 'Within pathway - aligned.' : crrem.gap_pct + '% above pathway. Misalignment Year risk without intervention.'),
+    action: crrem.aligned ? 'Document pathway alignment for SFDR/fund reporting.' : 'PUE improvement and renewable PPA required to close CRREM gap.',
+    cost_range: null,
+    disclosure: 'CRREM v2.01 does not include a published data centre pathway. The 300 kgCO2/MWh_IT band is LBE-derived (T3/T4). This is NOT an official CRREM output.'
+  });
+
+  // F06: CRU Readiness (NOT CRU Compliance)
+  const cru = calcs.cru_renewable.result;
+  findings.push({
+    id:'F06', area:'CRU Readiness - Renewable Obligation', category:'Regulatory',
+    source:'CRU/2025236', tier:'T1',
+    status: cru.compliant ? 'GREEN' : cru.gap_pct > 40 ? 'RED' : 'AMBER',
+    detail: cru.compliant
+      ? (inputs.ppa_pct||0) + '% renewable coverage meets CRU 80% obligation. CRU Readiness confirmed.'
+      : (inputs.ppa_pct||0) + '% renewable coverage is ' + cru.gap_pct + ' percentage points below CRU 80% obligation. Gap: ' + cru.gap_mwh.toLocaleString() + ' MWh uncovered.',
+    action: cru.compliant ? 'Maintain PPA coverage above 80%.' : 'Procure ' + cru.gap_mwh.toLocaleString() + ' MWh additional PPA. Indicative premium: EUR ' + Math.round(cru.indicative_ppa_cost/1000) + 'k/yr.',
+    cost_range: !cru.compliant ? 'EUR ' + Math.round(cru.indicative_ppa_cost/1000) + 'k/yr indicative PPA premium (T3 - EUR 0.08/kWh estimate)' : null
+  });
+
+  // F07: Carbon tax trajectory
+  const ctax = calcs.carbon_tax.result;
+  findings.push({
+    id:'F07', area:'Carbon Tax Exposure (Scope 1)', category:'Commercial',
+    source:'Budget 2025; Finance Act (2030 trajectory)', tier:'T1',
+    status: ctax.tax_2030 > 100000 ? 'RED' : ctax.tax_2030 > 25000 ? 'AMBER' : 'GREEN',
+    detail: 'Scope 1 from generator testing: ' + ctax.scope1_tonnes + ' tCO2/yr. Current cost: EUR ' + ctax.tax_current.toLocaleString() + '/yr at EUR 71/tCO2. 2030 projection: EUR ' + ctax.tax_2030.toLocaleString() + '/yr at EUR 100/tCO2.',
+    action: ctax.scope1_tonnes > 50 ? 'Evaluate HVO or gas transition to reduce Scope 1 emissions.' : 'Monitor carbon tax trajectory annually.',
+    cost_range: null
+  });
+
+  // F08: Planning route
+  const plan = calcs.planning.result;
+  findings.push({
+    id:'F08', area:'Planning Route', category:'Regulatory',
+    source:'Planning and Development Act', tier:'T1',
+    status: plan.sid_applies ? 'AMBER' : 'GREEN',
+    detail: plan.sid_applies
+      ? 'SID route required - An Bord Pleanala jurisdiction for >=50 MW IT. 18-24 month process.'
+      : 'Below 50 MW IT threshold. Standard local authority planning process applies.',
+    action: plan.sid_applies ? 'Engage planning consultants early - SID process 18 to 24 months.' : 'Standard planning process applies.',
+    cost_range: null
+  });
+
+  // F09: Overall compliance score
+  const sc = calcs.compliance_score.result;
+  findings.push({
+    id:'F09', area:'Regulatory Compliance Score', category:'Summary',
+    source:'Derived from C01-C10', tier:'Derived',
+    status: sc.pct >= 80 ? 'GREEN' : sc.pct >= 50 ? 'AMBER' : 'RED',
+    detail: sc.score + '/9 regulatory domains aligned (' + sc.pct + '%). '
+      + (sc.score === 9 ? 'Fully aligned across all 9 domains.' : (9 - sc.score) + ' domain(s) require attention.'),
+    action: sc.pct < 80 ? 'Commission comprehensive regulatory gap assessment (Desktop Assessment EUR 10,000 - EUR 15,000).' : 'Maintain alignment - annual review recommended.',
+    cost_range: null
+  });
+
+  const red_count   = findings.filter(f => f.status === 'RED').length;
+  const amber_count = findings.filter(f => f.status === 'AMBER').length;
+  const green_count = findings.length - red_count - amber_count;
+  const overall     = red_count > 0 ? 'RED' : amber_count > 0 ? 'AMBER' : 'GREEN';
+
+  return { findings, summary: { red_count, amber_count, green_count, overall } };
 }
 
 function deriveTrafficLight(findings) {
