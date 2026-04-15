@@ -881,14 +881,13 @@ function App(){
 
       const userPrompt = 'FACILITY: ' + (inputs.facility_name||'Unknown') + ' | ' + (inputs.location||'') + ' | Design IT Load: ' + (inputs.it_load_mw||'?') + ' MW\n\nCALCULATED RESULTS:\n' + calcSummary + '\n\nFINDINGS:\n' + findingSummary + '\n\nOverall readiness: ' + tl + '\n\nInterpret these pre-calculated commissioning readiness results. Do not perform any arithmetic.';
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://iphonednnnqhxvhypvwn.supabase.co/functions/v1/tool-interpret', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwaG9uZWRubm5xaHh2aHlwdnduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDU0MzMsImV4cCI6MjA4OTc4MTQzM30.VoexekmmKTbiLOBcROZl4YxUnx-A3EP8Rj7J72FBWAU' },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 4000,
-          system: INTERPRETATION_PROMPT,
-          messages: [{ role: 'user', content: userPrompt }]
+          system_prompt: INTERPRETATION_PROMPT,
+          user_message: userPrompt,
+          max_tokens: 8000
         })
       });
 
