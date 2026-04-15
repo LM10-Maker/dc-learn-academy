@@ -819,8 +819,9 @@ function runFindingsEngine(inputs, calcResults) {
 }
 
 function deriveTrafficLight(findings) {
-  if (findings.some(f => f.status === 'FAIL')) return 'RED';
-  if (findings.some(f => f.status === 'FLAG')) return 'AMBER';
+  if (!findings || !findings.length) return 'GREEN';
+  if (findings.some(f => f.status === 'FAIL' || f.status === 'RED'))   return 'RED';
+  if (findings.some(f => f.status === 'FLAG' || f.status === 'AMBER')) return 'AMBER';
   return 'GREEN';
 }
 
@@ -828,7 +829,7 @@ function deriveTrafficLight(findings) {
    HELPERS
    ================================================================ */
 function tlClass(s){ if(!s)return''; s=s.toUpperCase(); return s==='GREEN'||s==='PASS'?'tl-green':s==='AMBER'||s==='FLAG'?'tl-amber':'tl-red'; }
-function statusClass(s){ if(!s)return''; s=s.toUpperCase(); return s==='PASS'?'status-pass':s==='FLAG'?'status-flag':'status-fail'; }
+function statusClass(s){ if(!s)return''; s=s.toUpperCase(); return s==='PASS'||s==='GREEN'?'status-pass':s==='FLAG'||s==='AMBER'?'status-flag':'status-fail'; }
 function tierClass(t){ if(!t)return'tier-3'; return 'tier-'+t.replace('T',''); }
 
 /* ================================================================
@@ -847,14 +848,16 @@ function InputTab({ inputs, setInputs, onRun, loading }){
   const filledCount = INPUT_SCHEMA.filter(f=>{const v=inputs[f.id];return v!==undefined&&v!==null&&v!=='';}).length;
 
   const SECTIONS = [
-    { title: 'Facility Identity', ids: ['facility_name','location','build_year'] },
-    { title: 'Power & IT Load', ids: ['it_load_mw','rack_count','rack_density_kw','mic_kva','voltage_kv'] },
-    { title: 'Cooling & Efficiency', ids: ['pue','cooling_type'] },
-    { title: 'Backup & Redundancy', ids: ['redundancy_level','generator_fuel','generator_hours'] },
-    { title: 'Commercial & ESG', ids: ['ppa_pct','hall_config','total_floor_m2'] }
+    { title: 'Facility Identity',        ids: ['facility_name','location','build_year'] },
+    { title: 'IT Load & Efficiency',     ids: ['it_load_mw','pue','ppa_pct'] },
+    { title: 'Generator & Fuel',         ids: ['gen_thermal_mwth','gen_test_hrs_yr','fuel_type'] },
+    { title: 'Refrigerant (F-Gas)',      ids: ['refrigerant_type','refrigerant_gwp','refrigerant_charge_kg'] },
+    { title: 'Planning',                 ids: ['planning_sid'] }
   ];
 
   const renderField = (field) => {
+    // Hide refrigerant_gwp unless 'other' selected
+    if (field.id === 'refrigerant_gwp' && inputs.refrigerant_type !== 'other') return null;
     const isEmpty = field.required && touched[field.id] && (inputs[field.id]===undefined||inputs[field.id]===null||inputs[field.id]==='');
     return (
       <div className="input-group" key={field.id}>
@@ -941,7 +944,7 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
             <div className="calc-card-value"><span className={'traffic-light '+tlClass(trafficLight)} style={{marginRight:4}}></span>{trafficLight}</div>
             <div className="calc-card-unit">{failCount} fail, {flagCount} flag, {passCount} pass</div>
           </div>
-          {calcSteps.filter(s=>['carbon_cost_current','co2_tonnes','pue_gap'].includes(s.id)).map(s=>(
+          {calcSteps.filter(s=>['scope2_carbon','taxonomy_pue','compliance_score','total_reg_exposure'].includes(s.id)).map(s=>(
             <div className="calc-card" key={s.id}>
               <div className="calc-card-label">{s.name}</div>
               <div className="calc-card-value">{s.formatted}</div>
@@ -1015,11 +1018,18 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
           <div className="metric-value"><span className={'traffic-light '+tlClass(trafficLight)} style={{marginRight:6}}></span>{trafficLight}</div>
           <div className="metric-sub">{failCount} fail, {flagCount} flag, {passCount} pass</div>
         </div>
-        {calcSteps.filter(s=>s.id==='carbon_cost_current').map(s=>(
+        {calcSteps.filter(s=>s.id==='total_reg_exposure').map(s=>(
           <div className="metric-card" key={s.id}>
-            <div className="metric-label">Carbon Cost</div>
+            <div className="metric-label">Regulatory Exposure</div>
             <div className="metric-value" style={{color:'var(--warn)'}}>{s.formatted}</div>
-            <div className="metric-sub">per year (T1 — deterministic)</div>
+            <div className="metric-sub">total annual cost (screening-level)</div>
+          </div>
+        ))}
+        {calcSteps.filter(s=>s.id==='compliance_score').map(s=>(
+          <div className="metric-card" key={s.id}>
+            <div className="metric-label">Compliance Score</div>
+            <div className="metric-value">{s.formatted}</div>
+            <div className="metric-sub">regulatory domains aligned</div>
           </div>
         ))}
         <div className="metric-card">
@@ -1123,12 +1133,15 @@ function AuditTrailTab({ calcSteps, inputs }){
         <div className="caveat-box" style={{marginBottom:20}}>
           Every calculation below is deterministic JavaScript. Same inputs always produce same outputs. AI interpretation does not modify any value. Verify with any calculator.
         </div>
+        <div className="caveat-box" style={{marginBottom:20,borderColor:'var(--accent)'}}>
+          <strong>CRREM Disclosure (mandatory):</strong> CRREM v2.01 does not include a published data centre pathway. The 300 kgCO₂/MWh_IT band used in C08 is LBE-derived (T3/T4) and is NOT an official CRREM Foundation output. The term "Misalignment Year" is used — never "Stranding Year". Results must not be represented as official CRREM outputs.
+        </div>
 
         {calcSteps.map((step, i) => (
           <div className="audit-step" key={step.id}>
             <div className="audit-step-name">Step {i+1}: {step.name}</div>
             <div className="audit-formula">Formula: {step.formula}</div>
-            {step.inputs_used.map((inp, j) => (
+            {(step.inputs_used||[]).map((inp, j) => (
               <div className="audit-input-row" key={j}>
                 <span>{inp.label}</span>
                 <span>
@@ -1200,9 +1213,9 @@ function App(){
     setCalcSteps(steps);
 
     const fResults = runFindingsEngine(inputs, results);
-    setFindings(fResults);
+    setFindings(fResults.findings);
 
-    const tl = deriveTrafficLight(fResults);
+    const tl = deriveTrafficLight(fResults.findings);
     setTrafficLight(tl);
 
     // Show calculations tab immediately
