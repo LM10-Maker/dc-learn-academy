@@ -281,6 +281,100 @@ const CANONICAL_DATA = {
 };
 
 /* ================================================================
+   INPUT SCHEMA — 13 fields for DC-TOOL-007
+   ================================================================ */
+const INPUT_SCHEMA = [
+  { id:'facility_name',        label:'Facility Name',                  type:'text',   required:true,  demo:'Example Facility, Dublin', hint:'Internal reference name', unit:null },
+  { id:'location',             label:'Location',                       type:'text',   required:false, demo:'Dublin, Ireland',          hint:'City or area', unit:null },
+  { id:'build_year',           label:'Year Built',                     type:'number', required:true,  demo:2013,  hint:'Original commissioning year', unit:null, min:1990, max:2026 },
+  { id:'it_load_mw',           label:'IT Load',                        type:'number', required:true,  demo:2.4,   hint:'Total IT load', unit:'MW', min:0.1, max:100, step:0.1 },
+  { id:'pue',                  label:'Current PUE',                    type:'number', required:true,  demo:1.50,  hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
+  { id:'ppa_pct',              label:'Renewable PPA Coverage',         type:'number', required:true,  demo:0,     hint:'% covered by PPA or on-site renewable', unit:'%', min:0, max:100 },
+  { id:'gen_thermal_mwth',     label:'Generator Thermal Input',        type:'number', required:true,  demo:25,    hint:'Total generator fleet MW / 0.40 efficiency', unit:'MWth', min:0, max:200 },
+  { id:'gen_test_hrs_yr',      label:'Annual Generator Test Hours',    type:'number', required:true,  demo:200,   hint:'Planned annual run hours for testing', unit:'hrs/yr', min:0, max:500 },
+  { id:'fuel_type',            label:'Generator Fuel',                 type:'select', required:true,  demo:'diesel', hint:'Backup generator fuel type', unit:null, options:[
+    {value:'diesel',label:'Diesel'},{value:'HVO',label:'HVO'},{value:'gas',label:'Natural Gas'}
+  ]},
+  { id:'refrigerant_type',     label:'Primary Refrigerant',           type:'select', required:true,  demo:'R-134a', hint:'Primary cooling circuit refrigerant', unit:null, options:[
+    {value:'R-134a',  label:'R-134a (GWP 1,430)'},
+    {value:'R-410A',  label:'R-410A (GWP 2,088)'},
+    {value:'R-407C',  label:'R-407C (GWP 1,774)'},
+    {value:'R-32',    label:'R-32 (GWP 675)'},
+    {value:'R-1234ze',label:'R-1234ze (GWP 7)'},
+    {value:'R-290',   label:'R-290 Propane (GWP 3)'},
+    {value:'other',   label:'Other (specify GWP below)'}
+  ]},
+  { id:'refrigerant_gwp',      label:'Refrigerant GWP (if Other)',    type:'number', required:false, demo:null,  hint:'Enter GWP value if refrigerant not listed above', unit:null, min:1, max:5000 },
+  { id:'refrigerant_charge_kg',label:'Total Refrigerant Charge',      type:'number', required:true,  demo:600,   hint:'Total kg in system. Estimate: cooling MW x 120 kg/MW', unit:'kg', min:0, max:50000 },
+  { id:'planning_sid',         label:'Above 50 MW IT?',               type:'select', required:true,  demo:'false', hint:'Determines SID planning route via An Bord Pleanala', unit:null, options:[
+    {value:'false', label:'No - below 50 MW IT'},
+    {value:'true',  label:'Yes - 50+ MW IT'}
+  ]}
+];
+
+const DEMO_DATA = {};
+INPUT_SCHEMA.forEach(f => { if(f.demo !== undefined && f.demo !== null) DEMO_DATA[f.id] = f.demo; });
+
+const PERSONAS = {
+  ann:    { name:'Ann',    role:'Fund Manager',      icon:'💼' },
+  declan: { name:'Declan', role:'Ops Manager',       icon:'👷' },
+  mark:   { name:'Mark',   role:'MEP Engineer',      icon:'🔧' },
+  sarah:  { name:'Sarah',  role:'ESG Analyst',       icon:'🌱' },
+  tom:    { name:'Tom',    role:'QS / Cost Manager', icon:'📊' }
+};
+
+/* ================================================================
+   INTERPRETATION PROMPT — AI narrative only. Never calculates.
+   Source: DC_TOOL_007_CALC_ENGINE_v2_0.md
+   MANDATORY: Misalignment Year (never Stranding Year)
+   MANDATORY: CRREM disclosure
+   MANDATORY: CRU Readiness (never CRU Compliance)
+   ================================================================ */
+const INTERPRETATION_PROMPT = `You are a data centre regulatory compliance specialist working for Legacy Business Engineers Ltd (LBE), an independent technical advisory firm.
+
+You have received the results of a deterministic regulatory gap screening covering 9 regulatory domains: EED Art 26, EPA IE Licence, EU Taxonomy, SFDR, F-Gas, Irish Planning, CRREM, Carbon Tax, and CRU Renewable Obligation. All numbers have been calculated by JavaScript. You MUST NOT recalculate or invent any numbers.
+
+RULES:
+1. Every number you mention MUST come from the calculations or findings provided. Do not invent.
+2. Use fund-manager language: what is the risk, what does it cost, does the 10-year hold thesis work.
+3. CRREM DC pathway is LBE-derived (T3/T4). CRREM v2.01 does NOT include a published DC pathway. Always disclose this.
+4. Use "Misalignment Year" — NEVER "Stranding Year".
+5. CRU Readiness obligation: 80% (CRU/2025236). Use "CRU Readiness" — NEVER "CRU Compliance".
+6. All cost figures are screening-level estimates.
+7. Decision gate: if overall RED or AMBER, recommend Desktop Assessment (EUR 10,000 to EUR 15,000).
+8. LBE identifies and quantifies — never suggest LBE will design or deliver solutions.
+9. This screening does not constitute a design deliverable or compliance determination.
+
+Respond ONLY with a JSON object. No preamble, no markdown fences.
+{
+  "executive_summary": "3 sentences. How many domains fail, total cost exposure, hold thesis impact.",
+  "regulatory_matrix": [{"domain": "EED Art 26", "status": "GREEN/AMBER/RED", "summary": "one sentence"}],
+  "commercial_implications": "2-3 sentences for the fund manager. Emphasise 2030 trajectory.",
+  "recommended_next_step": "One clear recommendation with indicative cost.",
+  "caveats": "Standard screening-level caveat plus mandatory CRREM disclosure: CRREM v2.01 does not include a published data centre pathway. The 300 kgCO2/MWh_IT band is LBE-derived (T3/T4)."
+}`;
+
+/* ================================================================
+   BSG Layer 2 — ErrorBoundary
+   ================================================================ */
+class ErrorBoundary extends React.Component {
+  constructor(props){ super(props); this.state = { hasError:false, error:null }; }
+  static getDerivedStateFromError(error){ return { hasError:true, error }; }
+  render(){
+    if(this.state.hasError){
+      return React.createElement('div',{style:{padding:32,fontFamily:'monospace',background:'#1a1a1a',color:'#f85149',borderRadius:8,margin:24}},
+        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-007 v2.0.0 — Error Boundary'),
+        React.createElement('p',{style:{margin:'12px 0'}},'Error: '+(this.state.error?.message||'Unknown')),
+        React.createElement('p',{style:{fontSize:12,color:'#8b949e',marginTop:12}},'Copy this error and send to LM at info@legacybe.ie')
+      );
+    }
+    return this.props.children;
+  }
+}
+
+const { useState, useEffect, useCallback, useMemo, useRef } = React;
+
+/* ================================================================
    CALC ENGINE — 15 calculations C01-C15. Deterministic. No AI.
    DC-TOOL-007 v2.0.0 | Regulatory Gap Screener
    Source: DC_TOOL_007_CALC_ENGINE_v2_0.md
