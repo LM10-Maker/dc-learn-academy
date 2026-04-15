@@ -10,6 +10,7 @@
 <meta name="robots" content="index, follow">
 <title>DC-LEARN-004 v6.4.8 | Energy Efficiency & PUE | Legacy Business Engineers</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -139,6 +140,17 @@ header .sub{font-size:11px;font-family:var(--font-mono);color:var(--text-dim);ma
 .vg-narrative .vg-np-title{font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
 .vg-narrative .vg-np-body{margin-bottom:8px}
 .vg-narrative .vg-np-takeaway{font-weight:600;color:var(--text-bright)}
+.dc-story-body{font-size:17px;line-height:1.9;color:var(--text)}
+.dc-story-body p{margin-bottom:22px !important;font-size:17px;line-height:1.9}
+.dc-story-body h2{font-family:Georgia,"Times New Roman",serif !important;font-size:26px !important;font-weight:400 !important;color:var(--text-bright) !important;margin-bottom:28px !important;text-align:center;letter-spacing:0.3px}
+.dc-story-body h3{font-family:Georgia,"Times New Roman",serif !important;font-size:19px !important;font-weight:500 !important;color:var(--text-bright) !important;margin:36px 0 16px !important}
+.dc-story-body blockquote{margin:32px 0 !important;padding:18px 24px 18px 28px !important;border-left:3px solid var(--green) !important;background:var(--green-dim) !important;border-radius:0 6px 6px 0;font-style:italic;color:var(--text-dim)}
+.dc-story-body blockquote p{margin-bottom:0 !important}
+.dc-story-body hr{margin:36px auto !important;width:80px;border:none !important;border-top:1px solid var(--border-light) !important}
+.dc-story-body em{font-style:italic}
+.dc-story-body strong{color:var(--text-bright)}
+.dc-story-body .dc-story-dropcap::first-letter{float:left;font-family:Georgia,"Times New Roman",serif;font-size:68px;line-height:0.85;padding-right:10px;padding-top:4px;color:var(--green);font-weight:400}
+@media(max-width:600px){.dc-authbtn-dropdown{position:fixed !important;top:68px !important;left:12px !important;right:12px !important;min-width:0 !important;width:auto !important}}
 </style>
 
 </head>
@@ -433,11 +445,11 @@ whoShouldCare:["mark","declan"]},
     weakestLink:{whatsWrong:"We did not know about EED Article 12. No registration, no metering, no submission.",whatsRight:"The engineering data to calculate provisional PUE exists. A provisional submission with caveats is far better than non-submission.",howToGetThere:"Register with SEAI (free). Submit provisional PUE from billing data. Install metering (€20K–30K, Tier 2 — RICS NRM1; Schneider/Vertiv published metering package rates, indicative). Submit verified report year 2 onwards."}
   },
   rhetoric:{
-    declan:{hook:"A letter from SEAI three weeks ago. I did not know what EED Article 12 required until I read it in a regulatory enforcement notice.",text:"Declan — I got a letter from SEAI three weeks ago. I did not know what EED Article 12 was. Mark told me we need to report PUE, WUE, CUE, and REF to the European database by 15 May every year. We had none of the metering in place to calculate these properly. The IT meters were at the UPS output (Category 1), not the PDU level (Category 2) that the Delegated Regulation specifies. We have spent the last month installing sub-meters to get compliant.d me ignoring it is not an option."},
+    declan:{hook:"A letter from SEAI three weeks ago. I did not know what EED Article 12 required until I read it in a regulatory enforcement notice.",text:"Declan — I got a letter from SEAI three weeks ago. I did not know what EED Article 12 was. Mark told me we need to report PUE, WUE, CUE, and REF to the European database by 15 May every year. We had none of the metering in place to calculate these properly. The IT meters were at the UPS output (Category 1), not the PDU level (Category 2) that the Delegated Regulation specifies. We have spent the last month installing sub-meters to get compliant. He told me ignoring it is not an option."},
     ann:{hook:"EED compliance is now table stakes for institutional investment. A DC that cannot produce a verified Article 12 submission is not investable by most regulated funds.",text:"EED compliance is table stakes for institutional investment. A DC that cannot produce a verified PUE is not investable for the class of investor I am raising money from."},
     mark:{hook:"SEAI is in enforcement ramp-up. Facilities that proactively register and submit accurately face no penalties. Facilities that wait to be chased pay more in remediation.",text:"SEAI is in enforcement ramp-up. Facilities that proactively register and submit a provisional report with a metering improvement plan are not being penalised. Wait another year and that window closes. I'd check whether the specification requires EN 50600-4-2 Category 2 metering as a minimum for new installations. Category 3 for facilities targeting Taxonomy alignment."},
     sarah:{hook:"EED reporting feeds directly into SFDR disclosure. Article 9 funds require counterparty EED compliance — and they are now checking before, not after, investment.",text:"EED reporting feeds directly into SFDR disclosure. Article 9 funds require counterparty ESG data. PUE, WUE, REF, and CUE from EED reporting satisfy multiple regulatory disclosure requirements simultaneously. The standardised reporting under the Delegated Regulation means Irish operators are now directly comparable with continental European peers."},
-    tom:{hook:"Metering investment pays back not from energy saving but from regulatory standing. The alternative to investing in compliance is a SEAI enforcement notice with teeth.",text:"Tom — metering investment pays back instantly, not from energy saving but from regulatory risk elimination. The EN 50600-4-2 compliant metering package for a 2,400 kW facility costs €16–30K (Tier 2 — RICS NRM1; Schneider/Vertiv published, indicative). Without it, you cannot produce a verified PUE for EED Article 12, cannot demonstrate Taxonomy alignment, and cannot satisfy SFDR data requests from institutional investors. The cost of non-compliance is not a fine — it is exclusion from the institutional capital market.ination. €25K for metering (Tier 2 — RICS NRM1 metering package benchmarks, indicative) vs €50K penalty potential (Tier 3 — SEAI enforcement case data, screening-level estimate)."}
+    tom:{hook:"Metering investment pays back not from energy saving but from regulatory standing. The alternative to investing in compliance is a SEAI enforcement notice with teeth.",text:"Tom — metering investment pays back instantly, not from energy saving but from regulatory risk elimination. The EN 50600-4-2 compliant metering package for a 2,400 kW facility costs €16–30K (Tier 2 — RICS NRM1; Schneider/Vertiv published, indicative). Without it, you cannot produce a verified PUE for EED Article 12, cannot demonstrate Taxonomy alignment, and cannot satisfy SFDR data requests from institutional investors. The cost of non-compliance is not a fine — it is exclusion from the institutional capital market. Risk elimination: €25K for metering (Tier 2 — RICS NRM1 metering package benchmarks, indicative) vs €50K penalty potential (Tier 3 — SEAI enforcement case data, screening-level estimate)."}
   },
   scenario:{title:"The SEAI Letter",narrative:"SEAI sends Clonshaugh a compliance enquiry. Facility identified as in-scope via CRU grid connection data. No FY2024 submission. 28-day response deadline.",question:"What should the response contain?",answer:"Response elements:\n1. Acknowledge scope and obligation\n2. Provisional PUE from billing data (state methodology and uncertainty ±10–15%)\n3. WUE: state absence of sub-metering, installation planned\n4. REF: state grid supply, ~50% renewable (grid average)\n5. CUE: calculable from provisional PUE × grid emission factor\n6. Metering improvement plan with dates and committed budget\n7. Commitment to submit verified FY2025 report by 15 May 2026\n\nCritical: include a concrete remediation plan. Acknowledgement without a plan triggers enforcement.",
 whoShouldCare:["sarah","declan","ann"]},
@@ -472,7 +484,7 @@ whoShouldCare:["sarah","declan","ann"]},
     weakestLink:{whatsWrong:"Supply temperature set at 18°C since 2013 and never changed. Equipment has been refreshed to A2-class since then.",whatsRight:"A2 equipment tolerates 27°C inlet. Running at 18°C wastes 6°C of free cooling headroom.",howToGetThere:"Audit equipment thermal class. Identify any A1 legacy equipment. Zone A1 separately. Raise A2 zones to 22–24°C. Monitor for 30 days. Adjust."}
   },
   rhetoric:{
-    declan:{hook:"I set the supply temperature at 18 degrees when we opened in 2013 and never changed it. In 2026 that setpoint is costing approximately 85 thousand euros per year.",text:"Declan — I set the supply temperature at 18°C when we opened in 2013 and never changed it. Nobody told me the ASHRAE guidelines had widened to allow 32°C inlet for A1 equipment. Our servers are all A2-rated — they can handle 35°C inlet. We have been overcooling by 10–15°C for over a decade. Raising the setpoint to 24°C this month saved immediate cooling energy — the chillers run less and the free cooling hours extend dramatically. Zero capex, immediate payback.d me the servers could handle warmer air."},
+    declan:{hook:"I set the supply temperature at 18 degrees when we opened in 2013 and never changed it. In 2026 that setpoint is costing approximately 85 thousand euros per year.",text:"Declan — I set the supply temperature at 18°C when we opened in 2013 and never changed it. Nobody told me the ASHRAE guidelines had widened to allow 32°C inlet for A1 equipment. Our servers are all A2-rated — they can handle 35°C inlet. We have been overcooling by 10–15°C for over a decade. Raising the setpoint to 24°C this month saved immediate cooling energy — the chillers run less and the free cooling hours extend dramatically. Zero capex, immediate payback. Nobody told me the servers could handle warmer air."},
     ann:{hook:"Raising supply temperature from 18 to 24 degrees is a zero-capex optimisation. The energy saving is real, the free cooling hours increase, and no hardware moves.",text:"Raising supply temperature from 18°C to 24°C is a zero-capex optimisation. The energy saving at 2,400 kW could be €60K–120K/year (Tier 2 — CIBSE TM54; derived: 80–120 kW × 8,760 hrs × €0.12/kWh CRU T2, indicative). Free money. The zero-capex setpoint change is the most compelling slide in any board presentation."},
     mark:{hook:"18 degrees was correct for mixed A1 equipment in 2013. In 2026 with predominantly A2-plus equipment, ASHRAE A2 permits 27 degrees inlet — and the chiller thanks you.",text:"18°C was correct in 2013 for mixed A1 equipment. In 2026, with mostly A2+ equipment, running at 18°C is over-cooling by 6°C. That is €60K–120K/year wasted (Tier 2 — CIBSE TM54; derived: ~100 kW × 8,760 hrs × €0.12/kWh CRU T2, indicative)."},
     sarah:{hook:"Every degree of supply temperature increase reduces carbon intensity. At 2,400 kW, moving from 18 to 24 degrees avoids approximately 200 tonnes CO2 per year.",text:"Every degree of supply temperature rise reduces carbon intensity. At 2,400 kW, a 4°C rise saves approximately 200–400 tonnes CO₂/year from reduced chiller operation."},
@@ -511,7 +523,7 @@ whoShouldCare:["mark","declan","sarah"]},
     weakestLink:{whatsWrong:"We know we should invest in cooling but the capex request keeps getting deferred.",whatsRight:"Phase 1 (metering + setpoints) costs €30K–50K (Tier 2 — RICS NRM1; Schneider/Vertiv published metering package rates, indicative) and saves €150K+/year (Tier 1/2 — derived from setpoint and containment savings at canonical €0.12/kWh CRU T2). This does not need board-level capex approval in most organisations.",howToGetThere:"Start Phase 1 under operational budget. Use the measured savings to build the business case for Phase 2 (containment) and Phase 3 (free cooling)."}
   },
   rhetoric:{
-    declan:{hook:"I have been waiting three years for approval. I need the phased structure and the 10-year NPV to get the retrofit past the investment committee.",text:"Declan — I have been meaning to do this retrofit for three years. I just needed someone to pull it all together into a plan with costs and timelines that the board would approve. The phased approach works because Phase 1 (containment + setpoint optimisation) costs under €200k (Tier 2 — RICS NRM1 / SCSI Q1 2025 aggregated, indicative) and pays back in 6 months. That builds the business case for Phase 2 (free cooling + VSD retrofit) which is the big money but also the big saving. Each phase funds the next.r into a plan the board would approve."},
+    declan:{hook:"I have been waiting three years for approval. I need the phased structure and the 10-year NPV to get the retrofit past the investment committee.",text:"Declan — I have been meaning to do this retrofit for three years. I just needed someone to pull it all together into a plan with costs and timelines that the board would approve. The phased approach works because Phase 1 (containment + setpoint optimisation) costs under €200k (Tier 2 — RICS NRM1 / SCSI Q1 2025 aggregated, indicative) and pays back in 6 months. That builds the business case for Phase 2 (free cooling + VSD retrofit) which is the big money but also the big saving. Each phase funds the next."},
     ann:{hook:"Show me the 10-year NPV model and the phased approval structure. If Phase 1 pays back before Phase 2 approval is needed, the board decision is straightforward.",text:"Show me the 10-year NPV model and the phased approval structure. If Phase 1 pays for itself in 6 months, I can approve Phase 2 without going back to the investment committee."},
     mark:{hook:"This is the structure of a professional cooling optimisation report. Phase 1: containment and setpoints — zero downtime. Phase 2: BMS. Phase 3: free cooling. Sequence proven.",text:"This is exactly the structure of a professional cooling optimisation report. Phased actions, costs, savings, and the presentation structure for board approval. Two weeks to produce. Each phase is designed to be commissioned and proven before the next begins — respecting the operational constraints of a live facility."},
     sarah:{hook:"The cooling retrofit programme reduces carbon by 1,500 to 2,000 tonnes CO2 per year. Under CSRD that is a material reduction that requires reporting in the sustainability statement.",text:"The cooling retrofit programme reduces carbon by 1,500–2,000 tonnes CO₂/year. Under SFDR, that is a reportable ESG improvement that directly affects fund classification."},
@@ -2607,7 +2619,7 @@ function AuthButton({ authState }) {
   const handleSend = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
     setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
     setLoading(false);
     if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
     else setSent(true);
@@ -2636,7 +2648,7 @@ function AuthButton({ authState }) {
         background:'transparent',border:'1px solid var(--accent)',borderRadius:4,
         padding:'3px 10px',cursor:'pointer'}}>Sign in</button>
       {showLogin && (
-        <div style={{position:'absolute',top:'calc(100% + 8px)',right:0,
+        <div className="dc-authbtn-dropdown" style={{position:'absolute',top:'calc(100% + 8px)',right:0,
           background:'var(--surface)',border:'1px solid var(--border)',
           borderRadius:8,padding:16,zIndex:999,minWidth:280,
           boxShadow:'0 8px 24px rgba(0,0,0,0.4)'}}>
@@ -2688,7 +2700,7 @@ function LockedOverlay() {
   const handleSend = async () => {
     if (!email || !email.includes('@')) { setError('Enter a valid email address.'); return; }
     setLoading(true); setError('');
-    const { error: err } = await dcAuth.sendMagicLink(email);
+    const { error: err } = await dcAuth.sendMagicLink(email.trim().toLowerCase());
     setLoading(false);
     if (err) setError(typeof err === 'string' ? err : 'Could not send link. Try again.');
     else setSent(true);
@@ -2709,42 +2721,45 @@ function LockedOverlay() {
           This module is part of DC-LEARN Professional
         </h2>
         <p style={{fontSize:14,color:'var(--text-dim)',lineHeight:1.6,marginBottom:24}}>
-          Modules 000–002 are free. Sign in below if you've already purchased access,
-          or visit legacybe.ie to get the full 16-module series.
+          Modules 000–002 are free. The full 16-module series is available at legacybe.ie.
         </p>
 
         <div style={{background:'var(--surface)',border:'1px solid var(--border)',
-          borderRadius:12,padding:24,marginBottom:20}}>
+          borderRadius:12,padding:20,marginBottom:20,textAlign:'left'}}>
           {!sent ? (
             <div>
-              <div style={{fontSize:13,color:'var(--text-dim)',marginBottom:12}}>
-                Already have access? Enter your email for a sign-in link.
+              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.6,marginBottom:12,textAlign:'center'}}>
+                Already purchased? Enter your email to sign in.
               </div>
               <input type="email" value={email}
                 onChange={e=>{setEmail(e.target.value);setError('');}}
                 onKeyDown={e=>{if(e.key==='Enter') handleSend();}}
                 placeholder="your@email.com"
-                style={{width:'100%',padding:'10px 12px',fontSize:14,
+                style={{width:'100%',padding:'8px 10px',fontSize:13,
                 background:'var(--panel)',border:'1px solid var(--border)',
-                borderRadius:8,color:'var(--text-bright)',marginBottom:10,
+                borderRadius:6,color:'var(--text-bright)',marginBottom:8,
                 fontFamily:'var(--font-sans)',boxSizing:'border-box'}}/>
-              {error && <div style={{fontSize:12,color:'var(--error)',marginBottom:8}}>{error}</div>}
+              {error && <div style={{fontSize:11,color:'var(--error)',marginBottom:6}}>{error}</div>}
               <button onClick={handleSend} disabled={loading}
-                style={{width:'100%',padding:'10px',fontSize:14,fontWeight:600,
+                style={{width:'100%',padding:'8px',fontSize:13,fontWeight:600,
                 background:'var(--lbe-green)',color:'#fff',border:'none',
-                borderRadius:8,cursor:'pointer',opacity:loading?0.7:1,marginBottom:8}}>
+                borderRadius:6,cursor:'pointer',opacity:loading?0.7:1}}>
                 {loading ? 'Sending…' : 'Send sign-in link'}
               </button>
+              <div style={{fontSize:11,color:'var(--text-muted)',marginTop:8,lineHeight:1.5,textAlign:'center'}}>
+                No password needed. Or contact{' '}
+                <a href="mailto:info@legacybe.ie"
+                  style={{color:'var(--accent)',textDecoration:'none'}}>info@legacybe.ie</a>.
+              </div>
             </div>
           ) : (
-            <div style={{padding:'8px 0',textAlign:'center'}}>
-              <div style={{fontSize:28,marginBottom:10}}>✓</div>
-              <div style={{fontSize:14,color:'var(--text-bright)',fontWeight:600,marginBottom:6}}>
+            <div style={{textAlign:'center',padding:'8px 0'}}>
+              <div style={{fontSize:22,marginBottom:8}}>✓</div>
+              <div style={{fontSize:13,color:'var(--text-bright)',fontWeight:600,marginBottom:4}}>
                 Check your email
               </div>
-              <div style={{fontSize:13,color:'var(--text-dim)',lineHeight:1.5}}>
-                Sign-in link sent to <strong style={{color:'var(--text-bright)'}}>{email}</strong>.<br/>
-                Click the link to access this module.
+              <div style={{fontSize:12,color:'var(--text-dim)',lineHeight:1.5}}>
+                We sent a sign-in link to<br/><strong>{email}</strong>
               </div>
             </div>
           )}
@@ -2920,7 +2935,7 @@ function BookTab() {
     setLoading(true);
     fetch(CHAPTER_FILE)
       .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
-      .then(html => { setContent(html); setLoading(false); })
+      .then(html => { const processed = html.replace(/<p style="margin-bottom:14px">([A-Z])/, '<p class="dc-story-dropcap" style="margin-bottom:22px">$1'); setContent(processed); setLoading(false); })
       .catch(e => { setError('not-available'); setLoading(false); });
   }, []);
 
@@ -2929,7 +2944,7 @@ function BookTab() {
   const chLbl={fontSize:11,fontFamily:'var(--font-mono)',color:'var(--green)',letterSpacing:2,textTransform:'uppercase',marginBottom:8};
   const ttl={fontSize:22,fontWeight:700,color:'var(--text-bright)',marginBottom:6,lineHeight:1.3};
   const sub={fontSize:13,color:'var(--text-dim)',fontStyle:'italic'};
-  const cBox={background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'28px 32px',fontSize:15,lineHeight:1.85,color:'var(--text)',maxHeight:expanded?'none':600,overflow:expanded?'visible':'hidden',position:'relative'};
+  const cBox={background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'40px 48px',fontSize:17,lineHeight:1.9,color:'var(--text)',maxHeight:expanded?'none':600,overflow:expanded?'visible':'hidden',position:'relative'};
   const fade={position:'absolute',bottom:0,left:0,right:0,height:120,background:'linear-gradient(transparent, var(--panel))',pointerEvents:'none',display:expanded?'none':'block'};
   const btn={display:'block',margin:'16px auto 0',padding:'10px 28px',background:'transparent',border:'1px solid var(--green)',borderRadius:6,color:'var(--green)',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:'var(--font-sans)'};
 
@@ -2937,7 +2952,7 @@ function BookTab() {
 
   if (error || !content) return (<div style={ctr}><div style={hdr}><div style={chLbl}>The Data Centre Clock</div><div style={ttl}>{CHAPTER_NUM ? 'Chapter '+CHAPTER_NUM+': '+CHAPTER_TITLE : (CHAPTER_TITLE || 'The Data Centre Clock')}</div>{MODULE_TITLE && <div style={sub}>Companion reading for {MODULE_TITLE}</div>}</div><div style={{background:'var(--panel)',border:'1px solid var(--border)',borderRadius:10,padding:'48px 32px',textAlign:'center'}}><div style={{fontSize:17,fontWeight:600,color:'var(--text-bright)',marginBottom:8}}>Chapter coming soon</div><div style={{fontSize:14,color:'var(--text-dim)',maxWidth:400,margin:'0 auto',lineHeight:1.7}}>This chapter of <em>The Data Centre Clock: Engineering the Irish Retrofit</em> is being finalised. It will appear here automatically when published.</div></div></div>);
 
-  return (<div style={ctr}><div style={hdr}><div style={chLbl}>{CHAPTER_NUM ? 'The Data Centre Clock — Chapter '+CHAPTER_NUM : 'The Data Centre Clock — '+CHAPTER_TITLE}</div><div style={ttl}>{CHAPTER_TITLE}</div><div style={sub}>Companion reading for {MODULE_TITLE}</div></div><div style={cBox}><div dangerouslySetInnerHTML={{__html: content}} />{!expanded && <div style={fade} />}</div>{!expanded && <button style={btn} onClick={() => setExpanded(true)}>Continue reading</button>}{expanded && <button style={{...btn,marginTop:24}} onClick={() => {setExpanded(false);window.scrollTo({top:0,behavior:'smooth'})}}>Collapse chapter</button>}</div>);
+  return (<div style={ctr}><div style={hdr}><div style={chLbl}>{CHAPTER_NUM ? 'The Data Centre Clock — Chapter '+CHAPTER_NUM : 'The Data Centre Clock — '+CHAPTER_TITLE}</div><div style={ttl}>{CHAPTER_TITLE}</div><div style={sub}>Companion reading for {MODULE_TITLE}</div></div><div style={cBox}><div className="dc-story-body" dangerouslySetInnerHTML={{__html: content}} />{!expanded && <div style={fade} />}</div>{!expanded && <button style={btn} onClick={() => setExpanded(true)}>Continue reading</button>}{expanded && <button style={{...btn,marginTop:24}} onClick={() => {setExpanded(false);window.scrollTo({top:0,behavior:'smooth'})}}>Collapse chapter</button>}</div>);
 }
 
 
