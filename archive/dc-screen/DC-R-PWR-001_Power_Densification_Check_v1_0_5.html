@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-R-PWR-001 | Power Densification Check | Legacy Business Engineers</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ RESET & BASE ═══ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --lbe-green: #4a7c59;
+  --lbe-green-dark: #3d6b4a;
+  --lbe-green-light: #e8f0eb;
+  --lbe-dark: #1a2332;
+  --lbe-dark-alt: #1a1a1a;
+  --seg06-bg: #eef2ff;
+  --seg06-border: #6366f1;
+  --seg06-text: #4338ca;
+  --card-border: #e2e8f0;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --bg-body: #f1f5f9;
+  --bg-card: #ffffff;
+  --red: #dc2626;
+  --red-bg: #fef2f2;
+  --red-border: #fca5a5;
+  --amber: #d97706;
+  --amber-bg: #fffbeb;
+  --amber-border: #fcd34d;
+  --green-status: #16a34a;
+  --green-bg: #f0fdf4;
+  --green-border: #86efac;
+  --blue: #2563eb;
+  --blue-bg: #eff6ff;
+  --blue-border: #93c5fd;
+}
+body {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+  padding-bottom: 80px;
+}
+.container { max-width: 720px; margin: 0 auto; padding: 0; }
+
+/* ═══ HEADER ═══ */
+.tool-header {
+  background: var(--lbe-dark);
+  color: white;
+  padding: 28px 32px 24px;
+  border-radius: 12px 12px 0 0;
+  margin-top: 16px;
+}
+.tool-header .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.tool-header .logo-icon {
+  width: 36px; height: 36px; background: var(--lbe-green);
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; color: white;
+}
+.tool-header .logo-text { font-size: 13px; font-weight: 600; opacity: 0.85; letter-spacing: 0.5px; }
+.tool-header h1 { font-size: 22px; font-weight: 700; margin: 8px 0 4px; line-height: 1.3; }
+.tool-header .subtitle { font-size: 14px; opacity: 0.8; }
+.tool-header .version { font-size: 11px; opacity: 0.5; margin-top: 8px; font-family: monospace; }
+
+/* ═══ SEGMENT BANNER ═══ */
+.seg-banner {
+  background: var(--seg06-bg);
+  border-left: 4px solid var(--seg06-border);
+  padding: 14px 20px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--seg06-text);
+  line-height: 1.5;
+}
+
+/* ═══ CARDS ═══ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--card-border);
+  padding: 24px 28px;
+}
+.card:last-of-type { border-radius: 0 0 12px 12px; }
+.card + .card { border-top: none; }
+.card-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; }
+
+/* ═══ AUDIENCE BAR & LINE ═══ */
+.v15-audience-bar {
+  background: var(--lbe-dark);
+  color: white;
+  text-align: center;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.v15-audience-line {
+  background: var(--seg06-bg);
+  color: var(--seg06-text);
+  text-align: center;
+  padding: 5px 16px;
+  font-size: 11px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* ═══ SAMPLE BANNER ═══ */
+.v15-sample {
+  background: #fefce8;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.5;
+}
+.v15-sample a { color: var(--seg06-text); font-weight: 600; }
+
+/* ═══ FORM ELEMENTS ═══ */
+.form-group { margin-bottom: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.form-label .unit { font-weight: 400; color: var(--text-secondary); }
+input[type="number"], select {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: white;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input[type="number"]:focus, select:focus {
+  outline: none;
+  border-color: var(--lbe-green);
+  box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.15);
+}
+
+/* ═══ CALCULATE BUTTON ═══ */
+.calc-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--lbe-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 8px;
+}
+.calc-btn:hover { background: var(--lbe-green-dark); }
+
+/* ═══ RESULTS ═══ */
+.results-section { display: none; }
+.results-section.active { display: block; }
+.primary-result {
+  text-align: center;
+  padding: 20px;
+  border: 2px solid var(--card-border);
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.primary-result .label { font-size: 13px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.primary-result .value { font-size: 36px; font-weight: 700; margin: 4px 0; }
+.primary-result .detail { font-size: 13px; color: var(--text-secondary); }
+
+/* ═══ TRAFFIC LIGHT DASHBOARD ═══ */
+.tl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.tl-card {
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--card-border);
+}
+.tl-card .tl-icon { font-size: 28px; margin-bottom: 4px; }
+.tl-card .tl-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+.tl-card .tl-value { font-size: 18px; font-weight: 700; margin: 2px 0; }
+.tl-card .tl-detail { font-size: 12px; color: var(--text-secondary); }
+.tl-green { background: var(--green-bg); border-color: var(--green-border); }
+.tl-green .tl-value { color: var(--green-status); }
+.tl-amber { background: var(--amber-bg); border-color: var(--amber-border); }
+.tl-amber .tl-value { color: var(--amber); }
+.tl-red { background: var(--red-bg); border-color: var(--red-border); }
+.tl-red .tl-value { color: var(--red); }
+
+/* ═══ BOTTLENECK TABLE ═══ */
+.data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.data-table th {
+  background: var(--lbe-dark);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.data-table td { padding: 8px 12px; border-bottom: 1px solid var(--card-border); }
+.data-table tr:nth-child(even) td { background: #f8fafc; }
+.data-table .status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-green { background: var(--green-bg); color: var(--green-status); border: 1px solid var(--green-border); }
+.badge-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge-red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+/* ═══ UPGRADE SEQUENCE ═══ */
+.upgrade-step {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--card-border);
+}
+.upgrade-step:last-child { border-bottom: none; }
+.step-num {
+  width: 28px;
+  height: 28px;
+  background: var(--lbe-green);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-content .step-title { font-weight: 600; font-size: 14px; }
+.step-content .step-detail { font-size: 13px; color: var(--text-secondary); }
+.step-content .step-cost { font-size: 12px; color: var(--amber); font-weight: 600; margin-top: 2px; }
+
+/* ═══ TIPS ═══ */
+.tip-card {
+  padding: 14px 16px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.tip-green { background: var(--green-bg); border-left: 4px solid var(--green-status); }
+.tip-blue { background: var(--blue-bg); border-left: 4px solid var(--blue); }
+.tip-amber { background: var(--amber-bg); border-left: 4px solid var(--amber); }
+.tip-red { background: var(--red-bg); border-left: 4px solid var(--red); }
+.tip-title { font-weight: 700; margin-bottom: 4px; }
+.tip-ref { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+/* ═══ NOT CHECKED PANEL ═══ */
+/* ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ */
+.confidence-panel {
+  background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px;
+  padding: 16px; margin-top: 16px; font-size: 12px; color: #14532d;
+}
+.confidence-panel h4 { color: #166534; font-size: 13px; margin-bottom: 10px; font-weight: 700; }
+.confidence-panel table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.confidence-panel th { text-align: left; padding: 4px 8px; font-weight: 700; border-bottom: 1px solid #86efac; font-size: 11px; }
+.confidence-panel td { padding: 4px 8px; border-bottom: 1px solid #dcfce7; font-size: 11px; }
+.confidence-panel .tier-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-weight: 700; font-size: 10px; }
+.confidence-panel .t1 { background: #166534; color: white; }
+.confidence-panel .t2 { background: #15803d; color: white; }
+.confidence-panel .t3 { background: #ca8a04; color: white; }
+.confidence-panel .t4 { background: #dc2626; color: white; }
+
+.not-checked {
+  border: 2px solid var(--red);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-top: 20px;
+  background: var(--red-bg);
+}
+.not-checked h3 { color: var(--red); font-size: 15px; margin-bottom: 10px; }
+.not-checked ul { margin: 0; padding-left: 20px; font-size: 13px; color: #991b1b; }
+.not-checked li { margin-bottom: 4px; }
+
+/* ═══ BAR CHART ═══ */
+.bar-chart { margin: 16px 0; }
+.bar-row { display: flex; align-items: center; margin-bottom: 8px; gap: 8px; }
+.bar-label { width: 100px; font-size: 12px; font-weight: 600; text-align: right; flex-shrink: 0; }
+.bar-track { flex: 1; height: 24px; background: #f1f5f9; border-radius: 4px; position: relative; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; display: flex; align-items: center; padding-left: 8px; }
+.bar-fill span { font-size: 11px; font-weight: 700; color: white; white-space: nowrap; }
+.bar-limit { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--red); z-index: 2; }
+.bar-limit-label { position: absolute; top: -16px; font-size: 10px; color: var(--red); font-weight: 600; white-space: nowrap; transform: translateX(-50%); }
+
+/* ═══ NAV FOOTER ═══ */
+.v15-nav-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--lbe-dark-alt);
+  border-top: 3px solid var(--lbe-green);
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  font-size: 12px;
+  color: #94a3b8;
+}
+.v15-nav-footer a { color: var(--lbe-green); text-decoration: none; font-weight: 600; }
+.v15-nav-footer a:hover { text-decoration: underline; }
+
+/* ═══ STANDARDS FOOTER ═══ */
+.standards-footer {
+  text-align: center;
+  padding: 16px 20px;
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ═══ PRINT ═══ */
+@media print {
+  .cta-bar, .sample-bar { display: none !important; }
+
+  .np { display: none !important; }
+  .calc-btn { display: none; }
+  body { background: white; padding-bottom: 0; }
+  .container { max-width: 100%; }
+  .tool-header { border-radius: 0; break-after: avoid; }
+  .card { border: 1px solid #ddd; break-inside: avoid; }
+  .results-section.active { display: block !important; }
+  .v15-nav-footer { display: none !important; }
+}
+
+
+/* ═══ PRINT BUTTON ═══ */
+.print-btn {
+  width: 100%; margin-top: 12px; padding: 10px; background: #f1f5f9;
+  border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px;
+  font-weight: 600; color: #475569; cursor: pointer; font-family: inherit;
+}
+.print-btn:hover { background: #e2e8f0; }
+
+
+/* ═══ WHAT THIS MEANS ═══ */
+.wtm-panel {
+  background: linear-gradient(135deg, #f8fafc, #f0f9ff);
+  border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 16px 20px; margin-top: 16px;
+}
+.wtm-panel h4 { font-size: 14px; color: #1e40af; margin-bottom: 8px; }
+.wtm-panel p { font-size: 13px; color: #334155; line-height: 1.6; }
+
+
+/* ═══ LOAD SAMPLE BUTTON ═══ */
+.demo-btn {
+  padding: 8px 16px; background: #f1f5f9; border: 1px solid #cbd5e1;
+  border-radius: 6px; font-size: 12px; font-weight: 600; color: #475569;
+  cursor: pointer; margin-left: 8px; transition: background 0.2s;
+}
+.demo-btn:hover { background: #e2e8f0; }
+
+/* ═══ GOLD CTA BAR (A+ compliance) ═══ */
+.cta-bar {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #5cdb8f;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  text-align: center;
+  color: #ffffff;
+}
+.cta-bar h3 { color: #5cdb8f; font-size: 18px; margin: 0 0 8px; font-weight: 700; }
+.cta-bar .cta-service { font-size: 15px; color: #e5e7eb; margin: 0 0 4px; }
+.cta-bar .cta-price { font-size: 14px; color: #9ca3af; margin: 0 0 16px; }
+.cta-bar .cta-btn {
+  display: inline-block; padding: 10px 28px; background: #5cdb8f; color: #1a1a1a;
+  border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
+  transition: background 0.2s;
+}
+.cta-bar .cta-btn:hover { background: #4bc97d; }
+.sample-bar {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+  padding: 12px 20px; margin: 12px 0; text-align: center; font-size: 13px; color: #374151;
+}
+.sample-bar a { color: #166534; font-weight: 600; text-decoration: none; }
+.sample-bar a:hover { text-decoration: underline; }
+
+</style>
+</head>
+<body>
+
+<!-- ═══ BLANK SCREEN GUARD ═══ -->
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var el = document.getElementById('root');
+  if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
+    el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error — Not a Blank Screen</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-R-PWR-001 v1.0.6</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+      + '</div>';
+  }
+  return false;
+};
+</script>
+
+<!-- ═══ DOMAIN LOCK ═══ -->
+<script>
+(function(){
+  var h = window.location.hostname.toLowerCase();
+  var allowed = ['legacybe.ie','www.legacybe.ie','lbe-tools.netlify.app','localhost','127.0.0.1',''];
+  if (allowed.indexOf(h) === -1) {
+    document.body.innerHTML = '<div style="max-width:600px;margin:80px auto;padding:40px;text-align:center;font-family:system-ui;border:3px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h1 style="color:#dc2626;font-size:24px;margin-bottom:12px">⛔ Unauthorised Copy</h1>'
+      + '<p style="color:#374151;font-size:16px">This tool is the property of <strong>Legacy Business Engineers Ltd</strong>.</p>'
+      + '<p style="color:#6b7280;font-size:14px;margin-top:8px">Licensed use only at legacybe.ie</p></div>';
+  }
+})();
+</script>
+
+<!-- ═══ FINGERPRINT ═══ -->
+<script>
+var _aimep_lineage = {
+  origin: 'Legacy Business Engineers Ltd',
+  tool: 'DC-R-PWR-001',
+  version: '1.0.6',
+  license: 'LBE-Proprietary',
+  build: '2026-02-28',
+  classification: 'T2-SCREENING',
+  notice: 'Unauthorised reproduction prohibited. Contact legacybe.ie'
+};
+</script>
+
+<div id="root">
+<div class="container">
+
+  <!-- AUDIENCE BAR -->
+  <div class="v15-audience-bar np">BUILT FOR: DATA CENTRE OPERATORS &amp; INVESTORS</div>
+
+  <!-- HEADER -->
+  <div class="tool-header">
+    <div class="logo-row">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAoCAIAAADyl3S3AAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAAOZElEQVR42m1YaXBc1ZU+59639N4tdUtqqbVZlmxZsmy84gUb2xjbDBAwGQxJPMyEKhJSgRCmppIZoGAyTKipTAgJE6DYZpjMVICkMAw1MZjFxhsey/si25K1Sy21pHbvy+v33r1nfrRllpn349Wrrr7nu+e8753zfRellAAEgAAAAESEiESASABIRATAGQMA0zIHo0OZfEblGjKQACAJAQkAgHweX01lldflBQCSkkgCAgBDhGvBr134JVQiAkS8tglJkjMOAEPRkQtDvef7L0RqwmsXr2qojiiK+kUMEqlcZiZ5JZXNIkDQX1EfrlMVjUgAlBP4OnAZ9erq8i8AQCQZ4wBweWzgxMVTpm1V+CpuXnGjQ3dmC5nh2NhMIp4p5IAxTdUqvb6QvzJcWeNxegBgYHQglpxpqI5EqsOM8S+h0uz9C1T68j4457li/rPjBzLZTNEujcxEdUWd39B2dujiRCIWTyXNkiHIRkXxuvwBl7fC7fN5fV7d3VRbf8PiVSFf5UxiOplNz4k0K1y5WjqUQDj7+EWuAABCSoXzwejwgROHLGFdnBhMZdMOVb+SSg5PjutOvTZYXV9TV10RcusOIoxnkrHE9Hgsatv23Pqm9qb5lmUqTLln8x3hyhrLtjjjX8oVylz5CmoZ8nTf2fOXe9LF3CfHD/o8XpUrl8eHHbq+7fpNG5fd0Bpp8ji9X2PHVGLqeO/Z9498dHH48rLWrqVtXX3Rgc6W9ns3bS+HLZOqTNWv5Fou7Nn+86cunhlPxA6f625vaB2dmRgYG7519U0/uOu7kerIlxgEQgrO+NfoebL3zC//8NJ4fOLh7fdPpeIzySuP7fyxrupC2GWilBdfRS3TdWhy5LPu/Yl8+qOTh+ZU1feO9gsmfvKth29bs/Va3Hg62jt+bPjK2XRp2qH4arzNLbWL6ivneZ2V1/7z1t53n/6PZx/4s51N4YY93Xt/8YOnfC6vlBKRlTmFUory284bhd0HP0rlMm/v29Uabr4wMcQY++0jz3S1dgKAEPbpwU+PDX4wke7NlRLIEJFJkiRJ4YpHDy5sWLe+/Z4qX6MtLIWr/dGhb//se3euu+X6zqVvfvLub3/8T5qiA1xtAyilJCLG2N6jn+UL+Vc/fNPlcI7ERhHg3554YX5DKwDEkv3vHP3lwNRpRKmpOucaSUJEkogoAZlEWTTzLtV3U+d9mxb+hRCSczaTim/967sf/MZ9jbWNR3q6f3b/39m2zRhDIFaGHIwOJ5PJ/ef+xzSNeDqeN4vPPfLzMuTF8cP/8uH3h+Kn3S6vU/ciKlJKYJBNiGzCRE2alp1PCo/uF9J6/9Rv3tj3WN5ISklVgdDv//6V53a90lBd53V4dn32vqIokgQgsPKbONd7PlVKn+nv0VW9Pzr46J9///qO5UAwNnPpjQOPm2A4dZ+QQpBABlPDJhFk0wYpApBI0kRfXkhTUdGl+E6PffLixz9KF2NCivbGtsd3PvrQsz+9b9uO3Uc/TefTDJkkYIyxgejQTDJ+buSS3+8djo0sb128c+vdkihnpN7tfo7Q1BSXLSwSAITIAJDSV0zbFmZBChNUB2camCUx0WtkErbHEZjI9L7T/SxDtIW9c8uOgCfw0bF9d9905+8+epsxLokYAJztO987Mtg/PmyUjKKwHt7xPVXRGMKRi/89kjynMmd62gICAmkaJCyKtOkTl4q9h9MogHOGAImoMXiyEGpweiu5bZt+R0XP2P4zQ58qXCGgnz/42DsHP9iwaE3v8EA8FVcYZ6ZtDo+PFq1iLleITk0uae28YdEqAMgXMr2TRxgwy5ATfRmGhChTcRMZmgVqXxVITRuJWFHTmZEVl4/F61pcjBPjpChomzYj9cCltyUJIURHc3t9KHyi99SNXas+PrYfEdnkTCyRTmbMLFPRsIw71m7jXAGAaKJvLNWjctXhYaYh0ldMqwSZaUNRUNjg8OANd4f7T6UVhzJ4Nr1gTchf45gZtcyijA2VgDNdd05mB6ZSQwpTiOjuG2///OyxW9dtGZoeJSBlfGoiZ+TTpZxNIlgZWr9kLQEh4OXYiXwhq6NfccjOdZUnP56ev7KikLIUjeVzliVlVYPbsmLpuDk1VFi0Kfj5rjHTJF9QbVlcqehAkhWM3Gi8p7ailaRYs+j6oL/Spbs1rsWuTCnR+IRhm6ZhClu21bfUBcNSSo48WZjQnZwKcOFgmnGMDxv9xwfCLV4AuBI1wnMc3MM8fv3g2+PD55JOD69qdNS1edwBDZGMrK1pKkmayYzNNj6ls6WDgOpDtdGZmJLIphhnoiQUxusqqkBKpihFIx9LDnFUND+2Lg2kp83wDtf0aP6D1/qrmpxGRs7p9JCA0Z5UJlHc/siC5kUBxikRNYVFnENyUtQ0akAkpJiVKGDbpqpqzbUNtrBYIpNyarpUhaapDJlFNgKaopAxkghMCMEUqmrWvFW8a1Ponp92ffjK5Uy86K3Ur0wUJ4YSt/9wfvvqSiHt4TPZ1LQZqNYnLxuqBg4PkiSn5p4d3sQ4B4CQL8AAmFd3Mc6KRkFBpjsd5RmocFVTNSJknBlFSsVtVDAZM5qv863b0Xz+0CTj0Ns9Xd3ob1sWSsSKqsbj46XGTvfxD2LH90wzztJxwThz6f7yTEUkhihJhgLBRW0Lmd/tk0KQRQIFIkpbAoBDdVc4w0SSAN1+Pnoul5qyFU0tpI3l28K2oO7dsb7jiUU3hlUdfUHH5e7U6X3R3S8P9J9MLd0WkkIKSyLwoKdudqBjeapm83mH5lQ0TQUA3ePIFYsT0YlsPuNyujhXO+rX9c+cUoEBQE2D6+B/RsNt7jV3Vbt8avuKqj2v9Uqi9pWV2YRx+J1oNlFasrm6sTNQO8djlYSUIITQ1WB9cD4AIDIgLE8aaQsAYA01ddPpGdOwjKIxmZmOpxJlabMgstyjV9i2LSxZ1+Fc/+36aF/qvd/0x8eLC9dVFwuGP+ScGTN+/cDnx/dEdZfqC7mEDWOXcqWCFCYaZqGl+jqvMySkdVWPIdi2JUgCAGsMNypcNe2SrqvJYmooNgIAQto1gTmddaslFmyDEjGTULavror25Z5/8PP4qOFw6YWs+e7zF1bc2vDDl1Y0L/ZfOJzMpSx3hcIdiKoExNVtd8zKwKuCo2ga5XHDgv7ggsY2RESAdC5z8PRRW5gIiExZ1XanRwsVDXOitzBwMs04feeprm8+unD/HweEELlUYc7iwK0PznO4lYVrQxvurXe6Nd2tMlAKZm7F3FtawyuEsBE5Y5xIAEAqm3JoDgBgLqdrUetCv9tnmUIB9WTfmf7RQca4EKI53HVzx/1uL5u/0rv6trrOtSGXX7luS23H6mqrZCPyZZsjpZwQBhSztruCVzfrHHihlK7xNn5j6Y+IpCRijJ28dKpvtJ+Isrl8hS8AQAwAWiPN8+rmWKapMp62su8f/rD8kUkSa9q371j5hGmIbDZvFsA2qZi35y4PAoCqKZU1TmETckTGyWZM8oKVqnCF/3L9M25HhZSSMSal/LB773Qy/qdDuzVVdepOISQDgEhNZGFjh65rAmynpu85se/w2SOcK0IIQljauuW7G5/xOkK5UlKiqXDm9ikAoGiouhgiMs4QwZRGzkwsiKx5aOvLtRVtQloExBl/79CfVFW7NNZvCVHh9wMgIDAhhUN3ruhatnDuAkOYti2kgBd2vZ5IX1EVTZKwyVpQv/bhW16+felD1Z6GfCFtGEUABERLlApWNldKGiJb42+8d80TD2z6VcBdI6RNgJwpscTUHz99jwGlcuk5tU1VldVlpaggIBF1zm3fsuKm0enoVGIm6NfTxewvfv/8k/f/rUPTpZQC7QpPzeZFf7Vq7p2jqTN/mHkToMcs2j5WPzcSCTjrOyJrW6uXKoouSRBclYLI8MnXn2mrn3NptP+WlZuqKqsUpggpkIAhIhE5ddfqhctvXrpBZUoml9FVtXes/8lX/hGIFK5IQVIKISyH7u6I3FjLlgFI27KWB79z//pf37Xib9rrVnOuCWEDIUkCQs75T156yrSseDbV0Tx/bmROXahWCIFlf1nuklKKxnDD1pUbNyxZY9vWUHRUVdTpVPwf3vjndC6jqioiSCIhbQA4cvQQ55xz/tm+TwGgVDKEtAkIkQkpFK5wjk+8+nTP4CWO6FC1dQtXzWua94XdwC98jiQAIjpytvuFd1+7ONrLkLVGWoKBEEPcev3mzcvWuxwuAMik0w0NTZlsGgB8fv9Af18wGBJCAKCiKAAwHp94/JWnRyfHI9Vhv9v/rQ13ds3r8nt8QkpkCABIX/F0EoBJkvuO73/xndeHp0clQMhfcV1bl1N3uRzutvqWjub5KrHDBw/rqoYMLcveuHFDfaShvL5gFN7au+vf97ylK7pDd9aHwjs3bu9o7Qx4A0La5UQBGM76HJo1y1Qu+PGeEy/+1792XzzBkKmq1lLXtGhuZ8gfcupOp65XBisrfIEVc5eUwWxhDY4P7z1xYPfRTyaTM1XeCkm0csGSb66/raWhxevySClgVniX43/dvwJIgLKKmzzWd/rV998YiY1pimoJUekNNEca66vrAy6fV3NrmpYr5mKp6b7o0ND4UL5YDLj8brfb6XCtmL94+7pb5jW1aaoqpMSrffhqsoD/zwnB1UOQsvGbSkw987tfHTh92CbhcDoVRRFCWiXLtkxhW0ISItN0TXdouuYEgeFA1e03bNm2anNNZbUkCSRnW3+ZR2XvTF9HpdkdEUlJUuEqER3p6f7k5P4jPcen4lPSFgpXpUrAUEGOAhRQKvwV7U2t13cuX9WxvKE6Up5aCAiIQFTuRwg0W2f6vxUGIIJZT09EiKxMhCvpRO/I5aHYSCKTYioKAI/THfQEanxVDTWR2mBNuTxC2IiIgATX8JAQkK6dL9H/Aj2XvXsNnnhrAAAAAElFTkSuQmCC" alt="LBE" style="height:36px;border-radius:50%" onerror="this.style.display='none'" />
+      <div class="logo-text">LEGACY BUSINESS ENGINEERS</div>
+    </div>
+    <h1>Power Densification Check</h1>
+    <div class="subtitle">Can your existing power infrastructure handle 2× or 3× rack density? Identify bottlenecks before you invest.</div>
+    <div class="version">DC-R-PWR-001 v1.0.6 | T1 DC Screening</div>
+  </div>
+
+  <!-- AUDIENCE LINE -->
+  <div class="v15-audience-line np">🖥️ Segment: Data Centres — Retrofit | DC-R-PWR-001 | legacybe.ie</div>
+
+  <!-- SEGMENT BANNER -->
+  <div class="seg-banner">
+    <strong>Power Infrastructure Screening:</strong> Assess whether your supply, UPS, and distribution can support target densification. Identifies the limiting component and estimates upgrade costs at ±30% RICS NRM1 accuracy.
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <!-- SAMPLE BANNER -->
+    <div class="v15-sample np">
+      📊 This is an indicative screening tool. For a site-specific DC Retrofit Diagnostic,
+      <a href="https://legacybe.ie/contact">talk to an engineer →</a>
+    </div>
+
+    <div class="card-title">Facility Power Parameters</div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="itCurrent">IT Load — Current <span class="unit">(MW)</span></label>
+        <input type="number" id="itCurrent" value="5" min="0.5" max="200" step="0.1"
+          title="Meaning: Total measured IT electrical load (servers, storage, networking). Typical: 2–20 MW for enterprise/colo. Source: Metered IT power at UPS output. Warning: Use measured load, not nameplate — nameplate is typically 40–60% higher than actual draw.">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="itTarget">IT Load — Target <span class="unit">(MW)</span></label>
+        <input type="number" id="itTarget" value="10" min="0.5" max="200" step="0.1"
+          title="Meaning: Desired IT load after densification (e.g. adding AI/GPU racks). Typical: 1.5–3× current load for AI retrofits. Source: Business plan / tenant demand forecast. Warning: Ensure this is realistic — many facilities physically cannot double capacity.">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="totalCapacity">Total Facility Power <span class="unit">(MVA)</span></label>
+        <input type="number" id="totalCapacity" value="8" min="0.5" max="500" step="0.1"
+          title="Meaning: Total electrical supply capacity at transformer/utility intake. Typical: 1.2–1.5× IT load for PUE range 1.3–1.6. Source: ESB Networks connection agreement or transformer nameplate. Warning: MVA ≠ MW. At 0.95 PF typical for DC, 8 MVA ≈ 7.6 MW usable.">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="upsCapacity">UPS Capacity <span class="unit">(MW)</span></label>
+        <input type="number" id="upsCapacity" value="6" min="0.1" max="200" step="0.1"
+          title="Meaning: Rated UPS capacity at stated redundancy — the MW your UPS can continuously deliver. For 2N, enter per-path capacity (e.g. 8 MW means each string can deliver 8 MW). Typical: Matches or exceeds IT load. Source: UPS factory acceptance test or capacity report. Warning: If quoting total physical capacity of a 2N system, halve it before entering.">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="upsRedundancy">UPS Redundancy</label>
+        <select id="upsRedundancy"
+          title="Meaning: UPS topology redundancy level. N = no redundancy. N+1 = one spare module. 2N = fully duplicated. 2N+1 = duplicated plus one spare. Typical: N+1 for enterprise, 2N for colo/hyperscale. Source: Design specification or Tier certification. Warning: 2N halves usable capacity — a 6 MW 2N system only provides 3 MW IT capacity.">
+          <option value="N">N (no redundancy)</option>
+          <option value="N+1" selected>N+1 (one spare)</option>
+          <option value="2N">2N (fully duplicated)</option>
+          <option value="2N+1">2N+1 (duplicated + spare)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="numPDUs">Number of PDUs/RPPs</label>
+        <input type="number" id="numPDUs" value="20" min="1" max="500" step="1"
+          title="Meaning: Total Power Distribution Units or Remote Power Panels serving IT racks. Typical: 1 PDU per 10–25 racks at 100–500 kW each. Source: Distribution one-line diagram or asset register. Warning: Older PDUs may be rated lower (100–200 kW) — check individual ratings.">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="pduRating">Average PDU Rating <span class="unit">(kW)</span></label>
+        <input type="number" id="pduRating" value="250" min="50" max="1000" step="10"
+          title="Meaning: Rated capacity per PDU/RPP. Typical: 100–200 kW (legacy), 250–500 kW (modern). Source: PDU nameplate or electrical schedule. Warning: Never load a PDU above 80% of nameplate for sustained operation.">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="cableAge">Busbar/Cable Age <span class="unit">(years)</span></label>
+        <input type="number" id="cableAge" value="10" min="1" max="30" step="1"
+          title="Meaning: Age of main power distribution busbars and cables from UPS to PDUs. Typical: Designed for 25-year life (CIBSE Guide M). Source: Commissioning records or as-built drawings. Warning: Cables >15 years old with >50% load increase need thermal survey — insulation degrades with age and heat.">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="coolingPower">Current Cooling Power <span class="unit">(MW)</span></label>
+        <input type="number" id="coolingPower" value="1.5" min="0.1" max="100" step="0.1"
+          title="Meaning: Electrical power consumed by the cooling system (chillers, pumps, fans, CRAHs). Typical: 30–60% of IT load depending on PUE. Source: Metered cooling power or derived from PUE minus 1 × IT load. Warning: This must be the electrical input to cooling, not the thermal cooling capacity.">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="coolingType">Planned Cooling After Retrofit</label>
+        <select id="coolingType"
+          title="Meaning: The cooling approach planned after densification. Air = traditional CRAH/CRAC. Chilled Water = updated chiller plant. Hybrid DLC = air for standard + liquid for high-density. Full DLC = complete liquid cooling. Typical: Hybrid DLC for mixed AI/standard deployments. Source: Cooling retrofit plan or DC-R-CLG-001 output. Warning: Full DLC requires complete piping infrastructure — assess structural loading.">
+          <option value="air">Air Cooling</option>
+          <option value="chilled_water">Chilled Water</option>
+          <option value="hybrid_dlc" selected>Hybrid DLC</option>
+          <option value="full_dlc">Full DLC</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">⚡ Run Power Densification Check</button>
+    <button class="demo-btn np" onclick="loadSample()" style="margin-top:8px">📊 Load Sample</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card results-section" id="resultsSection">
+    <div class="card-title">Power Infrastructure Assessment</div>
+    <div id="resultsContent"></div>
+  </div>
+
+  <!-- NOT CHECKED — always visible -->
+  <div class="card">
+    <div class="not-checked">
+      <h3>⚠️ NOT CHECKED BY THIS TOOL</h3>
+      <ul>
+        <li>ESB Networks connection capacity or application status</li>
+        <li>HV switchgear condition or arc flash assessment</li>
+        <li>Specific cable sizing or volt drop calculations</li>
+        <li>Generator capacity and fuel storage adequacy</li>
+        <li>Fire suppression system impact on power infrastructure changes</li>
+        <li>Cable thermal derating for aged XLPE/PILC (20yr+ cables may be derated 15–20%)</li>
+        <li>Arc flash incident energy at higher loading — requires formal study per IEEE 1584</li>
+        <li>Carbon emissions impact of power upgrades (assessed separately in DC-R-PUE-001)</li>
+      </ul>
+    </div>
+
+    <!-- ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ -->
+    <div class="confidence-panel">
+      <h4>📊 HOW RELIABLE IS THIS RESULT?</h4>
+      <table>
+        <tr><th>Data Point</th><th>Source</th><th>Tier</th></tr>
+        <tr><td>IT Load, UPS Capacity, PDU Ratings</td><td>User-supplied — accuracy depends on as-built records</td><td><span class="tier-badge t1">T1</span> if from nameplate, <span class="tier-badge t4">T4</span> if estimated</td></tr>
+        <tr><td>Power Factor (0.95)</td><td>Typical DC power factor — EN 50600-2-2</td><td><span class="tier-badge t2">T2</span></td></tr>
+        <tr><td>UPS Redundancy Factors (N+1, 2N)</td><td>Uptime Institute Tier Standards</td><td><span class="tier-badge t1">T1</span></td></tr>
+        <tr><td>Cooling PUE Contribution by Type</td><td>ASHRAE TC 9.9 + CIBSE Guide B2 benchmarks</td><td><span class="tier-badge t2">T2</span></td></tr>
+        <tr><td>Cable Derating (15–20% for >20yr)</td><td>CIBSE Guide M + BS 7671 derating factors</td><td><span class="tier-badge t2">T2</span></td></tr>
+        <tr><td>UPS Efficiency (90–92% legacy, 96–97% modern)</td><td>EN 62040-3 + Schneider/ABB/Eaton published data</td><td><span class="tier-badge t2">T2</span></td></tr>
+        <tr><td>Cost per MW Upgrade Estimates</td><td>LBE project experience + supplier quotations 2024</td><td><span class="tier-badge t3">T3</span></td></tr>
+      </table>
+      <p style="margin-top:10px;font-style:italic;">T1 = published standard/regulation · T2 = peer-reviewed/industry data · T3 = engineering estimate · T4 = professional judgement. Capacity calculations are deterministic; cost estimates carry ±30% uncertainty.</p>
+    </div>
+
+  </div>
+
+  <div style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;margin-top:8px;max-width:720px;margin-left:auto;margin-right:auto;">INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+  <div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;max-width:720px;margin-left:auto;margin-right:auto;">Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+  <!-- STANDARDS FOOTER -->
+  <div class="standards-footer">
+    EN 50600-2-2 (DC Power Distribution) · EN 50600-2-3 (Environmental Control) · EU EED 2023/1791 Art.12 ·
+    ASHRAE TC 9.9 · CIBSE Guide M (Maintenance) · CRU Dec 2025 (DC Grid Policy)<br>
+    Screening tool only — not a substitute for professional engineering assessment.
+    Cost estimates at ±30% RICS NRM1 Order of Cost accuracy.<br>
+    © 2026 Legacy Business Engineers Ltd · legacybe.ie
+  </div>
+
+</div><!-- /container -->
+</div><!-- /root -->
+
+<!-- NAV FOOTER -->
+
+<!-- ═══ GOLD CTA BAR (A+ compliance) ═══ -->
+<div class="cta-bar np">
+  <h3>Got the answers? Here's what to do next.</h3>
+  <p class="cta-service">DC Retrofit Diagnostic — site-specific assessment with chartered engineer sign-off</p>
+  <p class="cta-price">From €5,000 + VAT · Delivered in 5 working days</p>
+  <a href="https://legacybe.ie/contact?service=S4+DC+Retrofit+Diagnostic" class="cta-btn">Talk to an Engineer →</a>
+</div>
+
+<!-- ═══ SAMPLE BAR ═══ -->
+<div class="sample-bar np">
+  📊 See what an DC Retrofit Diagnostic delivers — <a href="https://legacybe.ie/dc-sample-report" target="_blank">View Sample Report →</a>
+</div>
+
+<div class="v15-nav-footer np">
+  <span>© 2026 Legacy Business Engineers Ltd</span>
+  <a href="https://legacybe.ie/contact">Talk to an Engineer →</a>
+</div>
+
+<script>
+function calculate() {
+  // ═══ GATHER INPUTS ═══
+  var itCurrent = parseFloat(document.getElementById('itCurrent').value);
+  var itTarget = parseFloat(document.getElementById('itTarget').value);
+  var totalCapMVA = parseFloat(document.getElementById('totalCapacity').value);
+  var upsCap = parseFloat(document.getElementById('upsCapacity').value);
+  var upsRedundancy = document.getElementById('upsRedundancy').value;
+  var numPDUs = parseInt(document.getElementById('numPDUs').value);
+  var pduRating = parseFloat(document.getElementById('pduRating').value);
+  var cableAge = parseInt(document.getElementById('cableAge').value);
+  var coolingPower = parseFloat(document.getElementById('coolingPower').value);
+  var coolingType = document.getElementById('coolingType').value;
+
+  // ═══ VALIDATE ═══
+  if (isNaN(itCurrent) || isNaN(itTarget) || itTarget < itCurrent) {
+    alert('Please check inputs. Target IT load must be ≥ current IT load.');
+    return;
+  }
+
+  // ═══ DERIVED VALUES ═══
+  var pf = 0.95; // Source: typical DC power factor — EN 50600-2-2 (T2) // Source: typical DC power factor — EN 50600-2-2 (T2)
+  var totalCapMW = totalCapMVA * pf;
+
+  // UPS usable capacity — input is total deliverable MW at stated redundancy
+  // N = no spare, use as-is; N+1 = one spare module derates ~15%;
+  // 2N/2N+1 = each path = full rated (operator quotes per-path capacity)
+  var upsUsable;
+  var upsRedLabel;
+  switch(upsRedundancy) {
+    case 'N':
+      upsUsable = upsCap;
+      upsRedLabel = 'N';
+      break;
+    case 'N+1':
+      upsUsable = upsCap * 0.85; // ~15% lost to spare module
+      upsRedLabel = 'N+1';
+      break;
+    case '2N':
+      upsUsable = upsCap; // operator quotes per-path capacity
+      upsRedLabel = '2N';
+      break;
+    case '2N+1':
+      upsUsable = upsCap;
+      upsRedLabel = '2N+1';
+      break;
+    default:
+      upsUsable = upsCap;
+      upsRedLabel = 'N';
+  }
+
+  // Cooling power estimate for target
+  var coolingPUEfactors = {
+    'air': 0.50,          // cooling = 50% of IT load
+    'chilled_water': 0.35,
+    'hybrid_dlc': 0.20,
+    'full_dlc': 0.10
+  };
+  var coolingFactor = coolingPUEfactors[coolingType] || 0.35;
+  var targetCoolingMW = itTarget * coolingFactor;
+  var targetTotalMW = itTarget + targetCoolingMW + (itTarget * 0.05); // 5% for lighting, BMS, misc
+
+  // Current utilisation
+  var currentTotalMW = itCurrent + coolingPower + (itCurrent * 0.05);
+  var currentUtil = (currentTotalMW / totalCapMW) * 100;
+  var targetUtil = (targetTotalMW / totalCapMW) * 100;
+
+  // Headroom
+  var headroomMW = totalCapMW - targetTotalMW;
+
+  // PDU check
+  var pduTotalKW = numPDUs * pduRating;
+  var pduTotalMW = pduTotalKW / 1000;
+  var pduPerLoad = (itTarget * 1000) / numPDUs;
+  var pduUtil = (pduPerLoad / pduRating) * 100;
+
+  // UPS check
+  var upsUtil = (itTarget / upsUsable) * 100;
+
+  // Cable/busbar thermal risk
+  var loadIncrease = ((itTarget - itCurrent) / itCurrent) * 100;
+  var cableThermalRisk = (cableAge > 15 && loadIncrease > 50);
+
+  // ═══ STATUS DETERMINATION ═══
+  // Supply: stricter — transformer overload is critical
+  function getSupplyStatus(util) {
+    if (util <= 80) return 'green';
+    if (util <= 95) return 'amber';
+    return 'red';
+  }
+  // UPS/PDU: slightly looser — redundancy provides margin
+  function getUPSStatus(util) {
+    if (util <= 90) return 'green';
+    if (util <= 100) return 'amber';
+    return 'red';
+  }
+
+  var supplyStatus = targetUtil > 100 ? 'red' : getSupplyStatus(targetUtil);
+  var upsStatus = upsUtil > 100 ? 'red' : getUPSStatus(upsUtil);
+  var pduStatus = pduUtil > 100 ? 'red' : getUPSStatus(pduUtil);
+
+  // Cooling status
+  var coolingIncrease = ((targetCoolingMW - coolingPower) / Math.max(coolingPower, 0.1)) * 100;
+  var coolingStatus;
+  if (coolingIncrease <= 20) coolingStatus = 'green';
+  else if (coolingIncrease <= 60) coolingStatus = 'amber';
+  else coolingStatus = 'red';
+
+  // Cable status
+  var cableStatus = cableThermalRisk ? 'red' : (cableAge > 12 && loadIncrease > 30 ? 'amber' : 'green');
+
+  // Max achievable without upgrade
+  var maxITnoUpgrade = Math.min(
+    totalCapMW / (1 + coolingFactor + 0.05), // supply limited
+    upsUsable,                                 // UPS limited
+    pduTotalMW                                 // PDU limited
+  );
+  maxITnoUpgrade = Math.max(maxITnoUpgrade, itCurrent);
+
+  // Limiting factor
+  var bottlenecks = [
+    { name: 'Supply (Transformer)', util: targetUtil, status: supplyStatus, limit: totalCapMW / (1 + coolingFactor + 0.05) },
+    { name: 'UPS System', util: upsUtil, status: upsStatus, limit: upsUsable },
+    { name: 'Distribution (PDUs)', util: pduUtil, status: pduStatus, limit: pduTotalMW },
+    { name: 'Cooling Power', util: coolingIncrease > 100 ? 100 + coolingIncrease/5 : coolingIncrease, status: coolingStatus, limit: null }
+  ];
+
+  var limitingFactor = bottlenecks.reduce(function(prev, curr) {
+    var statusOrder = { red: 3, amber: 2, green: 1 };
+    return (statusOrder[curr.status] > statusOrder[prev.status]) ? curr : prev;
+  });
+
+  // Overall status
+  var overallStatus = 'green';
+  bottlenecks.forEach(function(b) {
+    if (b.status === 'red') overallStatus = 'red';
+    else if (b.status === 'amber' && overallStatus !== 'red') overallStatus = 'amber';
+  });
+  if (cableStatus === 'red') overallStatus = 'red';
+
+  // ═══ COST ESTIMATES ═══
+  var upgradeCosts = [];
+  var totalCostLow = 0;
+  var totalCostHigh = 0;
+
+  if (supplyStatus !== 'green') {
+    var addMVA = Math.max(0, (targetTotalMW / pf) - totalCapMVA);
+    var sLow = addMVA * 300000;
+    var sHigh = addMVA * 600000;
+    upgradeCosts.push({ item: 'Transformer / Grid Supply', low: sLow, high: sHigh, status: supplyStatus, note: '+' + addMVA.toFixed(1) + ' MVA required' });
+    totalCostLow += sLow;
+    totalCostHigh += sHigh;
+  }
+
+  if (upsStatus !== 'green') {
+    var addUPS = Math.max(0, itTarget - upsUsable);
+    var uLow = addUPS * 200000;
+    var uHigh = addUPS * 400000;
+    upgradeCosts.push({ item: 'UPS Upgrade/Addition', low: uLow, high: uHigh, status: upsStatus, note: '+' + addUPS.toFixed(1) + ' MW UPS capacity needed' });
+    totalCostLow += uLow;
+    totalCostHigh += uHigh;
+  }
+
+  if (pduStatus !== 'green') {
+    var pduShortfall = Math.max(0, Math.ceil((itTarget * 1000 / (pduRating * 0.8)) - numPDUs));
+    var pLow = pduShortfall * 50000;
+    var pHigh = pduShortfall * 100000;
+    upgradeCosts.push({ item: 'New PDU/RPP Units', low: pLow, high: pHigh, status: pduStatus, note: '+' + pduShortfall + ' PDUs at ' + pduRating + ' kW each' });
+    totalCostLow += pLow;
+    totalCostHigh += pHigh;
+  }
+
+  if (cableStatus !== 'green') {
+    var bLow = (itTarget - itCurrent) * 100000;
+    var bHigh = (itTarget - itCurrent) * 250000;
+    upgradeCosts.push({ item: 'Busbar / Cable Upgrade', low: bLow, high: bHigh, status: cableStatus, note: cableAge + 'yr old, +' + loadIncrease.toFixed(0) + '% load increase' });
+    totalCostLow += bLow;
+    totalCostHigh += bHigh;
+  }
+
+  if (coolingStatus !== 'green') {
+    var addCool = Math.max(0, targetCoolingMW - coolingPower);
+    var cLow = addCool * 200000;
+    var cHigh = addCool * 500000;
+    upgradeCosts.push({ item: 'Cooling Power Increase', low: cLow, high: cHigh, status: coolingStatus, note: '+' + addCool.toFixed(1) + ' MW cooling electrical' });
+    totalCostLow += cLow;
+    totalCostHigh += cHigh;
+  }
+
+  // ═══ RENDER RESULTS ═══
+  var html = '';
+
+  // Primary result
+  var overallLabels = { green: 'CLEAR TO DENSIFY', amber: 'UPGRADES NEEDED', red: 'MAJOR CONSTRAINTS' };
+  var overallIcons = { green: '✅', amber: '⚠️', red: '🚫' };
+  var overallColors = { green: 'var(--green-status)', amber: 'var(--amber)', red: 'var(--red)' };
+
+  html += '<div class="primary-result" style="border-color:' + overallColors[overallStatus] + '">';
+  html += '<div class="label">Power Infrastructure Verdict</div>';
+  html += '<div class="value" style="color:' + overallColors[overallStatus] + '">' + overallIcons[overallStatus] + ' ' + overallLabels[overallStatus] + '</div>';
+  html += '<div class="detail">Target: ' + itCurrent.toFixed(1) + ' MW → ' + itTarget.toFixed(1) + ' MW IT | Max without upgrade: ' + maxITnoUpgrade.toFixed(1) + ' MW IT</div>';
+  html += '</div>';
+
+  // What This Means
+  var wtmText = '';
+  if (overallStatus === 'green') {
+    wtmText = 'Your existing power infrastructure can support the target IT load of ' + itTarget.toFixed(1) + ' MW without upgrades. You have headroom to densify within current capacity — start with the highest-headroom PDU zones.';
+  } else if (overallStatus === 'amber') {
+    wtmText = 'Densification to ' + itTarget.toFixed(1) + ' MW is feasible but requires targeted upgrades (estimated €' + fmt(totalCostLow) + '–€' + fmt(totalCostHigh) + '). The bottleneck is ' + limitingFactor.name + '. You can achieve ' + maxITnoUpgrade.toFixed(1) + ' MW immediately using existing infrastructure while planning the upgrade.';
+  } else {
+    wtmText = 'Major power infrastructure constraints prevent densification to ' + itTarget.toFixed(1) + ' MW without significant investment (€' + fmt(totalCostLow) + '–€' + fmt(totalCostHigh) + '). At this scale, a formal DC Retrofit Diagnostic is needed to model upgrade sequencing, ESB connection timeline, and phased delivery.';
+  }
+  html += '<div class="wtm-panel"><h4>What This Means</h4><p>' + wtmText + '</p></div>';
+
+  // Traffic light dashboard
+  html += '<div class="tl-grid">';
+
+  var statusIcons = { green: '✅', amber: '⚠️', red: '🚫' };
+  var statusLabels = { green: 'OK', amber: 'At Risk', red: 'Bottleneck' };
+
+  html += '<div class="tl-card tl-' + supplyStatus + '">';
+  html += '<div class="tl-icon">' + statusIcons[supplyStatus] + '</div>';
+  html += '<div class="tl-label">Supply</div>';
+  html += '<div class="tl-value">' + statusLabels[supplyStatus] + '</div>';
+  html += '<div class="tl-detail">' + Math.min(targetUtil, 999).toFixed(0) + '% of ' + totalCapMVA.toFixed(1) + ' MVA</div>';
+  html += '</div>';
+
+  html += '<div class="tl-card tl-' + upsStatus + '">';
+  html += '<div class="tl-icon">' + statusIcons[upsStatus] + '</div>';
+  html += '<div class="tl-label">UPS</div>';
+  html += '<div class="tl-value">' + statusLabels[upsStatus] + '</div>';
+  html += '<div class="tl-detail">' + Math.min(upsUtil, 999).toFixed(0) + '% of ' + upsUsable.toFixed(1) + ' MW (' + upsRedLabel + ')</div>';
+  html += '</div>';
+
+  html += '<div class="tl-card tl-' + pduStatus + '">';
+  html += '<div class="tl-icon">' + statusIcons[pduStatus] + '</div>';
+  html += '<div class="tl-label">Distribution</div>';
+  html += '<div class="tl-value">' + statusLabels[pduStatus] + '</div>';
+  html += '<div class="tl-detail">' + Math.min(pduUtil, 999).toFixed(0) + '% — ' + pduPerLoad.toFixed(0) + ' kW/PDU</div>';
+  html += '</div>';
+
+  html += '<div class="tl-card tl-' + coolingStatus + '">';
+  html += '<div class="tl-icon">' + statusIcons[coolingStatus] + '</div>';
+  html += '<div class="tl-label">Cooling</div>';
+  html += '<div class="tl-value">' + statusLabels[coolingStatus] + '</div>';
+  html += '<div class="tl-detail">' + coolingPower.toFixed(1) + ' → ' + targetCoolingMW.toFixed(1) + ' MW</div>';
+  html += '</div>';
+
+  html += '</div>'; // tl-grid
+
+  // Utilisation bar chart
+  html += '<div class="card-title" style="margin-top:8px">Capacity Utilisation</div>';
+  html += '<div class="bar-chart">';
+
+  var barData = [
+    { label: 'Supply', current: (currentTotalMW / totalCapMW) * 100, target: targetUtil, cap: totalCapMW.toFixed(1) + ' MW' },
+    { label: 'UPS', current: (itCurrent / upsUsable) * 100, target: upsUtil, cap: upsUsable.toFixed(1) + ' MW' },
+    { label: 'PDUs', current: ((itCurrent * 1000 / numPDUs) / pduRating) * 100, target: pduUtil, cap: pduTotalMW.toFixed(1) + ' MW' }
+  ];
+
+  barData.forEach(function(bd) {
+    var curW = Math.min(bd.current, 100);
+    var tarW = Math.min(bd.target, 100);
+    var tarColor = bd.target > 85 ? 'var(--red)' : (bd.target > 70 ? 'var(--amber)' : 'var(--lbe-green)');
+    html += '<div class="bar-row">';
+    html += '<div class="bar-label">' + bd.label + '</div>';
+    html += '<div class="bar-track">';
+    // Target bar
+    html += '<div class="bar-fill" style="width:' + tarW + '%;background:' + tarColor + ';position:absolute;top:0;left:0;opacity:0.85">';
+    html += '<span>' + bd.target.toFixed(0) + '%</span></div>';
+    // Current bar overlay (lighter)
+    html += '<div class="bar-fill" style="width:' + curW + '%;background:rgba(74,124,89,0.4);position:absolute;top:0;left:0">';
+    html += '</div>';
+    // 80% limit line
+    html += '<div class="bar-limit" style="left:80%"><div class="bar-limit-label">80%</div></div>';
+    html += '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // Bottleneck / upgrade table
+  if (upgradeCosts.length > 0) {
+    html += '<div class="card-title" style="margin-top:16px">Upgrade Requirements</div>';
+    html += '<table class="data-table">';
+    html += '<tr><th>Component</th><th>Status</th><th>Est. Cost (€)</th><th>Note</th></tr>';
+    upgradeCosts.forEach(function(uc) {
+      var badgeCls = 'badge-' + uc.status;
+      html += '<tr>';
+      html += '<td><strong>' + uc.item + '</strong></td>';
+      html += '<td><span class="status-badge ' + badgeCls + '">' + statusLabels[uc.status].toUpperCase() + '</span></td>';
+      html += '<td>€' + fmt(uc.low) + ' – €' + fmt(uc.high) + '</td>';
+      html += '<td>' + uc.note + '</td>';
+      html += '</tr>';
+    });
+    html += '<tr style="font-weight:700;background:#f1f5f9">';
+    html += '<td>TOTAL ESTIMATED</td><td></td>';
+    html += '<td>€' + fmt(totalCostLow) + ' – €' + fmt(totalCostHigh) + '</td>';
+    html += '<td>±30% RICS NRM1</td></tr>';
+    html += '</table>';
+  }
+
+  // Max achievable without upgrade
+  html += '<div class="primary-result" style="margin-top:16px;border-color:var(--seg06-border)">';
+  html += '<div class="label">Maximum IT Load Without Power Upgrade</div>';
+  html += '<div class="value" style="color:var(--seg06-text)">' + maxITnoUpgrade.toFixed(1) + ' MW</div>';
+  html += '<div class="detail">Limited by: ' + limitingFactor.name + '</div>';
+  html += '</div>';
+
+  // Recommended upgrade sequence
+  if (upgradeCosts.length > 0) {
+    html += '<div class="card-title">Recommended Upgrade Sequence</div>';
+    // Sort by status severity (red first), then cost
+    var sortedUpgrades = upgradeCosts.slice().sort(function(a, b) {
+      var ord = { red: 0, amber: 1, green: 2 };
+      if (ord[a.status] !== ord[b.status]) return ord[a.status] - ord[b.status];
+      return b.high - a.high; // higher cost = more critical
+    });
+
+    sortedUpgrades.forEach(function(uc, i) {
+      html += '<div class="upgrade-step">';
+      html += '<div class="step-num">' + (i + 1) + '</div>';
+      html += '<div class="step-content">';
+      html += '<div class="step-title">' + uc.item + '</div>';
+      html += '<div class="step-detail">' + uc.note + '</div>';
+      html += '<div class="step-cost">€' + fmt(uc.low) + ' – €' + fmt(uc.high) + '</div>';
+      html += '</div></div>';
+    });
+  } else {
+    html += '<div class="tip-card tip-green" style="margin-top:12px">';
+    html += '<div class="tip-title">✅ No power upgrades required</div>';
+    html += 'Your existing infrastructure has sufficient capacity to support the target IT load of ' + itTarget.toFixed(1) + ' MW.';
+    html += '</div>';
+  }
+
+  // Value Engineering Tips
+  html += '<div class="card-title" style="margin-top:20px">Value Engineering Tips</div>';
+
+  html += '<div class="tip-card tip-amber">';
+  html += '<div class="tip-title">⚡ Grid Connection — CRU Rules Apply</div>';
+  html += 'Since Dec 2025, new MVA capacity in Dublin requires 80% renewable supply + dispatchable generation. Existing grid connections are a scarce asset — quantify this value before assuming a new supply is feasible.';
+  html += '<div class="tip-ref">Ref: CRU Dec 2025 Data Centre Grid Policy</div></div>';
+
+  html += '<div class="tip-card tip-green">';
+  html += '<div class="tip-title">🔋 UPS Efficiency — Modern Li-ion Gains</div>';
+  html += 'Legacy VRLA UPS systems operate at 90–92% efficiency. Modern Li-ion UPS achieves 96–97%, saving 0.03–0.05 on PUE. At ' + itTarget.toFixed(0) + ' MW, that\'s ' + (itTarget * 0.04 * 8760 * 0.20 / 1000).toFixed(0) + 'k/yr in reduced losses.';
+  html += '<div class="tip-ref">Ref: EN 50600-2-2, Schneider WP 92</div></div>';
+
+  html += '<div class="tip-card tip-blue">';
+  html += '<div class="tip-title">📊 Staged Densification</div>';
+  html += 'You don\'t have to densify all racks at once. Start with 25% of racks in the highest-headroom PDU zones using existing capacity (' + maxITnoUpgrade.toFixed(1) + ' MW available). Use revenue from densified racks to fund the next phase.';
+  html += '<div class="tip-ref">Ref: Uptime Institute Tier Standards</div></div>';
+
+  html += '<div class="tip-card tip-green">';
+  html += '<div class="tip-title">📏 Right-Size Before Upgrading</div>';
+  html += 'Actual IT load is typically 40–60% of nameplate. Measure real power draw at every PDU before committing to supply upgrades — you may have more headroom than the nameplate suggests.';
+  html += '<div class="tip-ref">Ref: ASHRAE TC 9.9, industry benchmarking</div></div>';
+
+  html += '<div class="tip-card tip-amber">';
+  html += '<div class="tip-title">⏱ ESB Networks Lead Time</div>';
+  html += 'New transformer or HV connection in Dublin: 12–24 months from application to energisation. In constrained areas, longer. If supply is the bottleneck, start the application NOW — this is on the critical path.';
+  html += '<div class="tip-ref">Ref: ESB Networks Connection Process</div></div>';
+
+  // Old inline CTA removed — replaced by gold CTA bar
+
+  document.getElementById('resultsContent').innerHTML = html;
+  document.getElementById('resultsSection').classList.add('active');
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══ FORMAT HELPERS ═══
+function fmt(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(0) + 'k';
+  return n.toFixed(0);
+}
+
+// ═══ LOAD SAMPLE — Clonshaugh reference facility ═══
+function loadSample() {
+  document.getElementById('itCurrent').value = 2.4;
+  document.getElementById('itTarget').value = 4.0;
+  document.getElementById('totalCapacity').value = 5.0;
+  document.getElementById('upsCapacity').value = 3.5;
+  document.getElementById('upsRedundancy').value = 'N+1';
+  document.getElementById('numPDUs').value = 24;
+  document.getElementById('pduRating').value = 200;
+  document.getElementById('cableAge').value = 14;
+  document.getElementById('coolingPower').value = 1.5;
+  document.getElementById('coolingType').value = 'air';
+  calculate();
+}
+</script>
+
+
+<button class="print-btn np" onclick="window.print()" style="max-width:720px;margin:12px auto;display:block">🖨️ Print / Save as PDF</button>
+</body>
+</html>

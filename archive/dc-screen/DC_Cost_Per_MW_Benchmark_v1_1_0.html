@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC Cost Benchmark Calculator | Legacy Business Engineers</title>
+<style>
+  :root {
+    --lbe-green: #4a7c59; --lbe-green-light: #e8f0eb; --lbe-dark: #1a2332;
+    --seg06-bg: #eef2ff; --seg06-border: #6366f1; --seg06-text: #3730a3;
+    --green-bg: #dcfce7; --green-text: #166534; --green-border: #86efac;
+    --amber-bg: #fef3c7; --amber-text: #92400e; --amber-border: #fcd34d;
+    --red-bg: #fee2e2; --red-text: #991b1b; --red-border: #fca5a5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8fafc; color: #1e293b; line-height: 1.6; }
+  .container { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .lbe-header { background: var(--lbe-dark); color: white; padding: 16px 20px;
+    border-radius: 10px 10px 0 0; display: flex; align-items: center; gap: 14px; }
+  .lbe-header img { height: 36px; border-radius: 50%; flex-shrink: 0; }
+  .lbe-header .h-text { flex: 1; }
+  .lbe-header .h-title { font-size: 17px; font-weight: 700; }
+  .lbe-header .h-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .lbe-header .h-ver { font-size: 10px; color: #64748b; }
+  .seg-banner { background: var(--seg06-bg); border-left: 4px solid var(--seg06-border);
+    color: var(--seg06-text); padding: 10px 16px; font-size: 13px; font-weight: 600; }
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 0 0 10px 10px; padding: 20px; }
+  .card + .card { border-radius: 10px; margin-top: 12px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+  .hint { font-size: 11px; color: #94a3b8; margin-bottom: 2px; }
+  select, input[type="number"] { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1;
+    border-radius: 6px; font-size: 14px; background: white; margin-bottom: 14px; }
+  select:focus, input:focus { outline: none; border-color: var(--lbe-green);
+    box-shadow: 0 0 0 3px rgba(74,124,89,0.12); }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .check-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .check-row input { width: 18px; height: 18px; accent-color: var(--lbe-green); }
+  .check-row label { margin-bottom: 0; font-weight: 500; }
+  .calc-btn { width: 100%; padding: 12px; background: var(--lbe-green); color: white;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .calc-btn:hover { background: #3d6b4a; }
+  .result-panel { display: none; margin-top: 16px; }
+  .result-panel.show { display: block; }
+  .r-primary { text-align: center; padding: 20px; border-radius: 10px;
+    border: 2px solid var(--lbe-green); background: var(--lbe-green-light); margin-bottom: 14px; }
+  .r-primary .r-num { font-size: 32px; font-weight: 800; color: var(--lbe-dark); }
+  .r-primary .r-label { font-size: 13px; color: #64748b; margin-top: 2px; }
+  .verdict { display: inline-block; padding: 5px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 700; }
+  .v-green { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+  .v-amber { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+  .v-red { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+  .r-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .r-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+  .r-item .ri-val { font-size: 20px; font-weight: 700; color: var(--lbe-dark); }
+  .r-item .ri-lab { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .r-item.full { grid-column: 1 / -1; }
+  /* Elemental breakdown table */
+  .el-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12px; }
+  .el-table th { background: var(--lbe-dark); color: white; padding: 8px 10px; text-align: left; font-weight: 600; }
+  .el-table td { padding: 7px 10px; border-bottom: 1px solid #e2e8f0; }
+  .el-table tr:nth-child(even) { background: #f8fafc; }
+  .el-table .el-sub { font-weight: 700; background: #f1f5f9; }
+  .el-table .el-total { font-weight: 800; background: var(--lbe-green-light); }
+  .el-table .el-adj { font-style: italic; color: #64748b; }
+  .el-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  /* Tips, WTM, CTA, nav, disclaimer — same as GRD-001 */
+  .tip { border-left: 4px solid; border-radius: 6px; padding: 12px 16px; margin-top: 10px; font-size: 13px; }
+  .tip-green { background: #f0fdf4; border-color: #22c55e; }
+  .tip-amber { background: #fffbeb; border-color: #f59e0b; }
+  .tip-blue { background: #eff6ff; border-color: #3b82f6; }
+  .tip .tip-title { font-weight: 700; margin-bottom: 4px; }
+  .tip .tip-ref { font-size: 11px; color: #64748b; margin-top: 6px; }
+  .wtm { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-top: 14px; }
+  .wtm-title { font-size: 14px; font-weight: 700; color: var(--lbe-dark); margin-bottom: 8px; }
+  .wtm-text { font-size: 13px; color: #475569; line-height: 1.7; }
+  .cta-bar { background: linear-gradient(135deg, var(--lbe-dark) 0%, #2a3a4c 100%);
+    color: white; border-radius: 10px; padding: 20px; margin-top: 16px; text-align: center; }
+  .cta-bar .cta-hook { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .cta-bar .cta-detail { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+  .cta-bar .cta-btn { display: inline-block; background: var(--lbe-green); color: white;
+    padding: 11px 28px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .cta-bar .cta-btn:hover { background: #3d6b4a; }
+  .cta-bar .cta-price { font-size: 11px; color: #94a3b8; margin-top: 8px; }
+  .sample-bar { text-align: center; padding: 12px; background: #f0fdf4;
+    border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 10px; }
+  .sample-bar a { color: var(--lbe-green); font-weight: 600; font-size: 13px; text-decoration: none; }
+  .nav-footer { text-align: center; padding: 12px; background: #f9fafb;
+    border-top: 1px solid #e5e7eb; margin-top: 20px; }
+  .nav-footer a { color: var(--lbe-green); text-decoration: none; font-size: 13px; }
+  .nav-footer .nf-copy { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+  .disclaimer { font-size: 10px; color: #94a3b8; text-align: center; padding: 10px; line-height: 1.5; margin-top: 10px; }
+  @media print {
+    body { background: white; }
+    .no-print { display: none !important; }
+    .cta-bar, .sample-bar, .nav-footer, .calc-btn, .seg-banner, .np, .not-checked-panel { display: none !important; }
+    @page { size: A4 portrait; margin: 14mm 12mm 20mm 12mm; }
+    .container { max-width: 100%; }
+    .card { border: none; }
+    .lbe-header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+
+  .not-checked-panel { background: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px;
+    padding: 16px 20px; margin-top: 16px; }
+  .not-checked-panel h3 { color: #991b1b; font-size: 14px; font-weight: 700; margin: 0 0 8px;
+    display: flex; align-items: center; gap: 6px; }
+  .not-checked-panel ul { margin: 0; padding: 0 0 0 18px; }
+  .not-checked-panel li { font-size: 12px; color: #7f1d1d; margin-bottom: 4px; line-height: 1.5; }
+  .not-checked-panel .nc-note { font-size: 11px; color: #991b1b; margin-top: 8px; font-style: italic; }
+</style>
+</head>
+<body>
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var b = document.body;
+  if (b && b.children.length < 3) {
+    b.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-F-CST-001 v1.1.0</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+      + '</div>';
+  }
+  return false;
+};
+</script>
+<!-- LBE AUDIENCE BAR v15 -->
+<div id="lbe-audience-bar" class="np" style="background:#eef2ff;border-bottom:3px solid #6366f1;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div>
+    <div style="font-size:13px;font-weight:700;color:#3730a3;">BUILT FOR: DATA CENTRE OPERATORS &amp; INVESTORS</div>
+    <div style="font-size:11px;color:#374151;margin-top:1px;font-style:italic;">Screening tool — dc cost benchmark calculator</div>
+  </div>
+  <span style="font-size:10px;color:#3730a3;opacity:0.7;white-space:nowrap;">DC-F-CST-001</span>
+</div>
+<div style="text-align:center;font-size:10px;color:#3730a3;padding:4px;border-bottom:1px solid #e5e7eb;">
+  Audience: &#x1F5A5;&#xFE0F; Data Centre Operators &amp; Investors | DC-F-CST-001 | Legacy Business Engineers Ltd | legacybe.ie
+</div>
+<div id="lbe-sample-bar" class="np" style="margin:8px 16px 4px;padding:8px 12px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+  <span style="font-size:13px;font-weight:600;color:#333;">&#x1F4CA; Data centre MEP feasibility — site-specific assessment available</span>
+  <a href="https://legacybe.ie/contact/" target="_blank" rel="noopener" style="font-size:13px;font-weight:700;color:#3730a3;text-decoration:none;">Discuss Your Project &rarr;</a>
+</div>
+<div class="container">
+
+  <div class="lbe-header">
+    <img src="data:image/png;base64,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" alt="LBE" onerror="this.style.display='none'" />
+    <div class="h-text">
+      <div class="h-title">DC Cost Benchmark Calculator</div>
+      <div class="h-sub">What will this data centre cost per MW?</div>
+      <div class="h-ver">DC-F-CST-001 v1.1.0 · Legacy Business Engineers</div>
+    </div>
+  </div>
+
+  <div class="seg-banner no-print np">Data Centre Screening — DC Cost Benchmark Calculator | DC-F-CST-001</div>
+
+  <div class="card">
+    <div class="row-2">
+      <div>
+        <label for="itLoad">IT Load (MW)</label>
+        <div class="hint">Total design IT capacity</div>
+        <input type="number" title="Total IT electrical load in MW. Typical: 1-100MW for commercial facilities." id="itLoad" min="0.5" max="200" step="0.5" placeholder="e.g. 50" />
+      </div>
+      <div>
+        <label for="tier">Uptime Tier</label>
+        <div class="hint">Redundancy classification</div>
+        <select title="Uptime Institute tier classification. Tier I (basic) to Tier IV (fault-tolerant)." id="tier">
+          <option value="II">Tier II — Redundant capacity</option>
+          <option value="III">Tier III — Concurrent maintenance</option>
+          <option value="IV" selected>Tier IV — Fault tolerant</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label for="designTier">Design Approach</label>
+        <div class="hint">Drives technology selection + PUE</div>
+        <select title="Uptime Institute tier classification. Tier I (basic) to Tier IV (fault-tolerant)." id="designTier">
+          <option value="T1">T1 — Conventional (PUE ~1.30)</option>
+          <option value="T2" selected>T2 — Best Practice (PUE ~1.10)</option>
+          <option value="T3">T3 — Innovation (PUE &lt;1.10)</option>
+        </select>
+      </div>
+      <div>
+        <label for="elecTariff">Electricity Tariff (€/kWh)</label>
+        <div class="hint">Blended commercial rate</div>
+        <input type="number" title="Blended commercial rate in €/kWh. Ireland typical: €0.10-€0.16/kWh." id="elecTariff" min="0.05" max="0.30" step="0.01" value="0.12" />
+      </div>
+    </div>
+
+    <div class="check-row">
+      <input type="checkbox" id="aiReady" />
+      <label for="aiReady">AI-ready (GPU racks >30kW — requires DLC infrastructure)</label>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="heatReuse" />
+      <label for="heatReuse">Heat reuse provision (EU EED Article 26 compliance)</label>
+    </div>
+
+    <button class="calc-btn no-print" onclick="calculate()">Calculate Cost Benchmark</button>
+
+    <div id="results" class="result-panel"></div>
+  </div>
+
+  <div class="cta-bar no-print" id="ctaBar" style="display:none;">
+    <div class="cta-hook">Need a site-specific cost estimate?</div>
+    <div class="cta-detail">S4-A Site Feasibility Assessment — elemental cost plan, cooling strategy comparison, power architecture options, and PUE validation. Delivered in 2–4 weeks.</div>
+    <a href="https://legacybe.ie/contact/" target="_blank" class="cta-btn">Talk to an Engineer</a>
+    <div class="cta-price">From €15,000 + VAT</div>
+  </div>
+
+  <div class="sample-bar no-print" id="sampleBar" style="display:none;">
+    <a href="#">See Sample: Tara Campus — 50MW Hyperscale Cost Estimate</a>
+  </div>
+
+  </div>
+
+  <div class="disclaimer">
+    Independent MEP feasibility assessment — not detailed design or certification.
+    Cost basis: Industry consensus H2 2025 — indicative (±20–30%), subject to site-specific assessment.
+    All figures exclude land, IT equipment, and VAT.
+  
+    <br>Standards: EN 50600 series · ASHRAE TC 9.9 · EU EED 2023/1791 · EirGrid/CRU · CIBSE TM46
+  </div>
+<div class="not-checked-panel">
+    <h3>⚠️ NOT CHECKED — Outside Scope of This Tool</h3>
+    <ul><li>Detailed elemental cost breakdown by discipline — screening uses €/kW composite rates</li><li>Site-specific factors (access, ground conditions, planning constraints)</li><li>Procurement strategy impact (single-stage, two-stage, design-build)</li><li>Currency exchange risk on imported equipment</li><li>Land acquisition, IT equipment, and professional fees</li></ul>
+    <div class="nc-note">These items require detailed design by a qualified engineer. This tool provides screening-level assessment only.</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DC-F-CST-001 v1.1.0 — DC Cost Benchmark Calculator
+// SERVICE tool · Seg06 (DC Developer / Investor)
+// Source: Industry consensus — CBRE, JLL, T&T cross-reference [VALIDATE]
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TOOL_META = {
+  tool_id: 'DC-F-CST-001', tool_name: 'DC Cost Benchmark Calculator',
+  version: '1.0.0', date: '2026-02-27', segment: 'seg06',
+};
+
+// ─── COST REFERENCE DATA ────────────────────────────────────────────────
+// Source: AIMEP_DC_STANDARDS_REFERENCE_v1_0.yaml Section 7
+// Currency: EUR, Base year: 2025, Location: Ireland
+const COST = {
+  base_cost_per_kw: 10000,  // €/kW IT at 50MW reference
+  reference_mw: 50,
+  scale_exponent: -0.15,    // Economies of scale
+  mep_percent: 65,
+
+  // Tier factors — relative to base benchmark (€10k/kW assumes Tier III baseline)
+  // Source: DC Standards Ref Section 7 cost_adjustment_factors
+  // Tier II: ~10% below Tier III; Tier III: baseline; Tier IV: 25-40% above Tier III
+  tier: { 'II': 0.90, 'III': 1.00, 'IV': 1.30 },
+
+  // Adjustment factors
+  ai_ready: { min: 1.15, mid: 1.20, max: 1.30 },
+  heat_reuse: { min: 1.05, mid: 1.07, max: 1.10 },
+
+  // Elemental breakdown (€/kW IT, Tier IV, 50MW, before tier factor)
+  // Applied AFTER scale adjustment, BEFORE tier/AI/heat adjustments
+  elements: {
+    electrical: [
+      { code: 'E60', name: 'HV Substation', eur_per_kw: 550 },
+      { code: 'E60', name: 'Generators', eur_per_kw: 400 },
+      { code: 'E61', name: 'LV Distribution', eur_per_kw: 800 },
+      { code: 'E61', name: 'UPS', eur_per_kw: 550 },
+      { code: 'E62', name: 'Busbar & PDU', eur_per_kw: 300 },
+      { code: 'E64', name: 'Structured Cabling', eur_per_kw: 225 },
+      { code: 'E65', name: 'DCIM & Controls', eur_per_kw: 150 },
+      { code: 'E67', name: 'Security', eur_per_kw: 115 },
+      { code: 'E68', name: 'Fire Detection', eur_per_kw: 150 },
+    ],
+    mechanical: [
+      { code: 'M55', name: 'Cooling Plant', eur_per_kw: 800 },
+      { code: 'M51', name: 'Heat Rejection', eur_per_kw: 400 },
+      { code: 'M53/56', name: 'CHW Distribution', eur_per_kw: 300 },
+      { code: 'M57', name: 'Airflow Management', eur_per_kw: 225 },
+      { code: 'M58', name: 'Fire Suppression', eur_per_kw: 200 },
+      { code: 'M50/54', name: 'Fuel Storage', eur_per_kw: 150 },
+      { code: 'M50/53', name: 'Water Services', eur_per_kw: 75 },
+      { code: 'M52', name: 'Drainage', eur_per_kw: 45 },
+    ],
+    support: [
+      { code: 'E63', name: 'Lighting', eur_per_kw: 30 },
+      { code: 'BWS', name: 'Builder Work in Services', eur_per_kw: 150 },
+    ]
+  },
+
+  // Design tier PUE assumptions
+  pue: { 'T1': 1.30, 'T2': 1.10, 'T3': 1.06 },
+
+  // Operating cost
+  opex_per_kw_yr: 1050,
+
+  // Programme
+  programme: { 5: 15, 20: 24, 50: 30, 100: 36, 200: 42 },
+
+  source: 'Industry consensus H2 2025. [VALIDATE] against CBRE/JLL/T&T.',
+};
+
+function calculate() {
+  const itLoad = parseFloat(document.getElementById('itLoad').value);
+  const tier = document.getElementById('tier').value;
+  const designTier = document.getElementById('designTier').value;
+  const elecTariff = parseFloat(document.getElementById('elecTariff').value);
+  const aiReady = document.getElementById('aiReady').checked;
+  const heatReuse = document.getElementById('heatReuse').checked;
+
+  if (!itLoad || itLoad < 0.5 || itLoad > 200) {
+    showError('IT load must be 0.5–200 MW.'); return;
+  }
+
+  // ── Scale adjustment
+  const scaleFactor = Math.pow(itLoad / COST.reference_mw, COST.scale_exponent);
+  const baseCostPerKw = Math.round(COST.base_cost_per_kw * scaleFactor);
+
+  // ── Adjustment factors
+  const tierFactor = COST.tier[tier] || 1.55;
+  const aiFactor = aiReady ? COST.ai_ready.mid : 1.0;
+  const heatFactor = heatReuse ? COST.heat_reuse.mid : 1.0;
+  const combinedFactor = tierFactor * aiFactor * heatFactor;
+
+  // ── Total cost
+  const adjustedCostPerKw = Math.round(baseCostPerKw * combinedFactor);
+  const totalCostEur = adjustedCostPerKw * itLoad * 1000;
+  const mepCostEur = totalCostEur * COST.mep_percent / 100;
+
+  // ── Elemental breakdown (scale-adjusted, then tier/AI/heat)
+  const elecScaleRatio = baseCostPerKw / COST.base_cost_per_kw;
+  const buildTable = (elements) => elements.map(e => ({
+    ...e,
+    scaled: Math.round(e.eur_per_kw * elecScaleRatio),
+    adjusted: Math.round(e.eur_per_kw * elecScaleRatio * combinedFactor),
+    total: Math.round(e.eur_per_kw * elecScaleRatio * combinedFactor * itLoad * 1000),
+  }));
+
+  const elecRows = buildTable(COST.elements.electrical);
+  const mechRows = buildTable(COST.elements.mechanical);
+  const suppRows = buildTable(COST.elements.support);
+
+  const elecSubtotal = elecRows.reduce((s, r) => s + r.total, 0);
+  const mechSubtotal = mechRows.reduce((s, r) => s + r.total, 0);
+  const suppSubtotal = suppRows.reduce((s, r) => s + r.total, 0);
+  const mepTotal = elecSubtotal + mechSubtotal + suppSubtotal;
+
+  // ── Operating cost
+  const pue = COST.pue[designTier] || 1.10;
+  const annualElecKwh = itLoad * 1000 * pue * 8760;
+  const annualElecEur = annualElecKwh * elecTariff;
+  const annualOpex = COST.opex_per_kw_yr * itLoad * 1000;
+
+  // ── Programme
+  const progKeys = Object.keys(COST.programme).map(Number).sort((a, b) => a - b);
+  let progMonths = COST.programme[progKeys[progKeys.length - 1]];
+  for (let i = 0; i < progKeys.length; i++) {
+    if (itLoad <= progKeys[i]) { progMonths = COST.programme[progKeys[i]]; break; }
+  }
+
+  // ── Verdict
+  let verdict, verdictClass, verdictLabel, verdictNote;
+  if (adjustedCostPerKw < 12000) {
+    verdict = 'GREEN'; verdictClass = 'v-green'; verdictLabel = 'WITHIN BENCHMARK';
+    verdictNote = 'Cost per kW is within typical market range for this scale and specification.';
+  } else if (adjustedCostPerKw < 18000) {
+    verdict = 'AMBER'; verdictClass = 'v-amber'; verdictLabel = 'ABOVE BASELINE';
+    verdictNote = `At €${fmtK(adjustedCostPerKw)}/kW, this is above the baseline benchmark. ${aiReady ? 'AI-ready DLC infrastructure' : ''} ${heatReuse ? 'heat reuse provision' : ''} ${aiReady || heatReuse ? 'adds premium but delivers long-term value.' : 'Tier IV specification drives the premium.'}`;
+  } else {
+    verdict = 'RED'; verdictClass = 'v-red'; verdictLabel = 'HIGH COST';
+    verdictNote = 'Cost per kW is significantly above market benchmarks. Review specification for value engineering opportunities.';
+  }
+
+  // ── Build HTML
+  let html = `
+    <div class="r-primary">
+      <div class="r-num">€${fmtK(adjustedCostPerKw)}/kW IT</div>
+      <div class="r-label">${itLoad} MW · Tier ${tier} · ${designTier} design · Ireland</div>
+      <div style="margin-top:10px;"><span class="verdict ${verdictClass}">${verdictLabel}</span></div>
+    </div>
+
+    <div class="r-grid">
+      <div class="r-item">
+        <div class="ri-val">€${fmtM(totalCostEur)}</div>
+        <div class="ri-lab">Total project cost (excl. land & IT)</div>
+      </div>
+      <div class="r-item">
+        <div class="ri-val">€${fmtM(mepCostEur)}</div>
+        <div class="ri-lab">MEP cost (${COST.mep_percent}% of total)</div>
+      </div>
+      <div class="r-item">
+        <div class="ri-val">€${fmtM(annualElecEur)}/yr</div>
+        <div class="ri-lab">Annual electricity at PUE ${pue}</div>
+      </div>
+      <div class="r-item">
+        <div class="ri-val">${progMonths} months</div>
+        <div class="ri-lab">Indicative programme (excl. grid)</div>
+      </div>
+    </div>
+  `;
+
+  // ── Factors applied
+  html += `<div style="font-size:12px; color:#64748b; margin:8px 0 14px 0;">
+    <strong>Factors applied:</strong> Scale ${scaleFactor.toFixed(3)} × Tier ${tier} (${tierFactor.toFixed(2)})`;
+  if (aiReady) html += ` × AI-ready (${aiFactor.toFixed(2)})`;
+  if (heatReuse) html += ` × Heat reuse (${heatFactor.toFixed(2)})`;
+  html += ` = combined ${combinedFactor.toFixed(3)}</div>`;
+
+  // ── Elemental table
+  html += `<table class="el-table">
+    <tr><th>Element</th><th style="text-align:right">€/kW IT</th><th style="text-align:right">Total (€)</th></tr>`;
+
+  const addRows = (rows, label) => {
+    rows.forEach(r => {
+      html += `<tr><td>${r.code} — ${r.name}</td><td class="num">€${fmtK(r.adjusted)}</td><td class="num">€${fmtM(r.total)}</td></tr>`;
+    });
+    const sub = rows.reduce((s, r) => s + r.total, 0);
+    const subPerKw = rows.reduce((s, r) => s + r.adjusted, 0);
+    html += `<tr class="el-sub"><td>${label} Subtotal</td><td class="num">€${fmtK(subPerKw)}</td><td class="num">€${fmtM(sub)}</td></tr>`;
+  };
+
+  addRows(elecRows, 'Electrical');
+  addRows(mechRows, 'Mechanical');
+  addRows(suppRows, 'Support');
+  html += `<tr class="el-total"><td>MEP TOTAL</td><td class="num">€${fmtK(Math.round(mepTotal / (itLoad * 1000)))}</td><td class="num">€${fmtM(mepTotal)}</td></tr>`;
+  html += `</table>`;
+
+  // ── Tips
+  const tips = [];
+  if (aiReady) {
+    tips.push({ c: 'blue', t: '💡 AI-ready adds 15–30% to MEP cost',
+      b: `Direct liquid cooling infrastructure for GPU racks (>30kW) adds significant M&E cost but is essential for AI/ML workloads. The premium covers CDU plant, manifold pipework, leak detection, and dedicated cooling loops. This investment enables rack densities of 50–120 kW that air cooling cannot support.`,
+      r: 'Reference: ASHRAE TC 9.9 H1 class; Uptime Institute AI Infrastructure Survey 2024' });
+  }
+  if (tierFactor > 1.40) {
+    tips.push({ c: 'amber', t: '⚠️ Tier IV adds 55% to baseline cost',
+      b: `Tier IV fault tolerance requires 2N or 2(N+1) redundancy across all critical systems — effectively doubling power and cooling plant. For ${itLoad} MW, this means ${Math.ceil(itLoad * 2.2)} MW of generator capacity and dual UPS paths. Consider whether Tier III (concurrently maintainable, 30% premium) meets your actual availability requirements.`,
+      r: 'Reference: Uptime Institute Tier Standard; EN 50600-2-2 Availability Class 4' });
+  }
+  if (itLoad >= 50) {
+    tips.push({ c: 'green', t: '💡 Economies of scale reduce cost per kW',
+      b: `At ${itLoad} MW, the scale factor (${scaleFactor.toFixed(3)}) reduces the baseline €/kW by ${Math.round((1 - scaleFactor) * 100)}% compared to the 50MW reference point. Shared infrastructure — HV substation, BMS, security, fire systems — is amortised across more IT capacity. Phased deployment further optimises cash flow.`,
+      r: 'Reference: Industry scale curve, exponent -0.15 (conservative)' });
+  }
+  if (heatReuse) {
+    tips.push({ c: 'green', t: '💡 Heat reuse can generate €1M+/year revenue',
+      b: `The 5–7% heat reuse premium covers heat exchangers and pipework for district heating connection. A ${itLoad} MW facility at PUE ${pue} produces approximately ${Math.round(itLoad * pue * 0.5)} MW of recoverable thermal energy. At €0.05/kWh and 60% utilisation, annual revenue potential is €${fmtM(Math.round(itLoad * pue * 0.5 * 8760 * 0.05 * 0.6 * 1000))}.`,
+      r: 'Reference: EU EED 2023/1791 Article 26 — mandatory assessment for DCs >1MW from May 2025' });
+  }
+  tips.push({ c: 'blue', t: '💡 EirGrid connection cost is additional',
+    b: `This estimate covers the DC facility only. The EirGrid grid connection (110kV for ${itLoad}MW) typically adds €${fmtM(Math.ceil(itLoad * pue / 0.9) * 75000)}–€${fmtM(Math.ceil(itLoad * pue / 0.9) * 150000)} for shallow connection, plus potential deep reinforcement. Grid connection timeline (4–8 years) is typically the programme driver.`,
+    r: 'Reference: EirGrid Connection Policy 2024; CRU' });
+
+  tips.forEach(t => {
+    html += `<div class="tip tip-${t.c}"><div class="tip-title">${t.t}</div><div>${t.b}</div><div class="tip-ref">${t.r}</div></div>`;
+  });
+
+  // ── WTM
+  html += `<div class="wtm"><div class="wtm-title">What This Means</div><div class="wtm-text">`;
+  if (verdict === 'GREEN') {
+    html += `At €${fmtK(adjustedCostPerKw)}/kW, a ${itLoad} MW Tier ${tier} data centre in Ireland is within typical market benchmarks. Total indicative cost is €${fmtM(totalCostEur)}, of which €${fmtM(mepCostEur)} is MEP services (${COST.mep_percent}%). These are screening-level figures — a full S4-A assessment provides an elemental cost plan with ±20% accuracy based on your specific site, cooling strategy, and power architecture.`;
+  } else if (verdict === 'AMBER') {
+    html += `At €${fmtK(adjustedCostPerKw)}/kW, this ${itLoad} MW facility is above baseline benchmarks — ${aiReady ? 'AI-ready DLC infrastructure' : 'Tier IV specification'} is the primary cost driver. The total indicative cost of €${fmtM(totalCostEur)} includes significant MEP investment (€${fmtM(mepCostEur)}). An S4-A assessment identifies value engineering opportunities and quantifies the trade-offs between design tiers, potentially saving 10–20% through optimised equipment selection and procurement strategy.`;
+  } else {
+    html += `At €${fmtK(adjustedCostPerKw)}/kW, this specification produces a high-cost facility. Before committing, you need an independent review of the specification to identify where costs can be optimised without compromising availability. An S4-A assessment provides this analysis with quantified alternatives.`;
+  }
+  html += `</div></div>`;
+
+  document.getElementById('results').innerHTML = html;
+  document.getElementById('results').classList.add('show');
+  document.getElementById('ctaBar').style.display = 'block';
+  document.getElementById('sampleBar').style.display = 'block';
+}
+
+function showError(msg) {
+  document.getElementById('results').innerHTML =
+    `<div class="r-primary" style="border-color:#fca5a5;background:#fee2e2;">
+      <div class="r-num" style="font-size:18px;color:#991b1b;">${msg}</div></div>`;
+  document.getElementById('results').classList.add('show');
+}
+
+function fmtM(n) {
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(0) + 'k';
+  return n.toLocaleString();
+}
+function fmtK(n) { return n.toLocaleString('en-IE'); }
+</script>
+<!-- LBE NAV FOOTER v15 -->
+<div class="np" style="position:fixed;bottom:0;left:0;right:0;background:#1a1a18;color:#f7f4ef;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;font-family:sans-serif;font-size:12px;z-index:9999;gap:16px;flex-wrap:wrap;border-top:2px solid #4a7c59;">
+  <span style="color:#4a7c59;font-weight:600;">Legacy Business Engineers</span>
+  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+    <a href="https://legacybe.ie" style="color:#ccc;text-decoration:none;">&larr; All Tools</a>
+    <a href="https://legacybe.ie" style="color:#ccc;text-decoration:none;" target="_blank">legacybe.ie</a>
+    <a href="https://legacybe.ie/contact/" style="background:#4a7c59;color:white;padding:6px 14px;border-radius:6px;text-decoration:none;font-weight:600;">Talk to an Engineer &rarr;</a>
+  </div>
+</div>
+<div style="height:52px;"></div>
+</body>
+</html>

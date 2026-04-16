@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-R-ROI-001 | Retrofit vs Rebuild Calculator | Legacy Business Engineers</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --lbe-green: #4a7c59;
+  --lbe-green-dark: #3d6b4a;
+  --lbe-dark: #1a2332;
+  --seg06-bg: #eef2ff;
+  --seg06-border: #6366f1;
+  --seg06-text: #4338ca;
+  --border: #e2e8f0;
+  --text: #334155;
+  --text-light: #64748b;
+  --bg: #f8fafc;
+  --white: #ffffff;
+  --red: #ef4444;
+  --amber: #f59e0b;
+  --green-light: #10b981;
+  --blue: #3b82f6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  padding-bottom: 80px;
+}
+.container { max-width: 720px; margin: 0 auto; padding: 0; }
+
+/* Header */
+.tool-header {
+  background: var(--lbe-dark);
+  color: white;
+  padding: 24px 28px;
+  border-radius: 12px 12px 0 0;
+  margin-top: 16px;
+}
+.tool-header .logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.tool-header .logo-icon { width: 36px; height: 36px; background: var(--lbe-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+.tool-header .company { font-size: 13px; opacity: 0.8; letter-spacing: 0.5px; }
+.tool-header h1 { font-size: 22px; font-weight: 700; margin: 8px 0 4px; }
+.tool-header .subtitle { font-size: 14px; opacity: 0.75; }
+.tool-header .version { font-size: 11px; opacity: 0.5; margin-top: 4px; }
+
+/* Seg Banner */
+.seg-banner {
+  background: var(--seg06-bg);
+  border-left: 4px solid var(--seg06-border);
+  padding: 14px 20px;
+  margin: 0;
+  color: var(--seg06-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Cards */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin: 0;
+}
+.card:last-of-type { border-radius: 0 0 12px 12px; }
+.card-title { font-size: 16px; font-weight: 700; color: var(--lbe-dark); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--lbe-green); }
+
+/* Inputs */
+.input-group { margin-bottom: 14px; }
+.input-label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.input-label .unit { font-weight: 400; color: var(--text-light); }
+.input-field {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field:focus { outline: none; border-color: var(--lbe-green); box-shadow: 0 0 0 3px rgba(74,124,89,0.15); }
+select.input-field { cursor: pointer; }
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Button */
+.calc-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--lbe-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.calc-btn:hover { background: var(--lbe-green-dark); }
+
+/* Results */
+.results-section { display: none; }
+.results-section.visible { display: block; }
+.primary-result {
+  text-align: center;
+  padding: 20px;
+  border: 2px solid var(--lbe-green);
+  border-radius: 10px;
+  margin-bottom: 20px;
+  background: #f0fdf4;
+}
+.primary-result .label { font-size: 13px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+.primary-result .value { font-size: 28px; font-weight: 700; color: var(--lbe-green); }
+.primary-result .detail { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+
+/* Strategy Cards */
+.strategy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.strategy-card {
+  padding: 16px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  transition: border-color 0.2s;
+  position: relative;
+}
+.strategy-card.recommended { border-color: var(--lbe-green); background: #f0fdf4; }
+.strategy-card .badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--lbe-green);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.strategy-card .strat-icon { font-size: 28px; margin-bottom: 6px; }
+.strategy-card .strat-name { font-size: 13px; font-weight: 700; color: var(--lbe-dark); }
+.strategy-card .strat-npv { font-size: 20px; font-weight: 700; margin: 6px 0; }
+.strategy-card .strat-npv.positive { color: var(--green-light); }
+.strategy-card .strat-npv.negative { color: var(--red); }
+.strategy-card .strat-detail { font-size: 11px; color: var(--text-light); }
+
+/* Results Grid */
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.result-item {
+  padding: 14px;
+  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.result-item .ri-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+.result-item .ri-value { font-size: 18px; font-weight: 700; color: var(--lbe-dark); }
+.result-item .ri-sub { font-size: 11px; color: var(--text-light); }
+
+/* Cashflow Table */
+.cf-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px; }
+.cf-table th { background: var(--lbe-dark); color: white; padding: 8px 6px; text-align: right; font-weight: 600; }
+.cf-table th:first-child { text-align: left; border-radius: 6px 0 0 0; }
+.cf-table th:last-child { border-radius: 0 6px 0 0; }
+.cf-table td { padding: 6px; text-align: right; border-bottom: 1px solid var(--border); }
+.cf-table td:first-child { text-align: left; font-weight: 600; }
+.cf-table tr:nth-child(even) { background: #f8fafc; }
+.cf-table .neg { color: var(--red); }
+.cf-table .pos { color: var(--green-light); }
+
+/* Sensitivity Table */
+.sens-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px; }
+.sens-table th { background: var(--seg06-bg); color: var(--seg06-text); padding: 8px 6px; text-align: center; font-weight: 600; }
+.sens-table td { padding: 6px; text-align: center; border-bottom: 1px solid var(--border); }
+.sens-table .winner { font-weight: 700; color: var(--lbe-green); }
+
+/* Tips */
+.tip-card {
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  background: var(--white);
+}
+.tip-card.green { border-color: var(--green-light); background: #f0fdf4; }
+.tip-card.blue { border-color: var(--blue); background: #eff6ff; }
+.tip-card.amber { border-color: var(--amber); background: #fffbeb; }
+.tip-card.red { border-color: var(--red); background: #fef2f2; }
+.tip-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.tip-body { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+.tip-ref { font-size: 10px; color: #94a3b8; margin-top: 4px; }
+
+/* NOT CHECKED */
+/* ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ */
+.confidence-panel {
+  background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px;
+  padding: 16px; margin-top: 16px; font-size: 12px; color: #14532d;
+}
+.confidence-panel h4 { color: #166534; font-size: 13px; margin-bottom: 10px; font-weight: 700; }
+.confidence-panel table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.confidence-panel th { text-align: left; padding: 4px 8px; font-weight: 700; border-bottom: 1px solid #86efac; font-size: 11px; }
+.confidence-panel td { padding: 4px 8px; border-bottom: 1px solid #dcfce7; font-size: 11px; }
+.confidence-panel .tier-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-weight: 700; font-size: 10px; }
+.confidence-panel .t1 { background: #166534; color: white; }
+.confidence-panel .t2 { background: #15803d; color: white; }
+.confidence-panel .t3 { background: #ca8a04; color: white; }
+.confidence-panel .t4 { background: #dc2626; color: white; }
+
+.not-checked {
+  border: 2px solid var(--red);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  background: #fef2f2;
+}
+.not-checked h3 { color: var(--red); font-size: 14px; margin-bottom: 8px; }
+.not-checked ul { list-style: disc; padding-left: 20px; font-size: 12px; color: var(--text); line-height: 1.8; }
+
+/* Audience bar & nav */
+.v15-audience-bar { background: var(--lbe-dark); color: rgba(255,255,255,0.85); text-align: center; padding: 8px; font-size: 11px; font-weight: 600; letter-spacing: 1px; }
+.v15-audience-line { text-align: center; padding: 6px; font-size: 11px; color: var(--text-light); background: var(--bg); border-bottom: 1px solid var(--border); }
+.v15-sample {
+  background: #fffbeb;
+  border: 1px solid #fbbf24;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: #92400e;
+  margin-bottom: 16px;
+}
+.v15-sample a { color: var(--lbe-green); font-weight: 600; text-decoration: none; }
+.v15-sample a:hover { text-decoration: underline; }
+.v15-nav-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border-top: 3px solid var(--lbe-green);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  font-size: 12px;
+}
+.v15-nav-footer .left { color: rgba(255,255,255,0.6); }
+.v15-nav-footer .right a { color: var(--lbe-green); text-decoration: none; font-weight: 600; }
+.v15-nav-footer .right a:hover { text-decoration: underline; }
+
+/* Standards footer */
+.standards-footer { text-align: center; font-size: 10px; color: #94a3b8; padding: 16px 20px; line-height: 1.6; }
+.standards-footer a { color: var(--text-light); }
+
+/* Error panel */
+.error-panel { max-width: 600px; margin: 40px auto; padding: 24px; background: #fef2f2; border: 2px solid var(--red); border-radius: 10px; font-family: monospace; font-size: 13px; color: #991b1b; }
+.domain-block { max-width: 600px; margin: 60px auto; padding: 32px; text-align: center; background: #fef2f2; border: 2px solid var(--red); border-radius: 10px; }
+
+/* Print */
+@media print {
+  .cta-bar, .sample-bar { display: none !important; }
+
+  .np { display: none !important; }
+  .calc-btn { display: none !important; }
+  body { padding-bottom: 0; }
+  .container { max-width: 100%; }
+  .tool-header { border-radius: 0; }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .strategy-grid { grid-template-columns: 1fr; }
+  .input-row { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+}
+
+/* NPV Bar Chart */
+.npv-chart { display: flex; align-items: flex-end; justify-content: center; gap: 24px; height: 200px; padding: 20px 0; margin-bottom: 20px; border-bottom: 2px solid var(--border); position: relative; }
+.npv-bar-wrap { display: flex; flex-direction: column; align-items: center; width: 120px; }
+.npv-bar { width: 80px; border-radius: 6px 6px 0 0; transition: height 0.5s; min-height: 4px; }
+.npv-bar.pos-bar { background: var(--lbe-green); }
+.npv-bar.neg-bar { background: var(--red); border-radius: 0 0 6px 6px; }
+.npv-bar-label { font-size: 12px; font-weight: 700; margin-top: 8px; text-align: center; }
+.npv-bar-value { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.chart-zero-line { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--text-light); }
+
+
+/* ═══ LOAD SAMPLE BUTTON ═══ */
+.demo-btn {
+  padding: 8px 16px; background: #f1f5f9; border: 1px solid #cbd5e1;
+  border-radius: 6px; font-size: 12px; font-weight: 600; color: #475569;
+  cursor: pointer; margin-left: 8px; transition: background 0.2s;
+}
+.demo-btn:hover { background: #e2e8f0; }
+
+/* ═══ WHAT THIS MEANS ═══ */
+.wtm-panel {
+  background: linear-gradient(135deg, #f8fafc, #f0f9ff);
+  border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 16px 20px; margin-top: 16px;
+}
+.wtm-panel h4 { font-size: 14px; color: #1e40af; margin-bottom: 8px; }
+.wtm-panel p { font-size: 13px; color: #334155; line-height: 1.6; }
+
+/* ═══ GOLD CTA BAR (A+ compliance) ═══ */
+.cta-bar {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #5cdb8f;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  text-align: center;
+  color: #ffffff;
+}
+.cta-bar h3 { color: #5cdb8f; font-size: 18px; margin: 0 0 8px; font-weight: 700; }
+.cta-bar .cta-service { font-size: 15px; color: #e5e7eb; margin: 0 0 4px; }
+.cta-bar .cta-price { font-size: 14px; color: #9ca3af; margin: 0 0 16px; }
+.cta-bar .cta-btn {
+  display: inline-block; padding: 10px 28px; background: #5cdb8f; color: #1a1a1a;
+  border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
+  transition: background 0.2s;
+}
+.cta-bar .cta-btn:hover { background: #4bc97d; }
+.sample-bar {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+  padding: 12px 20px; margin: 12px 0; text-align: center; font-size: 13px; color: #374151;
+}
+.sample-bar a { color: #166534; font-weight: 600; text-decoration: none; }
+.sample-bar a:hover { text-decoration: underline; }
+
+</style>
+</head>
+<body>
+
+<!-- COMPLIANCE 1: BLANK SCREEN GUARD -->
+<script>
+window.onerror = function(msg, url, line, col, err) {
+  var p = document.createElement('div');
+  p.className = 'error-panel';
+  p.innerHTML = '<h3 style="margin-bottom:8px">⚠️ Tool Error — DC-R-ROI-001</h3>' +
+    '<p><strong>Error:</strong> ' + msg + '</p>' +
+    '<p><strong>Location:</strong> Line ' + line + '</p>' +
+    '<p style="margin-top:8px">Please refresh or contact <a href="https://legacybe.ie/contact">Legacy Business Engineers</a>.</p>';
+  document.body.insertBefore(p, document.body.firstChild);
+  return true;
+};
+</script>
+
+<!-- COMPLIANCE 2: DOMAIN LOCK -->
+<script>
+(function() {
+  var h = window.location.hostname;
+  var allowed = ['legacybe.ie','www.legacybe.ie','lbe-tools.netlify.app','localhost','127.0.0.1',''];
+  if (allowed.indexOf(h) === -1) {
+    document.body.innerHTML = '<div class="domain-block"><h2>⛔ Unauthorised Copy</h2><p style="margin-top:12px">This tool is licensed to <strong>Legacy Business Engineers Ltd</strong>.</p><p style="margin-top:8px"><a href="https://legacybe.ie/contact">Contact LBE</a></p></div>';
+  }
+})();
+</script>
+
+<!-- COMPLIANCE 8: FINGERPRINT -->
+<script>
+var _aimep_lineage = {
+  origin: 'Legacy Business Engineers Ltd',
+  tool: 'DC-R-ROI-001',
+  version: '1.0.6',
+  license: 'LBE-INTERNAL',
+  build: '2026-02-28',
+  classification: 'T2-SCREENING',
+  notice: 'Unauthorised reproduction prohibited. Contact legacybe.ie'
+};
+</script>
+
+<!-- COMPLIANCE 3: AUDIENCE BAR -->
+<div class="v15-audience-bar np">BUILT FOR: DATA CENTRE OPERATORS &amp; INVESTORS</div>
+
+<!-- COMPLIANCE 4: AUDIENCE LINE -->
+<div class="v15-audience-line np">🖥️ Segment: Data Centres — Retrofit | DC-R-ROI-001 | legacybe.ie</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="tool-header">
+    <div class="logo-row">
+      <img src="data:image/png;base64,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" alt="LBE" style="height:36px;border-radius:50%" onerror="this.style.display='none'" />
+      <div class="company">LEGACY BUSINESS ENGINEERS</div>
+    </div>
+    <h1>Retrofit vs Rebuild Calculator</h1>
+    <div class="subtitle">NPV comparison: Retrofit existing · Build new · Divest/exit</div>
+    <div class="version">DC-R-ROI-001 v1.0.6 | T1 DC Screening</div>
+  </div>
+
+  <!-- SEG BANNER -->
+  <div class="seg-banner">
+    <strong>Data Centre Investment Decision Tool</strong> — Compare three capital strategies for an existing DC asset using Net Present Value, IRR, and sensitivity analysis. Indicative screening for fund managers, operators, and asset owners.
+  </div>
+
+  <!-- INPUT CARD -->
+  <div class="card">
+    <!-- COMPLIANCE 5: SAMPLE BANNER -->
+    <div class="v15-sample np">
+      📊 This is an indicative screening tool. For a site-specific DC Retrofit Diagnostic, talk to an engineer → <a href="https://legacybe.ie/contact">legacybe.ie/contact</a>
+    </div>
+
+    <div class="card-title">Facility & Financial Parameters</div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="itCurrent">IT Load — Current <span class="unit">(MW)</span></label>
+        <input type="number" id="itCurrent" class="input-field" value="5" min="0.5" max="200" step="0.1"
+          title="Current total IT electrical load in megawatts. Typical: 1–50MW for commercial DCs. Source: facility metering. Warning: use measured IT load, not contracted capacity.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="itTarget">IT Load — Target <span class="unit">(MW)</span></label>
+        <input type="number" id="itTarget" class="input-field" value="10" min="0.5" max="200" step="0.1"
+          title="Target IT load after densification or expansion. Typical: 1.5–3× current for AI retrofit. Source: business plan. Warning: ensure grid connection can support.">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="currentPUE">Current PUE</label>
+        <input type="number" id="currentPUE" class="input-field" value="1.6" min="1.0" max="3.0" step="0.01"
+          title="Annualised Power Usage Effectiveness. Meaning: total facility power ÷ IT power. Typical: 1.3–1.8 for Irish DCs. Source: EN 50600-4-2 measurement. Warning: seasonal PUE varies ±0.1.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="facilityGFA">Facility GFA <span class="unit">(m²)</span></label>
+        <input type="number" id="facilityGFA" class="input-field" value="3000" min="100" max="100000" step="100"
+          title="Gross Floor Area of facility. Typical: 500–50,000m² for commercial DCs. Source: lease or building drawings. Warning: include all plant and support areas.">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="remainingLease">Remaining Lease <span class="unit">(years, 0=freehold)</span></label>
+        <input type="number" id="remainingLease" class="input-field" value="15" min="0" max="99" step="1"
+          title="Years remaining on facility lease. 0 = freehold/owner-occupied. Typical: 10–25yr for DC leases. Source: lease agreement. Warning: check break clauses and renewal options.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="assetValue">Current Asset Value <span class="unit">(€M)</span></label>
+        <input type="number" id="assetValue" class="input-field" value="20" min="0.5" max="5000" step="0.5"
+          title="Current book value or market value of facility. Typical: €3–5M per MW IT for operational DCs. Source: most recent valuation. Warning: include land value if freehold.">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="annualRevenue">Annual Revenue <span class="unit">(€M)</span></label>
+        <input type="number" id="annualRevenue" class="input-field" value="8" min="0" max="5000" step="0.5"
+          title="Annual colocation revenue or internal charge-back. Typical: €1–2M per MW IT. Source: financial statements. Warning: for enterprise DC, use equivalent charge-back rate.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="electricityCost">Electricity Cost <span class="unit">(€/kWh)</span></label>
+        <input type="number" id="electricityCost" class="input-field" value="0.20" min="0.05" max="0.50" step="0.01"
+          title="All-in electricity cost including capacity charges, PSO levy, network charges. Typical: €0.18–€0.25/kWh for Irish DCs. Source: utility bills. Warning: confirm whether PPA-indexed or market-rate.">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="discountRate">Discount Rate <span class="unit">(%)</span></label>
+        <input type="number" id="discountRate" class="input-field" value="8" min="1" max="20" step="0.5"
+          title="Weighted average cost of capital for NPV calculation. Typical: 6–10% for DC infrastructure. Source: corporate finance team. Warning: higher rate favours shorter-payback options.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="analysisPeriod">Analysis Period <span class="unit">(years)</span></label>
+        <input type="number" id="analysisPeriod" class="input-field" value="10" min="5" max="20" step="1"
+          title="NPV analysis horizon. Typical: 10yr for DC investment decisions. Source: investment policy. Warning: align with lease term if applicable.">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="currentDensity">Current Rack Density <span class="unit">(kW/rack)</span></label>
+        <input type="number" id="currentDensity" class="input-field" value="8" min="1" max="100" step="1"
+          title="Average power per rack. Typical: 5–10kW traditional IT, 20–40kW AI/GPU. Source: PDU metering. Warning: average masks hot spots — check peak racks too.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="targetDensity">Target Rack Density <span class="unit">(kW/rack)</span></label>
+        <input type="number" id="targetDensity" class="input-field" value="25" min="1" max="100" step="1"
+          title="Desired rack density after upgrade. Typical: 20–40kW for AI workloads. Source: business plan / tenant requirements. Warning: >30kW likely requires liquid cooling.">
+      </div>
+    </div>
+
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label" for="landValue">Land Value <span class="unit">(€M)</span></label>
+        <input type="number" id="landValue" class="input-field" value="10" min="0" max="5000" step="0.5"
+          title="Residual land value if facility divested/demolished. Typical: €2–8M per acre in Dublin industrial zones. Source: comparable transactions. Warning: planning status affects value significantly.">
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="newBuildCost">New Build Cost <span class="unit">(€M/MW IT)</span></label>
+        <input type="number" id="newBuildCost" class="input-field" value="10" min="5" max="20" step="0.5"
+          title="All-in cost to build new DC per MW IT capacity. Typical: €8–12M/MW in Ireland 2024–2026. Source: RICS NRM1 benchmarks. Warning: excludes land acquisition and grid connection fees.">
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Calculate — Compare Strategies</button>
+    <button class="demo-btn np" onclick="loadSample()" style="margin-top:8px">📊 Load Sample</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="card results-section" id="resultsCard">
+
+    <div class="card-title">Investment Decision Analysis</div>
+
+    <!-- Recommendation -->
+    <div class="primary-result" id="recommendation"></div>
+
+    <!-- Strategy Cards -->
+    <div class="strategy-grid" id="strategyGrid"></div>
+
+    <!-- NPV Chart -->
+    <div style="font-size:13px;font-weight:700;color:var(--lbe-dark);margin-bottom:8px;">NPV Comparison (€M)</div>
+    <div class="npv-chart" id="npvChart"></div>
+
+    <!-- Key Metrics -->
+    <div style="font-size:13px;font-weight:700;color:var(--lbe-dark);margin-bottom:8px;">Key Metrics</div>
+    <div class="results-grid" id="keyMetrics"></div>
+
+    <!-- Cashflow Table -->
+    <div style="font-size:13px;font-weight:700;color:var(--lbe-dark);margin-bottom:8px;">Annual Cashflow Summary (€M)</div>
+    <div style="overflow-x:auto;">
+      <table class="cf-table" id="cashflowTable"></table>
+    </div>
+
+    <!-- Sensitivity -->
+    <div style="font-size:13px;font-weight:700;color:var(--lbe-dark);margin-bottom:8px;">Sensitivity Analysis — Which Strategy Wins?</div>
+    <table class="sens-table" id="sensTable"></table>
+
+    <!-- Decision Matrix -->
+    <div style="font-size:13px;font-weight:700;color:var(--lbe-dark);margin-bottom:8px;">Decision Matrix</div>
+    <div id="decisionMatrix"></div>
+
+    <!-- Value Engineering Tips -->
+    <div style="font-size:13px;font-weight:700;color:var(--lbe-dark);margin:20px 0 8px;">Value Engineering Insights</div>
+    <div id="veTips"></div>
+
+    <!-- NOT CHECKED - COMPLIANCE 7 -->
+    <div class="not-checked">
+      <h3>⚠️ NOT CHECKED BY THIS TOOL</h3>
+      <ul>
+        <li>Tax implications of capital expenditure vs disposal</li>
+        <li>Lease break clauses or landlord consent requirements</li>
+        <li>Planning permission for new build or material change of use</li>
+        <li>Detailed construction programme or phasing</li>
+        <li>Tenant contracts, SLA penalties, or migration logistics</li>
+        <li>Terminal value / asset reversion at end of analysis period</li>
+        <li>Carbon tax trajectory (€71/tCO₂ current → €100 by 2030) not modelled as cashflow line</li>
+        <li>Embodied carbon in new-build vs retrofit (Scope 3)</li>
+      </ul>
+    </div>
+
+    <!-- ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ -->
+    <div class="confidence-panel">
+      <h4>📊 HOW RELIABLE IS THIS RESULT?</h4>
+      <table>
+        <tr><th>Data Point</th><th>Source</th><th>Tier</th></tr>
+        <tr><td>IT Load, PUE, Revenue, Asset Value</td><td>User-supplied — accuracy depends on financial records</td><td><span class="tier-badge t1">T1</span> if audited, <span class="tier-badge t4">T4</span> if estimated</td></tr>
+        <tr><td>Grid Emission Factor (0.2241 kgCO₂/kWh)</td><td>SEAI 2026 published national grid factor</td><td><span class="tier-badge t1">T1</span></td></tr>
+        <tr><td>Target PUE Post-Retrofit (65% gap closure)</td><td>LBE project experience — typical achievable improvement</td><td><span class="tier-badge t3">T3</span></td></tr>
+        <tr><td>Target PUE New-Build (1.20)</td><td>EU Taxonomy + Uptime Institute best practice</td><td><span class="tier-badge t2">T2</span></td></tr>
+        <tr><td>New-Build Cost per MW (€8–12M)</td><td>RICS NRM1 benchmarks + CBRE/JLL market reports 2024</td><td><span class="tier-badge t2">T2</span></td></tr>
+        <tr><td>Retrofit Cost (€3–5M/MW typical)</td><td>LBE project experience + supplier quotations</td><td><span class="tier-badge t3">T3</span></td></tr>
+        <tr><td>Discount Rate, Analysis Period</td><td>User-supplied financial parameters</td><td><span class="tier-badge t1">T1</span> user input</td></tr>
+      </table>
+      <p style="margin-top:10px;font-style:italic;">T1 = published standard/regulation · T2 = peer-reviewed/industry data · T3 = engineering estimate · T4 = professional judgement. NPV calculations are deterministic; input assumptions drive output accuracy.</p>
+    </div>
+
+  </div>
+
+  <div style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;margin-top:8px;max-width:720px;margin-left:auto;margin-right:auto;">INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+  <div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;max-width:720px;margin-left:auto;margin-right:auto;">Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+  <!-- COMPLIANCE 9: STANDARDS FOOTER -->
+  <div class="standards-footer">
+    EN 50600 (DC Infrastructure) · EU EED 2023/1791 Art.12 · EU Delegated Regulation 2024/1364 ·
+    RICS NRM1 (±30% Order of Cost) · CIBSE Guides B2, F, M · SEAI 2026 (0.2241 kgCO₂/kWh)<br>
+    This tool provides indicative screening estimates only. All values carry ±30% uncertainty per RICS NRM1 Order of Cost grading.
+    Professional advice should be sought for investment decisions.<br>
+    © 2026 Legacy Business Engineers Ltd · legacybe.ie
+  </div>
+
+</div>
+
+<!-- COMPLIANCE 6: NAV FOOTER -->
+
+<!-- ═══ GOLD CTA BAR (A+ compliance) ═══ -->
+<div class="cta-bar np">
+  <h3>Got the answers? Here's what to do next.</h3>
+  <p class="cta-service">DC Retrofit Diagnostic — site-specific assessment with chartered engineer sign-off</p>
+  <p class="cta-price">From €5,000 + VAT · Delivered in 5 working days</p>
+  <a href="https://legacybe.ie/contact?service=S4+DC+Retrofit+Diagnostic" class="cta-btn">Talk to an Engineer →</a>
+</div>
+
+<!-- ═══ SAMPLE BAR ═══ -->
+<div class="sample-bar np">
+  📊 See what an DC Retrofit Diagnostic delivers — <a href="https://legacybe.ie/dc-sample-report" target="_blank">View Sample Report →</a>
+</div>
+
+<div class="v15-nav-footer np">
+  <div class="left">© 2026 Legacy Business Engineers Ltd</div>
+  <div class="right"><a href="https://legacybe.ie/contact">Talk to an Engineer →</a></div>
+</div>
+
+<script>
+function calculate() {
+  // Get inputs
+  var itCurrent = parseFloat(document.getElementById('itCurrent').value) || 5;
+  var itTarget = parseFloat(document.getElementById('itTarget').value) || 10;
+  var currentPUE = parseFloat(document.getElementById('currentPUE').value) || 1.6;
+  var facilityGFA = parseFloat(document.getElementById('facilityGFA').value) || 3000;
+  var remainingLease = parseInt(document.getElementById('remainingLease').value);
+  if (isNaN(remainingLease)) remainingLease = 15;
+  var assetValue = parseFloat(document.getElementById('assetValue').value) || 20;
+  var annualRevenue = parseFloat(document.getElementById('annualRevenue').value) || 8;
+  var electricityCost = parseFloat(document.getElementById('electricityCost').value) || 0.20;
+  var discountRate = parseFloat(document.getElementById('discountRate').value) / 100 || 0.08;
+  var analysisPeriod = parseInt(document.getElementById('analysisPeriod').value) || 10;
+  var currentDensity = parseFloat(document.getElementById('currentDensity').value) || 8;
+  var targetDensity = parseFloat(document.getElementById('targetDensity').value) || 25;
+  var landValue = parseFloat(document.getElementById('landValue').value) || 10;
+  var newBuildCostPerMW = parseFloat(document.getElementById('newBuildCost').value) || 10;
+
+  // Derived
+  var pueGap = currentPUE - 1.25; // target PUE post-retrofit
+  var targetPUE_retrofit = Math.max(1.2, currentPUE - (pueGap * 0.65)); // 65% improvement achievable — Source: LBE project experience (T3)
+  var targetPUE_newbuild = 1.2; // Source: EU Taxonomy + Uptime Institute best practice (T2)
+  var densityRatio = targetDensity / currentDensity;
+
+  // Annual energy costs — MW × PUE × 8760 hrs × 1000 kW/MW × €/kWh ÷ 1e6 = €M
+  var annualCostE_current = (itCurrent * currentPUE * 8760 * 1000 * electricityCost) / 1e6; // €M — SEAI grid + CRU tariff
+
+  var annualCostE_retrofit = (itTarget * targetPUE_retrofit * 8760 * 1000 * electricityCost) / 1e6;
+  var annualCostE_newbuild = (itTarget * targetPUE_newbuild * 8760 * 1000 * electricityCost) / 1e6;
+
+  // Revenue scaling — target load may generate proportionally more revenue
+  var revenueScale = itTarget / itCurrent;
+  var targetRevenue = annualRevenue * revenueScale;
+
+  // Operating costs (non-energy) — approx 10% of revenue
+  var opex_other = annualRevenue * 0.10;
+  var opex_other_target = targetRevenue * 0.10;
+
+  // === OPTION A: RETROFIT ===
+  // Cost benchmarks per MW IT
+  var retrofitPerMW = 1.5; // €M/MW baseline
+  if (pueGap > 0.4) retrofitPerMW += 0.3;
+  if (densityRatio > 2) retrofitPerMW += 0.5;
+  if (densityRatio > 3) retrofitPerMW += 0.5;
+  var retrofitCapex = itTarget * retrofitPerMW; // €M
+  var retrofitTimeline = densityRatio > 2 ? 24 : 18; // months
+
+  // Cashflows Option A
+  var cfA = [];
+  cfA.push(-retrofitCapex); // Year 0: CAPEX
+  for (var y = 1; y <= analysisPeriod; y++) {
+    var rev, opE, opO;
+    if (y <= Math.ceil(retrofitTimeline / 12)) {
+      // During construction: 80% capacity revenue, current energy cost
+      rev = annualRevenue * 0.8;
+      opE = annualCostE_current * 0.9;
+      opO = opex_other;
+    } else {
+      // Post-retrofit: full target revenue, improved energy
+      rev = targetRevenue;
+      opE = annualCostE_retrofit;
+      opO = opex_other_target;
+    }
+    cfA.push(rev - opE - opO);
+  }
+
+  // === OPTION B: BUILD NEW ===
+  var newBuildCapex = itTarget * newBuildCostPerMW; // €M
+  var buildTimeline = 30; // months average
+  var buildYears = Math.ceil(buildTimeline / 12); // 3 years
+
+  // Cashflows Option B
+  var cfB = [];
+  cfB.push(-newBuildCapex); // Year 0
+  for (var y = 1; y <= analysisPeriod; y++) {
+    if (y <= buildYears) {
+      // During build: minimal revenue from existing facility (winding down)
+      var windDown = annualRevenue * Math.max(0, (1 - y / buildYears) * 0.5);
+      cfB.push(windDown - annualCostE_current * (1 - y / buildYears * 0.5) - opex_other * 0.5);
+    } else {
+      cfB.push(targetRevenue - annualCostE_newbuild - opex_other_target);
+    }
+  }
+
+  // === OPTION C: DIVEST ===
+  var divestProceeds = Math.max(assetValue, landValue);
+  var cfC = [];
+  cfC.push(divestProceeds);
+  for (var y = 1; y <= analysisPeriod; y++) {
+    // Capital redeployed at discount rate (opportunity cost = 0 net)
+    cfC.push(0);
+  }
+
+  // NPV calculations
+  function calcNPV(cashflows, rate) {
+    var npv = 0;
+    for (var i = 0; i < cashflows.length; i++) {
+      npv += cashflows[i] / Math.pow(1 + rate, i);
+    }
+    return npv;
+  }
+
+  function calcIRR(cashflows) {
+    var lo = -0.5, hi = 2.0;
+    for (var iter = 0; iter < 100; iter++) {
+      var mid = (lo + hi) / 2;
+      var npv = calcNPV(cashflows, mid);
+      if (Math.abs(npv) < 0.001) return mid;
+      if (npv > 0) lo = mid;
+      else hi = mid;
+    }
+    return (lo + hi) / 2;
+  }
+
+  var npvA = calcNPV(cfA, discountRate);
+  var npvB = calcNPV(cfB, discountRate);
+  var npvC = calcNPV(cfC, discountRate);
+
+  var irrA = calcIRR(cfA);
+  var irrB = calcIRR(cfB);
+
+  // Break-even for retrofit
+  var cumCF = 0;
+  var breakEvenA = analysisPeriod;
+  for (var y = 0; y <= analysisPeriod; y++) {
+    cumCF += cfA[y];
+    if (cumCF > 0 && y > 0) { breakEvenA = y; break; }
+  }
+
+  // Annual energy savings (retrofit vs status quo)
+  var annualSavings_retrofit = annualCostE_current * (itTarget / itCurrent) - annualCostE_retrofit;
+  var GRID_EMISSION_FACTOR = 0.2241; // kgCO₂/kWh — Source: SEAI 2026 published grid factor (T1)
+  var co2Saved = (itTarget * currentPUE - itTarget * targetPUE_retrofit) * 8760 * GRID_EMISSION_FACTOR; // tonnes/yr
+
+  // Determine recommendation
+  var npvs = [{name: 'Retrofit', npv: npvA}, {name: 'Build New', npv: npvB}, {name: 'Divest', npv: npvC}];
+  npvs.sort(function(a, b) { return b.npv - a.npv; });
+  var best = npvs[0].name;
+
+  // Check lease constraint
+  var leaseWarning = '';
+  if (remainingLease > 0 && remainingLease < 5 && best === 'Retrofit') {
+    leaseWarning = ' ⚠️ Short lease — retrofit payback may exceed lease term.';
+  }
+  if (remainingLease > 0 && remainingLease < buildYears + 3 && best === 'Build New') {
+    best = 'Retrofit';
+    leaseWarning = ' ⚠️ Lease too short for new build ROI. Retrofit preferred.';
+  }
+
+  // === RENDER RESULTS ===
+  document.getElementById('resultsCard').classList.add('visible');
+
+  // Recommendation
+  document.getElementById('recommendation').innerHTML =
+    '<div class="label">Recommended Strategy</div>' +
+    '<div class="value">' + (best === 'Retrofit' ? '🔧' : best === 'Build New' ? '🏗️' : '💰') + ' Option ' +
+    (best === 'Retrofit' ? 'A' : best === 'Build New' ? 'B' : 'C') + ': ' + best + '</div>' +
+    '<div class="detail">Highest NPV over ' + analysisPeriod + '-year analysis period' + leaseWarning + '</div>';
+
+  // Strategy cards
+  var strategies = [
+    {icon: '🔧', name: 'A: Retrofit', npv: npvA, detail: 'CAPEX: €' + retrofitCapex.toFixed(1) + 'M · ' + retrofitTimeline + ' months', rec: best === 'Retrofit'},
+    {icon: '🏗️', name: 'B: Build New', npv: npvB, detail: 'CAPEX: €' + newBuildCapex.toFixed(1) + 'M · ' + buildTimeline + ' months', rec: best === 'Build New'},
+    {icon: '💰', name: 'C: Divest', npv: npvC, detail: 'Proceeds: €' + divestProceeds.toFixed(1) + 'M', rec: best === 'Divest'}
+  ];
+  var sgHTML = '';
+  strategies.forEach(function(s) {
+    sgHTML += '<div class="strategy-card' + (s.rec ? ' recommended' : '') + '">' +
+      (s.rec ? '<div class="badge">✓ RECOMMENDED</div>' : '') +
+      '<div class="strat-icon">' + s.icon + '</div>' +
+      '<div class="strat-name">' + s.name + '</div>' +
+      '<div class="strat-npv ' + (s.npv >= 0 ? 'positive' : 'negative') + '">€' + s.npv.toFixed(1) + 'M</div>' +
+      '<div class="strat-detail">' + s.detail + '</div></div>';
+  });
+  document.getElementById('strategyGrid').innerHTML = sgHTML;
+
+  // NPV Chart
+  var maxAbs = Math.max(Math.abs(npvA), Math.abs(npvB), Math.abs(npvC), 1);
+  var maxHeight = 140;
+  function barH(v) { return Math.max(4, Math.abs(v) / maxAbs * maxHeight); }
+  // Determine if we have negative values
+  var hasNeg = npvA < 0 || npvB < 0 || npvC < 0;
+  var hasPos = npvA > 0 || npvB > 0 || npvC > 0;
+  var chartH = hasNeg && hasPos ? 280 : 200;
+
+  var chartHTML = '';
+  [['A: Retrofit', npvA], ['B: Build New', npvB], ['C: Divest', npvC]].forEach(function(item) {
+    var label = item[0], val = item[1];
+    var h = barH(val);
+    var cls = val >= 0 ? 'pos-bar' : 'neg-bar';
+    chartHTML += '<div class="npv-bar-wrap">' +
+      '<div class="npv-bar ' + cls + '" style="height:' + h + 'px"></div>' +
+      '<div class="npv-bar-label">' + label + '</div>' +
+      '<div class="npv-bar-value">€' + val.toFixed(1) + 'M</div></div>';
+  });
+  document.getElementById('npvChart').style.height = chartH + 'px';
+  document.getElementById('npvChart').innerHTML = chartHTML;
+
+  // Key metrics
+  var km = '';
+  km += '<div class="result-item"><div class="ri-label">Retrofit IRR</div><div class="ri-value">' + (irrA * 100).toFixed(1) + '%</div><div class="ri-sub">Internal Rate of Return</div></div>';
+  km += '<div class="result-item"><div class="ri-label">New Build IRR</div><div class="ri-value">' + (irrB * 100).toFixed(1) + '%</div><div class="ri-sub">Internal Rate of Return</div></div>';
+  km += '<div class="result-item"><div class="ri-label">Retrofit Break-Even</div><div class="ri-value">Year ' + breakEvenA + '</div><div class="ri-sub">Cumulative cashflow positive</div></div>';
+  km += '<div class="result-item"><div class="ri-label">Retrofit CAPEX</div><div class="ri-value">€' + retrofitCapex.toFixed(1) + 'M</div><div class="ri-sub">' + ((retrofitCapex / newBuildCapex) * 100).toFixed(0) + '% of new build cost</div></div>';
+  km += '<div class="result-item"><div class="ri-label">Annual Energy Saving</div><div class="ri-value">€' + annualSavings_retrofit.toFixed(1) + 'M</div><div class="ri-sub">Retrofit vs status quo</div></div>';
+  km += '<div class="result-item"><div class="ri-label">CO₂ Avoided</div><div class="ri-value">' + co2Saved.toFixed(0) + ' t/yr</div><div class="ri-sub">SEAI 0.2241 kgCO₂/kWh</div></div>';
+  var carbonTaxSaved = co2Saved * 71; // €71/tCO₂ — Budget 2025 (Finance Act: €100 by 2030)
+  km += '<div class="result-item"><div class="ri-label">Carbon Tax Avoided</div><div class="ri-value">€' + (carbonTaxSaved / 1000).toFixed(0) + 'k/yr</div><div class="ri-sub">€71/tCO₂ (Budget 2025) → €100 by 2030</div></div>';
+  document.getElementById('keyMetrics').innerHTML = km;
+
+  // Cashflow table
+  var cfHTML = '<thead><tr><th>Year</th><th>Retrofit (€M)</th><th>Build New (€M)</th><th>Divest (€M)</th></tr></thead><tbody>';
+  for (var y = 0; y <= analysisPeriod; y++) {
+    cfHTML += '<tr><td>' + y + '</td>';
+    cfHTML += '<td class="' + (cfA[y] < 0 ? 'neg' : 'pos') + '">' + cfA[y].toFixed(2) + '</td>';
+    cfHTML += '<td class="' + (cfB[y] < 0 ? 'neg' : 'pos') + '">' + cfB[y].toFixed(2) + '</td>';
+    cfHTML += '<td class="' + (cfC[y] < 0 ? 'neg' : 'pos') + '">' + cfC[y].toFixed(2) + '</td>';
+    cfHTML += '</tr>';
+  }
+  cfHTML += '</tbody>';
+  document.getElementById('cashflowTable').innerHTML = cfHTML;
+
+  // Sensitivity analysis
+  var scenarios = [
+    {label: 'Base Case', capexMult: 1.0, revMult: 1.0, eMult: 1.0},
+    {label: 'CAPEX +20%', capexMult: 1.2, revMult: 1.0, eMult: 1.0},
+    {label: 'CAPEX -20%', capexMult: 0.8, revMult: 1.0, eMult: 1.0},
+    {label: 'Revenue +15%', capexMult: 1.0, revMult: 1.15, eMult: 1.0},
+    {label: 'Revenue -15%', capexMult: 1.0, revMult: 0.85, eMult: 1.0},
+    {label: 'Electricity +25%', capexMult: 1.0, revMult: 1.0, eMult: 1.25},
+    {label: 'Electricity -25%', capexMult: 1.0, revMult: 1.0, eMult: 0.75}
+  ];
+
+  var sHTML = '<thead><tr><th>Scenario</th><th>Retrofit NPV</th><th>Build New NPV</th><th>Divest NPV</th><th>Winner</th></tr></thead><tbody>';
+  scenarios.forEach(function(sc) {
+    // Rebuild cashflows with multipliers
+    var sA = [], sB = [], sC = [];
+    sA.push(-retrofitCapex * sc.capexMult);
+    sB.push(-newBuildCapex * sc.capexMult);
+    sC.push(divestProceeds);
+    for (var y = 1; y <= analysisPeriod; y++) {
+      var eM = sc.eMult;
+      var rM = sc.revMult;
+      // Option A
+      if (y <= Math.ceil(retrofitTimeline / 12)) {
+        sA.push(annualRevenue * 0.8 * rM - annualCostE_current * 0.9 * eM - opex_other);
+      } else {
+        sA.push(targetRevenue * rM - annualCostE_retrofit * eM - opex_other_target);
+      }
+      // Option B
+      if (y <= buildYears) {
+        var wd = annualRevenue * Math.max(0, (1 - y / buildYears) * 0.5) * rM;
+        sB.push(wd - annualCostE_current * (1 - y / buildYears * 0.5) * eM - opex_other * 0.5);
+      } else {
+        sB.push(targetRevenue * rM - annualCostE_newbuild * eM - opex_other_target);
+      }
+      sC.push(0);
+    }
+    var sNpvA = calcNPV(sA, discountRate);
+    var sNpvB = calcNPV(sB, discountRate);
+    var sNpvC = calcNPV(sC, discountRate);
+    var sMax = Math.max(sNpvA, sNpvB, sNpvC);
+    var sWinner = sNpvA === sMax ? 'Retrofit' : (sNpvB === sMax ? 'Build New' : 'Divest');
+    sHTML += '<tr><td style="text-align:left;font-weight:600">' + sc.label + '</td>';
+    sHTML += '<td class="' + (sNpvA === sMax ? 'winner' : '') + '">€' + sNpvA.toFixed(1) + 'M</td>';
+    sHTML += '<td class="' + (sNpvB === sMax ? 'winner' : '') + '">€' + sNpvB.toFixed(1) + 'M</td>';
+    sHTML += '<td class="' + (sNpvC === sMax ? 'winner' : '') + '">€' + sNpvC.toFixed(1) + 'M</td>';
+    sHTML += '<td class="winner">' + sWinner + '</td></tr>';
+  });
+  sHTML += '</tbody>';
+  document.getElementById('sensTable').innerHTML = sHTML;
+
+  // Decision Matrix
+  var dm = '';
+  dm += '<div class="tip-card green"><div class="tip-title">Choose RETROFIT when:</div><div class="tip-body">';
+  dm += 'PUE gap is moderate (>0.2), existing grid connection is valuable, lease > 5 years, ';
+  dm += 'density target achievable with cooling upgrade, revenue continuity is critical.</div></div>';
+  dm += '<div class="tip-card blue"><div class="tip-title">Choose BUILD NEW when:</div><div class="tip-body">';
+  dm += 'Facility is fundamentally obsolete (PUE > 1.8, age > 20yr), target density requires complete redesign, ';
+  dm += 'you own the land (freehold), can tolerate 2–3 year revenue gap, need > 3× current capacity.</div></div>';
+  dm += '<div class="tip-card amber"><div class="tip-title">Choose DIVEST when:</div><div class="tip-body">';
+  dm += 'Short lease remaining (< 5yr), land value exceeds going-concern value, ';
+  dm += 'no viable business case for either upgrade path, capital better deployed elsewhere.</div></div>';
+  document.getElementById('decisionMatrix').innerHTML = dm;
+
+  // Value Engineering Tips
+  var tips = '';
+  tips += '<div class="tip-card green"><div class="tip-title">💡 Retrofit Cost Advantage</div><div class="tip-body">' +
+    'Retrofit is typically 15–25% of new build cost (€' + retrofitCapex.toFixed(1) + 'M vs €' + newBuildCapex.toFixed(1) + 'M here) ' +
+    'while delivering 70–80% of the performance improvement. The existing structure, grid connection, and site infrastructure have significant embedded value.</div>' +
+    '<div class="tip-ref">RICS NRM1 · Irish DC market benchmarks 2024–2026</div></div>';
+
+  tips += '<div class="tip-card blue"><div class="tip-title">⚡ Grid Connection is Misalignment Insurance</div><div class="tip-body">' +
+    'In Dublin, existing grid connections are increasingly scarce. CRU Dec 2025 moratorium lift requires 80% renewable + dispatchable generation for new connections. ' +
+    'An existing ESB connection at ' + (itCurrent * currentPUE).toFixed(1) + 'MVA has significant option value not captured in book value.</div>' +
+    '<div class="tip-ref">CRU Dec 2025 · ESB Networks connection policy</div></div>';
+
+  tips += '<div class="tip-card amber"><div class="tip-title">📊 Revenue Continuity Gap</div><div class="tip-body">' +
+    'New build has a ' + buildYears + '-year revenue gap while retrofit maintains ~80% revenue during works. Over the analysis period, this gap alone represents €' +
+    (annualRevenue * buildYears * 0.7).toFixed(1) + 'M in foregone income — often the decisive factor.</div>' +
+    '<div class="tip-ref">DCF analysis · opportunity cost of capital</div></div>';
+
+  tips += '<div class="tip-card green"><div class="tip-title">🏗️ Phased Retrofit Strategy</div><div class="tip-body">' +
+    'Consider staging retrofit: Phase 1 (cooling + containment, 6 months) delivers quick PUE gains that fund Phase 2 (power densification, 12 months). ' +
+    'This de-risks the investment and proves ROI before committing full CAPEX.</div>' +
+    '<div class="tip-ref">DC operator best practice · phased capital deployment</div></div>';
+
+  if (remainingLease > 0 && remainingLease < analysisPeriod) {
+    tips += '<div class="tip-card red"><div class="tip-title">⚠️ Lease Constraint</div><div class="tip-body">' +
+      'Remaining lease (' + remainingLease + ' years) is shorter than analysis period (' + analysisPeriod + ' years). ' +
+      'Any investment must achieve payback within lease term, or negotiate lease extension as condition of CAPEX commitment.</div>' +
+      '<div class="tip-ref">Commercial lease risk · investment horizon alignment</div></div>';
+  }
+
+  var eedTip = '<div class="tip-card blue"><div class="tip-title">📋 EED Stranded Asset Risk</div><div class="tip-body">' +
+    'EU minimum performance standards (expected H1 2026) could devalue facilities that fail to meet PUE ≤1.3 by 2030. ' +
+    'Un-upgraded facilities face regulatory misalignment risk — factor this into the divest scenario valuation.</div>' +
+    '<div class="tip-ref">EU EED 2023/1791 · EU Delegated Regulation 2024/1364</div></div>';
+  tips += eedTip;
+
+  document.getElementById('veTips').innerHTML = tips;
+
+  // Scroll to results
+  // ═══ WHAT THIS MEANS ═══
+  var existingWtm = document.querySelector('.wtm-panel');
+  if (existingWtm) existingWtm.remove();
+  var wtmText = '';
+  if (best === 'Retrofit') {
+    wtmText = 'Retrofit is the strongest option at <strong>€' + npvA.toFixed(1) + 'M NPV</strong>. '
+      + 'Your existing grid connection, structure, and site infrastructure have significant embedded value. '
+      + 'At ' + ((retrofitCapex / newBuildCapex) * 100).toFixed(0) + '% of new-build cost with ~80% revenue continuity during works, '
+      + 'the investment case is clear. Payback in Year ' + breakEvenA + '.';
+  } else if (best === 'Build New') {
+    wtmText = 'New build delivers the best NPV at <strong>€' + npvB.toFixed(1) + 'M</strong>, '
+      + 'but carries a ' + buildYears + '-year revenue gap and €' + newBuildCapex.toFixed(1) + 'M upfront. '
+      + 'This makes sense when the facility is fundamentally obsolete or you need >3× current capacity. '
+      + 'Check the sensitivity table — if CAPEX rises 20%, does new build still win?';
+  } else {
+    wtmText = 'Divestment shows the best return at <strong>€' + npvC.toFixed(1) + 'M NPV</strong>. '
+      + 'Neither retrofit nor new build generates sufficient return to justify the capital. '
+      + 'Consider whether the land/asset value exceeds the going-concern value, '
+      + 'and whether capital would be better deployed in a different facility or market.';
+  }
+  var wtmDiv = document.createElement('div');
+  wtmDiv.className = 'wtm-panel';
+  wtmDiv.innerHTML = '<h4>What This Means</h4><p>' + wtmText + '</p>';
+  document.getElementById('strategyGrid').insertAdjacentElement('afterend', wtmDiv);
+
+  document.getElementById('resultsCard').scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// ═══ LOAD SAMPLE — Clonshaugh reference facility ═══
+function loadSample() {
+  document.getElementById('itCurrent').value = 2.4;
+  document.getElementById('itTarget').value = 4.0;
+  document.getElementById('currentPUE').value = 1.65;
+  document.getElementById('facilityGFA').value = 3200;
+  document.getElementById('remainingLease').value = 12;
+  document.getElementById('assetValue').value = 8;
+  document.getElementById('annualRevenue').value = 4.2;
+  document.getElementById('electricityCost').value = 0.20;
+  document.getElementById('discountRate').value = 8;
+  document.getElementById('analysisPeriod').value = 15;
+  document.getElementById('newBuildCost').value = 10;
+  document.getElementById('landValue').value = 5;
+  document.getElementById('currentDensity').value = 8;
+  document.getElementById('targetDensity').value = 25;
+  calculate();
+}
+</script>
+
+<button class="demo-btn np" onclick="window.print()" style="max-width:720px;margin:12px auto;display:block;width:100%;padding:10px;font-size:13px">🖨️ Print / Save as PDF</button>
+
+</body>
+</html>
