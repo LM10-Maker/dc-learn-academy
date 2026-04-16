@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grid Capacity Quick Check | Legacy Business Engineers</title>
+<style>
+  /* ═══════════════════════════════════════════════════════════════════
+     DC-F-GRD-001 v1.2.0 | Grid Capacity Quick Check
+     SERVICE tool — Vanilla JS, no React
+     Segment: Seg06 (DC Developer / Investor)
+     ═══════════════════════════════════════════════════════════════════ */
+  :root {
+    --lbe-green: #4a7c59;
+    --lbe-green-light: #e8f0eb;
+    --lbe-dark: #1a2332;
+    --seg06-bg: #eef2ff;
+    --seg06-border: #6366f1;
+    --seg06-text: #3730a3;
+    --green-bg: #dcfce7; --green-text: #166534; --green-border: #86efac;
+    --amber-bg: #fef3c7; --amber-text: #92400e; --amber-border: #fcd34d;
+    --red-bg: #fee2e2; --red-text: #991b1b; --red-border: #fca5a5;
+    --grey-bg: #f3f4f6; --grey-text: #6b7280; --grey-border: #d1d5db;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8fafc; color: #1e293b; line-height: 1.6; }
+  .container { max-width: 720px; margin: 0 auto; padding: 16px; }
+
+  /* Header */
+  .lbe-header { background: var(--lbe-dark); color: white; padding: 16px 20px;
+    border-radius: 10px 10px 0 0; display: flex; align-items: center; gap: 14px; }
+  .lbe-header img { height: 36px; border-radius: 50%; flex-shrink: 0; }
+  .lbe-header .h-text { flex: 1; }
+  .lbe-header .h-title { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+  .lbe-header .h-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .lbe-header .h-ver { font-size: 10px; color: #64748b; }
+
+  /* Audience banner */
+  .seg-banner { background: var(--seg06-bg); border-left: 4px solid var(--seg06-border);
+    color: var(--seg06-text); padding: 10px 16px; font-size: 13px; font-weight: 600; }
+
+  /* Card */
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 0 0 10px 10px;
+    padding: 20px; }
+  .card + .card { border-radius: 10px; margin-top: 12px; }
+
+  /* Form elements */
+  label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+  .hint { font-size: 11px; color: #94a3b8; margin-bottom: 2px; }
+  select, input[type="number"] { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1;
+    border-radius: 6px; font-size: 14px; background: white; margin-bottom: 14px; }
+  select:focus, input:focus { outline: none; border-color: var(--lbe-green);
+    box-shadow: 0 0 0 3px rgba(74,124,89,0.12); }
+
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* Checkbox */
+  .check-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .check-row input { width: 18px; height: 18px; accent-color: var(--lbe-green); }
+  .check-row label { margin-bottom: 0; font-weight: 500; }
+
+  /* Button */
+  .calc-btn { width: 100%; padding: 12px; background: var(--lbe-green); color: white;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
+    letter-spacing: 0.3px; transition: background 0.2s; }
+  .calc-btn:hover { background: #3d6b4a; }
+
+  /* Results */
+  .result-panel { display: none; margin-top: 16px; }
+  .result-panel.show { display: block; }
+  .r-primary { text-align: center; padding: 20px; border-radius: 10px;
+    border: 2px solid var(--lbe-green); background: var(--lbe-green-light); margin-bottom: 14px; }
+  .r-primary .r-num { font-size: 32px; font-weight: 800; color: var(--lbe-dark); }
+  .r-primary .r-label { font-size: 13px; color: #64748b; margin-top: 2px; }
+
+  /* Verdict badge */
+  .verdict { display: inline-block; padding: 5px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.5px; }
+  .v-green { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+  .v-amber { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+  .v-red { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+  .v-grey { background: var(--grey-bg); color: var(--grey-text); border: 1px solid var(--grey-border); }
+
+  /* Results grid */
+  .r-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .r-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+  .r-item .ri-val { font-size: 20px; font-weight: 700; color: var(--lbe-dark); }
+  .r-item .ri-lab { font-size: 11px; color: #64748b; margin-top: 2px; }
+  .r-item.full { grid-column: 1 / -1; }
+
+  /* Flags */
+  .flag-list { list-style: none; padding: 0; margin: 10px 0; }
+  .flag-list li { padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px;
+    display: flex; align-items: flex-start; gap: 8px; }
+  .flag-list .f-icon { flex-shrink: 0; font-size: 16px; }
+
+  /* Tips */
+  .tip { border-left: 4px solid; border-radius: 6px; padding: 12px 16px; margin-top: 10px; font-size: 13px; }
+  .tip-green { background: #f0fdf4; border-color: #22c55e; }
+  .tip-amber { background: #fffbeb; border-color: #f59e0b; }
+  .tip-red { background: #fef2f2; border-color: #ef4444; }
+  .tip-blue { background: #eff6ff; border-color: #3b82f6; }
+  .tip .tip-title { font-weight: 700; margin-bottom: 4px; }
+  .tip .tip-ref { font-size: 11px; color: #64748b; margin-top: 6px; }
+
+  /* WTM */
+  .wtm { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+    padding: 16px; margin-top: 14px; }
+  .wtm-title { font-size: 14px; font-weight: 700; color: var(--lbe-dark); margin-bottom: 8px; }
+  .wtm-text { font-size: 13px; color: #475569; line-height: 1.7; }
+
+  /* CTA */
+  .cta-bar { background: linear-gradient(135deg, var(--lbe-dark) 0%, #2a3a4c 100%);
+    color: white; border-radius: 10px; padding: 20px; margin-top: 16px; text-align: center; }
+  .cta-bar .cta-hook { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .cta-bar .cta-detail { font-size: 12px; color: #94a3b8; margin-bottom: 12px; }
+  .cta-bar .cta-btn { display: inline-block; background: var(--lbe-green); color: white;
+    padding: 11px 28px; border-radius: 8px; text-decoration: none; font-weight: 700;
+    font-size: 14px; transition: background 0.2s; }
+  .cta-bar .cta-btn:hover { background: #3d6b4a; }
+  .cta-bar .cta-price { font-size: 11px; color: #94a3b8; margin-top: 8px; }
+
+  /* Sample bar */
+  .sample-bar { text-align: center; padding: 12px; background: #f0fdf4;
+    border: 1px solid #bbf7d0; border-radius: 8px; margin-top: 10px; }
+  .sample-bar a { color: var(--lbe-green); font-weight: 600; font-size: 13px; text-decoration: none; }
+
+  /* Nav footer */
+  .nav-footer { text-align: center; padding: 12px; background: #f9fafb;
+    border-top: 1px solid #e5e7eb; margin-top: 20px; border-radius: 0 0 10px 10px; }
+  .nav-footer a { color: var(--lbe-green); text-decoration: none; font-size: 13px; }
+  .nav-footer .nf-copy { font-size: 10px; color: #9ca3af; margin-top: 4px; }
+
+  /* Disclaimer */
+  .disclaimer { font-size: 10px; color: #94a3b8; text-align: center; padding: 10px;
+    line-height: 1.5; margin-top: 10px; }
+
+  /* Print */
+  @media print {
+    body { background: white; }
+    .no-print { display: none !important; }
+    .cta-bar, .sample-bar, .nav-footer, .calc-btn, .seg-banner, .np, .not-checked-panel { display: none !important; }
+    @page { size: A4 portrait; margin: 14mm 12mm 20mm 12mm; }
+    .container { max-width: 100%; }
+    .card { border: none; box-shadow: none; }
+    .lbe-header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  }
+
+  .not-checked-panel { background: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px;
+    padding: 16px 20px; margin-top: 16px; }
+  .not-checked-panel h3 { color: #991b1b; font-size: 14px; font-weight: 700; margin: 0 0 8px;
+    display: flex; align-items: center; gap: 6px; }
+  .not-checked-panel ul { margin: 0; padding: 0 0 0 18px; }
+  .not-checked-panel li { font-size: 12px; color: #7f1d1d; margin-bottom: 4px; line-height: 1.5; }
+  .not-checked-panel .nc-note { font-size: 11px; color: #991b1b; margin-top: 8px; font-style: italic; }
+</style>
+</head>
+<body>
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var b = document.body;
+  if (b && b.children.length < 3) {
+    b.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-E-GRD-001 v1.2.0</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+      + '</div>';
+  }
+  return false;
+};
+</script>
+
+<!-- LBE AUDIENCE BAR v15 -->
+<div id="lbe-audience-bar" class="np" style="background:#eef2ff;border-bottom:3px solid #6366f1;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <div>
+    <div style="font-size:13px;font-weight:700;color:#3730a3;">BUILT FOR: DATA CENTRE OPERATORS &amp; INVESTORS</div>
+    <div style="font-size:11px;color:#374151;margin-top:1px;font-style:italic;">Screening tool — grid capacity quick check</div>
+  </div>
+  <span style="font-size:10px;color:#3730a3;opacity:0.7;white-space:nowrap;">DC-E-GRD-001</span>
+</div>
+<div style="text-align:center;font-size:10px;color:#3730a3;padding:4px;border-bottom:1px solid #e5e7eb;">
+  Audience: &#x1F5A5;&#xFE0F; Data Centre Operators &amp; Investors | DC-E-GRD-001 | Legacy Business Engineers Ltd | legacybe.ie
+</div>
+<div id="lbe-sample-bar" class="np" style="margin:8px 16px 4px;padding:8px 12px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:8px;display:flex;align-items:center;justify-content:space-between;">
+  <span style="font-size:13px;font-weight:600;color:#333;">&#x1F4CA; Data centre MEP feasibility — site-specific assessment available</span>
+  <a href="https://legacybe.ie/contact/" target="_blank" rel="noopener" style="font-size:13px;font-weight:700;color:#3730a3;text-decoration:none;">Discuss Your Project &rarr;</a>
+</div>
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="lbe-header">
+    <img src="data:image/png;base64,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" alt="LBE"
+         onerror="this.style.display='none'" />
+    <div class="h-text">
+      <div class="h-title">Grid Capacity Quick Check</div>
+      <div class="h-sub">Can I get power to this Irish data centre site?</div>
+      <div class="h-ver">DC-F-GRD-001 v1.2.0 · Legacy Business Engineers</div>
+    </div>
+  </div>
+
+  <!-- ═══ AUDIENCE BANNER ═══ -->
+  <div class="seg-banner no-print np">Data Centre Screening — Grid Capacity Quick Check | DC-E-GRD-001</div>
+
+  <!-- ═══ INPUT CARD ═══ -->
+  <div class="card">
+    <div class="row-2">
+      <div>
+        <label for="county">County</label>
+        <div class="hint">Where is the site?</div>
+        <select title="Irish county — determines EirGrid substation capacity data." id="county">
+          <option value="">— Select county —</option>
+          <option value="carlow">Carlow</option>
+          <option value="cavan">Cavan</option>
+          <option value="clare">Clare</option>
+          <option value="cork">Cork</option>
+          <option value="donegal">Donegal</option>
+          <option value="dublin">Dublin</option>
+          <option value="galway">Galway</option>
+          <option value="kerry">Kerry</option>
+          <option value="kildare">Kildare</option>
+          <option value="kilkenny">Kilkenny</option>
+          <option value="laois">Laois</option>
+          <option value="leitrim">Leitrim</option>
+          <option value="limerick">Limerick</option>
+          <option value="longford">Longford</option>
+          <option value="louth">Louth</option>
+          <option value="mayo">Mayo</option>
+          <option value="meath">Meath</option>
+          <option value="monaghan">Monaghan</option>
+          <option value="offaly">Offaly</option>
+          <option value="roscommon">Roscommon</option>
+          <option value="sligo">Sligo</option>
+          <option value="south_dublin">South Dublin</option>
+          <option value="tipperary">Tipperary</option>
+          <option value="waterford">Waterford</option>
+          <option value="westmeath">Westmeath</option>
+          <option value="wexford">Wexford</option>
+          <option value="wicklow">Wicklow</option>
+        </select>
+      </div>
+      <div>
+        <label for="itLoad">IT Load (MW)</label>
+        <div class="hint">Total design IT capacity</div>
+        <input type="number" title="Total IT electrical load in MW. Typical: 1-100MW for commercial facilities." id="itLoad" min="0.5" max="200" step="0.5" placeholder="e.g. 50" />
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label for="tier">Target Tier</label>
+        <div class="hint">Uptime Institute classification</div>
+        <select title="Uptime Institute tier classification. Tier I (basic) to Tier IV (fault-tolerant)." id="tier">
+          <option value="II">Tier II — Redundant capacity</option>
+          <option value="III">Tier III — Concurrently maintainable</option>
+          <option value="IV" selected>Tier IV — Fault tolerant</option>
+        </select>
+      </div>
+      <div>
+        <label for="pue">Assumed PUE</label>
+        <div class="hint">1.10 = best practice new build</div>
+        <input type="number" title="Power Usage Effectiveness. 1.0 = perfect. Typical new build: 1.2-1.4. Legacy: 1.5-2.0." id="pue" min="1.02" max="2.0" step="0.01" value="1.10" />
+      </div>
+    </div>
+
+    <div class="check-row">
+      <input type="checkbox" id="dualFeed" checked />
+      <label for="dualFeed">Dual feed required (two independent 110kV sources)</label>
+    </div>
+
+    <button class="calc-btn no-print" onclick="calculate()">Check Grid Capacity</button>
+
+    <!-- ═══ RESULTS ═══ -->
+    <div id="results" class="result-panel">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+
+  <!-- ═══ CTA BAR ═══ -->
+  <div class="cta-bar no-print" id="ctaBar" style="display:none;">
+    <div class="cta-hook">Next step: Full grid and site feasibility</div>
+    <div class="cta-detail">Feed this screening into DC-CPS-001 for the Carbon Position Statement. Then proceed to independent EirGrid pre-application assessment, power architecture review, and budget estimate.</div>
+    <a href="https://legacybe.ie/contact/" target="_blank" class="cta-btn">Open DC-CPS-001</a>
+  </div>
+
+  <!-- ═══ SAMPLE BAR ═══ -->
+  <div class="sample-bar no-print" id="sampleBar" style="display:none;">
+    <a href="#">See Sample: Tara Campus — 50MW Hyperscale Feasibility Assessment</a>
+  </div>
+
+  <!-- ═══ NAV FOOTER ═══ -->
+  </div>
+
+  <!-- ═══ DISCLAIMER ═══ -->
+  <div class="disclaimer">
+    Independent MEP feasibility assessment — not detailed design or certification.
+    Indicative findings subject to design team verification.
+    EirGrid published data is indicative — connection offers are site-specific.
+    Grid timelines and costs are estimates based on published EirGrid data and may vary significantly.
+  
+    <br>Standards: EN 50600 series · ASHRAE TC 9.9 · EU EED 2023/1791 · EirGrid/CRU · CIBSE TM46
+  </div>
+
+<div class="not-checked-panel">
+    <h3>⚠️ NOT CHECKED — Outside Scope of This Tool</h3>
+    <ul><li>EirGrid connection application requirements and timeline</li><li>TSO/DSO interface design and metering arrangements</li><li>Power quality assessment (harmonics, flicker, voltage regulation)</li><li>Backup supply and island-mode capability</li><li>Network reinforcement costs — indicative capacity only, not firm offers</li></ul>
+    <div class="nc-note">These items require detailed design by a qualified engineer. This tool provides screening-level assessment only.</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DC-F-GRD-001 v1.2.0 — Grid Capacity Quick Check
+// SERVICE tool · Seg06 (DC Developer / Investor)
+// Standards: EirGrid Grid Code, EirGrid Connection Policy 2024, CRU
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TOOL_META = {
+  tool_id: 'DC-F-GRD-001',
+  tool_name: 'Grid Capacity Quick Check',
+  version: '1.0.0',
+  date: '2026-02-27',
+  segment: 'seg06',
+  family: 'service',
+  standards: ['EirGrid Grid Code', 'EirGrid Connection Policy 2024', 'CRU Decision Papers'],
+};
+
+// ─── COUNTY GRID DATA ───────────────────────────────────────────────────
+// Source: EirGrid Transmission Development Plan; CRU Connection Policy 2024
+// Validation: [VALIDATE] — indicative only, subject to EirGrid pre-application
+const COUNTY_GRID = {
+  carlow:       { region: 'South East', nearest_110kv: 'Kellis 110kV',       capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.2 },
+  cavan:        { region: 'North',      nearest_110kv: 'Louth 110kV',        capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.3 },
+  clare:        { region: 'West',       nearest_110kv: 'Ennis 110kV',        capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.2 },
+  cork:         { region: 'South',      nearest_110kv: 'Knockraha 220kV',    capacity_note: 'good',    dual_feed: 'possible',    timeline_adj: 1.0 },
+  donegal:      { region: 'North West', nearest_110kv: 'Letterkenny 110kV',  capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.4 },
+  dublin:       { region: 'Dublin',     nearest_110kv: 'Multiple 110/220kV', capacity_note: 'congested', dual_feed: 'available', timeline_adj: 0.9 },
+  galway:       { region: 'West',       nearest_110kv: 'Galway 110kV',       capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.2 },
+  kerry:        { region: 'South West', nearest_110kv: 'Tralee 110kV',       capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.3 },
+  kildare:      { region: 'GDA',        nearest_110kv: 'Maynooth 110kV',     capacity_note: 'constrained', dual_feed: 'conditional', timeline_adj: 1.0 },
+  kilkenny:     { region: 'South East', nearest_110kv: 'Kilkenny 110kV',     capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.2 },
+  laois:        { region: 'Midlands',   nearest_110kv: 'Portlaoise 110kV',   capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.1 },
+  leitrim:      { region: 'North West', nearest_110kv: 'Carrick-on-Shannon', capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.4 },
+  limerick:     { region: 'Mid-West',   nearest_110kv: 'Limerick 110kV',     capacity_note: 'good',    dual_feed: 'possible',    timeline_adj: 1.0 },
+  longford:     { region: 'Midlands',   nearest_110kv: 'Lanesborough 110kV', capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.3 },
+  louth:        { region: 'North East', nearest_110kv: 'Louth 220kV',        capacity_note: 'good',    dual_feed: 'possible',    timeline_adj: 1.0 },
+  mayo:         { region: 'West',       nearest_110kv: 'Castlebar 110kV',    capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.3 },
+  meath:        { region: 'GDA',        nearest_110kv: 'Maynooth 110kV',     capacity_note: 'moderate', dual_feed: 'conditional', timeline_adj: 1.0 },
+  monaghan:     { region: 'North',      nearest_110kv: 'Louth 110kV',        capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.3 },
+  offaly:       { region: 'Midlands',   nearest_110kv: 'Shannonbridge 110kV', capacity_note: 'moderate', dual_feed: 'unlikely',  timeline_adj: 1.2 },
+  roscommon:    { region: 'West',       nearest_110kv: 'Athlone 110kV',      capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.2 },
+  sligo:        { region: 'North West', nearest_110kv: 'Sligo 110kV',        capacity_note: 'limited', dual_feed: 'unlikely',    timeline_adj: 1.3 },
+  south_dublin: { region: 'Dublin',     nearest_110kv: 'Citywest 110kV',     capacity_note: 'congested', dual_feed: 'available', timeline_adj: 0.9 },
+  tipperary:    { region: 'Mid-West',   nearest_110kv: 'Thurles 110kV',      capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.1 },
+  waterford:    { region: 'South East', nearest_110kv: 'Waterford 110kV',    capacity_note: 'good',    dual_feed: 'possible',    timeline_adj: 1.0 },
+  westmeath:    { region: 'Midlands',   nearest_110kv: 'Athlone 110kV',      capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.1 },
+  wexford:      { region: 'South East', nearest_110kv: 'Wexford 110kV',      capacity_note: 'moderate', dual_feed: 'unlikely',   timeline_adj: 1.2 },
+  wicklow:      { region: 'GDA',        nearest_110kv: 'Arklow 110kV',       capacity_note: 'moderate', dual_feed: 'conditional', timeline_adj: 1.1 },
+};
+
+// ─── COST & TIMELINE REFERENCE ──────────────────────────────────────────
+// Source: EirGrid Connection Policy 2024; CRU Decision Papers
+const GRID_REF = {
+  cost_per_mva_min: 50000,   // €/MVA shallow connection
+  cost_per_mva_max: 150000,  // €/MVA — highly variable
+  timeline_base_min_yr: 4,   // Application to energisation
+  timeline_base_max_yr: 8,
+  dispatch_threshold_mw: 10, // CRU dispatch licence threshold
+  hv_threshold_mw: 20,       // 110kV connection trigger
+  dc_queue_gw: 2.1,          // Pending DC connections (2024 data)
+  power_factor: 0.90,        // Typical DC power factor
+  source: 'EirGrid Connection Policy 2024; CRU; indicative only',
+};
+
+// ─── CALCULATION ────────────────────────────────────────────────────────
+function calculate() {
+  const county = document.getElementById('county').value;
+  const itLoad = parseFloat(document.getElementById('itLoad').value);
+  const tier = document.getElementById('tier').value;
+  const pue = parseFloat(document.getElementById('pue').value);
+  const dualFeed = document.getElementById('dualFeed').checked;
+
+  // Validation
+  if (!county) { showError('Select a county to continue.'); return; }
+  if (!itLoad || itLoad < 0.5 || itLoad > 200) { showError('IT load must be 0.5–200 MW.'); return; }
+  if (!pue || pue < 1.02 || pue > 2.0) { showError('PUE must be 1.02–2.0.'); return; }
+
+  const g = COUNTY_GRID[county];
+  if (!g) { showError('County data not available.'); return; }
+
+  // ── Facility load
+  const facilityMW = itLoad * pue;
+  const facilityMVA = Math.ceil(facilityMW / GRID_REF.power_factor);
+
+  // ── Connection voltage
+  const voltage = itLoad > GRID_REF.hv_threshold_mw ? '110 kV' : '38 kV';
+
+  // ── Timeline
+  const tAdj = g.timeline_adj;
+  const tlMin = Math.round(GRID_REF.timeline_base_min_yr * tAdj);
+  const tlMax = Math.round(GRID_REF.timeline_base_max_yr * tAdj);
+
+  // ── Cost
+  const costMin = facilityMVA * GRID_REF.cost_per_mva_min;
+  const costMax = facilityMVA * GRID_REF.cost_per_mva_max;
+
+  // ── Dual feed assessment
+  let dualStatus, dualNote;
+  if (!dualFeed) {
+    dualStatus = 'N/A';
+    dualNote = 'Dual feed not required for this tier.';
+  } else if (g.dual_feed === 'available') {
+    dualStatus = 'AVAILABLE';
+    dualNote = 'Multiple 110kV substations in proximity — dual feed likely achievable.';
+  } else if (g.dual_feed === 'possible') {
+    dualStatus = 'POSSIBLE';
+    dualNote = `${g.nearest_110kv} may support dual feed — requires EirGrid pre-application confirmation.`;
+  } else if (g.dual_feed === 'conditional') {
+    dualStatus = 'CONDITIONAL';
+    dualNote = `${g.nearest_110kv} is single source. Dual feed requires second 110kV source or on-site generation backup.`;
+  } else {
+    dualStatus = 'UNLIKELY';
+    dualNote = `${g.nearest_110kv} — limited 110kV infrastructure in this region. Dual feed may require significant grid reinforcement.`;
+  }
+
+  // ── Generator & dispatch
+  const tierMultipliers = { 'II': 1.2, 'III': 1.5, 'IV': 2.2 };
+  const genCapacityMW = Math.ceil(facilityMW * (tierMultipliers[tier] || 2.2));
+  const dispatchRequired = genCapacityMW > GRID_REF.dispatch_threshold_mw;
+
+  // ── Capacity assessment
+  let capacityVerdict, capacityNote;
+  if (g.capacity_note === 'congested') {
+    capacityVerdict = itLoad > 30 ? 'RED' : 'AMBER';
+    capacityNote = 'Grid congestion in this area. Large connections face extended timelines and potential deep reinforcement costs.';
+  } else if (g.capacity_note === 'good') {
+    capacityVerdict = 'GREEN';
+    capacityNote = 'Reasonable grid capacity. Connection achievable within standard timelines.';
+  } else if (g.capacity_note === 'moderate') {
+    capacityVerdict = itLoad > 50 ? 'AMBER' : 'GREEN';
+    capacityNote = 'Moderate grid capacity. Pre-application to EirGrid recommended to confirm headroom.';
+  } else if (g.capacity_note === 'constrained') {
+    capacityVerdict = 'AMBER';
+    capacityNote = 'Grid constraints in this area. Capacity available but competition from other DC connections.';
+  } else {
+    capacityVerdict = itLoad > 20 ? 'RED' : 'AMBER';
+    capacityNote = 'Limited grid infrastructure. Large DC connections may require substantial reinforcement.';
+  }
+
+  // ── Overall verdict
+  let verdict, verdictNote;
+  const verdicts = [capacityVerdict];
+  if (dualFeed && (dualStatus === 'UNLIKELY')) verdicts.push('RED');
+  else if (dualFeed && (dualStatus === 'CONDITIONAL')) verdicts.push('AMBER');
+
+  if (verdicts.includes('RED')) {
+    verdict = 'RED';
+    verdictNote = 'Significant grid constraints. Full EirGrid assessment essential before committing to this site.';
+  } else if (verdicts.includes('AMBER')) {
+    verdict = 'AMBER';
+    verdictNote = 'Grid available but with conditions. Timeline and dual feed require detailed assessment.';
+  } else {
+    verdict = 'GREEN';
+    verdictNote = 'Favourable grid position. Standard connection process should apply.';
+  }
+
+  // ── Build results HTML
+  const countyLabel = county.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const vClass = verdict === 'GREEN' ? 'v-green' : verdict === 'AMBER' ? 'v-amber' : 'v-red';
+
+  let html = `
+    <div class="r-primary">
+      <div class="r-num">${facilityMVA} MVA</div>
+      <div class="r-label">Total facility demand at ${countyLabel} · ${itLoad} MW IT × ${pue} PUE</div>
+      <div style="margin-top:10px;">
+        <span class="verdict ${vClass}">${verdict === 'GREEN' ? 'FAVOURABLE' : verdict === 'AMBER' ? 'CONDITIONAL' : 'CHALLENGING'}</span>
+      </div>
+    </div>
+
+    <div class="r-grid">
+      <div class="r-item">
+        <div class="ri-val">${voltage}</div>
+        <div class="ri-lab">Connection voltage</div>
+      </div>
+      <div class="r-item">
+        <div class="ri-val">${tlMin}–${tlMax} yrs</div>
+        <div class="ri-lab">Indicative timeline</div>
+      </div>
+      <div class="r-item">
+        <div class="ri-val">€${fmtM(costMin)}–€${fmtM(costMax)}</div>
+        <div class="ri-lab">Shallow connection cost (indicative)</div>
+      </div>
+      <div class="r-item">
+        <div class="ri-val">${g.nearest_110kv}</div>
+        <div class="ri-lab">Nearest 110kV substation</div>
+      </div>
+    </div>
+  `;
+
+  // ── Flags
+  html += '<ul class="flag-list">';
+  // Dual feed
+  const dfCol = dualStatus === 'AVAILABLE' ? '--green-bg' : dualStatus === 'POSSIBLE' ? '--green-bg' : dualStatus === 'CONDITIONAL' ? '--amber-bg' : dualStatus === 'UNLIKELY' ? '--red-bg' : '--grey-bg';
+  const dfIcon = dualStatus === 'AVAILABLE' ? '✅' : dualStatus === 'POSSIBLE' ? '🟢' : dualStatus === 'CONDITIONAL' ? '🟡' : dualStatus === 'UNLIKELY' ? '🔴' : '⚪';
+  html += `<li style="background:var(${dfCol});"><span class="f-icon">${dfIcon}</span><div><strong>Dual Feed:</strong> ${dualStatus}<br>${dualNote}</div></li>`;
+
+  // Dispatch
+  if (dispatchRequired) {
+    html += `<li style="background:var(--amber-bg);"><span class="f-icon">⚡</span><div><strong>CRU Dispatch Licence:</strong> REQUIRED<br>Generator capacity ${genCapacityMW} MW exceeds ${GRID_REF.dispatch_threshold_mw} MW threshold. Typically 6–12 months for CRU approval.</div></li>`;
+  }
+
+  // DC queue warning
+  html += `<li style="background:var(--amber-bg);"><span class="f-icon">📊</span><div><strong>DC Queue:</strong> ~${GRID_REF.dc_queue_gw} GW pending<br>Approximately ${GRID_REF.dc_queue_gw} GW of DC connections are pending in the EirGrid queue. Government is reviewing DC grid allocation policy.</div></li>`;
+
+  // Grid capacity
+  const capCol = capacityVerdict === 'GREEN' ? '--green-bg' : capacityVerdict === 'AMBER' ? '--amber-bg' : '--red-bg';
+  const capIcon = capacityVerdict === 'GREEN' ? '🟢' : capacityVerdict === 'AMBER' ? '🟡' : '🔴';
+  html += `<li style="background:var(${capCol});"><span class="f-icon">${capIcon}</span><div><strong>Grid Capacity (${countyLabel}):</strong> ${g.capacity_note.toUpperCase()}<br>${capacityNote}</div></li>`;
+  html += '</ul>';
+
+  // ── Tips
+  html += '<div id="tipsPanel">';
+  const tips = buildTips(county, itLoad, tier, facilityMVA, dualFeed, dualStatus, tlMax, g);
+  tips.forEach(t => {
+    html += `<div class="tip tip-${t.c}"><div class="tip-title">${t.t}</div><div>${t.b}</div><div class="tip-ref">${t.r}</div></div>`;
+  });
+  html += '</div>';
+
+  // ── WTM (What This Means)
+  html += `
+    <div class="wtm">
+      <div class="wtm-title">What This Means</div>
+      <div class="wtm-text">${buildWTM(verdict, countyLabel, itLoad, facilityMVA, voltage, tlMin, tlMax, dualStatus, costMin, costMax)}</div>
+    </div>
+  `;
+
+  document.getElementById('results').innerHTML = html;
+  document.getElementById('results').classList.add('show');
+  document.getElementById('ctaBar').style.display = 'block';
+  document.getElementById('sampleBar').style.display = 'block';
+}
+
+// ─── TIPS ENGINE ────────────────────────────────────────────────────────
+function buildTips(county, itLoad, tier, mva, dualFeed, dualStatus, tlMax, g) {
+  const tips = [];
+
+  // Tip 1: Phased connection (always relevant for large DCs)
+  if (itLoad > 20) {
+    tips.push({
+      c: 'blue', t: '💡 Consider phased grid connection',
+      b: `A ${itLoad} MW facility doesn't need full capacity on Day 1. A phased approach — 38kV for Phase 1, upgrading to 110kV for Phase 2 — reduces upfront cost and can shave 12–18 months off the critical path. Phase 1 would be limited to Tier II/III until 110kV is energised.`,
+      r: 'Reference: EirGrid Connection Policy — phased connection agreements'
+    });
+  }
+
+  // Tip 2: Timeline is the real constraint
+  if (tlMax >= 6) {
+    tips.push({
+      c: 'amber', t: '⚠️ Grid timeline is the programme driver',
+      b: `At ${tlMax} years worst case, the EirGrid connection — not building construction — determines when this facility can operate. Start the EirGrid pre-application process immediately, even before planning permission. The pre-application is free and non-binding.`,
+      r: 'Reference: EirGrid pre-application process (ECP-1)'
+    });
+  }
+
+  // Tip 3: On-site generation as bridge
+  if (dualFeed && dualStatus !== 'AVAILABLE') {
+    tips.push({
+      c: 'green', t: '💡 On-site generation can satisfy Tier IV dual path',
+      b: `Where dual 110kV feed is not available, Tier IV fault tolerance can be achieved with one grid feed plus on-site generation as the second independent path. This is an accepted interpretation under EN 50600-2-2 and is common practice for Irish DCs outside Dublin.`,
+      r: 'Reference: EN 50600-2-2:2019 Availability Class 4; Uptime Tier IV topology standard'
+    });
+  }
+
+  // Tip 4: Dublin congestion
+  if ((county === 'dublin' || county === 'south_dublin') && itLoad > 20) {
+    tips.push({
+      c: 'amber', t: '⚠️ Dublin grid congestion — competition for capacity',
+      b: `Dublin's 110kV and 220kV networks are heavily loaded. Multiple DC operators are competing for the same grid headroom. Early engagement with EirGrid is critical — the queue operates broadly on a first-come-first-served basis for connection offers.`,
+      r: 'Reference: EirGrid System Operator data 2024 — 2.1 GW DC pending'
+    });
+  }
+
+  // Tip 5: Deep reinforcement risk
+  if (g.capacity_note === 'limited' || g.capacity_note === 'constrained') {
+    tips.push({
+      c: 'red', t: '⚠️ Deep reinforcement may be required',
+      b: `If the local 110kV network doesn't have sufficient headroom, EirGrid may require "deep reinforcement" — building new transmission infrastructure. This can add 2–5× to the shallow connection cost and 2–3 years to the timeline. The S4 DC Feasibility assessment quantifies this risk with EirGrid pre-application data.`,
+      r: 'Reference: CRU Connection Policy — deep vs shallow connection costs'
+    });
+  }
+
+  return tips;
+}
+
+// ─── WHAT THIS MEANS ────────────────────────────────────────────────────
+function buildWTM(verdict, county, itLoad, mva, voltage, tlMin, tlMax, dualStatus, costMin, costMax) {
+  if (verdict === 'GREEN') {
+    return `Based on this screening, a ${itLoad} MW data centre in ${county} would require a ${mva} MVA ${voltage} connection. Grid capacity in this area is favourable, with an indicative timeline of ${tlMin}–${tlMax} years and connection cost of €${fmtM(costMin)}–€${fmtM(costMax)}. However, this is a quick check using published data — a full S4 DC Feasibility assessment verifies grid availability through EirGrid pre-application, quantifies the actual connection timeline, and identifies whether deep reinforcement is needed.`;
+  } else if (verdict === 'AMBER') {
+    return `This screening shows that a ${itLoad} MW data centre in ${county} is achievable but faces conditions: ${dualStatus === 'CONDITIONAL' ? 'dual feed availability is uncertain' : 'grid capacity may be constrained'}, and the ${tlMin}–${tlMax} year timeline is programme-critical. This isn't a dealbreaker but it affects cost and programme. An S4 DC Feasibility assessment quantifies the actual grid position through EirGrid pre-application engagement and identifies alternatives — including phased connection strategies and on-site generation options.`;
+  } else {
+    return `This screening flags significant grid challenges for a ${itLoad} MW data centre in ${county}. ${dualStatus === 'UNLIKELY' ? 'Dual 110kV feed is unlikely in this location, which constrains Tier IV options.' : 'Grid capacity is limited, and deep reinforcement is likely required.'} The indicative cost of €${fmtM(costMin)}–€${fmtM(costMax)} may increase substantially. Before committing to this site, you need an independent assessment of actual grid headroom, reinforcement requirements, and alternative connection strategies. That's exactly what the S4 DC Feasibility assessment delivers.`;
+  }
+}
+
+// ─── ERROR ───────────────────────────────────────────────────────────────
+function showError(msg) {
+  document.getElementById('results').innerHTML =
+    `<div class="r-primary" style="border-color:var(--red-border);background:var(--red-bg);">
+      <div class="r-num" style="font-size:18px;color:var(--red-text);">${msg}</div>
+    </div>`;
+  document.getElementById('results').classList.add('show');
+}
+
+// ─── FORMATTING ─────────────────────────────────────────────────────────
+function fmtM(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(0) + 'k';
+  return n.toLocaleString();
+}
+</script>
+
+<!-- LBE NAV FOOTER v15 -->
+<div class="np" style="position:fixed;bottom:0;left:0;right:0;background:#1a1a18;color:#f7f4ef;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;font-family:sans-serif;font-size:12px;z-index:9999;gap:16px;flex-wrap:wrap;border-top:2px solid #4a7c59;">
+  <span style="color:#4a7c59;font-weight:600;">Legacy Business Engineers</span>
+  <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+    <a href="https://legacybe.ie" style="color:#ccc;text-decoration:none;">&larr; All Tools</a>
+    <a href="https://legacybe.ie" style="color:#ccc;text-decoration:none;" target="_blank">legacybe.ie</a>
+    <a href="https://legacybe.ie/contact/" style="background:#4a7c59;color:white;padding:6px 14px;border-radius:6px;text-decoration:none;font-weight:600;">Contact LBE &rarr;</a>
+  </div>
+</div>
+<div style="height:52px;"></div>
+</body>
+</html>

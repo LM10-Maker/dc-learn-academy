@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-R-SUM-001 v1.0.2 | DC Screening Summary | Legacy Business Engineers</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   DC-R-SUM-001 — DC Screening Summary Aggregator
+   Version: 1.0.2 | Service Tool | Vanilla JS
+   Branding: DC black (#1a1a1a) primary
+   CDN: unpkg.com / cdn.jsdelivr.net
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --dc-black: #1a1a1a;
+  --dc-dark: #2d2d2d;
+  --dc-gray: #6b7280;
+  --dc-light: #f3f4f6;
+  --dc-border: #e5e7eb;
+  --green-500: #22c55e;
+  --green-50: #f0fdf4;
+  --green-700: #15803d;
+  --amber-500: #f59e0b;
+  --amber-50: #fffbeb;
+  --amber-700: #b45309;
+  --red-500: #ef4444;
+  --red-50: #fef2f2;
+  --red-700: #b91c1c;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --lbe-green: #4a7c59;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Source Sans 3',system-ui,sans-serif; background:var(--gray-50); color:var(--gray-700); line-height:1.5; }
+.container { max-width:900px; margin:0 auto; padding:16px; }
+
+/* Header */
+.header-card { background:#fff; border-radius:12px; border-top:4px solid var(--dc-black); padding:20px 24px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); }
+.header-top { display:flex; align-items:center; gap:14px; margin-bottom:8px; }
+.logo-circle { width:36px; height:36px; border-radius:50%; background:var(--dc-black); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; flex-shrink:0; }
+.header-meta { font-family:monospace; font-size:11px; color:var(--gray-400); }
+.header-title { font-family:'Source Serif 4',Georgia,serif; font-size:1.5rem; font-weight:600; color:var(--dc-black); margin:4px 0; }
+.header-subtitle { font-size:0.9rem; color:var(--gray-500); }
+.info-bar { background:var(--gray-50); border-radius:8px; padding:12px 16px; margin-top:12px; font-size:0.85rem; color:var(--gray-500); border:1px solid var(--gray-200); }
+
+/* Audience Banner */
+#lbe-audience-bar { background:#1a1a1a; color:#e5e7eb; padding:8px 16px; font-size:0.8rem; text-align:center; border-radius:8px; margin-bottom:12px; border:1px solid #374151; }
+#lbe-audience-bar strong { color:#fff; letter-spacing:0.05em; }
+
+/* Cards */
+.card { background:#fff; border-radius:12px; padding:20px 24px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.08); border:1px solid var(--gray-200); }
+.card-title { font-size:1.1rem; font-weight:700; color:var(--dc-black); margin-bottom:12px; }
+
+/* Drop Zone */
+.drop-zone { border:2px dashed var(--gray-300); border-radius:12px; padding:40px 24px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--gray-50); }
+.drop-zone:hover, .drop-zone.drag-over { border-color:var(--dc-black); background:#f0f0f0; }
+.drop-zone-icon { font-size:2rem; margin-bottom:8px; color:var(--gray-400); }
+.drop-zone-text { font-size:0.95rem; color:var(--gray-500); }
+.drop-zone-sub { font-size:0.8rem; color:var(--gray-400); margin-top:4px; }
+
+/* Checklist */
+.checklist { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:16px; }
+.check-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:6px; font-size:0.85rem; border:1px solid var(--gray-200); }
+.check-item.imported { background:var(--green-50); border-color:var(--green-500); color:var(--green-700); }
+.check-item.missing { background:var(--gray-50); color:var(--gray-400); }
+.check-icon { font-size:1rem; flex-shrink:0; }
+
+/* Domain Grid */
+.domain-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:16px 0; }
+@media(max-width:700px) { .domain-grid { grid-template-columns:repeat(2,1fr); } }
+.domain-card { border:1px solid var(--gray-200); border-radius:10px; padding:14px; text-align:center; border-top:3px solid var(--gray-300); transition:all 0.2s; }
+.domain-card.green { border-top-color:var(--green-500); }
+.domain-card.amber { border-top-color:var(--amber-500); }
+.domain-card.red { border-top-color:var(--red-500); }
+.domain-card.na { opacity:0.5; }
+.domain-name { font-size:0.75rem; font-weight:600; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px; }
+.domain-value { font-size:1.3rem; font-weight:700; color:var(--dc-black); line-height:1.2; }
+.domain-label { font-size:0.7rem; color:var(--gray-400); margin-top:2px; }
+.verdict-badge { display:inline-block; padding:2px 10px; border-radius:12px; font-size:0.7rem; font-weight:700; margin-top:6px; text-transform:uppercase; letter-spacing:0.04em; }
+.badge-green { background:var(--green-50); color:var(--green-700); border:1px solid var(--green-500); }
+.badge-amber { background:var(--amber-50); color:var(--amber-700); border:1px solid var(--amber-500); }
+.badge-red { background:var(--red-50); color:var(--red-700); border:1px solid var(--red-500); }
+.badge-na { background:var(--gray-100); color:var(--gray-400); border:1px solid var(--gray-300); }
+
+/* Overall Verdict */
+.verdict-panel { text-align:center; padding:20px; border-radius:12px; margin-bottom:16px; }
+.verdict-panel.green { background:var(--green-50); border:2px solid var(--green-500); }
+.verdict-panel.amber { background:var(--amber-50); border:2px solid var(--amber-500); }
+.verdict-panel.red { background:var(--red-50); border:2px solid var(--red-500); }
+.verdict-big { font-size:1.8rem; font-weight:700; }
+.verdict-big.green { color:var(--green-700); }
+.verdict-big.amber { color:var(--amber-700); }
+.verdict-big.red { color:var(--red-700); }
+.verdict-sub { font-size:0.9rem; color:var(--gray-500); margin-top:4px; }
+
+/* Priority Actions */
+.action-list { list-style:none; counter-reset:actions; }
+.action-item { counter-increment:actions; padding:10px 14px; border-left:3px solid var(--dc-black); margin-bottom:8px; background:var(--gray-50); border-radius:0 6px 6px 0; font-size:0.85rem; }
+.action-item::before { content:counter(actions) ". "; font-weight:700; color:var(--dc-black); }
+.action-source { font-size:0.7rem; color:var(--gray-400); font-family:monospace; }
+
+/* WTM Panel */
+.wtm-panel { background:var(--gray-50); border-radius:8px; padding:16px 20px; border-left:4px solid var(--dc-black); margin:16px 0; font-size:0.9rem; color:var(--gray-700); line-height:1.6; }
+
+/* NOT_CHECKED */
+.not-checked { background:var(--red-50); border:2px solid var(--red-500); border-radius:10px; padding:16px 20px; margin:16px 0; }
+.not-checked-title { font-weight:700; color:var(--red-700); margin-bottom:8px; font-size:0.95rem; }
+.not-checked-item { font-size:0.85rem; color:var(--red-700); padding:3px 0; padding-left:16px; position:relative; }
+.not-checked-item::before { content:"\2022"; position:absolute; left:0; color:var(--red-500); }
+
+/* Buttons */
+.btn { padding:10px 20px; border-radius:8px; font-weight:600; font-size:0.85rem; cursor:pointer; border:none; transition:all 0.15s; }
+.btn-primary { background:var(--dc-black); color:#fff; }
+.btn-primary:hover { background:#333; }
+.btn-secondary { background:#fff; color:var(--dc-black); border:1px solid var(--gray-300); }
+.btn-secondary:hover { background:var(--gray-50); }
+.btn-row { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+
+/* Gold CTA */
+.cta-bar { background:linear-gradient(135deg,#fef3c7,#fde68a); border:1px solid #fcd34d; border-radius:12px; padding:20px 24px; text-align:center; margin:16px 0; }
+.cta-title { font-weight:700; color:#92400e; font-size:1rem; margin-bottom:6px; }
+.cta-text { font-size:0.85rem; color:#78350f; margin-bottom:12px; }
+.cta-btn { display:inline-block; background:#92400e; color:#fff; padding:10px 24px; border-radius:8px; text-decoration:none; font-weight:600; font-size:0.85rem; }
+.cta-btn:hover { background:#78350f; }
+
+/* Sample Bar */
+.sample-bar { text-align:center; padding:12px; background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; margin-bottom:12px; font-size:0.85rem; color:var(--gray-500); }
+.sample-bar a { color:var(--lbe-green); text-decoration:none; font-weight:600; }
+
+/* Nav Footer */
+.nav-footer { text-align:center; padding:12px; background:var(--gray-50); border-top:1px solid var(--gray-200); margin-top:20px; border-radius:0 0 8px 8px; }
+.nav-footer a { color:var(--lbe-green); text-decoration:none; font-size:0.85rem; }
+.nav-footer .copyright { font-size:0.7rem; color:var(--gray-400); margin-top:4px; }
+
+/* Disclaimer */
+.disclaimer { font-size:0.75rem; color:var(--gray-400); padding:12px 16px; border-top:1px solid var(--gray-200); margin-top:16px; line-height:1.5; }
+
+/* Utility */
+.hidden { display:none; }
+.mt-2 { margin-top:8px; }
+.mt-4 { margin-top:16px; }
+.mb-2 { margin-bottom:8px; }
+.text-center { text-align:center; }
+.flex { display:flex; }
+.gap-2 { gap:8px; }
+.items-center { align-items:center; }
+
+/* ═══ PRINT ═══ */
+@media print {
+  body { background:#fff; }
+  .no-print, .cta-bar, .sample-bar, .nav-footer, .drop-zone, .btn-row, #lbe-audience-bar { display:none !important; }
+  @page { size:A4 portrait; margin:14mm 12mm 20mm 12mm; }
+  .container { max-width:100%; padding:0; }
+  .card { box-shadow:none; border:1px solid #ddd; page-break-inside:avoid; }
+  .domain-grid { grid-template-columns:repeat(4,1fr); }
+  .verdict-panel { page-break-inside:avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ BLANK SCREEN GUARD — Layer 1 ═══ -->
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var el = document.getElementById('root');
+  if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
+    el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">Tool Error</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-R-SUM-001 v1.0.2</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+      + '</div>';
+  }
+  return false;
+};
+</script>
+
+<div id="root"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// DC-R-SUM-001 v1.0.2 — DC Screening Summary Aggregator
+// Legacy Business Engineers Ltd
+// Vanilla JS — NO React, NO Babel
+// PURPOSE: Pure aggregation/presentation tool. Imports JSON from 8 DC-R
+//          screening tools and produces a unified dashboard.
+// RULE: This tool does NOT calculate any new engineering values.
+//       It reads what the source tools produced and presents it.
+// ═══════════════════════════════════════════════════════════════════════
+
+var LBE_LOGO = 'data:image/png;base64,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';
+var TOOL_ID = 'DC-R-SUM-001';
+var TOOL_VERSION = '1.0.2';
+var TOOL_NAME = 'DC Screening Summary';
+var TOOL_SUBTITLE = 'Unified dashboard across all DC retrofit screening domains';
+
+// ─── Disclaimer (Rule 4: exports carry disclaimers) ───
+var DISCLAIMER = 'INDICATIVE SCREENING ASSESSMENT \u2014 This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output. | CRREM data centre pathway bands are derived by LBE from the CRREM v2.01 commercial real estate methodology. CRREM has not published a sector-specific pathway for data centres. These bands are screening-level estimates (T3/T4) and should not be cited as CRREM-published values.';
+
+// ─── NOT_CHECKED items (Rule 2) ───
+var NOT_CHECKED = [
+  'Tool outputs are screening-level — not verified engineering assessments',
+  'Cross-domain interactions (e.g. cooling upgrade affecting PUE) not modelled',
+  'Site-specific conditions not assessed',
+  'Financial projections are indicative (\u00b130%)', // ±30% — AIMEP_DC_STANDARDS_REFERENCE Section 13
+  'Regulatory interpretations subject to change'
+];
+
+// ─── 8 recognised tool IDs ───
+// Source: DC Retrofit Tool Suite architecture — AIMEP_MASTER_INVENTORY v6.0
+var TOOL_REGISTRY = {
+  'DC-R-PUE-001': { name: 'PUE Gap Analysis',          short: 'PUE',         icon: '\u26A1' },
+  'DC-R-CLG-001': { name: 'Cooling Retrofit Options',   short: 'Cooling',     icon: '\u2744' },
+  'DC-R-PWR-001': { name: 'Power Densification Check',  short: 'Power',       icon: '\u2393' },
+  'DC-R-EED-001': { name: 'EED Compliance Gap',         short: 'EED',         icon: '\u2611' },
+  'DC-R-ROI-001': { name: 'Retrofit vs Rebuild',        short: 'ROI',         icon: '\u2696' },
+  'DC-R-HTR-001': { name: 'Waste Heat Recovery',        short: 'Heat',        icon: '\u2668' },
+  'DC-R-STR-001': { name: 'Misalignment Risk',             short: 'Misalignment',   icon: '\u23F1' },
+  'DC-R-FGS-001': { name: 'F-Gas Phase-Down',           short: 'F-Gas',       icon: '\u2601' }
+};
+
+// ─── WTM narratives (window._TC equivalent for vanilla JS) ───
+// Source: S4 service tool pattern Section 3 — 3 verdict-keyed narratives
+var WTM = {
+  GREEN: 'Your facility shows strong performance across the assessed domains. ' +
+    'No immediate capital intervention appears necessary from this screening. ' +
+    'Consider an annual update to maintain visibility on evolving regulatory and market benchmarks.',
+  AMBER: 'Several domains indicate areas that warrant closer examination. ' +
+    'A Carbon Position Statement (CPS) would provide the structured assessment needed to ' +
+    'prioritise interventions and quantify the investment case for each.',
+  RED: 'One or more domains show significant gaps that could affect regulatory compliance, ' +
+    'operational costs, or asset value. A formal MEP assessment is recommended to ' +
+    'scope the required interventions and develop a phased remediation programme.'
+};
+
+// ═══ STATE ═══
+var importedTools = {}; // keyed by tool_id
+var importErrors = [];
+
+// ═══ VERDICT DERIVATION ═══
+// These thresholds extract a GREEN/AMBER/RED verdict from each tool's JSON.
+// Source: DC-R tool suite build prompts (28/02/2026) — threshold values from
+// AIMEP_DC_STANDARDS_REFERENCE_v1_0.yaml where applicable.
+
+function deriveVerdict(toolId, json) {
+  // Safely navigate JSON — tools export under .inputs.{field} or .results.{field}
+  var inp = json.inputs || {};
+  var res = json.results || json.outputs || {};
+  var v, verdict;
+
+  try {
+    switch(toolId) {
+      case 'DC-R-PUE-001':
+        // PUE thresholds: <1.3=GREEN, <1.5=AMBER, else RED
+        // Source: Uptime Institute 2023 Global Survey — median PUE 1.58
+        v = parseFloat(inp.current_pue || inp.pue || res.current_pue || res.pue);
+        if (isNaN(v)) return { value: 'N/A', label: 'PUE', verdict: 'NA' };
+        verdict = v < 1.3 ? 'GREEN' : v < 1.5 ? 'AMBER' : 'RED';
+        return { value: v.toFixed(2), label: 'Current PUE', verdict: verdict };
+
+      case 'DC-R-CLG-001':
+        // Map cooling type to modernity. Look for verdict or cooling_type field.
+        var ct = inp.primary_cooling || inp.cooling_type || res.cooling_type || '';
+        var cv = (res.verdict || res.recommendation || '').toUpperCase();
+        if (cv.indexOf('GREEN') >= 0 || cv.indexOf('GOOD') >= 0) verdict = 'GREEN';
+        else if (cv.indexOf('RED') >= 0 || cv.indexOf('CRITICAL') >= 0 || cv.indexOf('URGENT') >= 0) verdict = 'RED';
+        else verdict = 'AMBER';
+        // Modernity mapping as fallback — Source: ASHRAE TC 9.9, CIBSE TM57
+        if (!cv && ct) {
+          var modern = ['indirect evaporative','rear door','liquid','immersion'];
+          var legacy = ['crac','crah','split','dx'];
+          var ctL = ct.toLowerCase();
+          if (modern.some(function(m){ return ctL.indexOf(m)>=0; })) verdict = 'GREEN';
+          else if (legacy.some(function(m){ return ctL.indexOf(m)>=0; })) verdict = 'RED';
+          else verdict = 'AMBER';
+        }
+        return { value: ct || cv || 'Assessed', label: 'Cooling', verdict: verdict };
+
+      case 'DC-R-PWR-001':
+        // Rack density: >20kW=GREEN, >10kW=AMBER, else RED
+        // Source: Uptime Institute 2023 — average rack density trending 10-12kW
+        v = parseFloat(inp.rack_density_kW || inp.rack_density || inp.current_density_kw || res.rack_density_kW);
+        if (isNaN(v)) {
+          // Try target vs current approach
+          v = parseFloat(res.headroom_pct || res.utilisation_pct);
+          if (!isNaN(v)) {
+            verdict = v > 40 ? 'GREEN' : v > 20 ? 'AMBER' : 'RED'; // % headroom
+            return { value: v.toFixed(0) + '%', label: 'Headroom', verdict: verdict };
+          }
+          return { value: 'N/A', label: 'Power', verdict: 'NA' };
+        }
+        verdict = v >= 20 ? 'GREEN' : v >= 10 ? 'AMBER' : 'RED';
+        return { value: v.toFixed(1) + ' kW', label: 'Rack Density', verdict: verdict };
+
+      case 'DC-R-EED-001':
+        // Look for overall compliance score or gap count
+        v = res.overall_score || res.compliance_score || res.score;
+        if (v !== undefined && v !== null) {
+          var sc = parseFloat(v);
+          if (!isNaN(sc)) {
+            // Score out of 100 — Source: EU EED 2023/1791 Article 12 requirements
+            verdict = sc >= 80 ? 'GREEN' : sc >= 50 ? 'AMBER' : 'RED';
+            return { value: sc.toFixed(0) + '%', label: 'EED Score', verdict: verdict };
+          }
+        }
+        // Fallback: count gaps
+        var gaps = res.gap_count || res.gaps_found;
+        if (gaps !== undefined) {
+          gaps = parseInt(gaps);
+          verdict = gaps === 0 ? 'GREEN' : gaps <= 2 ? 'AMBER' : 'RED';
+          return { value: gaps + ' gaps', label: 'EED Gaps', verdict: verdict };
+        }
+        return { value: 'Assessed', label: 'EED', verdict: 'AMBER' };
+
+      case 'DC-R-ROI-001':
+        // Look for recommendation or NPV
+        var rec = (res.recommendation || res.verdict || res.decision || '').toUpperCase();
+        if (rec.indexOf('RETROFIT') >= 0) verdict = 'GREEN';
+        else if (rec.indexOf('REBUILD') >= 0 || rec.indexOf('DIVEST') >= 0 || rec.indexOf('SELL') >= 0) verdict = 'RED';
+        else verdict = 'AMBER';
+        var npv = res.npv || res.net_present_value;
+        var display = rec || (npv ? '\u20AC' + Number(npv).toLocaleString() : 'Assessed');
+        return { value: display.substring(0,20), label: 'ROI', verdict: verdict };
+
+      case 'DC-R-HTR-001':
+        // Utilisation: >20%=GREEN, >10%=AMBER, else RED
+        // Source: EU EED 2023/1791 — waste heat reporting threshold
+        v = parseFloat(inp.utilisation_pct || inp.heat_utilisation || res.utilisation_pct);
+        if (isNaN(v)) return { value: 'Assessed', label: 'Heat Recovery', verdict: 'AMBER' };
+        verdict = v >= 20 ? 'GREEN' : v >= 10 ? 'AMBER' : 'RED';
+        return { value: v.toFixed(0) + '%', label: 'Utilisation', verdict: verdict };
+
+      case 'DC-R-STR-001':
+        // Composite score 1-5 scale: <=2=GREEN, <=3=AMBER, else RED
+        // Source: CRREM methodology — misalignment year approach
+        v = parseFloat(res.composite_score || res.risk_score || res.stranding_score);
+        if (isNaN(v)) {
+          // Look for misalignment year
+          var my = parseInt(res.misalignment_year || res.stranding_year);
+          if (!isNaN(my)) {
+            verdict = my > 2040 ? 'GREEN' : my > 2030 ? 'AMBER' : 'RED';
+            return { value: my.toString(), label: 'CRREM Misalignment', verdict: verdict };
+          }
+          return { value: 'Assessed', label: 'Misalignment', verdict: 'AMBER' };
+        }
+        verdict = v <= 2 ? 'GREEN' : v <= 3 ? 'AMBER' : 'RED';
+        return { value: v.toFixed(1) + '/5', label: 'Risk Score', verdict: verdict };
+
+      case 'DC-R-FGS-001':
+        // Refrigerant GWP: <150=GREEN, <750=AMBER, else RED
+        // Source: EU F-Gas Regulation 2024/573 — GWP thresholds for phase-down
+        v = parseFloat(inp.refrigerant_gwp || inp.gwp || res.gwp || res.refrigerant_gwp);
+        if (isNaN(v)) return { value: 'Assessed', label: 'F-Gas', verdict: 'AMBER' };
+        verdict = v < 150 ? 'GREEN' : v < 750 ? 'AMBER' : 'RED';
+        return { value: 'GWP ' + v.toFixed(0), label: 'Refrigerant', verdict: verdict };
+
+      default:
+        return { value: 'Unknown', label: toolId, verdict: 'NA' };
+    }
+  } catch(e) {
+    console.warn('Verdict derivation failed for ' + toolId + ':', e);
+    return { value: 'Error', label: toolId, verdict: 'NA' };
+  }
+}
+
+// ═══ OVERALL VERDICT ═══
+// Worst-case across all imported domains
+function getOverallVerdict() {
+  var ids = Object.keys(importedTools);
+  if (ids.length === 0) return null;
+  var hasRed = false, hasAmber = false;
+  ids.forEach(function(id) {
+    var v = importedTools[id].verdict;
+    if (v === 'RED') hasRed = true;
+    if (v === 'AMBER') hasAmber = true;
+  });
+  return hasRed ? 'RED' : hasAmber ? 'AMBER' : 'GREEN';
+}
+
+// ═══ PRIORITY ACTIONS ═══
+// Extract up to 5 highest-priority items across all imported JSONs
+function getPriorityActions() {
+  var actions = [];
+  Object.keys(importedTools).forEach(function(id) {
+    var data = importedTools[id];
+    var json = data.raw;
+    var res = json.results || json.outputs || {};
+    var recs = res.recommendations || res.actions || res.priority_actions || res.tips || [];
+
+    // Handle array of strings or array of objects
+    if (Array.isArray(recs)) {
+      recs.forEach(function(r, i) {
+        if (i < 2) { // max 2 per tool
+          var text = typeof r === 'string' ? r : (r.title || r.text || r.body || r.action || JSON.stringify(r));
+          actions.push({ text: text.substring(0,200), source: id, severity: data.verdict });
+        }
+      });
+    }
+
+    // Also check for single recommendation string
+    if (actions.length === 0 || !Array.isArray(recs) || recs.length === 0) {
+      var single = res.recommendation || res.next_step || res.action;
+      if (single && typeof single === 'string') {
+        actions.push({ text: single.substring(0,200), source: id, severity: data.verdict });
+      }
+    }
+  });
+
+  // Sort: RED first, then AMBER, then GREEN
+  var order = { RED: 0, AMBER: 1, GREEN: 2, NA: 3 };
+  actions.sort(function(a, b) { return (order[a.severity]||3) - (order[b.severity]||3); });
+  return actions.slice(0, 5);
+}
+
+// ═══ FILE IMPORT HANDLER ═══
+function handleFiles(files) {
+  importErrors = [];
+  for (var i = 0; i < files.length; i++) {
+    (function(file) {
+      if (!file.name.toLowerCase().endsWith('.json')) {
+        importErrors.push(file.name + ': Not a JSON file');
+        render();
+        return;
+      }
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          var json = JSON.parse(e.target.result);
+          // Identify tool by _aimep_lineage.tool_id or metadata.tool_id
+          var toolId = null;
+          if (json._aimep_lineage && json._aimep_lineage.tool_id) {
+            toolId = json._aimep_lineage.tool_id;
+          } else if (json.metadata && json.metadata.tool_id) {
+            toolId = json.metadata.tool_id;
+          } else if (json.tool_id) {
+            toolId = json.tool_id;
+          }
+
+          if (!toolId || !TOOL_REGISTRY[toolId]) {
+            importErrors.push(file.name + ': Unrecognised tool ID "' + (toolId || 'none') + '". Expected one of: ' + Object.keys(TOOL_REGISTRY).join(', '));
+            render();
+            return;
+          }
+
+          // Derive verdict from JSON data
+          var result = deriveVerdict(toolId, json);
+          importedTools[toolId] = {
+            verdict: result.verdict,
+            value: result.value,
+            label: result.label,
+            filename: file.name,
+            raw: json,
+            importedAt: new Date().toISOString()
+          };
+          render();
+        } catch(err) {
+          importErrors.push(file.name + ': Invalid JSON — ' + err.message);
+          render();
+        }
+      };
+      reader.readAsText(file);
+    })(files[i]);
+  }
+}
+
+// ═══ EXPORT UNIFIED JSON ═══
+function exportJSON() {
+  var ids = Object.keys(importedTools);
+  var allIds = Object.keys(TOOL_REGISTRY);
+  var missingIds = allIds.filter(function(id) { return !importedTools[id]; });
+
+  var domains = {};
+  ids.forEach(function(id) {
+    var d = importedTools[id];
+    domains[TOOL_REGISTRY[id].short.toLowerCase().replace(/\s/g,'_')] = {
+      tool_id: id,
+      tool_name: TOOL_REGISTRY[id].name,
+      verdict: d.verdict,
+      primary_value: d.value,
+      primary_label: d.label
+    };
+  });
+
+  var rawImports = {};
+  ids.forEach(function(id) { rawImports[id] = importedTools[id].raw; });
+
+  var exportObj = {
+    _aimep_lineage: {
+      tool_id: TOOL_ID,
+      version: TOOL_VERSION,
+      generated: new Date().toISOString(),
+      status: 'SCREENING'
+    },
+    disclaimer: DISCLAIMER,
+    screening_summary: {
+      tools_imported: ids,
+      tools_missing: missingIds,
+      tools_imported_count: ids.length,
+      tools_total: allIds.length,
+      overall_verdict: getOverallVerdict(),
+      partial: ids.length < allIds.length,
+      domains: domains,
+      priority_actions: getPriorityActions()
+    },
+    not_checked: NOT_CHECKED,
+    raw_imports: rawImports
+  };
+
+  var blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = TOOL_ID + '_summary_' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══ LOAD SAMPLE DATA ═══
+// Rule 1: tool starts EMPTY. Sample loaded only on explicit user action.
+function loadSample() {
+  // Synthetic sample data representing a typical DC screening run
+  // Source: Tara Campus (placeholder) — AIMEP DC standards reference benchmarks
+  var sampleTools = {
+    'DC-R-PUE-001': {
+      _aimep_lineage: { tool_id: 'DC-R-PUE-001', version: '1.0.0' },
+      inputs: { current_pue: 1.45, facility_name: 'Tara Campus DC-1' },
+      results: { recommendations: ['Consider indirect evaporative cooling upgrade to reduce PUE below 1.3'] }
+    },
+    'DC-R-CLG-001': {
+      _aimep_lineage: { tool_id: 'DC-R-CLG-001', version: '1.0.0' },
+      inputs: { primary_cooling: 'CRAH with chilled water' },
+      results: { verdict: 'AMBER', recommendations: ['Evaluate indirect evaporative as primary cooling'] }
+    },
+    'DC-R-PWR-001': {
+      _aimep_lineage: { tool_id: 'DC-R-PWR-001', version: '1.0.0' },
+      inputs: { rack_density_kW: 8.5 },
+      results: { recommendations: ['Power distribution limits densification beyond 12kW/rack without upgrade'] }
+    },
+    'DC-R-EED-001': {
+      _aimep_lineage: { tool_id: 'DC-R-EED-001', version: '1.0.0' },
+      inputs: {},
+      results: { overall_score: 55, gap_count: 3, recommendations: ['Install sub-metering for EED Article 12 compliance','Register energy audit schedule'] }
+    },
+    'DC-R-ROI-001': {
+      _aimep_lineage: { tool_id: 'DC-R-ROI-001', version: '1.0.0' },
+      inputs: {},
+      results: { recommendation: 'RETROFIT', npv: 2400000, recommendations: ['Phased retrofit preferred over rebuild based on NPV analysis'] }
+    },
+    'DC-R-HTR-001': {
+      _aimep_lineage: { tool_id: 'DC-R-HTR-001', version: '1.0.0' },
+      inputs: { utilisation_pct: 5 },
+      results: { recommendations: ['District heating connection feasibility study recommended'] }
+    },
+    'DC-R-STR-001': {
+      _aimep_lineage: { tool_id: 'DC-R-STR-001', version: '1.0.0' },
+      inputs: {},
+      results: { composite_score: 3.2, misalignment_year: 2031, recommendations: ['CRREM misalignment projected before 2035 — decarbonisation plan required'] }
+    },
+    'DC-R-FGS-001': {
+      _aimep_lineage: { tool_id: 'DC-R-FGS-001', version: '1.0.0' },
+      inputs: { refrigerant_gwp: 1430 },
+      results: { recommendations: ['R-410A (GWP 1430) phase-down — plan transition to R-32 or R-1234ze'] }
+    }
+  };
+
+  importedTools = {};
+  importErrors = [];
+  Object.keys(sampleTools).forEach(function(id) {
+    var json = sampleTools[id];
+    var result = deriveVerdict(id, json);
+    importedTools[id] = {
+      verdict: result.verdict,
+      value: result.value,
+      label: result.label,
+      filename: 'sample_' + id + '.json',
+      raw: json,
+      importedAt: new Date().toISOString()
+    };
+  });
+  render();
+}
+
+// ═══ CLEAR ALL ═══
+function clearAll() {
+  importedTools = {};
+  importErrors = [];
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════════
+function render() {
+  var root = document.getElementById('root');
+  var ids = Object.keys(importedTools);
+  var allIds = Object.keys(TOOL_REGISTRY);
+  var overall = getOverallVerdict();
+  var actions = getPriorityActions();
+
+  var h = '';
+
+  // ─── Audience Banner ───
+  h += '<div id="lbe-audience-bar" class="no-print">';
+  h += '<strong>FOR DC OPERATORS &amp; ENGINEERS</strong> &mdash; Unified screening dashboard across 8 retrofit domains &mdash; ' + TOOL_ID;
+  h += '</div>';
+
+  h += '<div class="container">';
+
+  // ─── Header Card ───
+  h += '<div class="header-card">';
+  h += '<div class="header-top">';
+  h += '<img src="' + LBE_LOGO + '" alt="LBE" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;" onerror="this.style.display=\'none\'">';
+  h += '<div>';
+  h += '<div class="header-meta">' + TOOL_ID + ' v' + TOOL_VERSION + ' | Legacy Business Engineers</div>';
+  h += '<div class="header-title">' + TOOL_NAME + '</div>';
+  h += '<div class="header-subtitle">' + TOOL_SUBTITLE + '</div>';
+  h += '</div>';
+  h += '</div>';
+  h += '<div class="info-bar">Import JSON exports from any or all of the 8 DC retrofit screening tools. ';
+  h += 'This dashboard aggregates their outputs into a single readiness view. ';
+  h += 'It does not perform any new calculations.</div>';
+  h += '</div>';
+
+  // ─── Action Buttons ───
+  h += '<div class="btn-row no-print">';
+  h += '<button class="btn btn-primary" onclick="document.getElementById(\'file-input\').click()">Import JSON Files</button>';
+  h += '<button class="btn btn-secondary" onclick="loadSample()">Load Sample (Tara Campus)</button>';
+  if (ids.length > 0) {
+    h += '<button class="btn btn-secondary" onclick="exportJSON()">Export Unified JSON</button>';
+    h += '<button class="btn btn-secondary" onclick="window.print()">Print Summary</button>';
+    h += '<button class="btn btn-secondary" onclick="clearAll()" style="color:var(--red-500)">Clear All</button>';
+  }
+  h += '<input type="file" id="file-input" multiple accept=".json" class="hidden" onchange="handleFiles(this.files);this.value=\'\';">';
+  h += '</div>';
+
+  // ─── Drop Zone (only when empty) ───
+  if (ids.length === 0) {
+    h += '<div class="drop-zone" id="drop-zone" onclick="document.getElementById(\'file-input\').click()">';
+    h += '<div class="drop-zone-icon">\uD83D\uDCC2</div>';
+    h += '<div class="drop-zone-text">Drag and drop JSON files here, or click to browse</div>';
+    h += '<div class="drop-zone-sub">Accepts exports from DC-R-PUE-001, DC-R-CLG-001, DC-R-PWR-001, DC-R-EED-001, DC-R-ROI-001, DC-R-HTR-001, DC-R-STR-001, DC-R-FGS-001</div>';
+    h += '</div>';
+  }
+
+  // ─── Import Errors ───
+  if (importErrors.length > 0) {
+    h += '<div class="card" style="border-color:var(--red-500);background:var(--red-50)">';
+    h += '<div class="card-title" style="color:var(--red-700)">Import Errors</div>';
+    importErrors.forEach(function(err) {
+      h += '<div style="font-size:0.85rem;color:var(--red-700);padding:4px 0;">\u274C ' + escapeHTML(err) + '</div>';
+    });
+    h += '</div>';
+  }
+
+  // ─── Checklist ───
+  h += '<div class="card">';
+  h += '<div class="card-title">Screening Domains (' + ids.length + ' of ' + allIds.length + ' imported)</div>';
+  h += '<div class="checklist">';
+  allIds.forEach(function(id) {
+    var reg = TOOL_REGISTRY[id];
+    var imported = !!importedTools[id];
+    h += '<div class="check-item ' + (imported ? 'imported' : 'missing') + '">';
+    h += '<span class="check-icon">' + (imported ? '\u2705' : '\u2B1C') + '</span>';
+    h += '<span>' + reg.icon + ' ' + reg.name + '</span>';
+    h += '</div>';
+  });
+  h += '</div></div>';
+
+  // ─── Results (only if at least 1 imported) ───
+  if (ids.length > 0) {
+
+    // Overall Verdict
+    var oc = overall.toLowerCase();
+    h += '<div class="verdict-panel ' + oc + '">';
+    h += '<div class="verdict-big ' + oc + '">';
+    if (overall === 'GREEN') h += 'STRONG POSITION';
+    else if (overall === 'AMBER') h += 'AREAS FOR REVIEW';
+    else h += 'SIGNIFICANT GAPS IDENTIFIED';
+    h += '</div>';
+    h += '<div class="verdict-sub">Overall readiness: ' + overall;
+    if (ids.length < allIds.length) {
+      h += ' (partial \u2014 ' + ids.length + ' of ' + allIds.length + ' domains assessed)';
+    }
+    h += '</div></div>';
+
+    // Domain Grid
+    h += '<div class="card">';
+    h += '<div class="card-title">Domain Summary</div>';
+    h += '<div class="domain-grid">';
+    allIds.forEach(function(id) {
+      var reg = TOOL_REGISTRY[id];
+      var data = importedTools[id];
+      if (data) {
+        var vc = data.verdict.toLowerCase();
+        if (vc === 'na') vc = 'amber'; // fallback styling
+        h += '<div class="domain-card ' + vc + '">';
+        h += '<div class="domain-name">' + reg.icon + ' ' + reg.short + '</div>';
+        h += '<div class="domain-value">' + escapeHTML(data.value) + '</div>';
+        h += '<div class="domain-label">' + escapeHTML(data.label) + '</div>';
+        h += '<span class="verdict-badge badge-' + vc + '">' + data.verdict + '</span>';
+      } else {
+        h += '<div class="domain-card na">';
+        h += '<div class="domain-name">' + reg.icon + ' ' + reg.short + '</div>';
+        h += '<div class="domain-value" style="color:var(--gray-400);">\u2014</div>';
+        h += '<div class="domain-label">Not assessed</div>';
+        h += '<span class="verdict-badge badge-na">N/A</span>';
+      }
+      h += '</div>';
+    });
+    h += '</div></div>';
+
+    // What This Means
+    h += '<div class="card">';
+    h += '<div class="card-title">What This Means</div>';
+    h += '<div class="wtm-panel">' + WTM[overall] + '</div>';
+
+    // Recommended Next Step
+    h += '<div style="margin-top:16px;padding:12px 16px;background:var(--gray-50);border-radius:8px;border:1px solid var(--gray-200);">';
+    h += '<div style="font-weight:700;font-size:0.9rem;color:var(--dc-black);margin-bottom:4px;">Recommended Next Step</div>';
+    if (overall === 'RED') {
+      h += '<div style="font-size:0.85rem;color:var(--gray-700);">Formal MEP assessment recommended to scope required interventions and develop a phased remediation programme.</div>';
+    } else if (overall === 'AMBER') {
+      h += '<div style="font-size:0.85rem;color:var(--gray-700);">A Carbon Position Statement (CPS) would provide the structured assessment needed to prioritise interventions and quantify the investment case.</div>';
+    } else {
+      h += '<div style="font-size:0.85rem;color:var(--gray-700);">Facility in strong position. Consider an annual update to maintain visibility on evolving regulatory and market benchmarks.</div>';
+    }
+    h += '</div></div>';
+
+    // Priority Actions
+    if (actions.length > 0) {
+      h += '<div class="card">';
+      h += '<div class="card-title">Priority Actions</div>';
+      h += '<ol class="action-list">';
+      actions.forEach(function(a) {
+        h += '<li class="action-item">' + escapeHTML(a.text);
+        h += ' <span class="action-source">[' + a.source + ']</span></li>';
+      });
+      h += '</ol></div>';
+    }
+
+    // NOT_CHECKED
+    h += '<div class="not-checked">';
+    h += '<div class="not-checked-title">NOT CHECKED BY THIS TOOL</div>';
+    NOT_CHECKED.forEach(function(item) {
+      h += '<div class="not-checked-item">' + escapeHTML(item) + '</div>';
+    });
+    h += '</div>';
+  }
+
+  // ─── Gold CTA (no-print) ───
+  // Service: Carbon Position Statement — Source: S4 service pricing, DC context
+  h += '<div class="cta-bar no-print">';
+  h += '<div class="cta-title">Got the answers? Here\'s what to do next</div>';
+  h += '<div class="cta-text">This screening summary is indicative. For a structured assessment with defensible findings, ';
+  h += 'regulatory compliance mapping, and a prioritised investment roadmap:</div>';
+  h += '<div style="font-weight:700;color:#92400e;margin-bottom:8px;">DC Carbon Position Statement &mdash; from \u20AC3,000 + VAT | 5 working days</div>';
+  h += '<a href="https://legacybe.ie/contact/" target="_blank" class="cta-btn">Get a Quote \u2192</a>';
+  h += '</div>';
+
+  // ─── Sample Bar (no-print) ───
+  h += '<div class="sample-bar no-print">';
+  h += '\uD83D\uDCCA See what a DC Carbon Position Statement delivers &mdash; ';
+  h += '<a href="#" onclick="alert(\'Sample coming soon: Tara Campus CPS\');return false;">View Sample \u2192</a>';
+  h += '</div>';
+
+  // ─── Disclaimer ───
+  h += '<div class="disclaimer" style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;">';
+  h += DISCLAIMER;
+  h += '</div>';
+  h += '<div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;">Legacy Business Engineers Ltd \u2014 Professional Indemnity Insurance held \u2014 Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>';
+
+  // ─── Nav Footer (no-print) ───
+  h += '<div class="nav-footer no-print">';
+  h += '<a href="https://lbe-tools.netlify.app/">\u21A9 Back to All Tools</a>';
+  h += ' &nbsp;|&nbsp; ';
+  h += '<a href="https://legacybe.ie" target="_blank">legacybe.ie</a>';
+  h += '<div class="copyright">Powered by AIMEP \u00B7 \u00A9 2026 Legacy Business Engineers Ltd</div>';
+  h += '</div>';
+
+  h += '</div>'; // .container
+  root.innerHTML = h;
+
+  // Re-attach drag-and-drop if drop zone exists
+  var dz = document.getElementById('drop-zone');
+  if (dz) {
+    dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', function(e) { dz.classList.remove('drag-over'); });
+    dz.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dz.classList.remove('drag-over');
+      handleFiles(e.dataTransfer.files);
+    });
+  }
+}
+
+// ═══ UTILITY ═══
+function escapeHTML(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══ INITIAL RENDER ═══
+// Rule 1: Tool starts EMPTY — no pre-loaded data
+render();
+
+</script>
+</body>
+</html>

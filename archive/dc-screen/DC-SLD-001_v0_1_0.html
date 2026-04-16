@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-SLD-001 v0.1.1 | Power Chain Bottleneck Analysis | Legacy Business Engineers</title>
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ═══ DARK THEME (default) ═══ */
+:root,html[data-theme="dark"]{
+--bg:#0a0e17;--panel:#111827;--panel-hover:#1a2332;--border:#1e293b;--border-light:#334155;
+--text:#e2e8f0;--text-bright:#f8fafc;--text-dim:#94a3b8;--text-muted:#64748b;
+--green:#22c55e;--green-dim:rgba(34,197,94,0.15);--green-glow:rgba(34,197,94,0.3);
+--red:#ef4444;--red-dim:rgba(239,68,68,0.15);--red-glow:rgba(239,68,68,0.3);
+--amber:#f59e0b;--amber-dim:rgba(245,158,11,0.15);--amber-glow:rgba(245,158,11,0.3);
+--blue:#3b82f6;--blue-dim:rgba(59,130,246,0.15);--blue-glow:rgba(59,130,246,0.3);
+--purple:#a855f7;--purple-dim:rgba(168,85,247,0.15);
+--lbe-green:#4a7c59;--lbe-green-dark:#3a6147;
+--green-50:rgba(34,197,94,0.08);--amber-50:rgba(245,158,11,0.08);--red-50:rgba(239,68,68,0.08);--blue-50:rgba(59,130,246,0.08);
+--font-sans:'IBM Plex Sans',system-ui,sans-serif;
+--font-mono:'IBM Plex Mono',monospace;
+--card-shadow:0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* ═══ LIGHT THEME ═══ */
+html[data-theme="light"]{
+--bg:#f8f9fb;--panel:#ffffff;--panel-hover:#f1f5f9;--border:#e2e8f0;--border-light:#cbd5e1;
+--text:#1e293b;--text-bright:#0f172a;--text-dim:#475569;--text-muted:#94a3b8;
+--green:#16a34a;--green-dim:rgba(22,163,74,0.1);--green-glow:rgba(22,163,74,0.2);
+--red:#dc2626;--red-dim:rgba(220,38,38,0.08);--red-glow:rgba(220,38,38,0.15);
+--amber:#d97706;--amber-dim:rgba(217,119,6,0.08);--amber-glow:rgba(217,119,6,0.15);
+--blue:#2563eb;--blue-dim:rgba(37,99,235,0.08);--blue-glow:rgba(37,99,235,0.15);
+--purple:#7c3aed;--purple-dim:rgba(124,58,237,0.08);
+--green-50:#f0fdf4;--amber-50:#fffbeb;--red-50:#fef2f2;--blue-50:#eff6ff;
+--card-shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+
+html{font-size:15px}
+body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;line-height:1.6;transition:background .3s,color .3s}
+
+/* ═══ SCROLLBAR ═══ */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border-light);border-radius:3px}
+::selection{background:var(--blue);color:var(--text-bright)}
+
+/* ═══ LAYOUT ═══ */
+.container{max-width:940px;margin:0 auto;padding:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;box-shadow:var(--card-shadow)}
+.card-header{border-top:4px solid var(--lbe-green)}
+.card-dc{border-top:4px solid #1a1a1a}
+
+/* ═══ GRID ═══ */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+
+/* ═══ TYPOGRAPHY ═══ */
+.text-xs{font-size:0.75rem}.text-sm{font-size:0.875rem}.text-lg{font-size:1.125rem}.text-xl{font-size:1.25rem}.text-2xl{font-size:1.5rem}
+.font-bold{font-weight:700}.font-semibold{font-weight:600}.font-mono{font-family:var(--font-mono)}
+.mt-1{margin-top:4px}.mt-2{margin-top:8px}.mt-3{margin-top:12px}.mt-4{margin-top:16px}.mb-2{margin-bottom:8px}.mb-3{margin-bottom:12px}.mb-4{margin-bottom:16px}
+.flex-between{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto}
+.tab{padding:10px 20px;font-size:0.875rem;font-weight:600;color:var(--text-dim);background:none;border:none;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s}
+.tab:hover{color:var(--text-bright)}
+.tab.active{color:var(--lbe-green);border-bottom-color:var(--lbe-green)}
+
+/* ═══ INPUTS ═══ */
+.field{margin-bottom:16px}
+.field-label{display:block;font-size:0.875rem;font-weight:600;color:var(--text-dim);margin-bottom:4px}
+.field-label .req{color:var(--red);margin-left:2px}
+input[type="text"],input[type="number"],select{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border-light);border-radius:8px;color:var(--text);font-size:0.875rem;font-family:var(--font-sans);transition:border-color .2s}
+input:focus,select:focus{outline:none;border-color:var(--lbe-green);box-shadow:0 0 0 3px rgba(74,124,89,0.15)}
+input:invalid,input.invalid{border-color:var(--red)}
+.field-hint{font-size:0.72rem;color:var(--text-muted);margin-top:2px}
+.field-warn{font-size:0.72rem;color:var(--amber);margin-top:2px}
+
+/* ═══ TOOLTIPS ═══ */
+.tip-wrap{position:relative;display:inline-block;margin-left:6px;vertical-align:middle}
+.tip-icon{cursor:help;color:var(--blue);font-size:0.75rem}
+.tip-box{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);width:280px;padding:12px;background:#1e293b;color:#f8fafc;border-radius:8px;font-size:0.75rem;line-height:1.45;z-index:50;box-shadow:0 4px 16px rgba(0,0,0,0.4);pointer-events:none}
+.tip-wrap:hover .tip-box{display:block}
+.tip-box strong{color:var(--blue)}
+.tip-warn{color:#fbbf24;margin-top:4px}
+
+/* ═══ BUTTONS ═══ */
+.btn{padding:9px 20px;border-radius:10px;font-size:0.875rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:var(--font-sans)}
+.btn-primary{background:var(--lbe-green);color:#fff}
+.btn-primary:hover{filter:brightness(0.9)}
+.btn-primary:disabled{opacity:0.45;cursor:not-allowed;filter:none}
+.btn-secondary{background:var(--panel);border:1px solid var(--border-light);color:var(--text)}
+.btn-secondary:hover{background:var(--panel-hover)}
+.btn-demo{background:var(--blue-dim);border:1px solid var(--blue);color:var(--blue)}
+.btn-demo:hover{filter:brightness(1.1)}
+.btn-lg{font-size:1rem;padding:13px 36px}
+
+/* ═══ BADGES ═══ */
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;letter-spacing:0.03em}
+.badge-green{background:var(--green-dim);color:var(--green)}
+.badge-amber{background:var(--amber-dim);color:var(--amber)}
+.badge-red{background:var(--red-dim);color:var(--red)}
+.badge-blue{background:var(--blue-dim);color:var(--blue)}
+.badge-gray{background:var(--border);color:var(--text-dim)}
+
+/* ═══ TABLE ═══ */
+.tbl{width:100%;font-size:0.85rem;border-collapse:collapse}
+.tbl th{text-align:left;padding:10px 12px;font-weight:600;color:var(--text-dim);border-bottom:2px solid var(--border);font-size:0.78rem;text-transform:uppercase;letter-spacing:0.04em}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--border)}
+.tbl tr:hover{background:var(--panel-hover)}
+
+/* ═══ STAT BOX ═══ */
+.stat-box{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.stat-val{font-size:1.4rem;font-weight:700;font-family:var(--font-mono)}
+.stat-label{font-size:0.72rem;color:var(--text-muted);margin-top:2px}
+
+/* ═══ BOTTLENECK CARD ═══ */
+.bneck-card{padding:16px;border-radius:10px;margin-bottom:10px;border-left:4px solid}
+.bneck-critical{background:var(--red-dim);border-color:var(--red)}
+.bneck-major{background:var(--amber-dim);border-color:var(--amber)}
+.bneck-verify{background:var(--blue-dim);border-color:var(--blue)}
+.bneck-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.68rem;font-weight:700;letter-spacing:0.05em}
+
+/* ═══ NOT CHECKED PANEL ═══ */
+.not-checked{background:var(--red-dim);border:2px solid var(--red);border-radius:10px;padding:16px;margin-bottom:16px}
+.not-checked h3{color:var(--red);margin-bottom:8px}
+.not-checked li{font-size:0.85rem;margin-bottom:4px;line-height:1.5}
+.not-checked .reason{color:var(--text-muted);font-size:0.78rem}
+
+/* ═══ THEME TOGGLE ═══ */
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:100;background:var(--panel);border:1px solid var(--border-light);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:0.8rem;color:var(--text-dim);transition:all .2s}
+.theme-toggle:hover{border-color:var(--blue)}
+
+/* ═══ DOC STATUS ═══ */
+.doc-status-bar{padding:8px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;text-align:center;margin-bottom:12px;letter-spacing:0.03em}
+
+/* ═══ SECTION DIVIDER ═══ */
+.section-head{font-size:0.78rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;padding-bottom:6px;border-bottom:1px solid var(--border);margin-bottom:16px;margin-top:20px}
+
+/* ═══ INFO BAR ═══ */
+.info-bar{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-size:0.8rem;color:var(--text-dim);line-height:1.55}
+
+/* ═══ ANIMATIONS ═══ */
+.fade-in{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-red{0%,100%{box-shadow:0 0 0 0 var(--red-glow)}50%{box-shadow:0 0 12px 4px var(--red-glow)}}
+
+/* ═══ PRINT ═══ */
+.print-only{display:none}
+@media print{
+  body{background:#fff!important;color:#000!important;font-size:11pt}
+  .no-print{display:none!important}
+  .print-only{display:block!important}
+  *{color:#000!important;border-color:#ccc!important;box-shadow:none!important}
+  .card{border:1px solid #ccc;box-shadow:none}
+  .not-checked{background:#fee2e2!important;border-color:#dc2626!important}
+  .bneck-critical{background:#fee2e2!important}.bneck-major{background:#fef3c7!important}.bneck-verify{background:#dbeafe!important}
+  .stat-box{background:#f9fafb!important;border-color:#ccc!important}
+  .theme-toggle{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ BLANK SCREEN GUARD — Layer 1: Window Error Handler ═══ -->
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var el = document.getElementById('root');
+  if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
+    el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">\u26A0\uFE0F Tool Error \u2014 Not a Blank Screen</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-SLD-001 v0.1.1</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\\n\\nStack:\\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+      + '</div>';
+  }
+  return false;
+};
+</script>
+
+<div id="root"></div>
+
+<script type="text/babel">
+// ═══════════════════════════════════════════════════════════════
+// DC-SLD-001 — Power Chain Bottleneck Analysis (Production Tool)
+// Version: 0.1.0 | Session 1 — Calc Engine + Cascade Table
+// Generated: 2026-03-01
+// Core DNA: v1.2.0 | S4 DC Production Template: v1.0.0
+// Legacy Business Engineers Ltd
+// ═══════════════════════════════════════════════════════════════
+
+const { useState, useCallback, useMemo, useEffect } = React;
+
+// ─────────────────────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────────────────────
+
+const TOOL_ID = "DC-SLD-001";
+const TOOL_NAME = "Power Chain Bottleneck Analysis";
+const TOOL_VERSION = "0.1.1";
+const TOOL_SUBTITLE = "Identify power chain constraints before commissioning detailed design";
+const CORE_DNA = "1.2.0";
+
+// ─── Engineering constants (all sourced) ───
+const PF = 0.9;                    // Power factor — typical DC IT load — IS 10101 Appendix A
+const TX_K_DERATE = 0.8;           // K-factor derate for non-K-rated TX serving harmonic loads — IEEE C57.110
+const BUSBAR_CONTINUOUS = 0.8;     // Continuous current derate — IS 10101 Clause 5.2.1
+const BUSWAY_TAP_DERATE = 0.8;    // Tap-off continuous rating — manufacturer typical, verify against datasheet
+const RACK_PDU_DERATE = 0.8;      // Continuous load derate — IS 10101 Clause 5.2.1
+const V_1PH = 230;                // Nominal single-phase voltage — IS 10101 Clause 6.1
+const V_3PH = 400;                // Nominal three-phase voltage — IS 10101 Clause 6.1
+const SQRT3 = 1.732;              // √3 for three-phase power calculations
+
+// ─── Physical input limits ───
+const LIMITS = {
+  rackCount:    { min: 1, max: 50000, label: "Rack count" },
+  kwPerRack:    { min: 0.5, max: 100, label: "kW per rack" },
+  pue:          { min: 1.0, max: 3.0, label: "PUE" },
+  micMVA:       { min: 0.1, max: 200, label: "MIC (MVA)" },
+  txMVA:        { min: 0.1, max: 100, label: "Transformer (MVA)" },
+  txCount:      { min: 1, max: 20, label: "Transformer count" },
+  busbarA:      { min: 100, max: 10000, label: "Busbar rating (A)" },
+  upsCount:     { min: 1, max: 20, label: "UPS count" },
+  upsMVA:       { min: 0.05, max: 50, label: "UPS rating (MVA)" },
+  floorPDUMW:   { min: 0.01, max: 50, label: "Floor PDU (MW)" },
+  buswayTapA:   { min: 16, max: 400, label: "Busway tap (A)" },
+  rackPDUA:     { min: 16, max: 250, label: "Rack PDU (A)" },
+  yearBuilt:    { min: 1990, max: 2030, label: "Year built" }
+};
+
+// ─── NOT CHECKED — outside scope (Rule 2) ───
+const NOT_CHECKED = [
+  { item: "Cable sizing and voltage drop", reason: "Requires cable route lengths and installation methods — use E-CS-001" },
+  { item: "Protection coordination / discrimination", reason: "Requires device characteristics and fault levels — use E-PC-001" },
+  { item: "Earth fault loop impedance (Zs)", reason: "Requires measured or calculated Zs values" },
+  { item: "Harmonic distortion levels (THD)", reason: "Requires power quality measurement or harmonic study" },
+  { item: "Generator sizing and transfer time", reason: "Requires generator load acceptance and starting current data" },
+  { item: "Cooling chain capacity", reason: "Use DC-LEARN-002 cascade or dedicated cooling analysis" },
+  { item: "Physical space / clearance adequacy", reason: "Requires site survey and GA drawings" },
+  { item: "Arc flash incident energy", reason: "Requires IEEE 1584 study with actual fault data" },
+  { item: "Remaining useful life of equipment", reason: "Requires condition survey and maintenance records" }
+];
+
+// ─── Demo data: Declan's Clonshaugh facility (DC-LEARN-001 reference) ───
+const DEMO = {
+  facility: {
+    name: "Clonshaugh Data Centre",
+    ref: "CLN-2026-001",
+    location: "Clonshaugh, Dublin 17",
+    yearBuilt: 2013,
+    rackCount: 400,
+    kwPerRackCurrent: 6,
+    kwPerRackTarget: 20,
+    pueCurrent: 1.8,
+    pueTarget: 1.3
+  },
+  pathA: {
+    micMVA: 5,
+    txCount: 1,
+    txMVA: 2,
+    txKRated: false,
+    msbBusbarA: 3200,
+    upsCount: 1,
+    upsMVA: 1.5,
+    upsTopology: "2N",
+    floorPDUMW: 1.2,
+    buswayPhase: "1PH",
+    buswayTapA: 32,
+    rackPDUPhase: "1PH",
+    rackPDUA: 32
+  },
+  pathB: {
+    micMVA: 5,
+    txCount: 1,
+    txMVA: 2,
+    txKRated: false,
+    msbBusbarA: 3200,
+    upsCount: 1,
+    upsMVA: 1.5,
+    upsTopology: "2N",
+    floorPDUMW: 1.2,
+    buswayPhase: "1PH",
+    buswayTapA: 32,
+    rackPDUPhase: "1PH",
+    rackPDUA: 32
+  }
+};
+
+// ─── Document status options ───
+const DOC_STATUSES = [
+  { id:"DRAFT", label:"Draft", color:"gray", banner:"DRAFT — NOT FOR ISSUE" },
+  { id:"FOR_REVIEW", label:"For Review", color:"amber", banner:"FOR REVIEW — SUBJECT TO CHECKING" },
+  { id:"CHECKED", label:"Checked", color:"blue", banner:"CHECKED — READY FOR ISSUE" },
+  { id:"ISSUED", label:"Issued", color:"green", banner:"ISSUED" }
+];
+
+// ─── Cascade level definitions ───
+const CASCADE_LEVELS = [
+  { id:"L1", name:"Utility Supply (MIC)", icon:"\u26A1", component:"Grid Connection" },
+  { id:"L2", name:"Transformers", icon:"\uD83D\uDD0C", component:"MV/LV Transformer" },
+  { id:"L3", name:"MSB Busbar", icon:"\u2B50", component:"Main Switchboard" },
+  { id:"L4", name:"UPS System", icon:"\uD83D\uDD0B", component:"Uninterruptible Power Supply" },
+  { id:"L5", name:"Static Transfer Switch", icon:"\u21D4", component:"STS" },
+  { id:"L6", name:"Floor PDU", icon:"\uD83D\uDCE6", component:"Power Distribution Unit" },
+  { id:"L7", name:"Overhead Busway", icon:"\uD83D\uDCCF", component:"Busway / Busbar Trunking" },
+  { id:"L8", name:"Rack PDU", icon:"\uD83D\uDD0C", component:"In-Rack Power Strip" },
+  { id:"L9", name:"Server PSU (Demand)", icon:"\uD83D\uDCBB", component:"IT Load Target" }
+];
+
+// ═══════════════════════════════════════════════════════════════
+// BLANK SCREEN GUARD — Layer 2: React Error Boundary
+// ═══════════════════════════════════════════════════════════════
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { hasError: false, error: null, info: null }; }
+  static getDerivedStateFromError(error) { return { hasError: true, error }; }
+  componentDidCatch(error, info) { this.setState({ info }); console.error('DC-SLD-001 ErrorBoundary:', error, info); }
+  render() {
+    if (this.state.hasError) {
+      return React.createElement('div', { style: { maxWidth: 700, margin: '60px auto', padding: 24, border: '2px solid #dc2626', borderRadius: 12, background: '#fef2f2', fontFamily: 'system-ui' } },
+        React.createElement('h2', { style: { color: '#dc2626', margin: '0 0 12px' } }, '\u26A0\uFE0F Tool Runtime Error'),
+        React.createElement('p', { style: { color: '#374151' } }, React.createElement('strong', null, 'DC-SLD-001 v0.1.1'), ' crashed during rendering.'),
+        React.createElement('pre', { style: { background: '#1f2937', color: '#f87171', padding: 12, borderRadius: 8, fontSize: 13, whiteSpace: 'pre-wrap', margin: '12px 0', maxHeight: 300, overflow: 'auto' } },
+          String(this.state.error) + (this.state.info ? '\n\nComponent Stack:' + this.state.info.componentStack : '')),
+        React.createElement('p', { style: { color: '#6b7280', fontSize: 13 } }, 'Copy this error and send to LM.')
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SHARED COMPONENTS
+// ═══════════════════════════════════════════════════════════════
+
+const Tip = ({ meaning, typical, source, warning }) => (
+  <span className="tip-wrap">
+    <span className="tip-icon">{"\u24D8"}</span>
+    <span className="tip-box">
+      <div><strong>Meaning:</strong> {meaning}</div>
+      {typical && <div style={{marginTop:4}}><strong>Typical:</strong> {typical}</div>}
+      {source && <div style={{marginTop:4}}><strong>Source:</strong> {source}</div>}
+      {warning && <div className="tip-warn" style={{marginTop:4}}><strong>{"\u26A0"} {warning}</strong></div>}
+    </span>
+  </span>
+);
+
+const Field = ({ label, required, tip, hint, warn, children }) => (
+  <div className="field">
+    <label className="field-label">
+      {label}{required && <span className="req">*</span>}
+      {tip && <Tip {...tip} />}
+    </label>
+    {children}
+    {hint && <div className="field-hint">{hint}</div>}
+    {warn && <div className="field-warn">{"\u26A0"} {warn}</div>}
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN APP
+// ═══════════════════════════════════════════════════════════════
+
+const App = () => {
+  // ─── Theme ───
+  const [theme, setTheme] = useState("dark");
+  const toggleTheme = useCallback(() => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+  }, [theme]);
+
+  // ─── Document status ───
+  const [docStatus, setDocStatus] = useState("FOR_REVIEW");
+  const statusObj = DOC_STATUSES.find(s => s.id === docStatus);
+
+  // ─── Tab ───
+  const [tab, setTab] = useState(0);
+  const tabNames = ["Facility", "Path A", "Path B"];
+
+  // ─── View state ───
+  const [showResults, setShowResults] = useState(false);
+
+  // ─── Facility inputs ───
+  const [fName, setFName] = useState("");
+  const [fRef, setFRef] = useState("");
+  const [fLocation, setFLocation] = useState("");
+  const [fYear, setFYear] = useState("");
+  const [fRacks, setFRacks] = useState("");
+  const [fKwCurrent, setFKwCurrent] = useState("");
+  const [fKwTarget, setFKwTarget] = useState("");
+  const [fPueCurrent, setFPueCurrent] = useState("");
+  const [fPueTarget, setFPueTarget] = useState("");
+
+  // ─── Path A inputs ───
+  const [aMic, setAMic] = useState("");
+  const [aTxCount, setATxCount] = useState("");
+  const [aTxMVA, setATxMVA] = useState("");
+  const [aTxK, setATxK] = useState(false);
+  const [aBusbar, setABusbar] = useState("");
+  const [aUpsCount, setAUpsCount] = useState("");
+  const [aUpsMVA, setAUpsMVA] = useState("");
+  const [aUpsTopo, setAUpsTopo] = useState("2N");
+  const [aFloorPDU, setAFloorPDU] = useState("");
+  const [aBwPhase, setABwPhase] = useState("1PH");
+  const [aBwTap, setABwTap] = useState("");
+  const [aRpPhase, setARpPhase] = useState("1PH");
+  const [aRpA, setARpA] = useState("");
+
+  // ─── Path B inputs ───
+  const [bMic, setBMic] = useState("");
+  const [bTxCount, setBTxCount] = useState("");
+  const [bTxMVA, setBTxMVA] = useState("");
+  const [bTxK, setBTxK] = useState(false);
+  const [bBusbar, setBBusbar] = useState("");
+  const [bUpsCount, setBUpsCount] = useState("");
+  const [bUpsMVA, setBUpsMVA] = useState("");
+  const [bUpsTopo, setBUpsTopo] = useState("2N");
+  const [bFloorPDU, setBFloorPDU] = useState("");
+  const [bBwPhase, setBBwPhase] = useState("1PH");
+  const [bBwTap, setBBwTap] = useState("");
+  const [bRpPhase, setBRpPhase] = useState("1PH");
+  const [bRpA, setBRpA] = useState("");
+
+  // ─── Demo loader (Rule 1: tool opens empty, demo is deliberate action) ───
+  const loadDemo = useCallback(() => {
+    const d = DEMO;
+    setFName(d.facility.name); setFRef(d.facility.ref); setFLocation(d.facility.location);
+    setFYear(String(d.facility.yearBuilt)); setFRacks(String(d.facility.rackCount));
+    setFKwCurrent(String(d.facility.kwPerRackCurrent)); setFKwTarget(String(d.facility.kwPerRackTarget));
+    setFPueCurrent(String(d.facility.pueCurrent)); setFPueTarget(String(d.facility.pueTarget));
+    // Path A
+    setAMic(String(d.pathA.micMVA)); setATxCount(String(d.pathA.txCount)); setATxMVA(String(d.pathA.txMVA));
+    setATxK(d.pathA.txKRated); setABusbar(String(d.pathA.msbBusbarA));
+    setAUpsCount(String(d.pathA.upsCount)); setAUpsMVA(String(d.pathA.upsMVA)); setAUpsTopo(d.pathA.upsTopology);
+    setAFloorPDU(String(d.pathA.floorPDUMW)); setABwPhase(d.pathA.buswayPhase); setABwTap(String(d.pathA.buswayTapA));
+    setARpPhase(d.pathA.rackPDUPhase); setARpA(String(d.pathA.rackPDUA));
+    // Path B
+    setBMic(String(d.pathB.micMVA)); setBTxCount(String(d.pathB.txCount)); setBTxMVA(String(d.pathB.txMVA));
+    setBTxK(d.pathB.txKRated); setBBusbar(String(d.pathB.msbBusbarA));
+    setBUpsCount(String(d.pathB.upsCount)); setBUpsMVA(String(d.pathB.upsMVA)); setBUpsTopo(d.pathB.upsTopology);
+    setBFloorPDU(String(d.pathB.floorPDUMW)); setBBwPhase(d.pathB.buswayPhase); setBBwTap(String(d.pathB.buswayTapA));
+    setBRpPhase(d.pathB.rackPDUPhase); setBRpA(String(d.pathB.rackPDUA));
+    setShowResults(false);
+    setTab(0);
+  }, []);
+
+  // ─── Validation helpers ───
+  const pf = (v) => parseFloat(v) || 0;
+  const validateRange = (val, limit) => {
+    const n = pf(val);
+    if (val === "" || val === undefined) return null;
+    if (n < limit.min) return `${limit.label} below minimum (${limit.min})`;
+    if (n > limit.max) return `${limit.label} above maximum (${limit.max})`;
+    return null;
+  };
+
+  // ─── Can calculate? ───
+  const canCalc = fRacks && fKwTarget && fPueTarget && aMic && aTxCount && aTxMVA && aBusbar && aUpsCount && aUpsMVA && aFloorPDU && aBwTap && aRpA;
+
+  // ═══════════════════════════════════════════════════════════
+  // CALCULATION ENGINE (deterministic — Rule 9)
+  // ═══════════════════════════════════════════════════════════
+  const calc = useMemo(() => {
+    const racks = pf(fRacks);
+    const kwTarget = pf(fKwTarget);
+    const kwCurrent = pf(fKwCurrent);
+    const pueT = pf(fPueTarget) || 1.3;  // ASSUMPTION — default 1.3 if blank
+    const pueC = pf(fPueCurrent) || 1.8; // ASSUMPTION — default 1.8 if blank
+
+    // ─── Load calculations ───
+    const itLoadTargetMW = (racks * kwTarget) / 1000;        // MW
+    const itLoadCurrentMW = (racks * kwCurrent) / 1000;      // MW
+    const facilityTargetMW = itLoadTargetMW * pueT;          // Total facility = IT × PUE
+    const facilityCurrentMW = itLoadCurrentMW * pueC;
+
+    // ─── Helper: calc voltage for phase ───
+    const phaseV = (ph) => ph === "3PH" ? V_3PH * SQRT3 : V_1PH;  // V_3PH × √3 for line voltage to neutral power calc — actually for 3PH: P = √3 × V_L × I × PF, so use V_3PH × SQRT3 for VA calc from amps
+
+    // ─── Path capacity calculator ───
+    const calcPath = (p) => {
+      const mic = pf(p.mic);
+      const txC = pf(p.txCount);
+      const txM = pf(p.txMVA);
+      const txK = p.txKRated;
+      const busA = pf(p.busbar);
+      const upsC = pf(p.upsCount);
+      const upsM = pf(p.upsMVA);
+      const topo = p.upsTopo;
+      const fpdu = pf(p.floorPDU);
+      const bwPh = p.bwPhase;
+      const bwA = pf(p.bwTap);
+      const rpPh = p.rpPhase;
+      const rpA = pf(p.rpA);
+
+      // L1: MIC — shared between paths, check against TOTAL facility load
+      const l1_MW = mic * PF; // MVA × PF = MW capacity
+
+      // L2: Transformers
+      // capacity = count × MVA × PF × K-factor derate (if non-K-rated serving IT harmonic loads)
+      const l2_MW = txC * txM * PF * (txK ? 1.0 : TX_K_DERATE);
+
+      // L3: MSB Busbar
+      // capacity = busbar_A × V_3PH × √3 × PF × continuous_derate / 1e6
+      // Busbar always rated at 3-phase regardless of downstream config
+      const l3_MW = (busA * V_3PH * SQRT3 * PF * BUSBAR_CONTINUOUS) / 1e6;
+
+      // L4: UPS
+      // Total UPS capacity for this path
+      const l4_totalMVA = upsC * upsM;
+      const l4_MW = l4_totalMVA * PF;
+      // Per-string capacity (for 2N: each string carries FULL IT load independently)
+      const l4_perStringMW = upsM * PF;
+
+      // L5: STS — passthrough, capacity matches upstream UPS
+      const l5_MW = l4_MW; // STS capacity = UPS capacity (not independently limiting)
+
+      // L6: Floor PDU — user-entered MW estimate
+      const l6_MW = fpdu;
+
+      // L7: Busway per tap
+      // 1PH: tapA × derate × 230V / 1000 = kW
+      // 3PH: tapA × derate × 400 × √3 / 1000 = kW
+      const l7_perTapKW = (bwA * BUSWAY_TAP_DERATE * (bwPh === "3PH" ? V_3PH * SQRT3 : V_1PH)) / 1000;
+      const l7_totalMW = (l7_perTapKW * racks) / 1000; // total if one tap per rack
+
+      // L8: Rack PDU per rack
+      const l8_perRackKW = (rpA * RACK_PDU_DERATE * (rpPh === "3PH" ? V_3PH * SQRT3 : V_1PH)) / 1000;
+
+      // L9: Demand (target kW per rack)
+      const l9_demandKW = kwTarget;
+
+      return { l1_MW, l2_MW, l3_MW, l4_MW, l4_perStringMW, l4_totalMVA, l5_MW, l6_MW, l7_perTapKW, l7_totalMW, l8_perRackKW, l9_demandKW, topo };
+    };
+
+    const pathA = calcPath({
+      mic: aMic, txCount: aTxCount, txMVA: aTxMVA, txKRated: aTxK,
+      busbar: aBusbar, upsCount: aUpsCount, upsMVA: aUpsMVA, upsTopo: aUpsTopo,
+      floorPDU: aFloorPDU, bwPhase: aBwPhase, bwTap: aBwTap, rpPhase: aRpPhase, rpA: aRpA
+    });
+    const pathB = calcPath({
+      mic: bMic || aMic, txCount: bTxCount || aTxCount, txMVA: bTxMVA || aTxMVA, txKRated: bTxK,
+      busbar: bBusbar || aBusbar, upsCount: bUpsCount || aUpsCount, upsMVA: bUpsMVA || aUpsMVA, upsTopo: bUpsTopo,
+      floorPDU: bFloorPDU || aFloorPDU, bwPhase: bBwPhase, bwTap: bBwTap || aBwTap, rpPhase: bRpPhase, rpA: bRpA || aRpA
+    });
+
+    // ─── Cascade analysis (use limiting path — minimum of A and B) ───
+    // L1 MIC is shared — check against total facility load
+    // L2-L6 are per-path — check against IT load (for 2N each path carries full IT load)
+    // L7-L8 are per-rack — check against kW/rack target
+
+    // Determine per-path IT load based on topology
+    const is2N = pathA.topo === "2N" || pathA.topo === "2N+1";
+    // In 2N: each path must carry FULL IT load independently
+    // In N+1: load is shared across paths
+    const perPathITMW = is2N ? itLoadTargetMW : itLoadTargetMW / 2;
+
+    const buildLevel = (id, name, capacityMW, loadMW, unit, calcDetail) => {
+      const util = capacityMW > 0 ? (loadMW / capacityMW) * 100 : 999;
+      let status, statusLabel, tag;
+      if (util <= 80) { status = "ok"; statusLabel = "\u2705 OK"; tag = "OK"; }
+      else if (util <= 100) { status = "verify"; statusLabel = "\u26A0\uFE0F VERIFY"; tag = "VERIFY"; }
+      else { status = "fail"; statusLabel = "\u26D4 FAIL"; tag = util > 150 ? "CRITICAL" : "REPLACE"; }
+      return { id, name, capacityMW, loadMW, util, status, statusLabel, tag, unit, calcDetail };
+    };
+
+    const cascade = [
+      buildLevel("L1", "Utility Supply (MIC)",
+        pathA.l1_MW,
+        facilityTargetMW,
+        "MW",
+        `${pf(aMic)} MVA \u00D7 ${PF} PF = ${pathA.l1_MW.toFixed(2)} MW capacity vs ${facilityTargetMW.toFixed(2)} MW facility load`
+      ),
+      buildLevel("L2", "Transformers (Path A)",
+        pathA.l2_MW,
+        perPathITMW,
+        "MW",
+        `${pf(aTxCount)} \u00D7 ${pf(aTxMVA)} MVA \u00D7 ${PF} PF \u00D7 ${aTxK ? '1.0' : TX_K_DERATE + ' (non-K)'} = ${pathA.l2_MW.toFixed(2)} MW vs ${perPathITMW.toFixed(2)} MW IT load`
+      ),
+      buildLevel("L3", "MSB Busbar (Path A)",
+        pathA.l3_MW,
+        perPathITMW,
+        "MW",
+        `${pf(aBusbar)}A \u00D7 ${V_3PH}V \u00D7 \u221A3 \u00D7 ${PF} PF \u00D7 ${BUSBAR_CONTINUOUS} derate = ${pathA.l3_MW.toFixed(2)} MW`
+      ),
+      buildLevel("L4", "UPS System (Path A)",
+        is2N ? pathA.l4_perStringMW : pathA.l4_MW,
+        is2N ? itLoadTargetMW : perPathITMW,
+        "MW",
+        is2N
+          ? `2N: single string ${pf(aUpsMVA)} MVA \u00D7 ${PF} PF = ${pathA.l4_perStringMW.toFixed(2)} MW must carry full ${itLoadTargetMW.toFixed(2)} MW IT load`
+          : `${pf(aUpsCount)} \u00D7 ${pf(aUpsMVA)} MVA \u00D7 ${PF} PF = ${pathA.l4_MW.toFixed(2)} MW vs ${perPathITMW.toFixed(2)} MW`
+      ),
+      buildLevel("L5", "Static Transfer Switch",
+        pathA.l5_MW,
+        perPathITMW,
+        "MW",
+        `STS passthrough — capacity matches upstream UPS: ${pathA.l5_MW.toFixed(2)} MW`
+      ),
+      buildLevel("L6", "Floor PDU (Path A)",
+        pathA.l6_MW,
+        perPathITMW,
+        "MW",
+        `User-entered estimate: ${pathA.l6_MW.toFixed(2)} MW vs ${perPathITMW.toFixed(2)} MW IT load`
+      ),
+      buildLevel("L7", "Overhead Busway",
+        pathA.l7_perTapKW,
+        kwTarget,
+        "kW/rack",
+        `${pf(aBwTap)}A \u00D7 ${BUSWAY_TAP_DERATE} derate \u00D7 ${aBwPhase === "3PH" ? V_3PH + "V\u00D7\u221A3" : V_1PH + "V"} = ${pathA.l7_perTapKW.toFixed(3)} kW per tap vs ${kwTarget} kW target`
+      ),
+      buildLevel("L8", "Rack PDU",
+        pathA.l8_perRackKW,
+        kwTarget,
+        "kW/rack",
+        `${pf(aRpA)}A \u00D7 ${RACK_PDU_DERATE} derate \u00D7 ${aRpPhase === "3PH" ? V_3PH + "V\u00D7\u221A3" : V_1PH + "V"} = ${pathA.l8_perRackKW.toFixed(3)} kW per rack vs ${kwTarget} kW target`
+      ),
+      buildLevel("L9", "Server PSU (Demand)",
+        kwTarget,
+        kwTarget,
+        "kW/rack",
+        `Target density: ${kwTarget} kW/rack \u00D7 ${racks} racks = ${itLoadTargetMW.toFixed(2)} MW IT load`
+      )
+    ];
+
+    const bottlenecks = cascade.filter(l => l.status === "fail" || l.status === "verify");
+    const criticalCount = cascade.filter(l => l.status === "fail").length;
+
+    return {
+      racks, kwTarget, kwCurrent, pueT, pueC,
+      itLoadTargetMW, itLoadCurrentMW, facilityTargetMW, facilityCurrentMW,
+      perPathITMW, is2N,
+      pathA, pathB,
+      cascade, bottlenecks, criticalCount
+    };
+  }, [fRacks, fKwTarget, fKwCurrent, fPueTarget, fPueCurrent,
+      aMic, aTxCount, aTxMVA, aTxK, aBusbar, aUpsCount, aUpsMVA, aUpsTopo, aFloorPDU, aBwPhase, aBwTap, aRpPhase, aRpA,
+      bMic, bTxCount, bTxMVA, bTxK, bBusbar, bUpsCount, bUpsMVA, bUpsTopo, bFloorPDU, bBwPhase, bBwTap, bRpPhase, bRpA]);
+
+  // ─── Tips engine ───
+  const tips = useMemo(() => {
+    if (!showResults) return [];
+    const t = [];
+    const c = calc;
+    if (c.criticalCount >= 4) {
+      t.push({ c:"red", icon:"\u26D4", title:`${c.criticalCount} Critical Bottlenecks — Major Retrofit Required`,
+        body:`At ${c.kwTarget}kW/rack with PUE ${c.pueT}, the total facility load reaches ${c.facilityTargetMW.toFixed(1)} MW. Multiple power chain components cannot support this. A phased retrofit programme is needed — start with the highest-capacity items (MIC and transformers) as these have the longest lead times (12-24 months for ESB connection upgrades).`,
+        ref:"ESB Networks Connection Policy; IS 10101:2020+A1:2024" });
+    }
+    if (c.cascade[0] && c.cascade[0].status === "fail") {
+      t.push({ c:"red", icon:"\u26A1", title:`MIC Exceeded: ${c.cascade[0].util.toFixed(0)}% — ESB Upgrade Required`,
+        body:`The existing ${pf(aMic)} MVA MIC provides ${c.cascade[0].capacityMW.toFixed(1)} MW. Target facility load is ${c.facilityTargetMW.toFixed(1)} MW. Action: Apply to ESB Networks for MIC upgrade — typical lead time 12-24 months. This is the longest lead-time item.`,
+        ref:"ESB Networks Standard for MV Connections" });
+    }
+    if (c.cascade[3] && c.cascade[3].status === "fail") {
+      t.push({ c:"red", icon:"\uD83D\uDD0B", title:`UPS Overloaded: ${c.cascade[3].util.toFixed(0)}% — Each string at ${c.cascade[3].loadMW.toFixed(2)} MW vs ${c.cascade[3].capacityMW.toFixed(2)} MW capacity`,
+        body:`In 2N configuration, each UPS string must independently carry the full IT load. Current string capacity (${c.cascade[3].capacityMW.toFixed(2)} MW) cannot support ${c.itLoadTargetMW.toFixed(2)} MW. Action: Replace UPS modules or add parallel frames. Consider modular UPS for scalability.`,
+        ref:"IS 10101:2020+A1:2024; EN 62040-1" });
+    }
+    if (c.cascade[6] && c.cascade[6].status === "fail") {
+      t.push({ c:"amber", icon:"\uD83D\uDCCF", title:`Busway Tap Limited to ${c.cascade[6].capacityMW.toFixed(1)} kW — Below ${c.kwTarget} kW Target`,
+        body:`${aBwPhase} ${pf(aBwTap)}A busway taps deliver ${c.cascade[6].capacityMW.toFixed(3)} kW continuous. For ${c.kwTarget} kW/rack, consider upgrading to 3PH 32A taps (${(32 * BUSWAY_TAP_DERATE * V_3PH * SQRT3 / 1000).toFixed(1)} kW) or higher-rated busway.`,
+        ref:"IS 10101:2020+A1:2024 Clause 5.2.1" });
+    }
+    if (c.cascade[7] && c.cascade[7].status === "fail") {
+      t.push({ c:"amber", icon:"\uD83D\uDD0C", title:`Rack PDU Limited to ${c.cascade[7].capacityMW.toFixed(1)} kW — Below ${c.kwTarget} kW Target`,
+        body:`${aRpPhase} ${pf(aRpA)}A rack PDUs deliver ${c.cascade[7].capacityMW.toFixed(3)} kW continuous. For ${c.kwTarget} kW/rack, consider 3PH rack PDUs or higher amperage units. This is typically the quickest component to replace.`,
+        ref:"IS 10101:2020+A1:2024 Clause 5.2.1" });
+    }
+    if (c.criticalCount === 0 && c.bottlenecks.length === 0) {
+      t.push({ c:"green", icon:"\u2705", title:"All Levels OK — Power Chain Supports Target Density",
+        body:`At ${c.kwTarget} kW/rack with PUE ${c.pueT}, all 9 cascade levels are within 80% utilisation. Verify with detailed design before proceeding.`,
+        ref:"IS 10101:2020+A1:2024" });
+    }
+    return t;
+  }, [showResults, calc, aMic, aBwPhase, aBwTap, aRpPhase, aRpA]);
+
+  // ═══════════════════════════════════════════════════════════
+  // PATH INPUT PANEL (reused for Path A and Path B)
+  // ═══════════════════════════════════════════════════════════
+  const PathPanel = ({ label, mic, setMic, txCount, setTxCount, txMVA, setTxMVA, txK, setTxK,
+    busbar, setBusbar, upsCount, setUpsCount, upsMVA, setUpsMVA, upsTopo, setUpsTopo,
+    floorPDU, setFloorPDU, bwPhase, setBwPhase, bwTap, setBwTap, rpPhase, setRpPhase, rpA, setRpA }) => (
+    <div className="fade-in">
+      <div className="section-head">{label} — Power Chain Components</div>
+
+      <div className="grid-2">
+        <Field label="MIC / Grid Connection" required tip={{meaning:"Maximum Import Capacity — the grid connection limit for this path",typical:"1-100 MVA depending on facility size",source:"ESB Networks Connection Agreement",warning:"Both paths may share the same MIC — check connection agreement"}}>
+          <input type="number" step="0.1" min="0.1" value={mic} onChange={e=>setMic(e.target.value)} placeholder="MVA" />
+          {validateRange(mic, LIMITS.micMVA) && <div className="field-warn">{validateRange(mic, LIMITS.micMVA)}</div>}
+        </Field>
+
+        <Field label="Transformer Count" required tip={{meaning:"Number of MV/LV transformers on this path",typical:"1-4 for single facility, more for campus",source:"Electrical single-line diagram"}}>
+          <input type="number" step="1" min="1" value={txCount} onChange={e=>setTxCount(e.target.value)} placeholder="Count" />
+        </Field>
+
+        <Field label="Transformer Rating" required tip={{meaning:"Individual transformer rating in MVA",typical:"0.5-5 MVA for typical DC transformers",source:"Transformer nameplate or specification",warning:"Use nameplate rating, not contract demand"}}>
+          <input type="number" step="0.1" min="0.1" value={txMVA} onChange={e=>setTxMVA(e.target.value)} placeholder="MVA each" />
+        </Field>
+
+        <Field label="K-Rated Transformer?" tip={{meaning:"Whether transformer is designed for harmonic-rich IT loads",typical:"K-13 or K-20 typical for DC applications",source:"IEEE C57.110 — non-K-rated derated by 0.8 factor",warning:"Non-K-rated TX serving IT loads must be derated for harmonic heating"}}>
+          <select value={txK ? "yes" : "no"} onChange={e=>setTxK(e.target.value==="yes")}>
+            <option value="no">No — apply 0.8 K-factor derate</option>
+            <option value="yes">Yes — K-rated (no derate)</option>
+          </select>
+        </Field>
+
+        <Field label="MSB Busbar Rating" required tip={{meaning:"Main Switchboard busbar continuous current rating in Amperes",typical:"1600A-6300A for DC main switchboards",source:"MSB nameplate or GA drawing",warning:"Use continuous rating, not peak. Applied with 0.8 continuous derate per IS 10101"}}>
+          <input type="number" step="100" min="100" value={busbar} onChange={e=>setBusbar(e.target.value)} placeholder="Amps" />
+          {validateRange(busbar, LIMITS.busbarA) && <div className="field-warn">{validateRange(busbar, LIMITS.busbarA)}</div>}
+        </Field>
+
+        <Field label="UPS Count (this path)" required tip={{meaning:"Number of UPS modules/frames on this path",typical:"1-4 modules per path",source:"UPS room layout or SLD"}}>
+          <input type="number" step="1" min="1" value={upsCount} onChange={e=>setUpsCount(e.target.value)} placeholder="Count" />
+        </Field>
+
+        <Field label="UPS Rating" required tip={{meaning:"Individual UPS module/frame rating in MVA",typical:"0.1-3 MVA per module",source:"UPS nameplate",warning:"Use UPS output rating, not input. Check if rating is at unity PF or 0.9 PF."}}>
+          <input type="number" step="0.1" min="0.05" value={upsMVA} onChange={e=>setUpsMVA(e.target.value)} placeholder="MVA each" />
+        </Field>
+
+        <Field label="UPS Topology" required tip={{meaning:"How UPS strings relate to each other",typical:"2N most common in Tier III+",source:"Uptime Institute Tier Standard",warning:"2N means EACH string must carry full IT load. N+1 means load is shared."}}>
+          <select value={upsTopo} onChange={e=>setUpsTopo(e.target.value)}>
+            <option value="2N">2N (each string carries full load)</option>
+            <option value="2N+1">2N+1 (dual path + spare)</option>
+            <option value="N+1">N+1 (shared with one spare)</option>
+            <option value="standalone">Standalone (no redundancy)</option>
+          </select>
+        </Field>
+
+        <Field label="Floor PDU Total Capacity" required tip={{meaning:"Estimated total capacity of floor-level power distribution units on this path",typical:"0.5-5 MW depending on facility size",source:"PDU nameplate survey or specification",warning:"Often the hardest number to confirm — may need site survey of all PDU nameplates"}}>
+          <input type="number" step="0.1" min="0.01" value={floorPDU} onChange={e=>setFloorPDU(e.target.value)} placeholder="MW" />
+        </Field>
+
+        <Field label="Busway Phase Configuration" tip={{meaning:"Single-phase or three-phase busway/busbar trunking",typical:"1PH common in older facilities, 3PH in modern high-density",source:"Busway nameplate or specification"}}>
+          <select value={bwPhase} onChange={e=>setBwPhase(e.target.value)}>
+            <option value="1PH">Single Phase (230V)</option>
+            <option value="3PH">Three Phase (400V)</option>
+          </select>
+        </Field>
+
+        <Field label="Busway Tap Rating" required tip={{meaning:"Individual tap-off unit current rating in Amperes",typical:"16A-63A for rack-level taps",source:"Busway tap-off nameplate",warning:"Continuous rating derated by 0.8 factor per IS 10101 Clause 5.2.1"}}>
+          <input type="number" step="1" min="16" value={bwTap} onChange={e=>setBwTap(e.target.value)} placeholder="Amps" />
+        </Field>
+
+        <Field label="Rack PDU Phase Configuration" tip={{meaning:"Single-phase or three-phase in-rack PDU",typical:"1PH common <10kW/rack, 3PH for >10kW/rack",source:"Rack PDU specification"}}>
+          <select value={rpPhase} onChange={e=>setRpPhase(e.target.value)}>
+            <option value="1PH">Single Phase (230V)</option>
+            <option value="3PH">Three Phase (400V)</option>
+          </select>
+        </Field>
+
+        <Field label="Rack PDU Rating" required tip={{meaning:"In-rack PDU current rating in Amperes",typical:"16A-63A depending on density target",source:"Rack PDU nameplate",warning:"Continuous rating derated by 0.8 factor. 1PH 32A = 5.888kW max."}}>
+          <input type="number" step="1" min="16" value={rpA} onChange={e=>setRpA(e.target.value)} placeholder="Amps" />
+        </Field>
+      </div>
+    </div>
+  );
+
+  // ═══════════════════════════════════════════════════════════
+  // RENDER
+  // ═══════════════════════════════════════════════════════════
+  return (
+    <div className="container">
+      {/* ─── Theme toggle ─── */}
+      <button className="theme-toggle no-print" onClick={toggleTheme}>
+        {theme === "dark" ? "\u2600\uFE0F Light" : "\uD83C\uDF19 Dark"}
+      </button>
+
+      {/* ─── Header ─── */}
+      <div className="card card-dc">
+        <div className="flex-between">
+          <div>
+            <div className="font-mono text-xs" style={{color:'var(--text-muted)'}}>{TOOL_ID} v{TOOL_VERSION} · Core DNA {CORE_DNA}</div>
+            <h1 className="text-2xl font-bold" style={{marginTop:4}}>{TOOL_NAME}</h1>
+            <div className="text-sm" style={{color:'var(--text-dim)',marginTop:2}}>{TOOL_SUBTITLE}</div>
+          </div>
+          <div style={{textAlign:'right'}}>
+            <div className="text-xs font-bold" style={{color:'var(--lbe-green)'}}>Legacy Business Engineers</div>
+            <div className="text-xs" style={{color:'var(--text-muted)'}}>S4 Data Centre Services</div>
+          </div>
+        </div>
+        <div className="info-bar mt-3" style={{fontSize:'0.78rem'}}>
+          <strong>How this works:</strong> Enter your facility parameters and power chain component ratings for each path. The tool calculates capacity at each level and identifies bottlenecks against your target rack density. Components are rated as <span style={{color:'var(--green)'}}>{"\u2705"} OK</span> ({"\u2264"}80%), <span style={{color:'var(--amber)'}}>{"\u26A0\uFE0F"} VERIFY</span> (80-100%), or <span style={{color:'var(--red)'}}>{"\u26D4"} FAIL</span> ({">"}100%) utilisation.
+        </div>
+      </div>
+
+      {/* ─── Action buttons ─── */}
+      <div className="no-print" style={{display:'flex',gap:8,marginBottom:12,flexWrap:'wrap'}}>
+        <button className="btn btn-demo" onClick={loadDemo}>{"\uD83D\uDCCB"} Load Clonshaugh Demo</button>
+        <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:8}}>
+          <span className="text-xs" style={{color:'var(--text-muted)'}}>Status:</span>
+          <select value={docStatus} onChange={e=>setDocStatus(e.target.value)}
+            style={{padding:'4px 8px',borderRadius:6,fontSize:'0.78rem',background:'var(--bg)',border:'1px solid var(--border-light)',color:'var(--text)'}}>
+            {DOC_STATUSES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {/* ─── Document status banner ─── */}
+      <div className="doc-status-bar" style={{
+        background: statusObj.color === "amber" ? 'var(--amber-dim)' : statusObj.color === "green" ? 'var(--green-dim)' : statusObj.color === "blue" ? 'var(--blue-dim)' : 'var(--border)',
+        color: statusObj.color === "amber" ? 'var(--amber)' : statusObj.color === "green" ? 'var(--green)' : statusObj.color === "blue" ? 'var(--blue)' : 'var(--text-dim)',
+        border: `1px solid ${statusObj.color === "amber" ? 'var(--amber)' : statusObj.color === "green" ? 'var(--green)' : statusObj.color === "blue" ? 'var(--blue)' : 'var(--border-light)'}`
+      }}>
+        {statusObj.banner}
+      </div>
+
+      {/* ─── Tabs (input mode) ─── */}
+      {!showResults && (
+        <>
+          <div className="tabs no-print">
+            {tabNames.map((t, i) => (
+              <button key={i} className={`tab ${i===tab?'active':''}`} onClick={()=>setTab(i)}>{t}</button>
+            ))}
+          </div>
+
+          {/* ─── Tab 0: Facility ─── */}
+          {tab === 0 && (
+            <div className="card fade-in">
+              <div className="section-head">Facility Parameters</div>
+              <div className="grid-2">
+                <Field label="Facility Name" required tip={{meaning:"Name of the data centre facility",typical:"Site name or project reference"}}>
+                  <input type="text" value={fName} onChange={e=>setFName(e.target.value)} placeholder="e.g. Clonshaugh DC" />
+                </Field>
+                <Field label="Project Reference" tip={{meaning:"Your internal reference for this assessment",typical:"Format: SITE-YYYY-NNN"}}>
+                  <input type="text" value={fRef} onChange={e=>setFRef(e.target.value)} placeholder="e.g. CLN-2026-001" />
+                </Field>
+                <Field label="Location" tip={{meaning:"Facility address or area",typical:"Include county for Irish context"}}>
+                  <input type="text" value={fLocation} onChange={e=>setFLocation(e.target.value)} placeholder="e.g. Dublin 17" />
+                </Field>
+                <Field label="Year Built" tip={{meaning:"Year the facility was originally commissioned",typical:"Older facilities (pre-2015) more likely to have constraints",source:"Facility records"}}>
+                  <input type="number" step="1" value={fYear} onChange={e=>setFYear(e.target.value)} placeholder="e.g. 2013" />
+                  {validateRange(fYear, LIMITS.yearBuilt) && <div className="field-warn">{validateRange(fYear, LIMITS.yearBuilt)}</div>}
+                </Field>
+              </div>
+
+              <div className="section-head">Load Profile</div>
+              <div className="grid-2">
+                <Field label="Total Rack Count" required tip={{meaning:"Total number of IT racks in the facility",typical:"100-2000 for single hall, 2000-10000 for campus",source:"Rack layout drawings or asset register"}}>
+                  <input type="number" step="1" min="1" value={fRacks} onChange={e=>setFRacks(e.target.value)} placeholder="Racks" />
+                  {validateRange(fRacks, LIMITS.rackCount) && <div className="field-warn">{validateRange(fRacks, LIMITS.rackCount)}</div>}
+                </Field>
+                <Field label="Current kW/Rack" tip={{meaning:"Current average power draw per rack",typical:"3-8 kW typical legacy, 10-20 kW modern, 40+ kW AI/GPU",source:"Metered data or BMS reports"}}>
+                  <input type="number" step="0.5" min="0" value={fKwCurrent} onChange={e=>setFKwCurrent(e.target.value)} placeholder="kW" />
+                </Field>
+                <Field label="Target kW/Rack" required tip={{meaning:"Future target power density per rack after densification",typical:"10-20 kW standard refresh, 40-100 kW for GPU/AI workloads",source:"IT capacity planning or tenant requirements",warning:"This is the demand driver — all capacity checks reference this number"}}>
+                  <input type="number" step="0.5" min="0.5" value={fKwTarget} onChange={e=>setFKwTarget(e.target.value)} placeholder="kW" />
+                  {validateRange(fKwTarget, LIMITS.kwPerRack) && <div className="field-warn">{validateRange(fKwTarget, LIMITS.kwPerRack)}</div>}
+                </Field>
+                <div>{/* spacer */}</div>
+                <Field label="Current PUE" tip={{meaning:"Power Usage Effectiveness — total facility power / IT power",typical:"1.4-2.0 for legacy, 1.1-1.3 for modern efficient facilities",source:"Metered data. PUE < 1.0 is physically impossible.",warning:"PUE includes cooling, lighting, losses. Lower = more efficient."}}>
+                  <input type="number" step="0.1" min="1.0" value={fPueCurrent} onChange={e=>setFPueCurrent(e.target.value)} placeholder="e.g. 1.8" />
+                  {validateRange(fPueCurrent, LIMITS.pue) && <div className="field-warn">{validateRange(fPueCurrent, LIMITS.pue)}</div>}
+                </Field>
+                <Field label="Target PUE" required tip={{meaning:"Target PUE after retrofit / optimisation",typical:"1.2-1.4 achievable with containment + free cooling",source:"ASHRAE TC 9.9 Thermal Guidelines; EU EED Recast",warning:"Below 1.2 requires aggressive free cooling strategy. Below 1.1 is very hard."}}>
+                  <input type="number" step="0.1" min="1.0" value={fPueTarget} onChange={e=>setFPueTarget(e.target.value)} placeholder="e.g. 1.3" />
+                  {validateRange(fPueTarget, LIMITS.pue) && <div className="field-warn">{validateRange(fPueTarget, LIMITS.pue)}</div>}
+                </Field>
+              </div>
+            </div>
+          )}
+
+          {/* ─── Tab 1: Path A ─── */}
+          {tab === 1 && (
+            <div className="card">
+              <PathPanel label="PATH A"
+                mic={aMic} setMic={setAMic} txCount={aTxCount} setTxCount={setATxCount}
+                txMVA={aTxMVA} setTxMVA={setATxMVA} txK={aTxK} setTxK={setATxK}
+                busbar={aBusbar} setBusbar={setABusbar} upsCount={aUpsCount} setUpsCount={setAUpsCount}
+                upsMVA={aUpsMVA} setUpsMVA={setAUpsMVA} upsTopo={aUpsTopo} setUpsTopo={setAUpsTopo}
+                floorPDU={aFloorPDU} setFloorPDU={setAFloorPDU}
+                bwPhase={aBwPhase} setBwPhase={setABwPhase} bwTap={aBwTap} setBwTap={setABwTap}
+                rpPhase={aRpPhase} setRpPhase={setARpPhase} rpA={aRpA} setRpA={setARpA}
+              />
+            </div>
+          )}
+
+          {/* ─── Tab 2: Path B ─── */}
+          {tab === 2 && (
+            <div className="card">
+              <div className="info-bar mb-3" style={{fontSize:'0.78rem'}}>
+                <strong>Path B</strong> — If your facility has a second power path, enter its ratings here. Leave fields blank to mirror Path A values. For single-path facilities, you can skip this tab.
+              </div>
+              <PathPanel label="PATH B"
+                mic={bMic} setMic={setBMic} txCount={bTxCount} setTxCount={setBTxCount}
+                txMVA={bTxMVA} setTxMVA={setBTxMVA} txK={bTxK} setTxK={setBTxK}
+                busbar={bBusbar} setBusbar={setBBusbar} upsCount={bUpsCount} setUpsCount={setBUpsCount}
+                upsMVA={bUpsMVA} setUpsMVA={setBUpsMVA} upsTopo={bUpsTopo} setUpsTopo={setBUpsTopo}
+                floorPDU={bFloorPDU} setFloorPDU={setBFloorPDU}
+                bwPhase={bBwPhase} setBwPhase={setBBwPhase} bwTap={bBwTap} setBwTap={setBBwTap}
+                rpPhase={bRpPhase} setRpPhase={setBRpPhase} rpA={bRpA} setRpA={setBRpA}
+              />
+            </div>
+          )}
+
+          {/* ─── Generate Button ─── */}
+          <div style={{textAlign:'center',margin:'20px 0'}}>
+            <button className="btn btn-primary btn-lg" disabled={!canCalc}
+              onClick={() => { setShowResults(true); }}>
+              {"\u26A1"} Generate Bottleneck Analysis
+            </button>
+            {!canCalc && <div className="text-xs mt-2" style={{color:'var(--text-muted)'}}>Complete Facility tab and Path A to enable analysis</div>}
+          </div>
+        </>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════ */}
+      {/* RESULTS SECTION                                        */}
+      {/* ═══════════════════════════════════════════════════════ */}
+      {showResults && (
+        <div className="fade-in">
+
+          {/* ─── Edit button ─── */}
+          <div className="no-print" style={{display:'flex',gap:8,marginBottom:12}}>
+            <button className="btn btn-secondary" onClick={() => { setShowResults(false); setTab(0); }}>{"\u270F\uFE0F"} Edit Inputs</button>
+          </div>
+
+          {/* ─── Project Summary ─── */}
+          <div className="card" style={{borderLeft:'4px solid var(--lbe-green)'}}>
+            <div className="flex-between">
+              <div>
+                <h2 className="text-xl font-bold">{fName || "Unnamed Facility"}</h2>
+                <div className="text-sm" style={{color:'var(--text-dim)'}}>{fRef}{fRef && fLocation ? " · " : ""}{fLocation}{fYear ? ` · Built ${fYear}` : ""}</div>
+              </div>
+              <span className={`badge badge-${statusObj.color}`}>{statusObj.label}</span>
+            </div>
+
+            <div className="grid-4 mt-3">
+              <div className="stat-box">
+                <div className="stat-val" style={{color:'var(--blue)'}}>{calc.itLoadTargetMW.toFixed(1)}</div>
+                <div className="stat-label">IT Load (MW)</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-val" style={{color:'var(--amber)'}}>{calc.facilityTargetMW.toFixed(1)}</div>
+                <div className="stat-label">Facility Load (MW)</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-val" style={{color: calc.criticalCount > 0 ? 'var(--red)' : 'var(--green)'}}>{calc.criticalCount}</div>
+                <div className="stat-label">Critical Bottlenecks</div>
+              </div>
+              <div className="stat-box">
+                <div className="stat-val">{calc.racks}</div>
+                <div className="stat-label">Racks @ {calc.kwTarget} kW</div>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── NOT CHECKED PANEL (Rule 2: MORE visible than PASS) ─── */}
+          <div className="not-checked">
+            <h3>{"\u26A0\uFE0F"} NOT CHECKED — Outside Scope of This Tool</h3>
+            <ul style={{paddingLeft:20}}>
+              {NOT_CHECKED.map((nc, i) => (
+                <li key={i}><strong>{nc.item}</strong> <span className="reason">— {nc.reason}</span></li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ─── Cascade Summary Table ─── */}
+          <div className="card">
+            <h2 className="text-lg font-bold mb-3">{"\u26A1"} Power Chain Cascade Analysis</h2>
+            <div className="text-xs mb-3" style={{color:'var(--text-muted)'}}>
+              Target: {calc.racks} racks × {calc.kwTarget} kW = {calc.itLoadTargetMW.toFixed(2)} MW IT | × PUE {calc.pueT} = {calc.facilityTargetMW.toFixed(2)} MW facility
+              {calc.is2N && " | 2N topology: each path carries full IT load"}
+            </div>
+            <div style={{overflowX:'auto'}}>
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th>Level</th>
+                    <th>Component</th>
+                    <th style={{textAlign:'right'}}>Capacity</th>
+                    <th style={{textAlign:'right'}}>Load</th>
+                    <th style={{textAlign:'right'}}>Util %</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {calc.cascade.map(level => (
+                    <tr key={level.id} style={level.status === "fail" ? {background:'var(--red-dim)'} : level.status === "verify" ? {background:'var(--amber-dim)'} : {}}>
+                      <td className="font-mono text-xs" style={{color:'var(--text-muted)'}}>{level.id}</td>
+                      <td className="font-semibold">{level.name}</td>
+                      <td style={{textAlign:'right',fontFamily:'var(--font-mono)'}}>{level.capacityMW < 1 ? (level.capacityMW * 1000).toFixed(1) + " kW" : level.capacityMW.toFixed(2) + " MW"}</td>
+                      <td style={{textAlign:'right',fontFamily:'var(--font-mono)'}}>{level.loadMW < 1 ? (level.loadMW * 1000).toFixed(1) + " kW" : level.loadMW.toFixed(2) + " MW"}</td>
+                      <td style={{textAlign:'right',fontFamily:'var(--font-mono)',fontWeight:700,
+                        color: level.status === "fail" ? 'var(--red)' : level.status === "verify" ? 'var(--amber)' : 'var(--green)'}}>
+                        {level.util.toFixed(0)}%
+                      </td>
+                      <td>
+                        <span className={`badge ${level.status === "fail" ? "badge-red" : level.status === "verify" ? "badge-amber" : "badge-green"}`}>
+                          {level.tag}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* ─── Bottleneck Cards ─── */}
+          {calc.bottlenecks.length > 0 && (
+            <div className="card">
+              <h2 className="text-lg font-bold mb-3">{"\u26D4"} Bottleneck Analysis — {calc.bottlenecks.length} Issue{calc.bottlenecks.length > 1 ? "s" : ""} Found</h2>
+              {calc.bottlenecks.map(b => (
+                <div key={b.id} className={`bneck-card ${b.status === "fail" ? "bneck-critical" : "bneck-verify"}`}>
+                  <div className="flex-between mb-2">
+                    <span className="font-bold">{b.id}: {b.name}</span>
+                    <span className={`bneck-tag ${b.status === "fail" ? "badge-red" : "badge-amber"}`} style={{
+                      background: b.status === "fail" ? 'var(--red-dim)' : 'var(--amber-dim)',
+                      color: b.status === "fail" ? 'var(--red)' : 'var(--amber)'
+                    }}>{b.tag}</span>
+                  </div>
+                  <div className="text-sm" style={{color:'var(--text-dim)',lineHeight:1.6}}>
+                    <strong>Capacity:</strong> {b.capacityMW < 1 ? (b.capacityMW * 1000).toFixed(1) + " kW" : b.capacityMW.toFixed(2) + " MW"} |{" "}
+                    <strong>Load:</strong> {b.loadMW < 1 ? (b.loadMW * 1000).toFixed(1) + " kW" : b.loadMW.toFixed(2) + " MW"} |{" "}
+                    <strong>Utilisation:</strong> <span style={{color: b.status === "fail" ? 'var(--red)' : 'var(--amber)', fontWeight:700}}>{b.util.toFixed(0)}%</span>
+                  </div>
+                  <div className="text-xs mt-2" style={{color:'var(--text-muted)',fontFamily:'var(--font-mono)'}}>
+                    {b.calcDetail}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ─── Tips ─── */}
+          {tips.length > 0 && (
+            <div className="card">
+              <h2 className="text-lg font-bold mb-3">{"\uD83D\uDCA1"} Engineering Recommendations</h2>
+              {tips.map((t, i) => (
+                <div key={i} style={{
+                  padding:14, borderRadius:10, marginBottom:10, borderLeft:'4px solid',
+                  background: t.c === "red" ? 'var(--red-dim)' : t.c === "amber" ? 'var(--amber-dim)' : 'var(--green-dim)',
+                  borderColor: t.c === "red" ? 'var(--red)' : t.c === "amber" ? 'var(--amber)' : 'var(--green)'
+                }}>
+                  <div className="font-semibold">{t.icon} {t.title}</div>
+                  <div className="text-sm mt-2" style={{color:'var(--text-dim)',lineHeight:1.6}}>{t.body}</div>
+                  <div className="text-xs mt-2" style={{color:'var(--text-muted)'}}>Ref: {t.ref}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* ─── Disclaimer (basic — full version in S3) ─── */}
+          <div className="info-bar mt-3">
+            <strong>Disclaimer:</strong> Prepared by Legacy Business Engineers Ltd as an engineering screening tool. Provides indicative power chain analysis — does not constitute detailed design, certification, or formal professional advice. Verify all outputs with a chartered MEP engineer before design decisions. See NOT CHECKED panel for items outside scope.
+            <div style={{marginTop:8,borderTop:'1px solid var(--border)',paddingTop:6,fontSize:'0.7rem',color:'var(--text-muted)'}}>
+              <strong>Standards:</strong> IS 10101:2020+A1:2024 | IEEE C57.110 (K-factor) | EN 62040-1 (UPS) | EN 50600 (DC Infrastructure) | Uptime Institute Tier Standard
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* SCREENING DISCLAIMER */}
+      <div style={{fontSize:'0.75rem',color:'#6b7280',background:'#f9fafb',padding:'6px',borderRadius:'4px',marginTop:'8px'}}>INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+      <div style={{fontSize:'7.5pt',color:'#9ca3af',textAlign:'center',marginTop:'6px'}}>Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+      {/* ─── Nav Footer ─── */}
+      <div className="no-print" style={{textAlign:'center',padding:'24px 0 16px',fontSize:'0.75rem',color:'var(--text-muted)'}}>
+        <a href="https://legacybe.ie/contact" style={{color:'var(--lbe-green)',textDecoration:'none'}}>Discuss Your Project {"\u2192"}</a>
+        <span style={{margin:'0 8px'}}>|</span>
+        <a href="https://legacybe.ie" style={{color:'var(--text-muted)',textDecoration:'none'}}>legacybe.ie</a>
+        <div style={{marginTop:4,fontSize:'0.68rem'}}>
+          {"\u00A9"} 2026 Legacy Business Engineers Ltd {"\u00B7"} {TOOL_ID} v{TOOL_VERSION}
+        </div>
+        <div style={{marginTop:2,fontSize:'0.65rem',color:'var(--text-muted)'}}>
+          IS 10101:2020+A1:2024 | IEEE C57.110 | EN 62040-1 | EN 50600
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ─── Mount ───
+ReactDOM.render(
+  <ErrorBoundary><App /></ErrorBoundary>,
+  document.getElementById('root')
+);
+</script>
+</body>
+</html>

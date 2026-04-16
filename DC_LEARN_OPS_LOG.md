@@ -401,3 +401,25 @@
 - [BUILD] CalculationsTab and ReportTab calc ID references updated (carbon_cost_current→carbon_cost_now, co2_tonnes→co2_scope2)
 - [DECISION] WHY: v2.0 deterministic calc engine — LLM never calculates; numbers are JavaScript, narrative is AI
 - [COMMIT] Branch: claude/copy-dc-tool-template-jTJoJ | commit bb1d070 | tools/DC-TOOL-004_v2_0_0.html
+
+---
+## 2026-04-16 — [DEPLOY] Repo consolidation (dc-screen → dc-learn-academy)
+
+Session: Claude Code cloud (Sonnet)
+Prompt: SCREEN_SITE_CC_PROMPT_v8_CLOUD.md (simplified consolidation)
+
+Shipped:
+- archive/dc-screen/ : full dc-screen contents preserved as read-only reference
+- tools/pipeline/    : MSTR + CPS + RPT active here (Services-tier engine)
+
+dc-learn-academy is now the single source of truth.
+
+Deferred to later sessions:
+- DC-TOOL-009 v2.0.0 commit (requires upload)
+- screen/ v8 bundle staging (requires upload)
+- Netlify + Cloudflare setup
+
+Pending LM manual step:
+- github.com/LM10-Maker/dc-screen → Settings → Archive repository (read-only)
+
+Verdict: SHIP

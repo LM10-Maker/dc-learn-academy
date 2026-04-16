@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-R-STR-001 v1.0.3 | Misalignment Risk Screener | Legacy Business Engineers</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+<style>
+:root{--lbe-green:#4a7c59;--lbe-dark:#1a1a1a;--dc-black:#1a1a1a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f9fafb;color:#1f2937;line-height:1.6}
+.container{max-width:860px;margin:0 auto;padding:16px}
+.header{background:var(--dc-black);color:#fff;padding:16px 20px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:12px}
+.header-logo{font-weight:700;font-size:1.1rem;color:#4a7c59}
+.header-title{font-size:1.15rem;font-weight:600}
+.header-sub{font-size:0.8rem;color:#9ca3af;margin-top:2px}
+.aud-bar{background:#eef2ff;border-left:4px solid #6366f1;padding:10px 14px;font-size:0.82rem;color:#3730a3}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:18px;margin:12px 0}
+.card h2{font-size:1rem;font-weight:700;color:var(--dc-black);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #e5e7eb}
+label{display:block;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:4px}
+.help{font-size:0.72rem;color:#6b7280;margin-bottom:8px}
+input,select{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.88rem;margin-bottom:4px}
+input:focus,select:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 2px rgba(99,102,241,0.15)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.btn{background:var(--dc-black);color:#fff;padding:10px 20px;border:none;border-radius:6px;font-size:0.9rem;font-weight:600;cursor:pointer;width:100%;margin-top:8px}
+.btn:hover{background:#333}
+.btn-sample{background:#fff;color:var(--dc-black);border:1px solid #d1d5db;font-size:0.78rem;padding:6px 12px;border-radius:4px;cursor:pointer;margin-right:8px}
+.btn-sample:hover{background:#f3f4f6}
+.result-card{padding:14px;border-radius:8px;text-align:center;border:1px solid}
+.result-val{font-size:1.5rem;font-weight:700;line-height:1.2}
+.result-label{font-size:0.72rem;color:#6b7280;margin-top:2px}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:600}
+.badge-green{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.badge-amber{background:#fef3c7;color:#92400e;border:1px solid #fbbf24}
+.badge-red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.tip{padding:10px 12px;border-radius:6px;margin:6px 0;border-left:4px solid;font-size:0.82rem}
+.tip-green{background:#f0fdf4;border-color:#22c55e;color:#166534}
+.tip-amber{background:#fffbeb;border-color:#f59e0b;color:#92400e}
+.tip-red{background:#fef2f2;border-color:#ef4444;color:#991b1b}
+.tip-title{font-weight:700;margin-bottom:2px}
+.not-checked{background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:14px;margin:12px 0}
+.not-checked h3{color:#991b1b;font-size:0.9rem;margin-bottom:6px}
+.not-checked li{font-size:0.8rem;color:#991b1b;margin:3px 0}
+.wtm{background:#f0f9ff;border:1px solid #93c5fd;border-radius:8px;padding:14px;margin:12px 0}
+.wtm h3{font-size:0.88rem;color:#1e40af;margin-bottom:6px}
+.wtm p{font-size:0.82rem;color:#1e3a5f}
+.cta-bar{background:linear-gradient(135deg,#fbbf24,#f59e0b);padding:16px 20px;border-radius:8px;margin:12px 0;text-align:center}
+.cta-bar h3{color:#1a1a1a;font-size:0.95rem;margin-bottom:4px}
+.cta-bar p{color:#78350f;font-size:0.82rem;margin-bottom:8px}
+.cta-btn{display:inline-block;background:var(--dc-black);color:#fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem}
+.sample-bar{background:#f0fdf4;border:1px solid #86efac;padding:10px 16px;border-radius:6px;margin:8px 0;text-align:center;font-size:0.82rem}
+.sample-bar a{color:#166534;font-weight:600;text-decoration:none}
+.nav-footer{text-align:center;padding:12px;background:#f9fafb;border-top:1px solid #e5e7eb;margin-top:20px;font-size:0.8rem}
+.nav-footer a{color:#4a7c59;text-decoration:none}
+.disclaimer{font-size:0.7rem;color:#9ca3af;text-align:center;padding:8px;margin-top:4px}
+#results{display:none}
+.risk-bar{height:24px;border-radius:4px;position:relative;margin:4px 0}
+.risk-fill{height:100%;border-radius:4px;transition:width 0.5s}
+.risk-score-label{position:absolute;right:6px;top:3px;font-size:0.72rem;font-weight:600;color:#fff}
+.radar-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #f3f4f6;font-size:0.82rem}
+.radar-label{width:120px;font-weight:600;flex-shrink:0}
+.radar-bar-wrap{flex:1;background:#f3f4f6;border-radius:4px;height:20px;position:relative}
+.radar-fill{height:100%;border-radius:4px}
+.radar-score{width:40px;text-align:center;font-weight:700;font-size:0.85rem}
+@media print{
+  .no-print{display:none!important}
+  .cta-bar,.sample-bar,.nav-footer,.btn,.btn-sample,.aud-bar{display:none!important}
+  @page{size:A4 portrait;margin:14mm 12mm 20mm 12mm}
+  body{background:#fff}
+  .container{max-width:100%;padding:0}
+}
+</style>
+<script>
+window.onerror=function(msg,src,line,col,err){
+  var el=document.getElementById('app');
+  if(el&&(!el.innerHTML||el.innerHTML.trim()==='')){
+    el.innerHTML='<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      +'<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error</h2>'
+      +'<p style="color:#374151;margin:0 0 8px"><strong>DC-R-STR-001 v1.0.3</strong> failed to load.</p>'
+      +'<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      +'Error: '+msg+'\\nLine: '+line+', Col: '+col
+      +(err&&err.stack?'\\n\\nStack:\\n'+err.stack.substring(0,500):'')
+      +'</div>'
+      +'<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM.</p>'
+      +'</div>';
+  }
+  return false;
+};
+</script>
+</head>
+<body>
+<div class="container" id="app">
+
+<div class="header">
+  <div><img src="data:image/png;base64,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" alt="LBE" style="height:36px;border-radius:50%" onerror="this.style.display='none'" /></div>
+  <div>
+    <div class="header-title">Misalignment Risk Screener</div>
+    <div class="header-sub">DC-R-STR-001 v1.0.3 · When does this facility become a liability?</div>
+  </div>
+</div>
+
+<div class="aud-bar no-print">
+  <strong>For DC Investors & Operators</strong> — Screen regulatory, market, technical, financial, and carbon misalignment risk on a timeline
+</div>
+
+<div class="not-checked">
+  <h3>⚠️ NOT CHECKED by this tool</h3>
+  <ul>
+    <li>Tax implications of capital expenditure vs disposal</li>
+    <li>Lease break clauses or landlord consent requirements</li>
+    <li>Planning permission for material change of use</li>
+    <li>Detailed construction programme or phasing logistics</li>
+    <li>Tenant contracts, SLA penalties, or migration costs</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>Facility Parameters</h2>
+  <div class="grid-2">
+    <div>
+      <label for="pue">Current Annual PUE</label>
+      <div class="help">EN 50600-4-2 measurement. Warning if >2.0.</div>
+      <input type="number" id="pue" min="1.0" max="3.0" step="0.01" placeholder="e.g. 1.6">
+    </div>
+    <div>
+      <label for="itLoad">IT Load (MW)</label>
+      <div class="help">Metered IT load at facility level.</div>
+      <input type="number" id="itLoad" min="0.1" max="200" step="0.1" placeholder="e.g. 5">
+    </div>
+    <div>
+      <label for="annualEnergy">Annual Energy (MWh)</label>
+      <div class="help">Total facility electricity consumption.</div>
+      <input type="number" id="annualEnergy" min="100" max="2000000" step="100" placeholder="e.g. 43800">
+    </div>
+    <div>
+      <label for="renewPct">Renewable Share (%)</label>
+      <div class="help">PPA + on-site + GoO certificates. CRU 80% target by 2030.</div>
+      <input type="number" id="renewPct" min="0" max="100" step="1" placeholder="e.g. 30">
+    </div>
+    <div>
+      <label for="age">Facility Age (years)</label>
+      <div class="help">CIBSE Guide M: major plant design life 15–25 years.</div>
+      <input type="number" id="age" min="0" max="50" step="1" placeholder="e.g. 10">
+    </div>
+    <div>
+      <label for="leaseYrs">Remaining Lease (years)</label>
+      <div class="help">0 = freehold. Short lease reduces retrofit ROI.</div>
+      <input type="number" id="leaseYrs" min="0" max="99" step="1" placeholder="e.g. 15">
+    </div>
+    <div>
+      <label for="assetVal">Current Asset Value (€M)</label>
+      <div class="help">Market valuation or book value.</div>
+      <input type="number" id="assetVal" min="0.1" max="5000" step="0.1" placeholder="e.g. 20">
+    </div>
+    <div>
+      <label for="annualRev">Annual Revenue (€M)</label>
+      <div class="help">Colocation revenue or internal charge-back.</div>
+      <input type="number" id="annualRev" min="0.1" max="1000" step="0.1" placeholder="e.g. 8">
+    </div>
+    <div>
+      <label for="rackDensity">Average Rack Density (kW/rack)</label>
+      <div class="help">Current average. AI demand driving 30–50 kW/rack.</div>
+      <input type="number" id="rackDensity" min="1" max="120" step="1" placeholder="e.g. 8">
+    </div>
+    <div>
+      <label for="segment">Market Segment</label>
+      <div class="help">Determines competitive benchmarks.</div>
+      <select id="segment">
+        <option value="">-- Select --</option>
+        <option value="colocation">Colocation</option>
+        <option value="enterprise">Enterprise</option>
+        <option value="hyperscale">Hyperscale</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px" class="no-print">
+    <button class="btn" onclick="calculate()">Analyse Risk</button>
+    <button class="btn-sample" onclick="loadSample()">📋 Load Sample</button>
+  </div>
+</div>
+
+<div id="results">
+  <div class="card">
+    <h2>Risk Summary</h2>
+    <div class="grid-3" id="summaryCards"></div>
+  </div>
+  <div class="card">
+    <h2>Risk Factor Analysis</h2>
+    <div id="riskBars"></div>
+  </div>
+  <div class="card">
+    <h2>Misalignment Timeline</h2>
+    <div id="timeline"></div>
+  </div>
+  <div class="card">
+    <h2>Mitigation Actions</h2>
+    <div id="mitigations"></div>
+  </div>
+  <div class="wtm" id="wtmPanel"></div>
+  <div class="card">
+    <h2>💡 Value Engineering Tips</h2>
+    <div id="tipsPanel"></div>
+  </div>
+  <div class="card no-print">
+    <h2>Export</h2>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sample" onclick="exportJSON()">📥 Export JSON</button>
+      <button class="btn-sample" onclick="window.print()">🖨️ Print / PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="cta-bar no-print">
+  <h3>Got the answers? Ready for the full picture?</h3>
+  <p>S4-A Site Feasibility Assessment — independent MEP screening report for your data centre. From <strong>€15,000 + VAT</strong></p>
+  <a href="https://legacybe.ie/contact/" target="_blank" class="cta-btn">Talk to an Engineer</a>
+</div>
+
+<div class="sample-bar no-print">
+  <a href="#">See Sample: Tara Campus — 50MW hyperscale feasibility assessment</a>
+</div>
+
+<div class="nav-footer no-print">
+  <a href="https://lbe-tools.netlify.app/">↩ Back to All Tools</a>
+  &nbsp;|&nbsp;
+  <a href="https://legacybe.ie" target="_blank" style="color:#6b7280">legacybe.ie</a>
+  <div style="font-size:0.7rem;color:#9ca3af;margin-top:4px">Powered by AIMEP · © 2026 Legacy Business Engineers Ltd</div>
+</div>
+
+<div class="disclaimer" style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;">INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+<div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;">Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+
+</div>
+
+<script>
+var TOOL_META = { id: 'DC-R-STR-001', version: '1.0.3', name: 'Misalignment Risk Screener' };
+
+// Regulatory PUE thresholds — EU EED recast expected enforcement trajectory
+var REG_PUE_2026 = 1.50; // EU EED Art.12 reporting threshold — above this triggers regulatory attention
+var REG_PUE_2030 = 1.30; // Expected EU EED minimum efficiency standard by 2030 (proposed)
+var GRID_CO2 = 0.2241;   // kgCO₂/kWh — SEAI 2026 national grid emission factor
+var ELEC_PRICE = 0.12;   // €/kWh — CRU Q4 2024 large energy user rate
+
+// Market density benchmarks — Uptime Institute Global Survey 2024
+var MARKET_DENSITY = { colocation: 12, enterprise: 8, hyperscale: 15 }; // kW/rack average demand
+var AI_DENSITY_FLOOR = 30; // kW/rack — minimum for AI-ready facility (NVIDIA DGX class)
+
+// Plant design life — CIBSE Guide M Table 2.1
+var PLANT_DESIGN_LIFE = {
+  ups: 15,      // UPS systems — CIBSE Guide M
+  chiller: 20,  // Chillers — CIBSE Guide M
+  switchgear: 25, // LV switchgear — CIBSE Guide M
+  generator: 25   // Diesel generators — CIBSE Guide M
+};
+
+// Scoring weights — LBE internal methodology (equal weight, can be adjusted)
+var WEIGHTS = { regulatory: 0.25, market: 0.20, technical: 0.20, financial: 0.15, carbon: 0.20 };
+
+function gv(id) { var v = document.getElementById(id).value; return v === '' ? null : parseFloat(v); }
+function gs(id) { return document.getElementById(id).value; }
+
+function validate() {
+  var e = [];
+  if (gv('pue') === null) e.push('PUE required');
+  else if (gv('pue') < 1.0 || gv('pue') > 3.0) e.push('PUE must be 1.0–3.0');
+  if (gv('itLoad') === null) e.push('IT Load required');
+  if (gv('annualEnergy') === null) e.push('Annual energy required');
+  if (gv('renewPct') === null) e.push('Renewable share required');
+  if (gv('age') === null) e.push('Facility age required');
+  if (gv('leaseYrs') === null) e.push('Lease term required');
+  if (gv('assetVal') === null) e.push('Asset value required');
+  if (gv('annualRev') === null) e.push('Annual revenue required');
+  if (gv('rackDensity') === null) e.push('Rack density required');
+  if (!gs('segment')) e.push('Market segment required');
+  return e;
+}
+
+function scoreRisk(value, thresholds) {
+  // thresholds = [low, medLow, medHigh, high] — returns 1-5
+  if (value <= thresholds[0]) return 1;
+  if (value <= thresholds[1]) return 2;
+  if (value <= thresholds[2]) return 3;
+  if (value <= thresholds[3]) return 4;
+  return 5;
+}
+
+function calculate() {
+  var err = validate();
+  if (err.length > 0) { alert('Fix inputs:\n• ' + err.join('\n• ')); return; }
+
+  var pue = gv('pue'), itLoad = gv('itLoad'), energy = gv('annualEnergy');
+  var renew = gv('renewPct'), age = gv('age'), lease = gv('leaseYrs');
+  var assetVal = gv('assetVal'), annRev = gv('annualRev');
+  var density = gv('rackDensity'), segment = gs('segment');
+
+  // A. Regulatory risk: PUE vs expected minimums
+  var regGap2026 = pue - REG_PUE_2026;
+  var regGap2030 = pue - REG_PUE_2030;
+  var regScore = scoreRisk(pue, [1.20, 1.35, 1.50, 1.70]); // 1=excellent, 5=critical
+
+  // B. Market risk: density vs market demand
+  var mktBenchmark = MARKET_DENSITY[segment] || 10;
+  var densityRatio = density / AI_DENSITY_FLOOR; // How far from AI-ready
+  var mktScore = scoreRisk(1 - densityRatio, [-0.5, 0, 0.3, 0.6]); // closer to 0 = higher risk
+  // Also factor in absolute density
+  if (density < 5) mktScore = Math.max(mktScore, 4);
+  if (density >= 20) mktScore = Math.min(mktScore, 2);
+
+  // C. Technical: remaining design life
+  var plantLife = Math.min(PLANT_DESIGN_LIFE.ups, PLANT_DESIGN_LIFE.chiller); // Weakest link
+  var remainingLife = plantLife - age;
+  var techScore = scoreRisk(-remainingLife, [-15, -8, -3, 0]); // negative = years left
+
+  // D. Financial: operating cost competitiveness
+  var opCostPerMWh = (energy * ELEC_PRICE * 1000) / (itLoad * 8760); // Effective €/MWh_IT
+  // For colocation, compare rev/MW vs cost/MW
+  var revPerMW = annRev / itLoad;
+  var costPerMW = energy * ELEC_PRICE / itLoad;
+  var margin = (revPerMW - costPerMW) / revPerMW;
+  var finScore = scoreRisk(-margin, [-0.5, -0.3, -0.15, -0.05]); // negative = good margin
+
+  // E. Carbon: emissions trajectory
+  var co2Total = energy * GRID_CO2; // tCO₂/yr (total)
+  var co2Adjusted = co2Total * (1 - renew / 100); // Adjusted for renewable share
+  var co2Intensity = co2Adjusted / itLoad; // tCO₂/MW_IT
+  // DC carbon intensity thresholds — <200 excellent, >500 critical (kgCO₂/MWh_IT)
+  var co2IntKg = (co2Adjusted * 1000) / (itLoad * 8760); // kgCO₂/MWh_IT
+  var carbScore = scoreRisk(co2IntKg, [50, 100, 200, 350]);
+
+  // Weighted composite
+  var composite = regScore * WEIGHTS.regulatory + mktScore * WEIGHTS.market +
+                  techScore * WEIGHTS.technical + finScore * WEIGHTS.financial +
+                  carbScore * WEIGHTS.carbon;
+
+  // Misalignment year estimate
+  var currentYear = 2026;
+  // Each point above 2.5 composite reduces estimated viable years by ~3
+  var viableYears = Math.max(1, Math.round(25 - (composite - 1) * 5));
+  if (lease > 0 && lease < viableYears) viableYears = Math.min(viableYears, lease + 2);
+  var strandYear = currentYear + viableYears;
+
+  // Overall verdict
+  var verdict = composite <= 2.0 ? 'LOW RISK' : composite <= 3.0 ? 'MODERATE' :
+                composite <= 3.8 ? 'ELEVATED' : 'CRITICAL';
+
+  var factors = [
+    { name: 'A. Regulatory', score: regScore, detail: 'PUE ' + pue.toFixed(2) + ' vs 1.50 (2026) / 1.30 (2030)' },
+    { name: 'B. Market', score: mktScore, detail: density + ' kW/rack vs ' + AI_DENSITY_FLOOR + ' kW AI-ready threshold' },
+    { name: 'C. Technical', score: techScore, detail: age + ' yrs old, ' + (remainingLife > 0 ? remainingLife + ' yrs remaining' : Math.abs(remainingLife) + ' yrs past design life') },
+    { name: 'D. Financial', score: finScore, detail: 'Operating margin ~' + (margin * 100).toFixed(0) + '%' },
+    { name: 'E. Carbon', score: carbScore, detail: co2IntKg.toFixed(0) + ' kgCO₂/MWh_IT (' + renew + '% renewable)' }
+  ];
+
+  document.getElementById('results').style.display = 'block';
+  renderSummary(composite, verdict, strandYear, viableYears);
+  renderRiskBars(factors);
+  renderTimeline(strandYear, currentYear, pue, age, lease, factors);
+  renderMitigations(factors, pue, density, age, renew, lease);
+  renderWTM(verdict, composite, strandYear, pue, density, co2IntKg);
+  renderTips(pue, density, age, renew, lease, segment, strandYear);
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderSummary(comp, verdict, sYear, vYrs) {
+  var vc = verdict === 'LOW RISK' ? '#dcfce7;border-color:#86efac;color:#166534' :
+           verdict === 'MODERATE' ? '#fef3c7;border-color:#fbbf24;color:#92400e' :
+           verdict === 'ELEVATED' ? '#ffedd5;border-color:#fb923c;color:#9a3412' :
+           '#fee2e2;border-color:#fca5a5;color:#991b1b';
+  var bc = verdict === 'LOW RISK' ? 'badge-green' : verdict === 'MODERATE' ? 'badge-amber' : 'badge-red';
+  document.getElementById('summaryCards').innerHTML =
+    '<div class="result-card" style="background:' + vc + '"><div class="result-val">' + comp.toFixed(1) + '/5</div><div class="result-label">Composite Risk Score</div></div>' +
+    '<div class="result-card" style="background:' + vc + '"><div class="result-val">' + sYear + '</div><div class="result-label">Estimated Misalignment Year</div></div>' +
+    '<div class="result-card" style="background:' + vc + '"><div class="result-val">' + vYrs + ' yrs</div><div class="result-label">Viable Horizon</div>' +
+    '<div style="margin-top:4px"><span class="badge ' + bc + '">' + verdict + '</span></div></div>';
+}
+
+function renderRiskBars(factors) {
+  var html = '';
+  factors.forEach(function(f) {
+    var pct = (f.score / 5) * 100;
+    var col = f.score <= 2 ? '#22c55e' : f.score <= 3 ? '#f59e0b' : f.score <= 4 ? '#f97316' : '#ef4444';
+    html += '<div class="radar-row">' +
+      '<div class="radar-label">' + f.name + '</div>' +
+      '<div class="radar-bar-wrap"><div class="radar-fill" style="width:' + pct + '%;background:' + col + '"></div></div>' +
+      '<div class="radar-score" style="color:' + col + '">' + f.score + '/5</div>' +
+      '</div>' +
+      '<div style="font-size:0.72rem;color:#6b7280;padding:0 0 6px 128px">' + f.detail + '</div>';
+  });
+  document.getElementById('riskBars').innerHTML = html;
+}
+
+function renderTimeline(sYear, cYear, pue, age, lease, factors) {
+  var events = [];
+  events.push({ year: cYear, label: 'Now', type: 'info' });
+  if (pue > REG_PUE_2026) events.push({ year: 2026, label: 'EED PUE 1.50 threshold', type: 'warning' });
+  if (lease > 0) events.push({ year: cYear + lease, label: 'Lease expiry', type: 'info' });
+  events.push({ year: 2030, label: 'EU EED PUE 1.30 target', type: 'danger' });
+  if (age > 10) events.push({ year: cYear + (15 - age), label: 'UPS end-of-life (CIBSE Guide M)', type: 'warning' });
+  events.push({ year: sYear, label: 'Estimated misalignment year', type: 'danger' });
+
+  events.sort(function(a, b) { return a.year - b.year; });
+
+  var html = '<div style="position:relative;padding:10px 0 10px 120px">';
+  events.forEach(function(e) {
+    var col = e.type === 'danger' ? '#ef4444' : e.type === 'warning' ? '#f59e0b' : '#3b82f6';
+    html += '<div style="display:flex;align-items:center;margin:8px 0">' +
+      '<div style="width:60px;text-align:right;font-weight:700;font-size:0.85rem;color:' + col + ';margin-right:12px">' + e.year + '</div>' +
+      '<div style="width:12px;height:12px;border-radius:50%;background:' + col + ';flex-shrink:0"></div>' +
+      '<div style="margin-left:12px;font-size:0.82rem">' + e.label + '</div></div>';
+  });
+  html += '</div>';
+  document.getElementById('timeline').innerHTML = html;
+}
+
+function renderMitigations(factors, pue, density, age, renew, lease) {
+  var mitigations = [];
+  factors.forEach(function(f) {
+    if (f.score >= 3) {
+      var action = '';
+      if (f.name.indexOf('Regulatory') >= 0) action = 'Reduce PUE from ' + pue.toFixed(2) + ' to <1.30 through cooling upgrades (containment, free cooling, VFDs). Estimated CAPEX: €200k–€500k/MW. Timeline: 6–18 months.';
+      if (f.name.indexOf('Market') >= 0) action = 'Upgrade power distribution for higher density. Current ' + density + ' kW/rack — target 20+ kW/rack. Requires PDU/busway upgrade. Consider DLC for AI-ready capability.';
+      if (f.name.indexOf('Technical') >= 0) action = 'Plan major plant replacement programme. At ' + age + ' years, UPS/chillers approaching or past design life. Phased replacement reduces single-event risk.';
+      if (f.name.indexOf('Financial') >= 0) action = 'Review pricing against market. Reduce operational costs through PUE improvement and renewable PPA to improve margin.';
+      if (f.name.indexOf('Carbon') >= 0) action = 'Increase renewable share from ' + renew + '% toward 80%+ (CRU Dec 2025 target). Corporate PPA or GoO certificates. Consider on-site BESS for grid services revenue.';
+      mitigations.push({ factor: f.name, score: f.score, action: action });
+    }
+  });
+
+  if (mitigations.length === 0) {
+    document.getElementById('mitigations').innerHTML = '<div style="font-size:0.82rem;color:#166534;padding:8px;background:#dcfce7;border-radius:6px">All risk factors at acceptable levels. Continue monitoring annually.</div>';
+    return;
+  }
+
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem">' +
+    '<tr style="background:#f9fafb"><th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Factor</th><th style="padding:8px;border-bottom:1px solid #e5e7eb;width:60px">Score</th><th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Mitigation Action</th></tr>';
+  mitigations.forEach(function(m) {
+    var col = m.score <= 3 ? '#f59e0b' : '#ef4444';
+    html += '<tr><td style="padding:8px;font-weight:600;border-bottom:1px solid #f3f4f6">' + m.factor + '</td>' +
+      '<td style="padding:8px;text-align:center;border-bottom:1px solid #f3f4f6;color:' + col + ';font-weight:700">' + m.score + '/5</td>' +
+      '<td style="padding:8px;border-bottom:1px solid #f3f4f6">' + m.action + '</td></tr>';
+  });
+  html += '</table>';
+  document.getElementById('mitigations').innerHTML = html;
+}
+
+function renderWTM(verdict, comp, sYear, pue, density, co2) {
+  var narratives = {
+    'LOW RISK': { v: 'LOW RISK', t: 'This facility scores ' + comp.toFixed(1) + '/5 on composite misalignment risk. Current PUE (' + pue.toFixed(2) + ') and density (' + density + ' kW/rack) are within acceptable ranges. The estimated viable horizon extends to ' + sYear + '. Continue monitoring key metrics annually — PUE trajectory, market density demand, and renewable share — to maintain this position. An S4-A assessment provides a detailed baseline for ongoing performance tracking.' },
+    'MODERATE': { v: 'MODERATE', t: 'Composite risk at ' + comp.toFixed(1) + '/5 indicates manageable but non-trivial misalignment exposure by ' + sYear + '. The key pressure points are identifiable and addressable. A targeted programme of PUE reduction, density preparation, and renewable procurement would extend the facility\'s viable life by 5–10 years. An S4-A assessment quantifies the specific interventions, CAPEX, and payback for your facility.' },
+    'ELEVATED': { v: 'ELEVATED', t: 'At ' + comp.toFixed(1) + '/5 composite risk, this facility faces material misalignment pressure. Regulatory tightening (EU EED), market demand for higher density, and carbon trajectory converge around ' + sYear + '. Without intervention, the facility risks becoming commercially unviable. An S4-A assessment provides the detailed analysis needed for a board-level invest/divest decision.' },
+    'CRITICAL': { v: 'CRITICAL', t: 'Composite risk at ' + comp.toFixed(1) + '/5 indicates urgent misalignment exposure. Multiple factors score 4–5, and the estimated viable horizon is ' + sYear + '. This facility requires immediate strategic assessment: retrofit, rebuild, or divest. An S4-A engagement delivers the independent MEP analysis for that decision.' }
+  };
+  var n = narratives[verdict];
+  var bc = verdict === 'LOW RISK' ? 'badge-green' : verdict === 'MODERATE' ? 'badge-amber' : 'badge-red';
+  document.getElementById('wtmPanel').innerHTML =
+    '<h3>What This Means — <span class="badge ' + bc + '">' + n.v + '</span></h3><p>' + n.t + '</p>';
+}
+
+function renderTips(pue, density, age, renew, lease, segment, sYear) {
+  var tips = [];
+
+  if (lease > 0 && lease < 10) {
+    tips.push({ c: 'red', t: '📋 Short lease limits retrofit ROI', b: 'With ' + lease + ' years remaining, major CAPEX needs careful NPV modelling. Consider: negotiate lease extension before committing to retrofit; or, if landlord won\'t extend, the divest option may generate better returns than sinking capital into a short-lease asset.' });
+  }
+
+  tips.push({ c: 'green', t: '⚡ Dublin grid connection = misalignment insurance', b: 'An existing grid connection in Dublin is a scarce asset. EirGrid has constrained new DC connections in the Greater Dublin Area. Any facility with an established connection holds significant strategic value — even if the building needs retrofit. Factor grid connection value into any divest/rebuild analysis.' });
+
+  if (pue > 1.4 && pue <= 1.7) {
+    tips.push({ c: 'amber', t: '📉 PUE trajectory matters more than absolute number', b: 'Your PUE of ' + pue.toFixed(2) + ' is above the 2030 target (1.30) but not critically so. A steady improvement of 0.05 PUE/year through phased upgrades (containment → VFDs → free cooling) extends the misalignment year by 3–5 years. The key metric is trajectory, not a single snapshot.' });
+  }
+
+  if (density < 10) {
+    tips.push({ c: 'amber', t: '🔌 Low density = market risk', b: 'At ' + density + ' kW/rack, this facility is below current market standard (10–12 kW). AI workloads require 30–50+ kW/rack. The question isn\'t whether to densify — it\'s whether the power chain can support it. DC-R-PWR-001 screens this.' });
+  }
+
+  if (renew < 50) {
+    tips.push({ c: 'amber', t: '🌱 Renewable share is a competitive factor', b: 'At ' + renew + '%, the facility is below the CRU Dec 2025 target of 80% renewable for DC operators. Corporate PPAs in Ireland are available at €55–€75/MWh. Each 10% increase in renewable share reduces carbon intensity by ~22 kgCO₂/MWh_IT and improves ESG positioning.' });
+  }
+
+  document.getElementById('tipsPanel').innerHTML = tips.map(function(t) {
+    return '<div class="tip tip-' + t.c + '"><div class="tip-title">' + t.t + '</div>' + t.b + '</div>';
+  }).join('');
+}
+
+function loadSample() {
+  document.getElementById('pue').value = 1.6;
+  document.getElementById('itLoad').value = 5;
+  document.getElementById('annualEnergy').value = 43800;
+  document.getElementById('renewPct').value = 30;
+  document.getElementById('age').value = 10;
+  document.getElementById('leaseYrs').value = 15;
+  document.getElementById('assetVal').value = 20;
+  document.getElementById('annualRev').value = 8;
+  document.getElementById('rackDensity').value = 8;
+  document.getElementById('segment').value = 'colocation';
+  calculate();
+}
+
+function exportJSON() {
+  var data = {
+    _aimep_lineage: { tool_id: TOOL_META.id, version: TOOL_META.version, exported: new Date().toISOString(), classification: 'SCREENING' },
+    disclaimer: 'INDICATIVE SCREENING — Not a detailed asset valuation or investment recommendation. All outputs require review by qualified professionals before informing any investment, divestment, or capital allocation decision.',
+    not_checked: ['Tax implications','Lease break clauses','Planning permission','Construction programme','Tenant contracts/SLAs'],
+    inputs: {
+      pue: gv('pue'), itLoad_MW: gv('itLoad'), annual_energy_MWh: gv('annualEnergy'),
+      renewable_pct: gv('renewPct'), age_yrs: gv('age'), lease_yrs: gv('leaseYrs'),
+      asset_value_EUR_M: gv('assetVal'), annual_revenue_EUR_M: gv('annualRev'),
+      rack_density_kW: gv('rackDensity'), segment: gs('segment')
+    }
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'DC-R-STR-001_export.json';
+  a.click();
+}
+</script>
+</body>
+</html>
