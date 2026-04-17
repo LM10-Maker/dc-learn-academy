@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-R-PUE-001 | PUE Gap Analyser | Legacy Business Engineers</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --lbe-green: #4a7c59; --lbe-green-light: #e8f0eb; --lbe-dark: #1a2332;
+    --seg06-bg: #eef2ff; --seg06-border: #6366f1; --seg06-text: #4338ca;
+    --green-bg: #dcfce7; --green-text: #166534; --green-border: #86efac;
+    --amber-bg: #fef3c7; --amber-text: #92400e; --amber-border: #fcd34d;
+    --red-bg: #fef2f2; --red-text: #991b1b; --red-border: #fca5a5;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8fafc; color: #1e293b; line-height: 1.6; }
+  .container { max-width: 720px; margin: 0 auto; padding: 16px; padding-bottom: 80px; }
+
+  /* ═══ v15 AUDIENCE BAR ═══ */
+  .v15-audience-bar { background: var(--seg06-bg); border-bottom: 2px solid #c7d2fe;
+    text-align: center; padding: 6px 16px; font-size: 11px; font-weight: 700;
+    color: var(--seg06-text); letter-spacing: 1.2px; text-transform: uppercase; }
+  .v15-audience-line { text-align: center; padding: 6px 16px; font-size: 11px;
+    color: #64748b; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+
+  /* ═══ HEADER ═══ */
+  .lbe-header { background: var(--lbe-dark); color: white; padding: 16px 20px;
+    border-radius: 10px 10px 0 0; display: flex; align-items: center; gap: 14px; }
+  .lbe-header img { height: 36px; border-radius: 50%; flex-shrink: 0; }
+  .lbe-header .h-text { flex: 1; }
+  .lbe-header .h-title { font-size: 17px; font-weight: 700; }
+  .lbe-header .h-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .lbe-header .h-ver { font-size: 10px; color: #64748b; }
+  .seg-banner { background: var(--seg06-bg); border-left: 4px solid var(--seg06-border);
+    color: var(--seg06-text); padding: 10px 16px; font-size: 13px; font-weight: 600; }
+
+  /* ═══ FORM ═══ */
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 0 0 10px 10px; padding: 20px; }
+  .section-title { font-size: 14px; font-weight: 700; color: var(--lbe-dark); margin: 16px 0 8px;
+    padding-bottom: 6px; border-bottom: 2px solid var(--lbe-green); }
+  label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 4px; }
+  .hint { font-size: 11px; color: #94a3b8; margin-bottom: 2px; }
+  select, input[type="number"] { width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1;
+    border-radius: 6px; font-size: 14px; background: white; margin-bottom: 14px; }
+  select:focus, input:focus { outline: none; border-color: var(--lbe-green);
+    box-shadow: 0 0 0 3px rgba(74,124,89,0.12); }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .calc-btn { width: 100%; padding: 12px; background: var(--lbe-green); color: white;
+    border: none; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer;
+    margin-top: 6px; }
+  .calc-btn:hover { background: #3d6b4a; }
+
+  /* ═══ RESULTS ═══ */
+  .result-panel { display: none; margin-top: 16px; }
+  .result-panel.show { display: block; }
+  .r-primary { text-align: center; padding: 20px; border-radius: 10px;
+    border: 2px solid var(--lbe-green); background: var(--lbe-green-light); margin-bottom: 14px; }
+  .r-primary .r-num { font-size: 32px; font-weight: 800; color: var(--lbe-dark); }
+  .r-primary .r-label { font-size: 13px; color: #64748b; margin-top: 2px; }
+  .verdict { display: inline-block; padding: 5px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 700; margin-top: 8px; }
+  .v-green { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+  .v-amber { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+  .v-red { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+  .r-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .r-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .r-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; }
+  .r-item .ri-val { font-size: 20px; font-weight: 700; color: var(--lbe-dark); }
+  .r-item .ri-lab { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+  /* ═══ PUE GAUGE ═══ */
+  .pue-gauge { display: flex; align-items: center; gap: 10px; margin: 14px 0;
+    background: #f8fafc; border-radius: 8px; padding: 12px 16px; }
+  .pg-track { flex: 1; height: 14px; background: linear-gradient(to right, #22c55e 0%, #22c55e 25%, #f59e0b 50%, #ef4444 100%);
+    border-radius: 7px; position: relative; }
+  .pg-marker { position: absolute; top: -6px; width: 4px; height: 26px;
+    border-radius: 2px; transition: left 0.3s; }
+  .pg-label { font-size: 11px; font-weight: 600; min-width: 60px; text-align: center; }
+
+  /* ═══ INTERVENTION TABLE ═══ */
+  .int-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  .int-table th { background: var(--lbe-dark); color: white; padding: 8px 10px; text-align: left;
+    font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .int-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; }
+  .int-table tr:hover { background: #f8fafc; }
+  .int-table .pri-high { color: #991b1b; font-weight: 700; }
+  .int-table .pri-med { color: #92400e; font-weight: 700; }
+  .int-table .pri-low { color: #166534; font-weight: 700; }
+  .int-bar { height: 6px; border-radius: 3px; background: #e2e8f0; margin-top: 4px; }
+  .int-bar-fill { height: 100%; border-radius: 3px; background: var(--lbe-green); }
+
+  /* ═══ TIPS ═══ */
+  .tip { border-left: 4px solid; border-radius: 6px; padding: 12px 16px; margin-top: 10px; font-size: 13px; }
+  .tip-green { background: #f0fdf4; border-color: #22c55e; }
+  .tip-blue { background: #eff6ff; border-color: #3b82f6; }
+  .tip-amber { background: #fffbeb; border-color: #f59e0b; }
+  .tip-red { background: #fef2f2; border-color: #ef4444; }
+  .tip .tip-title { font-weight: 700; margin-bottom: 4px; }
+  .tip .tip-ref { font-size: 11px; color: #64748b; margin-top: 6px; }
+
+  /* ═══ NOT CHECKED PANEL ═══ */
+/* ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ */
+.confidence-panel {
+  background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px;
+  padding: 16px; margin-top: 16px; font-size: 12px; color: #14532d;
+}
+.confidence-panel h4 { color: #166534; font-size: 13px; margin-bottom: 10px; font-weight: 700; }
+.confidence-panel table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.confidence-panel th { text-align: left; padding: 4px 8px; font-weight: 700; border-bottom: 1px solid #86efac; font-size: 11px; }
+.confidence-panel td { padding: 4px 8px; border-bottom: 1px solid #dcfce7; font-size: 11px; }
+.confidence-panel .tier-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-weight: 700; font-size: 10px; }
+.confidence-panel .t1 { background: #166534; color: white; }
+.confidence-panel .t2 { background: #15803d; color: white; }
+.confidence-panel .t3 { background: #ca8a04; color: white; }
+.confidence-panel .t4 { background: #dc2626; color: white; }
+
+  .not-checked { background: #fef2f2; border: 2px solid #fca5a5; border-radius: 8px;
+    padding: 16px; margin-top: 16px; }
+  .not-checked h4 { color: #991b1b; font-size: 13px; margin-bottom: 8px; }
+  .not-checked ul { font-size: 12px; color: #991b1b; margin-left: 16px; }
+  .not-checked li { margin-bottom: 4px; }
+
+  /* ═══ CTA ═══ */
+  .cta-box { background: linear-gradient(135deg, var(--lbe-dark) 0%, #2d3748 100%);
+    border-radius: 10px; padding: 20px; margin-top: 16px; text-align: center; color: white; }
+  .cta-box h3 { font-size: 16px; margin-bottom: 6px; }
+  .cta-box p { font-size: 13px; color: #94a3b8; margin-bottom: 12px; }
+  .cta-btn { display: inline-block; padding: 10px 24px; background: var(--lbe-green);
+    color: white; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; }
+
+  /* ═══ STANDARDS FOOTER ═══ */
+  .std-footer { font-size: 10px; color: #94a3b8; text-align: center; margin-top: 16px;
+    padding-top: 12px; border-top: 1px solid #e2e8f0; line-height: 1.8; }
+
+  /* ═══ v15 NAV FOOTER ═══ */
+  .v15-nav-footer { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a1a;
+    padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+    z-index: 1000; border-top: 2px solid var(--lbe-green); }
+  .v15-nav-footer .nf-brand { color: #a3a39f; font-size: 11px; }
+  .v15-nav-footer .nf-cta { color: var(--lbe-green); font-size: 13px; font-weight: 700;
+    text-decoration: none; }
+  .v15-nav-footer .nf-cta:hover { color: #5d9970; }
+
+  /* ═══ v15 SAMPLE BANNER ═══ */
+  .v15-sample { background: #fefce8; border: 1px solid #fde047; border-radius: 8px;
+    padding: 10px 16px; margin-bottom: 14px; font-size: 12px; color: #854d0e; text-align: center; }
+  .v15-sample a { color: var(--seg06-text); font-weight: 700; }
+
+  /* ═══ PRINT ═══ */
+  @media print {
+  .cta-bar, .sample-bar { display: none !important; }
+
+    .np { display: none !important; }
+    body { background: white; font-size: 11pt; }
+    .container { max-width: 100%; padding: 0; }
+    .card { border: none; padding: 10px 0; }
+    .result-panel.show { display: block !important; }
+    .calc-btn { display: none; }
+    .cta-box { display: none; }
+    .not-checked { break-inside: avoid; }
+  }
+
+
+/* ═══ WHAT THIS MEANS ═══ */
+.wtm-panel {
+  background: linear-gradient(135deg, #f8fafc, #f0f9ff);
+  border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 16px 20px; margin-top: 16px;
+}
+.wtm-panel h4 { font-size: 14px; color: #1e40af; margin-bottom: 8px; }
+.wtm-panel p { font-size: 13px; color: #334155; line-height: 1.6; }
+
+
+/* ═══ LOAD SAMPLE BUTTON ═══ */
+.demo-btn {
+  padding: 8px 16px; background: #f1f5f9; border: 1px solid #cbd5e1;
+  border-radius: 6px; font-size: 12px; font-weight: 600; color: #475569;
+  cursor: pointer; margin-left: 8px; transition: background 0.2s;
+}
+.demo-btn:hover { background: #e2e8f0; }
+
+/* ═══ GOLD CTA BAR (A+ compliance) ═══ */
+.cta-bar {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #5cdb8f;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  text-align: center;
+  color: #ffffff;
+}
+.cta-bar h3 { color: #5cdb8f; font-size: 18px; margin: 0 0 8px; font-weight: 700; }
+.cta-bar .cta-service { font-size: 15px; color: #e5e7eb; margin: 0 0 4px; }
+.cta-bar .cta-price { font-size: 14px; color: #9ca3af; margin: 0 0 16px; }
+.cta-bar .cta-btn {
+  display: inline-block; padding: 10px 28px; background: #5cdb8f; color: #1a1a1a;
+  border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
+  transition: background 0.2s;
+}
+.cta-bar .cta-btn:hover { background: #4bc97d; }
+.sample-bar {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+  padding: 12px 20px; margin: 12px 0; text-align: center; font-size: 13px; color: #374151;
+}
+.sample-bar a { color: #166534; font-weight: 600; text-decoration: none; }
+.sample-bar a:hover { text-decoration: underline; }
+
+</style>
+</head>
+<body>
+<!-- ═══ BLANK SCREEN GUARD (Rule 7) ═══ -->
+<script>
+window.onerror = function(msg, url, line, col, err) {
+  document.body.innerHTML = '<div style="max-width:600px;margin:60px auto;padding:32px;font-family:system-ui;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+    + '<h2 style="color:#dc2626;margin-bottom:12px">⚠️ Tool Loading Error</h2>'
+    + '<p style="margin-bottom:8px">DC-R-PUE-001 encountered an error.</p>'
+    + '<p style="font-size:13px;color:#666">Error: ' + msg + ' (Line ' + line + ')</p>'
+    + '<p style="margin-top:16px"><a href="https://legacybe.ie/contact" style="color:#4a7c59;font-weight:700">Contact LBE for support →</a></p></div>';
+  return true;
+};
+</script>
+
+<!-- ═══ DOMAIN LOCK ═══ -->
+<script>
+(function(){
+  var allowed = ['legacybe.ie','www.legacybe.ie','lbe-tools.netlify.app','localhost','127.0.0.1',''];
+  var h = window.location.hostname;
+  if (allowed.indexOf(h) === -1 && h !== '') {
+    document.body.innerHTML = '<div style="max-width:500px;margin:80px auto;padding:32px;font-family:system-ui;text-align:center;border:2px solid #dc2626;border-radius:12px;background:#fef2f2"><h2 style="color:#dc2626">Unauthorised Copy</h2><p>This tool is licensed to Legacy Business Engineers Ltd.</p><p><a href="https://legacybe.ie">Visit legacybe.ie</a></p></div>';
+    throw new Error('Domain not authorised');
+  }
+})();
+</script>
+
+<!-- ═══ v15 AUDIENCE BAR ═══ -->
+<div class="v15-audience-bar np">BUILT FOR: DATA CENTRE OPERATORS &amp; INVESTORS</div>
+<div class="v15-audience-line np">🖥️ Segment: Data Centres — Retrofit | DC-R-PUE-001 | legacybe.ie</div>
+
+<div class="container">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="lbe-header">
+    <img src="data:image/png;base64,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" alt="LBE" onerror="this.style.display='none'">
+    <div class="h-text">
+      <div class="h-title">PUE Gap Analyser</div>
+      <div class="h-sub">DC Retrofit Screening — Current vs Target PUE Cost Analysis</div>
+      <div class="h-ver">DC-R-PUE-001 v1.0.6 | T1 DC Screening</div>
+    </div>
+  </div>
+  <div class="seg-banner">🖥️ RETROFIT SCREENING — Existing data centre PUE improvement pathway and cost estimate</div>
+
+  <div class="card">
+
+    <!-- ═══ SAMPLE BANNER ═══ -->
+    <div class="v15-sample np">
+      📊 This is an indicative screening tool. For a site-specific DC Retrofit Diagnostic,
+      <a href="https://legacybe.ie/contact">talk to an engineer →</a>
+    </div>
+
+    <!-- ═══ INPUTS: CURRENT STATE ═══ -->
+    <div class="section-title">📍 Current Facility State</div>
+
+    <div class="row-2">
+      <div>
+        <label>Current Annual PUE</label>
+        <div class="hint">Measured annualised PUE. Typical legacy: 1.4–1.8</div>
+        <input type="number" id="currentPUE" value="1.6" min="1.0" max="3.0" step="0.01"
+          title="Current measured Power Usage Effectiveness. PUE = Total Facility Power / IT Load Power. Source: EN 50600-4-2. Warning: values above 2.0 indicate severely inefficient infrastructure.">
+      </div>
+      <div>
+        <label>Target PUE</label>
+        <div class="hint">EU EED expected minimum ~1.5 (2026), ~1.3 (2030)</div>
+        <input type="number" id="targetPUE" value="1.3" min="1.05" max="2.0" step="0.01"
+          title="Target PUE after retrofit. 1.3 = current best practice air-cooled. 1.2 = efficient liquid-cooled. 1.1 = state of the art. Source: EU Code of Conduct for DC Energy Efficiency.">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label>IT Load (MW)</label>
+        <div class="hint">Total IT electrical load. Typical: 1–100 MW</div>
+        <input type="number" id="itLoad" value="5" min="0.5" max="200" step="0.1"
+          title="Total IT electrical load in MW. This is the denominator in the PUE equation. Source: metered data or design capacity. Warning: use measured load, not nameplate capacity.">
+      </div>
+      <div>
+        <label>Electricity Cost (€/kWh)</label>
+        <div class="hint">All-in rate inc. PSO, network. Ireland avg: €0.18–€0.25</div>
+        <input type="number" id="elecCost" value="0.20" min="0.05" max="0.50" step="0.01"
+          title="All-in electricity cost per kWh including PSO levy, network charges, and energy. Typical Irish DC rate: €0.18–€0.25/kWh. Source: CRU tariff schedules + supplier contract.">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label>Primary Cooling Type</label>
+        <div class="hint">Current dominant cooling technology</div>
+        <select id="coolingType"
+          title="Primary cooling method currently installed. Air-cooled CRAC/CRAH is most common in pre-2015 facilities. Direct liquid cooling (DLC) and rear-door heat exchangers are common in modern builds.">
+          <option value="air_crac">Air-cooled CRAC/CRAH units</option>
+          <option value="air_freecool">Air-cooled with free cooling</option>
+          <option value="chilled_water">Chilled water system</option>
+          <option value="evaporative">Evaporative cooling</option>
+          <option value="dlc_partial">Partial direct liquid cooling</option>
+        </select>
+      </div>
+      <div>
+        <label>Facility Age (Years)</label>
+        <div class="hint">Years since commissioning</div>
+        <input type="number" id="facilityAge" value="10" min="1" max="30" step="1"
+          title="Years since original commissioning. Affects remaining design life of major plant (chillers: 20yr, switchgear: 25yr, UPS: 10-15yr). Source: CIBSE Guide M Table 2.1.">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label>Average Rack Density (kW/rack)</label>
+        <div class="hint">Current average. Legacy: 5–10kW, AI: 30–50kW+</div>
+        <input type="number" id="rackDensity" value="8" min="1" max="100" step="1"
+          title="Current average IT power per rack. Pre-2015 design: 5-10kW. Modern compute: 15-25kW. AI/GPU: 30-50kW+. Source: metered rack PDU data. Warning: high density with air cooling causes hotspots.">
+      </div>
+      <div>
+        <label>Number of Racks</label>
+        <div class="hint">Total deployed racks in facility</div>
+        <input type="number" id="numRacks" value="500" min="10" max="10000" step="10"
+          title="Total number of IT racks deployed. Used to cross-check IT load (racks × avg density should approximate IT Load input).">
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calculate()">Analyse PUE Gap →</button>
+    <button class="demo-btn np" onclick="loadSample()">📊 Load Sample</button>
+
+    <!-- ═══ RESULTS ═══ -->
+    <div class="result-panel" id="results">
+
+      <!-- Primary metric -->
+      <div class="r-primary">
+        <div class="r-label">PUE Gap to Close</div>
+        <div class="r-num" id="r_pueGap">—</div>
+        <div id="r_verdict"></div>
+      </div>
+
+      <!-- PUE Gauge: Current → Target -->
+      <div style="font-size:12px;font-weight:700;color:#475569;margin-bottom:4px;">PUE Position</div>
+      <div class="pue-gauge">
+        <div class="pg-label" id="pg_current" style="color:var(--red-text);">Current</div>
+        <div class="pg-track">
+          <div class="pg-marker" id="pg_markerCurrent" style="background:#dc2626;"></div>
+          <div class="pg-marker" id="pg_markerTarget" style="background:#22c55e;"></div>
+        </div>
+        <div class="pg-label" id="pg_target" style="color:var(--green-text);">Target</div>
+      </div>
+
+      <!-- Key metrics -->
+      <div class="r-grid">
+        <div class="r-item">
+          <div class="ri-val" id="r_annualSavings">—</div>
+          <div class="ri-lab">Annual Energy Savings (€)</div>
+        </div>
+        <div class="r-item">
+          <div class="ri-val" id="r_energySaved">—</div>
+          <div class="ri-lab">Energy Saved (MWh/yr)</div>
+        </div>
+        <div class="r-item">
+          <div class="ri-val" id="r_co2Saved">—</div>
+          <div class="ri-lab">CO₂ Avoided (tonnes/yr)</div>
+        </div>
+        <div class="r-item">
+          <div class="ri-val" id="r_carbonTax">—</div>
+          <div class="ri-lab">Carbon Tax Avoided (€/yr)</div>
+        </div>
+      </div>
+
+      <div class="r-grid">
+        <div class="r-item">
+          <div class="ri-val" id="r_retrofitCost">—</div>
+          <div class="ri-lab">Estimated Retrofit CAPEX (±30%)</div>
+        </div>
+        <div class="r-item">
+          <div class="ri-val" id="r_payback">—</div>
+          <div class="ri-lab">Simple Payback (years)</div>
+        </div>
+      </div>
+
+      <!-- Intervention breakdown -->
+      <div class="section-title">🔧 Intervention Priority Matrix</div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:8px;">Ranked by PUE impact per euro spent. Indicative — subject to site survey.</div>
+
+      <table class="int-table">
+        <thead>
+          <tr>
+            <th>Intervention</th>
+            <th>PUE Impact</th>
+            <th>Cost (€/MW IT)</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody id="r_interventions"></tbody>
+      </table>
+
+      <!-- Value engineering tips -->
+      <div id="r_tips"></div>
+
+      <!-- EED compliance flag -->
+      <div id="r_eedFlag"></div>
+
+      <!-- ═══ NOT CHECKED (Rule 2) ═══ -->
+      <div class="not-checked">
+        <h4>⚠️ NOT CHECKED BY THIS TOOL</h4>
+        <ul>
+          <li>Site-specific structural loading for new cooling plant</li>
+          <li>Electrical distribution capacity for additional cooling loads</li>
+          <li>Specific equipment selection or vendor comparison</li>
+          <li>Planning permission or environmental impact requirements</li>
+          <li>Existing maintenance contracts, warranties, or lease constraints</li>
+        </ul>
+      </div>
+
+      <!-- ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ -->
+      <div class="confidence-panel">
+        <h4>📊 HOW RELIABLE IS THIS RESULT?</h4>
+        <table>
+          <tr><th>Data Point</th><th>Source</th><th>Tier</th></tr>
+          <tr><td>IT Load, Current PUE, Electricity Cost</td><td>User-supplied — accuracy depends on measurement quality</td><td><span class="tier-badge t1">T1</span> if metered, <span class="tier-badge t4">T4</span> if estimated</td></tr>
+          <tr><td>Grid Emission Factor (0.2241 kgCO₂/kWh)</td><td>SEAI 2026 published national grid factor</td><td><span class="tier-badge t1">T1</span></td></tr>
+          <tr><td>Carbon Tax (€71/tCO₂ → €100 by 2030)</td><td>Budget 2025 / Finance Act trajectory</td><td><span class="tier-badge t1">T1</span></td></tr>
+          <tr><td>PUE Thresholds (EU Taxonomy ≤1.3)</td><td>EU Delegated Act 2021/2139</td><td><span class="tier-badge t1">T1</span></td></tr>
+          <tr><td>Intervention Cost Ranges (€/MW)</td><td>Uptime Institute, CIBSE, manufacturer data 2024</td><td><span class="tier-badge t2">T2</span></td></tr>
+          <tr><td>Free Cooling Hours (7,200 hrs Dublin)</td><td>Met Éireann 30-year normals, hours below 18°C ambient</td><td><span class="tier-badge t2">T2</span></td></tr>
+          <tr><td>PUE Improvement Ranges per Intervention</td><td>LBE project experience + published benchmarks</td><td><span class="tier-badge t3">T3</span></td></tr>
+        </table>
+        <p style="margin-top:10px;font-style:italic;">T1 = published standard/regulation · T2 = peer-reviewed/industry data · T3 = engineering estimate · T4 = professional judgement. All outputs carry ±30% screening-level uncertainty.</p>
+      </div>
+
+
+      <!-- CTA -->
+      <!-- Old CTA removed — replaced by gold CTA bar -->
+
+      <div style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;margin-top:8px;">INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+      <div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;">Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+      <!-- Standards footer -->
+      <div class="std-footer">
+        References: EN 50600-4-2 (PUE) · EU EED 2023/1791 Art.12 · EU Delegated Regulation 2024/1364 ·
+        ASHRAE TC 9.9 · Uptime Institute · CIBSE Guide M · SEAI 2026 (0.2241 kgCO₂/kWh)<br>
+        Disclaimer: Indicative screening tool. Not a substitute for detailed engineering assessment.
+        Figures are ±30% (RICS NRM1 Order of Cost Estimate grade). Subject to site survey verification.<br>
+        © 2026 Legacy Business Engineers Ltd · legacybe.ie
+      </div>
+
+      <!-- Print button -->
+      <button onclick="window.print()" style="width:100%;margin-top:12px;padding:10px;background:#f1f5f9;
+        border:1px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:600;color:#475569;cursor:pointer;">
+        🖨️ Print / Save as PDF
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ v15 NAV FOOTER ═══ -->
+
+<!-- ═══ GOLD CTA BAR (A+ compliance) ═══ -->
+<div class="cta-bar np">
+  <h3>Got the answers? Here's what to do next.</h3>
+  <p class="cta-service">DC Retrofit Diagnostic — site-specific assessment with chartered engineer sign-off</p>
+  <p class="cta-price">From €5,000 + VAT · Delivered in 5 working days</p>
+  <a href="https://legacybe.ie/contact?service=S4+DC+Retrofit+Diagnostic" class="cta-btn">Talk to an Engineer →</a>
+</div>
+
+<!-- ═══ SAMPLE BAR ═══ -->
+<div class="sample-bar np">
+  📊 See what an DC Retrofit Diagnostic delivers — <a href="https://legacybe.ie/dc-sample-report" target="_blank">View Sample Report →</a>
+</div>
+
+<div class="v15-nav-footer np">
+  <span class="nf-brand">© 2026 Legacy Business Engineers Ltd</span>
+  <a href="https://legacybe.ie/contact" class="nf-cta">Talk to an Engineer →</a>
+</div>
+
+<!-- ═══ FINGERPRINT ═══ -->
+<script>
+var _aimep_lineage = {
+  origin: 'Legacy Business Engineers Ltd',
+  tool: 'DC-R-PUE-001',
+  version: '1.0.6',
+  license: 'legacybe.ie',
+  build: 'LBE-AIMEP-2026-02-28',
+  classification: 'T2-SCREENING',
+  notice: 'Unauthorised reproduction prohibited'
+};
+</script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DC-R-PUE-001 PUE Gap Analyser — Calculation Engine
+// Legacy Business Engineers Ltd | v1.0.6 | 28 Feb 2026
+// ═══════════════════════════════════════════════════════════════
+
+// Engineering data: PUE improvement interventions
+// Sources: Uptime Institute, ASHRAE, EU CoC for DC Energy Efficiency, LBE project data
+const INTERVENTIONS = [
+  {
+    id: 'hot_cold_containment',
+    name: 'Hot/Cold Aisle Containment',
+    pueImpact: [0.05, 0.15], // min-max PUE reduction
+    costPerMW: [50000, 120000], // €/MW IT — Uptime Institute 2023 benchmarks + LBE project data
+    applicableWhen: (d) => d.coolingType === 'air_crac' || d.coolingType === 'air_freecool',
+    description: 'Physical separation of hot and cold airstreams. Lowest cost, highest ROI intervention for air-cooled facilities.',
+    ref: 'ASHRAE TC 9.9 — Thermal Guidelines for Data Processing Environments'
+  },
+  {
+    id: 'vfd_fans_pumps',
+    name: 'VFD Retrofit on Fans & Pumps',
+    pueImpact: [0.03, 0.10],
+    costPerMW: [30000, 80000], // €/MW IT — CIBSE Guide B2 + manufacturer quotations 2024
+    applicableWhen: (d) => true, // always applicable
+    description: 'Variable frequency drives on CRAC/CRAH fans and chilled water pumps. Cube law: 50% speed = 12.5% power.',
+    ref: 'CIBSE Guide B2 — Ventilation and Ductwork'
+  },
+  {
+    id: 'raise_setpoint',
+    name: 'Raise Supply Air Temperature',
+    pueImpact: [0.02, 0.08],
+    costPerMW: [5000, 20000], // €/MW IT — operational change, minimal CAPEX (controls only)
+    applicableWhen: (d) => d.coolingType !== 'dlc_partial',
+    description: 'Raise cold aisle setpoint from 18–20°C to ASHRAE A1 recommended 18–27°C. Reduces compressor work.',
+    ref: 'ASHRAE TC 9.9 — A1 envelope: 18–27°C supply, -12°C to 24°C dew point'
+  },
+  {
+    id: 'free_cooling_upgrade',
+    name: 'Free Cooling System Upgrade',
+    pueImpact: [0.08, 0.20],
+    costPerMW: [150000, 350000], // €/MW IT — CIBSE TM64 + Irish DC retrofit benchmarks 2024
+    applicableWhen: (d) => d.coolingType === 'air_crac' || d.coolingType === 'chilled_water',
+    description: 'Add economiser/free cooling to exploit Ireland\'s mild climate. Dublin: ~7,200 free cooling hours/year below 18°C (Met Éireann 30-year normals).',
+    ref: 'CIBSE TM64 — Operational Energy Performance'
+  },
+  {
+    id: 'chiller_replacement',
+    name: 'Chiller Plant Replacement',
+    pueImpact: [0.05, 0.15],
+    costPerMW: [250000, 500000], // €/MW IT — EN 14511 replacement benchmarks + LBE project data
+    applicableWhen: (d) => (d.coolingType === 'chilled_water' || d.coolingType === 'air_crac') && d.facilityAge >= 8,
+    description: 'Replace legacy chillers (COP 3.0–4.0) with high-efficiency units (COP 6.0–8.0). Biggest impact for chilled water systems.',
+    ref: 'EN 14511 — Air conditioners, liquid chilling packages'
+  },
+  {
+    id: 'ups_upgrade',
+    name: 'UPS System Modernisation',
+    pueImpact: [0.02, 0.06],
+    costPerMW: [200000, 400000], // €/MW IT — EN 62040-3 UPS replacement benchmarks 2024
+    applicableWhen: (d) => d.facilityAge >= 8,
+    description: 'Replace legacy UPS (90–92% efficient) with modern Li-ion/modular units (96–97%). 4–6% total facility reduction.',
+    ref: 'EN 62040-3 — UPS performance and test requirements'
+  },
+  {
+    id: 'lighting_controls',
+    name: 'Lighting & BMS Optimisation',
+    pueImpact: [0.01, 0.03],
+    costPerMW: [10000, 30000], // €/MW IT — EU CoC Best Practice 5.1 + typical LED retrofit
+    applicableWhen: (d) => true,
+    description: 'LED conversion, occupancy sensing, BMS setpoint optimisation. Small individual impact but very low cost.',
+    ref: 'EU Code of Conduct for DC Energy Efficiency — Best Practice 5.1'
+  },
+  {
+    id: 'dlc_retrofit',
+    name: 'Direct Liquid Cooling (DLC) Retrofit',
+    pueImpact: [0.10, 0.25],
+    costPerMW: [400000, 800000], // €/MW IT — ASHRAE TC 9.9 Liquid Cooling + early-market pricing
+    applicableWhen: (d) => d.rackDensity >= 15 || d.targetPUE <= 1.2,
+    description: 'Rear-door heat exchangers or cold plate DLC for high-density racks. Essential for AI/GPU workloads >20kW/rack.',
+    ref: 'ASHRAE TC 9.9 — Liquid Cooling Guidelines for Datacom Equipment'
+  },
+  {
+    id: 'heat_recovery',
+    name: 'Waste Heat Recovery System',
+    pueImpact: [0.00, 0.05], // PUE impact via ERE reduction
+    costPerMW: [300000, 600000], // €/MW IT — EU EED Art.12 + district heating connection costs
+    applicableWhen: (d) => d.itLoad >= 2,
+    description: 'District heating connection or on-site heat reuse. EED Art.12 reporting metric. Revenue potential €50–150k/MW/yr.',
+    ref: 'EU EED 2023/1791 Art.12 — Waste heat utilisation reporting'
+  }
+];
+
+// Irish grid emission factor
+const GRID_EMISSION_FACTOR = 0.2241; // kgCO₂/kWh — SEAI 2026
+
+function calculate() {
+  // Read inputs
+  const d = {
+    currentPUE: parseFloat(document.getElementById('currentPUE').value),
+    targetPUE: parseFloat(document.getElementById('targetPUE').value),
+    itLoad: parseFloat(document.getElementById('itLoad').value),
+    elecCost: parseFloat(document.getElementById('elecCost').value),
+    coolingType: document.getElementById('coolingType').value,
+    facilityAge: parseInt(document.getElementById('facilityAge').value),
+    rackDensity: parseFloat(document.getElementById('rackDensity').value),
+    numRacks: parseInt(document.getElementById('numRacks').value)
+  };
+
+  // Validate
+  if (d.currentPUE <= d.targetPUE) {
+    alert('Current PUE must be higher than target PUE. You\'re already at or below target!');
+    return;
+  }
+  if (d.currentPUE < 1.0 || d.targetPUE < 1.0) {
+    alert('PUE cannot be below 1.0 (physically impossible — 1.0 means zero overhead).');
+    return;
+  }
+
+  // ═══ CORE CALCULATIONS ═══
+  const pueGap = d.currentPUE - d.targetPUE;
+  const hours = 8760; // hours/year — calendar constant (T1)
+
+  // Current total facility power
+  const currentTotalMW = d.itLoad * d.currentPUE;
+  const currentOverheadMW = currentTotalMW - d.itLoad;
+
+  // Target total facility power
+  const targetTotalMW = d.itLoad * d.targetPUE;
+  const targetOverheadMW = targetTotalMW - d.itLoad;
+
+  // Energy savings
+  const energySavedMWh = (currentTotalMW - targetTotalMW) * hours;
+  const annualSavingsEUR = energySavedMWh * 1000 * d.elecCost;
+  const co2SavedTonnes = energySavedMWh * GRID_EMISSION_FACTOR;
+  const CARBON_TAX = 71; // €/tCO₂ — Budget 2025 (€100/tCO₂ by 2030 per Finance Act)
+  const carbonTaxSaved = co2SavedTonnes * CARBON_TAX;
+
+  // ═══ INTERVENTION ANALYSIS ═══
+  const applicableInterventions = INTERVENTIONS
+    .filter(int => int.applicableWhen(d))
+    .map(int => {
+      const avgPUE = (int.pueImpact[0] + int.pueImpact[1]) / 2;
+      const avgCost = (int.costPerMW[0] + int.costPerMW[1]) / 2;
+      const totalCost = avgCost * d.itLoad;
+      const energySaved = avgPUE * d.itLoad * hours; // MWh
+      const moneySaved = energySaved * 1000 * d.elecCost;
+      const payback = totalCost / moneySaved;
+      const costEfficiency = avgPUE / (avgCost / 1000000); // PUE per €M
+
+      return {
+        ...int,
+        avgPUE, avgCost, totalCost, energySaved, moneySaved, payback, costEfficiency,
+        priority: payback <= 2 ? 'HIGH' : payback <= 5 ? 'MEDIUM' : 'LOW'
+      };
+    })
+    .sort((a, b) => b.costEfficiency - a.costEfficiency); // Best value first
+
+  // Total retrofit cost estimate (sum of applicable interventions, capped at gap)
+  let remainingGap = pueGap;
+  let totalRetrofitCost = 0;
+  const selectedInterventions = [];
+
+  for (const int of applicableInterventions) {
+    if (remainingGap <= 0) break;
+    const effectivePUE = Math.min(int.avgPUE, remainingGap);
+    const fraction = effectivePUE / int.avgPUE;
+    const cost = int.totalCost * fraction;
+    totalRetrofitCost += cost;
+    remainingGap -= effectivePUE;
+    selectedInterventions.push({ ...int, effectivePUE, effectiveCost: cost });
+  }
+
+  const simplePayback = totalRetrofitCost / annualSavingsEUR;
+
+  // ═══ RENDER RESULTS ═══
+  document.getElementById('results').classList.add('show');
+
+  // Primary metric
+  document.getElementById('r_pueGap').textContent = pueGap.toFixed(2);
+
+  // Verdict
+  let verdictClass, verdictText;
+  if (pueGap <= 0.15) { verdictClass = 'v-green'; verdictText = '✅ Minor gap — quick wins likely sufficient'; }
+  else if (pueGap <= 0.35) { verdictClass = 'v-amber'; verdictText = '⚠️ Moderate gap — targeted retrofit required'; }
+  else { verdictClass = 'v-red'; verdictText = '🔴 Major gap — comprehensive retrofit programme needed'; }
+  document.getElementById('r_verdict').innerHTML = '<span class="verdict ' + verdictClass + '">' + verdictText + '</span>';
+
+  // PUE gauge
+  const gaugeMin = 1.0, gaugeMax = 2.5;
+  const currentPos = ((d.currentPUE - gaugeMin) / (gaugeMax - gaugeMin)) * 100;
+  const targetPos = ((d.targetPUE - gaugeMin) / (gaugeMax - gaugeMin)) * 100;
+  document.getElementById('pg_markerCurrent').style.left = Math.min(Math.max(currentPos, 2), 98) + '%';
+  document.getElementById('pg_markerTarget').style.left = Math.min(Math.max(targetPos, 2), 98) + '%';
+  document.getElementById('pg_current').textContent = d.currentPUE.toFixed(2);
+  document.getElementById('pg_target').textContent = d.targetPUE.toFixed(2);
+
+  // Key metrics
+  document.getElementById('r_annualSavings').textContent = '€' + formatNum(annualSavingsEUR);
+  document.getElementById('r_energySaved').textContent = formatNum(energySavedMWh);
+  document.getElementById('r_co2Saved').textContent = formatNum(co2SavedTonnes);
+  document.getElementById('r_carbonTax').textContent = '€' + formatNum(carbonTaxSaved);
+  document.getElementById('r_retrofitCost').textContent = '€' + formatNum(totalRetrofitCost);
+  document.getElementById('r_payback').textContent = simplePayback.toFixed(1) + ' yrs';
+
+  // Intervention table
+  const tbody = document.getElementById('r_interventions');
+  tbody.innerHTML = '';
+  const maxPUE = Math.max(...applicableInterventions.map(i => i.avgPUE));
+  applicableInterventions.forEach(int => {
+    const priClass = int.priority === 'HIGH' ? 'pri-high' : int.priority === 'MEDIUM' ? 'pri-med' : 'pri-low';
+    const barWidth = (int.avgPUE / maxPUE * 100).toFixed(0);
+    tbody.innerHTML += '<tr>'
+      + '<td><strong>' + int.name + '</strong><div class="int-bar"><div class="int-bar-fill" style="width:' + barWidth + '%"></div></div></td>'
+      + '<td>' + int.avgPUE.toFixed(3) + '</td>'
+      + '<td>€' + formatNum(int.avgCost) + '</td>'
+      + '<td class="' + priClass + '">' + int.priority + '<br><span style="font-size:10px;font-weight:400;color:#64748b">' + int.payback.toFixed(1) + 'yr payback</span></td>'
+      + '</tr>';
+  });
+
+  // ═══ VALUE ENGINEERING TIPS ═══
+  let tips = '';
+
+  // Tip 1: Quick wins available
+  const quickWins = applicableInterventions.filter(i => i.payback <= 2);
+  if (quickWins.length > 0) {
+    const qwSavings = quickWins.reduce((s, i) => s + i.moneySaved, 0);
+    tips += '<div class="tip tip-green"><div class="tip-title">💡 Quick Wins Available</div>'
+      + quickWins.length + ' intervention(s) with &lt;2 year payback: '
+      + quickWins.map(i => i.name).join(', ')
+      + '. Combined annual savings: €' + formatNum(qwSavings)
+      + '<div class="tip-ref">Recommend implementing these first to fund larger interventions.</div></div>';
+  }
+
+  // Tip 2: Free cooling opportunity (Ireland climate)
+  if (d.coolingType === 'air_crac' || d.coolingType === 'chilled_water') {
+    tips += '<div class="tip tip-blue"><div class="tip-title">🌡️ Free Cooling Opportunity — Irish Climate Advantage</div>'
+      + 'Dublin averages ~7,200 free cooling hours/year below 18°C (Met Éireann 30-year normals). '
+      + 'If this facility has no economiser, adding free cooling typically delivers the best PUE improvement per euro in Irish climate.'
+      + '<div class="tip-ref">Source: Met Éireann climate data / CIBSE TM64</div></div>';
+  }
+
+  // Tip 3: Density warning
+  if (d.rackDensity >= 15 && d.coolingType === 'air_crac') {
+    tips += '<div class="tip tip-amber"><div class="tip-title">⚠️ Density vs Cooling Mismatch</div>'
+      + 'Average rack density of ' + d.rackDensity + ' kW/rack with air-cooled CRAC/CRAH will create thermal management challenges. '
+      + 'Above 15 kW/rack, consider rear-door heat exchangers or direct liquid cooling for high-density rows.'
+      + '<div class="tip-ref">Source: ASHRAE TC 9.9 Liquid Cooling Guidelines</div></div>';
+  }
+
+  // Tip 4: UPS end of life
+  if (d.facilityAge >= 10) {
+    tips += '<div class="tip tip-amber"><div class="tip-title">🔋 UPS & Battery End-of-Life</div>'
+      + 'At ' + d.facilityAge + ' years, UPS systems (design life 10–15 years per CIBSE Guide M) may be approaching replacement. '
+      + 'Coordinating UPS replacement with PUE retrofit avoids double mobilisation costs and captures efficiency gains from modern units (96–97% vs legacy 90–92%).'
+      + '<div class="tip-ref">Source: CIBSE Guide M Table 2.1 / EN 62040-3</div></div>';
+  }
+
+  // Tip 5: EED reporting
+  if (d.itLoad >= 0.5) {
+    tips += '<div class="tip tip-blue"><div class="tip-title">📋 EU EED Reporting Requirement</div>'
+      + 'This facility (≥500kW IT) must report PUE, WUE, renewable share, and waste heat utilisation annually to the European database (next deadline: 15 May 2026). '
+      + 'An EU Data Centre Energy Efficiency Package with potential minimum performance standards is expected H1 2026.'
+      + '<div class="tip-ref">Source: EU EED 2023/1791 Art.12 / Delegated Regulation 2024/1364</div></div>';
+  }
+
+  // Tip 6: ROI comparison
+  if (pueGap >= 0.3 && simplePayback > 6) {
+    tips += '<div class="tip tip-red"><div class="tip-title">📊 Retrofit vs Rebuild Decision Point</div>'
+      + 'With a PUE gap of ' + pueGap.toFixed(2) + ' and ' + simplePayback.toFixed(1) + '-year payback, '
+      + 'this facility may warrant a formal retrofit-vs-rebuild NPV analysis. Consider residual land value, '
+      + 'remaining lease term, and whether new-build PUE 1.2 with higher density would deliver better returns.'
+      + '<div class="tip-ref">LBE DC Retrofit Diagnostic includes full NPV comparison.</div></div>';
+  }
+
+  // Interaction effects note
+  if (applicableInterventions.length > 2) {
+    tips += '<div class="tip tip-amber" style="margin-top:12px"><div class="tip-title">📐 Interaction Effects</div>'
+      + 'Interventions ranked independently. Actual combined PUE reduction may be 15–25% less than sum of individual measures due to interaction effects. '
+      + 'A site-specific DC Retrofit Diagnostic models these interactions.'
+      + '<div class="tip-ref">Engineering note: diminishing returns on PUE improvement</div></div>';
+  }
+
+  document.getElementById('r_tips').innerHTML = tips;
+
+  // EED compliance flag
+  let eedHTML = '';
+  if (d.currentPUE > 1.5) {
+    eedHTML = '<div class="tip tip-red" style="margin-top:14px;"><div class="tip-title">🚨 EED Compliance Risk</div>'
+      + 'Current PUE of ' + d.currentPUE.toFixed(2) + ' exceeds the expected EU minimum performance threshold of 1.5 (anticipated H1 2026). '
+      + 'If minimum standards are enacted, this facility may face mandatory upgrade requirements or operational restrictions.'
+      + '<div class="tip-ref">Source: EU Commission Data Centre Energy Efficiency Package (expected H1 2026)</div></div>';
+  } else if (d.currentPUE > 1.3) {
+    eedHTML = '<div class="tip tip-amber" style="margin-top:14px;"><div class="tip-title">📋 EED Compliance — Monitor</div>'
+      + 'Current PUE of ' + d.currentPUE.toFixed(2) + ' meets the expected 2026 threshold (1.5) but may not meet the 2030 target trajectory (1.3). '
+      + 'Recommend planning retrofit pathway now to avoid compressed timelines if standards tighten.'
+      + '<div class="tip-ref">Source: EU Commission Data Centre Energy Efficiency Package (expected H1 2026)</div></div>';
+  }
+  document.getElementById('r_eedFlag').innerHTML = eedHTML;
+
+  // ═══ WHAT THIS MEANS (plain English for client) ═══
+  var existingWtm = document.querySelector('.wtm-panel');
+  if (existingWtm) existingWtm.remove();
+  let wtm = '';
+  if (pueGap <= 0.15) {
+    wtm = '<div class="wtm-panel"><h4>What This Means</h4><p>'
+      + 'Your facility is performing well. The PUE gap is minor — a few targeted improvements '
+      + '(likely containment and setpoint adjustments) could close it within 6 months. '
+      + 'Annual savings of <strong>€' + formatNum(annualSavingsEUR) + '</strong> are achievable with minimal disruption.'
+      + '</p></div>';
+  } else if (pueGap <= 0.35) {
+    wtm = '<div class="wtm-panel"><h4>What This Means</h4><p>'
+      + 'Your facility is wasting <strong>€' + formatNum(annualSavingsEUR) + '/year</strong> in excess energy — '
+      + 'that\'s <strong>€' + formatNum(annualSavingsEUR / 365) + ' every day</strong>. A structured retrofit programme '
+      + 'targeting the top interventions above would pay for itself in ' + simplePayback.toFixed(1) + ' years. '
+      + 'With EU minimum performance standards expected H1 2026, acting now avoids compressed timelines later.'
+      + '</p></div>';
+  } else {
+    wtm = '<div class="wtm-panel"><h4>What This Means</h4><p>'
+      + 'This facility is losing <strong>€' + formatNum(annualSavingsEUR) + '/year</strong> to infrastructure inefficiency — '
+      + '<strong>€' + formatNum(annualSavingsEUR / 365) + ' per day</strong>. At a PUE gap of ' + pueGap.toFixed(2) + ', '
+      + 'this is a major retrofit or a retrofit-vs-rebuild decision. The numbers warrant a formal DC Retrofit Diagnostic '
+      + 'with site-specific costing and NPV analysis before committing capital.'
+      + '</p></div>';
+  }
+  document.getElementById('r_eedFlag').insertAdjacentHTML('afterend', wtm);
+
+  // Scroll to results
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function formatNum(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return Math.round(n).toLocaleString('en-IE');
+  return n.toFixed(0);
+}
+
+// ═══ LOAD SAMPLE — Clonshaugh reference facility ═══
+function loadSample() {
+  document.getElementById('currentPUE').value = 1.65;
+  document.getElementById('targetPUE').value = 1.3;
+  document.getElementById('itLoad').value = 2.4;
+  document.getElementById('elecCost').value = 0.20;
+  document.getElementById('coolingType').value = 'air_crac';
+  document.getElementById('facilityAge').value = 14;
+  document.getElementById('rackDensity').value = 8;
+  document.getElementById('numRacks').value = 240;
+  calculate();
+}
+</script>
+</body>
+</html>
