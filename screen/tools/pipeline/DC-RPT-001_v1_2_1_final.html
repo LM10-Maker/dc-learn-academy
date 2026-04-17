@@ -9,7 +9,7 @@
 <title>Asset Carbon Risk Screening | Legacy Business Engineers Ltd</title>
 <style>
 /* ═══════════════════════════════════════════════════════════════════════
-   DC-RPT-001 v1.2.2 — Data Centre Report Renderer (CPS Mode)
+   DC-RPT-001 v1.2.3 — Data Centre Report Renderer (CPS Mode)
    Legacy Business Engineers Ltd | March 2026
    Vanilla JS — no framework dependencies
    ═══════════════════════════════════════════════════════════════════════ */
@@ -199,6 +199,7 @@ h1, h2, h3, h4 {
 
 .intensity-section h2 {
   font-size: 13pt;
+  margin-top: 16px;
   margin-bottom: 12px;
   padding-bottom: 4px;
   border-bottom: 1px solid #e5e7eb;
@@ -206,7 +207,7 @@ h1, h2, h3, h4 {
 
 .intensity-cards {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 12px;
 }
 
@@ -258,6 +259,7 @@ h1, h2, h3, h4 {
   color: var(--dc-gray-light);
   font-style: italic;
   margin-top: 8px;
+  margin-bottom: 8px;
   padding: 6px 10px;
   background: var(--dc-gray-pale);
   border-radius: 4px;
@@ -1080,34 +1082,9 @@ window.onerror = function(msg, src, line, col, err) {
         <div class="ppa-note" id="ppaNote" style="display:none"></div>
       </div>
 
-      <div class="page-footer">
-        <span id="footerP1Left">Asset Carbon Risk Screening | Legacy Business Engineers Ltd | —</span>
-        <span>&copy; 2026 Legacy Business Engineers Ltd | Private &amp; Confidential</span>
-        <span class="footer-page-num">Page 1 of 8</span>
-      </div>
-    </div>
-
-    <!-- ══════════════ PAGE 2: Facility Performance Summary ══════════════ -->
-    <div class="a4-page page-break" id="page2">
-
-      <div class="report-header">
-        <div class="header-left">
-          <img id="headerLogoP2a" class="logo-circle header-logo-dynamic" alt="LBE Logo" onerror="this.style.display='none'">
-          <div class="header-titles">
-            <h1>Asset Carbon Risk Screening</h1>
-            <div class="subtitle">Investment Screening — Carbon, Regulatory &amp; Retrofit Economics</div>
-          </div>
-        </div>
-        <div class="header-right">
-          <strong id="rptFacilityNameP2">—</strong><br>
-          <span id="rptDateP2">—</span><br>
-          <span id="rptRefP2">—</span>
-        </div>
-      </div>
-
-      <!-- Key Metrics -->
-      <div style="margin-bottom:18px">
-        <h2 style="font-size:13pt;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e5e7eb">Facility Performance Summary</h2>
+      <!-- Facility Performance Summary -->
+      <div style="margin-bottom:14px">
+        <h2 style="font-size:13pt;margin-top:16px;margin-bottom:10px;padding-bottom:4px;border-bottom:1px solid #e5e7eb">Facility Performance Summary</h2>
         <table class="report-table">
           <thead>
             <tr><th>Metric</th><th>Value</th><th>Benchmark</th></tr>
@@ -1117,9 +1094,9 @@ window.onerror = function(msg, src, line, col, err) {
       </div>
 
       <div class="page-footer">
-        <span id="footerP2Left">Asset Carbon Risk Screening | Legacy Business Engineers Ltd | —</span>
+        <span id="footerP1Left">Asset Carbon Risk Screening | Legacy Business Engineers Ltd | —</span>
         <span>&copy; 2026 Legacy Business Engineers Ltd | Private &amp; Confidential</span>
-        <span class="footer-page-num">Page 2 of 8</span>
+        <span class="footer-page-num">Page 1 of 8</span>
       </div>
     </div>
 
@@ -1267,7 +1244,7 @@ window.onerror = function(msg, src, line, col, err) {
       </div>
     </div>
 
-    <!-- ══════════════ PAGE 6: Appendix — Input Parameters & Reference Constants ══════════════ -->
+    <!-- ══════════════ PAGE 6: Appendix A — Carbon Calculation ══════════════ -->
     <div class="a4-page page-break" id="page6">
 
       <div class="report-header">
@@ -1275,7 +1252,7 @@ window.onerror = function(msg, src, line, col, err) {
           <img class="logo-circle header-logo-dynamic" alt="LBE Logo" onerror="this.style.display='none'">
           <div class="header-titles">
             <h1>Asset Carbon Risk Screening</h1>
-            <div class="subtitle">Calculation Appendix — Deterministic Audit Trail</div>
+            <div class="subtitle">Appendix A — Carbon Calculation</div>
           </div>
         </div>
         <div class="header-right">
@@ -1285,19 +1262,18 @@ window.onerror = function(msg, src, line, col, err) {
         </div>
       </div>
 
-      <div class="appendix-title">Appendix — Calculation Audit Trail</div>
+      <div class="appendix-title">Appendix A — Carbon Calculation</div>
 
-      <!-- Section A: Input Parameters -->
+      <!-- Section A.1: Input Parameters -->
       <div class="appendix-section">
-        <h3>A — Input Parameters</h3>
+        <h3>A.1 — Input Parameters</h3>
         <div id="appendixSectionA"></div>
       </div>
 
-      <!-- Section B: Reference Constants -->
+      <!-- Section A.2: Carbon Derivation -->
       <div class="appendix-section">
-        <h3>B — Reference Constants &amp; Sources</h3>
-        <div id="appendixSectionB"></div>
-        <div class="appendix-note">CRREM has not published a sector-specific pathway for data centres. Bands are derived by LBE from the CRREM v2.01 commercial real estate methodology.</div>
+        <h3>A.2 — Carbon Derivation</h3>
+        <div id="appendixSectionC"></div>
       </div>
 
       <div class="page-footer">
@@ -1307,7 +1283,7 @@ window.onerror = function(msg, src, line, col, err) {
       </div>
     </div><!-- /page6 -->
 
-    <!-- ══════════════ PAGE 7: Appendix — Energy, Carbon & Regulatory Calculations ══════════════ -->
+    <!-- ══════════════ PAGE 7: Appendix B — Hold Model ══════════════ -->
     <div class="a4-page page-break" id="page7">
 
       <div class="report-header">
@@ -1315,7 +1291,7 @@ window.onerror = function(msg, src, line, col, err) {
           <img class="logo-circle header-logo-dynamic" alt="LBE Logo" onerror="this.style.display='none'">
           <div class="header-titles">
             <h1>Asset Carbon Risk Screening</h1>
-            <div class="subtitle">Calculation Appendix — Deterministic Audit Trail</div>
+            <div class="subtitle">Appendix B — Hold Model</div>
           </div>
         </div>
         <div class="header-right">
@@ -1325,22 +1301,18 @@ window.onerror = function(msg, src, line, col, err) {
         </div>
       </div>
 
-      <!-- Section C: Energy & Carbon -->
+      <div class="appendix-title">Appendix B — Hold Model</div>
+
+      <!-- Section B.1: Retrofit Economics & Annual Saving -->
       <div class="appendix-section">
-        <h3>C — Energy &amp; Carbon Calculations</h3>
-        <div id="appendixSectionC"></div>
+        <h3>B.1 — Retrofit Economics &amp; Annual Saving</h3>
+        <div id="appendixSectionF"></div>
       </div>
 
-      <!-- Section D: CRREM Classification -->
+      <!-- Section B.2: 10-Year NPV -->
       <div class="appendix-section">
-        <h3>D — CRREM Classification</h3>
-        <div id="appendixSectionD"></div>
-      </div>
-
-      <!-- Section E: Regulatory Gap Analysis -->
-      <div class="appendix-section">
-        <h3>E — Regulatory Gap Analysis</h3>
-        <div id="appendixSectionE"></div>
+        <h3>B.2 — 10-Year NPV (Base &amp; Stressed)</h3>
+        <div id="appendixSectionG"></div>
       </div>
 
       <div class="page-footer">
@@ -1350,7 +1322,7 @@ window.onerror = function(msg, src, line, col, err) {
       </div>
     </div><!-- /page7 -->
 
-    <!-- ══════════════ PAGE 8: Appendix — Retrofit Economics & NPV ══════════════ -->
+    <!-- ══════════════ PAGE 8: Appendix C — Regulatory References ══════════════ -->
     <div class="a4-page page-break" id="page8">
 
       <div class="report-header">
@@ -1358,7 +1330,7 @@ window.onerror = function(msg, src, line, col, err) {
           <img class="logo-circle header-logo-dynamic" alt="LBE Logo" onerror="this.style.display='none'">
           <div class="header-titles">
             <h1>Asset Carbon Risk Screening</h1>
-            <div class="subtitle">Calculation Appendix — Deterministic Audit Trail</div>
+            <div class="subtitle">Appendix C — Regulatory References</div>
           </div>
         </div>
         <div class="header-right">
@@ -1368,22 +1340,13 @@ window.onerror = function(msg, src, line, col, err) {
         </div>
       </div>
 
-      <!-- Section F: Retrofit Economics -->
-      <div class="appendix-section">
-        <h3>F — Retrofit Economics</h3>
-        <div id="appendixSectionF"></div>
-      </div>
+      <div class="appendix-title">Appendix C — Regulatory References</div>
 
-      <!-- Section G: 10-Year NPV -->
+      <!-- Section C: Regulatory References table -->
       <div class="appendix-section">
-        <h3>G — 10-Year NPV (Year-by-Year)</h3>
-        <div id="appendixSectionG"></div>
-      </div>
-
-      <!-- Section H: CRM Revenue (conditional) -->
-      <div class="appendix-section" id="appendixSectionHWrap" style="display:none">
-        <h3>H — CRM Revenue</h3>
-        <div id="appendixSectionH"></div>
+        <h3>C — Active Regulatory Instruments</h3>
+        <div id="appendixSectionRegRef"></div>
+        <div class="appendix-note">All instruments listed are currently in force. Thresholds apply to the facility as screened. Status verified against published legislation as of April 2026.</div>
       </div>
 
       <div class="page-footer">
@@ -1414,7 +1377,7 @@ window.onerror = function(msg, src, line, col, err) {
   // ─────────────────────────────────────────────────────────
   var TOOL_META = {
     tool_id: 'DC-RPT-001',
-    version: '1.2.2',
+    version: '1.2.3',
     name: 'Data Centre Report Renderer (CPS Mode)'
   };
 
@@ -2177,7 +2140,7 @@ window.onerror = function(msg, src, line, col, err) {
 
     if (crremStatus === 'critical' || crremStatus === 'misaligned') {
       if (hm.npv_retrofit > 0) {
-        nextTitle = 'Desktop Assessment — €10,000–€15,000 + VAT';
+        nextTitle = 'Desktop Assessment — €15,000 + VAT';
         nextBody = 'A Desktop Assessment is the first step toward a full facility evaluation. It validates these screening figures with site-specific data, produces a phased retrofit programme, and confirms whether the hold thesis is defensible. This is the entry point to our DC-S01 independent engineering intelligence service. typically 6–8 weeks from receipt of data pack.';
       } else {
         nextTitle = 'Disposal Analysis — €8,000–€12,000 + VAT';
@@ -2282,15 +2245,17 @@ window.onerror = function(msg, src, line, col, err) {
     ];
 
     var aTable = '<table class="appendix-table"><thead><tr>' +
-      '<th>Parameter</th><th>Symbol</th><th>Value</th><th>Unit</th><th>Source</th>' +
+      '<th>Parameter</th><th>Symbol</th><th>Value</th><th>Unit</th><th>Source</th><th>Tier</th>' +
       '</tr></thead><tbody>';
     for (var ai = 0; ai < aRows.length; ai++) {
       aTable += '<tr><td>' + aRows[ai][0] + '</td><td>' + aRows[ai][1] +
         '</td><td><strong>' + aRows[ai][2] + '</strong></td><td>' + aRows[ai][3] +
-        '</td><td style="color:#6b7280">' + aRows[ai][4] + '</td></tr>';
+        '</td><td style="font-size:7.5pt;color:#6b7280">' + aRows[ai][4] +
+        '</td><td>' + tier('T4') + '</td></tr>';
     }
     aTable += '</tbody></table>';
-    document.getElementById('appendixSectionA').innerHTML = aTable;
+    var elSecA = document.getElementById('appendixSectionA');
+    if (elSecA) elSecA.innerHTML = aTable;
 
     // ════════════════════════════════════════
     // SECTION B - Reference Constants
@@ -2321,7 +2286,8 @@ window.onerror = function(msg, src, line, col, err) {
         '</td><td>' + bRows[bi][5] + '</td></tr>';
     }
     bTable += '</tbody></table>';
-    document.getElementById('appendixSectionB').innerHTML = bTable;
+    var elSecB = document.getElementById('appendixSectionB');
+    if (elSecB) elSecB.innerHTML = bTable;
 
     // ════════════════════════════════════════
     // SECTION C - Energy & Carbon Calculations
@@ -2405,7 +2371,8 @@ window.onerror = function(msg, src, line, col, err) {
         '<span class="calc-result">\u2192 ' + (misYear ? String(misYear) : 'None within 2050 horizon') + '</span>' +
         ' &nbsp;<span style="font-size:7pt;color:#6b7280">(linear interpolation, T4 LBE-derived estimate)</span>' +
       '</div>';
-    document.getElementById('appendixSectionD').innerHTML = dHtml;
+    var elSecD = document.getElementById('appendixSectionD');
+    if (elSecD) elSecD.innerHTML = dHtml;
 
     // ════════════════════════════════════════
     // SECTION E - Regulatory Gap Analysis
@@ -2440,7 +2407,8 @@ window.onerror = function(msg, src, line, col, err) {
         fmt(CO2_gen, 2) + ' t \u00d7 \u20ac100/t',
         '\u20ac' + fmt(ct_2030, 0), '/yr');
 
-    document.getElementById('appendixSectionE').innerHTML = eHtml;
+    var elSecE = document.getElementById('appendixSectionE');
+    if (elSecE) elSecE.innerHTML = eHtml;
 
     // ════════════════════════════════════════
     // SECTION F - Retrofit Economics
@@ -2454,7 +2422,14 @@ window.onerror = function(msg, src, line, col, err) {
     var co2_saving   = bh.carbon_saving_t;
     var payback      = bh.simple_payback;
 
+    var energy_cost_eur = E_total * 1000 * elec_rate;
+
     var fHtml =
+      calcRow('F0 \u2014 Annual Energy Cost',
+        'E<sub>total</sub>(kWh) \u00d7 Elec rate',
+        fmt(E_total * 1000, 0) + ' kWh \u00d7 \u20ac' + fmt(elec_rate, 3) + '/kWh',
+        '\u20ac' + fmt(energy_cost_eur, 0), '/yr') +
+
       calcRow('F1 \u2014 Retrofit CAPEX',
         'P<sub>IT</sub>(kW) \u00d7 \u20ac/kW',
         fmt(inp.it_load_mw * 1000, 0) + ' kW \u00d7 \u20ac' + fmt(baseAss.retrofit_cost_per_kw, 0) + '/kW',
@@ -2485,7 +2460,8 @@ window.onerror = function(msg, src, line, col, err) {
         '\u20ac' + fmt(capex, 0) + ' / \u20ac' + fmt(saving_eur, 0),
         (payback < 99 ? fmt(payback, 1) + ' years' : '>10 years'), '');
 
-    document.getElementById('appendixSectionF').innerHTML = fHtml;
+    var elSecF = document.getElementById('appendixSectionF');
+    if (elSecF) elSecF.innerHTML = fHtml;
 
     // ════════════════════════════════════════
     // SECTION G - 10-Year NPV (year-by-year)
@@ -2494,6 +2470,15 @@ window.onerror = function(msg, src, line, col, err) {
     var sDisc = sh.discount_rate;
     var bSave = bh.annual_saving;
     var sSave = sh.annual_saving;
+
+    var gAssump = '<table class="appendix-table" style="margin-bottom:8px"><thead><tr>' +
+      '<th>Assumption</th><th>Base Case</th><th>Stressed Case</th><th>Tier</th>' +
+      '</tr></thead><tbody>' +
+      '<tr><td>Discount rate</td><td>' + fmt(bDisc * 100, 1) + '%</td><td>' + fmt(sDisc * 100, 1) + '%</td><td>' + tier('T3') + '</td></tr>' +
+      '<tr><td>Electricity rate (\u20ac/kWh)</td><td>\u20ac' + fmt(bh.elec_rate, 3) + '</td><td>\u20ac' + fmt(sh.elec_rate, 3) + '</td><td>' + tier('T4') + '</td></tr>' +
+      '<tr><td>Target PUE (post-retrofit)</td><td>' + fmt(target_pue, 2) + '</td><td>' + fmt(sh.target_pue !== undefined ? sh.target_pue : target_pue, 2) + '</td><td>' + tier('T3') + '</td></tr>' +
+      '<tr><td>Retrofit CAPEX</td><td>\u20ac' + fmt(capex, 0) + '</td><td>\u20ac' + fmt(sh.retrofit_capex, 0) + '</td><td>' + tier('T3') + '</td></tr>' +
+      '</tbody></table>';
 
     var gTable = '<table class="npv-table"><thead><tr>' +
       '<th>Year</th>' +
@@ -2550,25 +2535,52 @@ window.onerror = function(msg, src, line, col, err) {
       'Stressed: discount rate ' + fmt(sDisc * 100, 1) + '%, elec \u20ac' + fmt(sh.elec_rate, 3) + '/kWh.' +
       '</div>';
 
-    document.getElementById('appendixSectionG').innerHTML = gTable;
+    var elSecG = document.getElementById('appendixSectionG');
+    if (elSecG) elSecG.innerHTML = gAssump + gTable;
 
     // ════════════════════════════════════════
     // SECTION H - CRM Revenue (conditional)
     // ════════════════════════════════════════
     var hWrap = document.getElementById('appendixSectionHWrap');
-    if (baseAss.include_crm) {
-      hWrap.style.display = 'block';
-      var crm_rev = inp.it_load_mw * CRM_CLEARING_PRICE;
-      var hHtml =
-        calcRow('H1 \u2014 CRM Revenue',
-          'P<sub>IT</sub> \u00d7 P<sub>CRM</sub>',
-          fmt(inp.it_load_mw, 2) + ' MW \u00d7 \u20ac149,960/MW/yr',
-          '\u20ac' + fmt(crm_rev, 0), '/yr') +
-        '<div class="appendix-note">Indicative only \u2014 subject to qualification, capacity market participation, and SEMO dispatch obligations. SEMO PCAR2829T-4 T-4 clearing price applied (T1 source).</div>';
-      document.getElementById('appendixSectionH').innerHTML = hHtml;
-    } else {
-      hWrap.style.display = 'none';
+    if (hWrap) {
+      if (baseAss.include_crm) {
+        hWrap.style.display = 'block';
+        var crm_rev = inp.it_load_mw * CRM_CLEARING_PRICE;
+        var hHtml =
+          calcRow('H1 \u2014 CRM Revenue',
+            'P<sub>IT</sub> \u00d7 P<sub>CRM</sub>',
+            fmt(inp.it_load_mw, 2) + ' MW \u00d7 \u20ac149,960/MW/yr',
+            '\u20ac' + fmt(crm_rev, 0), '/yr') +
+          '<div class="appendix-note">Indicative only \u2014 subject to qualification, capacity market participation, and SEMO dispatch obligations. SEMO PCAR2829T-4 T-4 clearing price applied (T1 source).</div>';
+        var elSecH = document.getElementById('appendixSectionH');
+        if (elSecH) elSecH.innerHTML = hHtml;
+      } else {
+        hWrap.style.display = 'none';
+      }
     }
+
+    // ════════════════════════════════════════
+    // SECTION RegRef - Regulatory References
+    // ════════════════════════════════════════
+    var regRows = [
+      ['EED Article 26',       'Energy Efficiency Directive — mandatory DC data reporting & efficiency targets', 'ACTIVE May 2025', tier('T1')],
+      ['CRU/2025/236',         'CRU Decision: 80% renewable electricity by 2026 for large energy users',        'ACTIVE Dec 2025',  tier('T1')],
+      ['EU Taxonomy 2021/2139','Delegated Act (CCM): PUE \u2264 1.30 threshold for climate-aligned DCs',       '2023/1791 amend.',  tier('T1')],
+      ['F-Gas Regulation',     'EU 2024/573 — phase-down of HFC refrigerants; impacts DC cooling plant',       'ACTIVE Jan 2025',  tier('T1')],
+      ['Finance Act 2025',     'Irish Carbon Tax schedule: \u20ac71/tCO\u2082 current; \u20ac100/tCO\u2082 by 2030', 'Finance Act 2025', tier('T1')]
+    ];
+    var regTable = '<table class="appendix-table"><thead><tr>' +
+      '<th>Instrument</th><th style="width:42%">Summary</th><th>Status</th><th>Tier</th>' +
+      '</tr></thead><tbody>';
+    for (var ri = 0; ri < regRows.length; ri++) {
+      regTable += '<tr><td style="font-size:8pt;font-weight:600">' + regRows[ri][0] + '</td>' +
+        '<td style="font-size:8pt">' + regRows[ri][1] + '</td>' +
+        '<td style="font-size:8pt;color:#374151">' + regRows[ri][2] + '</td>' +
+        '<td>' + regRows[ri][3] + '</td></tr>';
+    }
+    regTable += '</tbody></table>';
+    var elRegRef = document.getElementById('appendixSectionRegRef');
+    if (elRegRef) elRegRef.innerHTML = regTable;
   }
 
   // ─────────────────────────────────────────────────────────
