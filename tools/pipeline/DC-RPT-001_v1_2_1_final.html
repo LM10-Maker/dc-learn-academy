@@ -1031,7 +1031,7 @@ window.onerror = function(msg, src, line, col, err) {
 
       <!-- Sign-off footer -->
       <div class="cover-footer-block">
-        <div><strong>Prepared by:</strong> Les Murphy CEng MIEI MBA, Legacy Business Engineers Ltd</div>
+        <div><strong>Prepared by:</strong> Les Murphy CEng MEI MBA, Legacy Business Engineers Ltd</div>
         <div>Professional Indemnity Insurance held &mdash; Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
         <div style="margin-top:4px">info@legacybe.ie &nbsp;|&nbsp; legacybe.ie</div>
       </div>
@@ -1227,7 +1227,7 @@ window.onerror = function(msg, src, line, col, err) {
       <!-- Sign-off — single block per spec RED 1 -->
       <div style="border:1px solid #d1d5db;border-radius:6px;padding:16px 20px;margin:14px 0;font-size:9.5pt">
         <div style="font-weight:600;color:#374151;margin-bottom:10px">Independent Technical Sign-off</div>
-        <div style="margin-bottom:2px"><strong>Les Murphy CEng MIEI MBA</strong></div>
+        <div style="margin-bottom:2px"><strong>Les Murphy CEng MEI MBA</strong></div>
         <div style="color:#6b7280;margin-bottom:2px">Chartered Engineer | Independent Technical Advisor</div>
         <div style="color:#6b7280;margin-bottom:20px">Legacy Business Engineers Ltd</div>
         <div style="border-top:1px solid #1a1a1a;padding-top:4px;min-height:16px"></div>
@@ -1488,7 +1488,7 @@ window.onerror = function(msg, src, line, col, err) {
       retrofit_cost_per_kw: baseAss.retrofit_cost_per_kw,
       elec_rate:            baseAss.elec_rate * 1.15,
       include_crm:          baseAss.include_crm,
-      _grid_ef:             0.18,
+      _grid_ef:             0.2241,
       _carbon_tax:          100
     };
     var baseCalc     = reDerive(currentRawInputs, baseAss);
@@ -1865,7 +1865,7 @@ window.onerror = function(msg, src, line, col, err) {
     var rows = [
       ['Electricity Rate',    '€' + bh.elec_rate.toFixed(3) + '/kWh',                      '€' + sh.elec_rate.toFixed(3) + '/kWh'],
       ['Discount Rate',       (bh.discount_rate*100).toFixed(1) + '%',                 (sh.discount_rate*100).toFixed(1) + '%'],
-      ['Grid EF',             '0.2241 kgCO₂/kWh',                                 '0.18 kgCO₂/kWh'],
+      ['Grid EF',             '0.2241 kgCO₂/kWh',                                 '0.2241 kgCO₂/kWh'],
       ['Carbon Tax',          '€71/tCO₂',                                             '€100/tCO₂'],
       ['Target PUE',          bh.target_pue.toFixed(2),                                sh.target_pue.toFixed(2)],
       ['Annual Energy Cost',  '€' + numberWithCommas(Math.round(bh.annual_energy_cost)),    '€' + numberWithCommas(Math.round(sh.annual_energy_cost))],
@@ -1939,7 +1939,7 @@ window.onerror = function(msg, src, line, col, err) {
     var bothPos = bh.npv_retrofit > 0 && sh.npv_retrofit > 0;
     var basePos = bh.npv_retrofit > 0 && sh.npv_retrofit <= 0;
     var vLabel, vBg, vFg;
-    if (bothPos)       { vLabel = 'ROBUST';   vBg = '#dcfce7'; vFg = '#166534'; }
+    if (bothPos)       { vLabel = 'Indicative: ROBUST';   vBg = '#fef3c7'; vFg = '#92400e'; }
     else if (basePos)  { vLabel = 'MARGINAL';  vBg = '#fef3c7'; vFg = '#92400e'; }
     else               { vLabel = 'NEGATIVE';  vBg = '#fee2e2'; vFg = '#991b1b'; }
     var verdictBadge = '<span style="background:' + vBg + ';color:' + vFg +
@@ -1950,6 +1950,8 @@ window.onerror = function(msg, src, line, col, err) {
       '</strong>. Current carbon intensity is ' + Math.round(calc.intensity_location) +
       ' kgCO₂/MWh<sub>IT</sub> — ' + (calc.intensity_location > 300 ? 'above' : 'within') +
       ' the threshold where ESG-screened investors and lenders apply valuation discounts.</div>';
+
+    execHtml += '<div style="margin-bottom:8px;font-style:italic;font-size:8pt;color:#888">CRREM data centre pathway bands are derived by LBE from the CRREM v2.01 commercial real estate methodology. The CRREM Foundation has not published a sector-specific pathway for data centres. This is a screening-level estimate (T3/T4).</div>';
 
     execHtml += '<div style="margin-bottom:8px"><strong>Cost to fix:</strong> A PUE retrofit from ' +
       inp.pue.toFixed(2) + ' to ' + hm.target_pue.toFixed(1) +
@@ -2151,7 +2153,7 @@ window.onerror = function(msg, src, line, col, err) {
     if (crremStatus === 'critical' || crremStatus === 'misaligned') {
       if (hm.npv_retrofit > 0) {
         nextTitle = 'Desktop Assessment — €15,000 + VAT';
-        nextBody = 'A Desktop Assessment is the first step toward a full facility evaluation. It validates these screening figures with site-specific data, produces a phased retrofit programme, and confirms whether the hold thesis is defensible. This is the entry point to our DC-S01 independent engineering intelligence service. typically 6–8 weeks from receipt of data pack.';
+        nextBody = 'A Desktop Assessment is the first step toward a full facility evaluation. It validates these screening figures with site-specific data, produces a phased retrofit programme, and confirms whether the hold thesis is defensible. Typically 6–8 weeks from receipt of data pack.';
       } else {
         nextTitle = 'Disposal Analysis — €8,000–€12,000 + VAT';
         nextBody = 'Before committing capital, a Disposal Analysis benchmarks current market value against retrofit-then-sell economics. It identifies the optimal exit window relative to CRREM misalignment and quantifies the cost of delay. typically 4–6 weeks.';

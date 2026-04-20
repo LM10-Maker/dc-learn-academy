@@ -474,3 +474,14 @@ Commits: a56f7ab | 1bd0870 | 670c977 | f58ac3d
 Branch: claude/wire-dc-screen-pipeline-4SLAO
 
 Verdict: SHIP
+
+## [2026-04-20] DC-Screen Hero + RPT A+ Fix
+[FIX] RPT: CEng MIEI → CEng MEI throughout
+[FIX] RPT: CRREM LBE-derivation disclosure moved to Executive Summary page
+[FIX] RPT: ROBUST badge → "Indicative: ROBUST" (PI-safe qualifier added)
+[FIX] RPT: Stressed case grid EF corrected to 0.2241 (SEAI 2026 canonical)
+[FIX] RPT: DC-S01 service code removed from client-facing CTA
+[FIX] screen/index.html: Calendly link wired to Talk to Les card
+[FIX] screen/index.html: Screening Report card routes to intake form
+[FIX] screen/index.html: Sample PDF link wired at page bottom
+SHIP
