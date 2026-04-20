@@ -485,3 +485,12 @@ Verdict: SHIP
 [FIX] screen/index.html: Screening Report card routes to intake form
 [FIX] screen/index.html: Sample PDF link wired at page bottom
 SHIP
+
+## 2026-04-20 | DC-Screen | [DEPLOY]
+Corrected screen/ folder: replaced v4.12 hero with v4.13, added
+sample-screening-report.pdf and netlify.toml (missing from branch).
+Merged claude/add-screen-deploy-files-YxtjV to main, branch deleted.
+WHY: Branch had wrong hero version (no Calendly, old pricing). All 6
+deploy files now correct on main. Netlify publish dir: screen/
+Commit: 79b77e6
+SHIP
