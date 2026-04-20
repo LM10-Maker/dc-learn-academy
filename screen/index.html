@@ -38,6 +38,20 @@ a{color:inherit;text-decoration:none}
 .hero-meta-item{font-size:.78rem;font-family:var(--font-mono);color:var(--text-muted);display:flex;align-items:center;gap:.35rem}
 .hero-meta-item::before{content:'•';color:var(--lbe-green)}
 
+/* ── Hero action cards ──────────────────────────────────────────────── */
+.hero-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+@media(max-width:780px){.hero-cards{grid-template-columns:1fr}}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;display:flex;flex-direction:column;gap:.75rem}
+.hero-card-label{font-size:.68rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
+.hero-card-title{font-size:1.05rem;font-weight:700;color:var(--text-bright);line-height:1.3}
+.hero-card-desc{font-size:.82rem;color:var(--text-dim);line-height:1.5;flex:1}
+.hero-card-price{font-size:.8rem;font-family:var(--font-mono);color:var(--lbe-green);font-weight:600}
+.hero-card-btn{display:inline-block;margin-top:.5rem;padding:.6rem 1.25rem;border-radius:6px;font-size:.85rem;font-weight:700;font-family:var(--font-sans);text-align:center;cursor:pointer;transition:opacity .15s}
+.hero-card-btn:hover{opacity:.85}
+.btn-primary{background:var(--lbe-green);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--lbe-green);color:var(--lbe-green)}
+.btn-ghost{background:var(--panel);border:1px solid var(--border);color:var(--text-dim)}
+
 /* ── Intake section ─────────────────────────────────────────────────── */
 .intake-section{padding:0 2rem 3rem;max-width:1100px;margin:0 auto;width:100%}
 .section-label{font-size:.72rem;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
@@ -137,15 +151,47 @@ select option{background:var(--panel)}
   <h1 class="hero-title">Data Centre <span>Asset Carbon Risk</span> Screening</h1>
   <p class="hero-desc">Independent engineering intelligence for fund managers and colocation operators. LBE identifies and quantifies regulatory, carbon, and operational risk before capital commitment.</p>
   <div class="hero-meta">
-    <span class="hero-meta-item">CEng MIEI signed report</span>
+    <span class="hero-meta-item">CEng MEI signed report</span>
     <span class="hero-meta-item">€3,500 + VAT per facility</span>
     <span class="hero-meta-item">Delivered within 5 working days</span>
     <span class="hero-meta-item">CRREM · EU Taxonomy · CRU 2026</span>
   </div>
+
+  <!-- ── Action cards ──────────────────────────────────────────────── -->
+  <div class="hero-cards">
+
+    <!-- Card 1: Headline Audit (free) -->
+    <div class="hero-card">
+      <div class="hero-card-label">Free tool</div>
+      <div class="hero-card-title">Headline Audit</div>
+      <div class="hero-card-desc">Run DC-CPS-001 — the carbon and compliance pre-screener. Enter your facility parameters and get an instant risk band, CRREM position, and EU Taxonomy check. No sign-in required.</div>
+      <div class="hero-card-price">No charge</div>
+      <a class="hero-card-btn btn-primary" href="../tools/pipeline/DC-CPS-001_v1_0_2.html">Run the free audit →</a>
+    </div>
+
+    <!-- Card 2: Screening Report (€3,500) -->
+    <div class="hero-card">
+      <div class="hero-card-label">Paid service</div>
+      <div class="hero-card-title">Screening Report</div>
+      <div class="hero-card-desc">A full CEng MEI signed Asset Carbon Risk Screening Report for your facility. Covers CRREM pathway, EU Taxonomy alignment, hold thesis, and retrofit economics. Delivered within 5 working days.</div>
+      <div class="hero-card-price">€3,500 + VAT — Invoice-based</div>
+      <a class="hero-card-btn btn-outline" href="#intake-form" onclick="document.getElementById('intake-form').scrollIntoView({behavior:'smooth'});return false;">Book a Screening Report →</a>
+    </div>
+
+    <!-- Card 3: Talk to Les -->
+    <div class="hero-card">
+      <div class="hero-card-label">No charge</div>
+      <div class="hero-card-title">Talk to Les</div>
+      <div class="hero-card-desc">30-minute call with Les Murphy CEng MEI MBA to discuss your facility's carbon risk position, regulatory exposure, or the screening process. No obligation.</div>
+      <div class="hero-card-price">No charge</div>
+      <a class="hero-card-btn btn-ghost" href="https://calendly.com/lmurphy-legacybe/30min" target="_blank" rel="noopener noreferrer">Book 30 minutes →</a>
+    </div>
+
+  </div>
 </section>
 
 <!-- ── INTAKE FORM ──────────────────────────────────────────────────── -->
-<section class="intake-section">
+<section class="intake-section" id="intake-form">
   <div class="section-label">Request a Screening Report</div>
 
   <!-- Confirmation panel (hidden until submit) -->
@@ -411,7 +457,11 @@ select option{background:var(--panel)}
 
 <footer class="site-footer">
   <span class="footer-copy">&copy; 2026 Legacy Business Engineers Ltd · CRO 720301 · lmurphy@legacybe.ie</span>
-  <span class="footer-version">screen.legacybe.ie · DC Screen v2.1</span>
+  <span class="footer-version" style="display:flex;flex-direction:column;align-items:flex-end;gap:.35rem">
+    <span>screen.legacybe.ie · DC Screen v2.1</span>
+    <!-- TODO: wire to deployed CPS URL if sample-screening-report.pdf not yet committed -->
+    <a href="/sample-screening-report.pdf" style="font-size:.7rem;color:var(--accent);font-family:var(--font-mono)" target="_blank" rel="noopener noreferrer">Read an anonymised Screening Report on a 2.4 MW Dublin facility.</a>
+  </span>
 </footer>
 
 <script>
