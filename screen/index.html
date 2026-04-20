@@ -3,34 +3,101 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>DC Screen Tools | Legacy Business Engineers</title>
+<title>DC Screen | Asset Carbon Risk Screening | Legacy Business Engineers</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
+/* ── Design tokens ─────────────────────────────────────────────────── */
 :root,[data-theme="dark"]{
   --bg:#0d1117;--surface:#161b22;--panel:#1c2333;
   --border:#30363d;--border-light:#484f58;
   --text:#e6edf3;--text-bright:#f0f6fc;--text-dim:#8b949e;--text-muted:#6e7681;
   --accent:#58a6ff;--accent2:#79c0ff;--success:#3fb950;--warn:#d29922;--error:#f85149;
-  --lbe-green:#4a7c59;
-  --font-sans:'IBM Plex Sans',system-ui,sans-serif;--font-mono:'IBM Plex Mono',monospace;
+  --lbe-green:#4a7c59;--lbe-green-dim:rgba(74,124,89,.15);
+  --font-sans:'IBM Plex Sans',system-ui,sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-sans);min-height:100vh;display:flex;flex-direction:column}
 a{color:inherit;text-decoration:none}
+
+/* ── Site header ────────────────────────────────────────────────────── */
 .site-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .brand{display:flex;align-items:center;gap:.75rem}
 .brand-mark{width:28px;height:28px;background:var(--lbe-green);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;font-family:var(--font-mono);color:#fff;flex-shrink:0}
 .brand-name{font-size:.95rem;font-weight:600;color:var(--text-bright)}
 .brand-sub{font-size:.75rem;color:var(--text-dim);font-family:var(--font-mono)}
 .header-badge{font-size:.7rem;font-family:var(--font-mono);background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:.2rem .55rem;color:var(--text-dim)}
+
+/* ── Hero ──────────────────────────────────────────────────────────── */
 .hero{padding:3rem 2rem 2rem;max-width:1100px;margin:0 auto;width:100%}
 .hero-eyebrow{font-size:.72rem;font-family:var(--font-mono);color:var(--lbe-green);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.75rem}
 .hero-title{font-size:2rem;font-weight:700;color:var(--text-bright);line-height:1.2;margin-bottom:.75rem}
 .hero-title span{color:var(--accent)}
-.hero-desc{font-size:.95rem;color:var(--text-dim);max-width:560px;line-height:1.6}
-.tools-section{padding:0 2rem 3rem;max-width:1100px;margin:0 auto;width:100%}
+.hero-desc{font-size:.95rem;color:var(--text-dim);max-width:600px;line-height:1.6;margin-bottom:1.25rem}
+.hero-meta{display:flex;gap:1.5rem;flex-wrap:wrap}
+.hero-meta-item{font-size:.78rem;font-family:var(--font-mono);color:var(--text-muted);display:flex;align-items:center;gap:.35rem}
+.hero-meta-item::before{content:'•';color:var(--lbe-green)}
+
+/* ── Intake section ─────────────────────────────────────────────────── */
+.intake-section{padding:0 2rem 3rem;max-width:1100px;margin:0 auto;width:100%}
 .section-label{font-size:.72rem;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem}
 .section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.intake-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem}
+.intake-header{margin-bottom:1.75rem}
+.intake-header h2{font-size:1.15rem;font-weight:700;color:var(--text-bright);margin-bottom:.4rem}
+.intake-header p{font-size:.85rem;color:var(--text-dim);line-height:1.55;max-width:640px}
+.price-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--lbe-green-dim);border:1px solid var(--lbe-green);border-radius:6px;padding:.35rem .75rem;font-size:.8rem;font-weight:600;color:var(--lbe-green);margin-top:.75rem}
+
+/* ── Form layout ────────────────────────────────────────────────────── */
+.intake-form{display:flex;flex-direction:column;gap:0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem 1.5rem;margin-bottom:1.5rem}
+@media(max-width:680px){.form-grid{grid-template-columns:1fr}}
+
+.field-group{display:flex;flex-direction:column;gap:.35rem}
+.field-group.full{grid-column:1/-1}
+
+label{font-size:.8rem;font-weight:600;color:var(--text-dim);letter-spacing:.02em}
+label .req{color:var(--error);margin-left:.2rem}
+label .opt{font-size:.72rem;font-weight:400;color:var(--text-muted);margin-left:.3rem}
+
+input[type="text"],input[type="number"],input[type="email"],select,textarea{
+  width:100%;background:var(--panel);border:1px solid var(--border);border-radius:6px;
+  padding:.6rem .85rem;font-size:.88rem;font-family:var(--font-sans);
+  color:var(--text-bright);outline:none;transition:border-color .15s;
+  -webkit-appearance:none;appearance:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,.12)}
+input::placeholder,textarea::placeholder{color:var(--text-muted)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b949e' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2rem}
+select option{background:var(--panel)}
+
+.field-hint{font-size:.72rem;color:var(--text-muted);line-height:1.4;margin-top:.15rem}
+
+.form-divider{grid-column:1/-1;border:none;border-top:1px solid var(--border);margin:.25rem 0}
+.form-section-head{grid-column:1/-1;font-size:.72rem;font-family:var(--font-mono);color:var(--lbe-green);text-transform:uppercase;letter-spacing:.1em;padding-top:.25rem}
+
+/* ── Validation error state ─────────────────────────────────────────── */
+.field-error{border-color:var(--error)!important}
+.error-msg{font-size:.72rem;color:var(--error);margin-top:.2rem}
+
+/* ── Submit button ──────────────────────────────────────────────────── */
+.submit-row{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin-top:.5rem}
+.btn-submit{background:var(--lbe-green);color:#fff;border:none;border-radius:6px;padding:.75rem 1.75rem;font-size:.9rem;font-weight:700;font-family:var(--font-sans);cursor:pointer;transition:background .15s;flex-shrink:0}
+.btn-submit:hover{background:#3a6147}
+.btn-submit:disabled{background:var(--border);color:var(--text-muted);cursor:not-allowed}
+.submit-note{font-size:.75rem;color:var(--text-muted);line-height:1.45;max-width:420px}
+
+/* ── Confirmation panel ─────────────────────────────────────────────── */
+.confirm-panel{display:none;background:var(--panel);border:1px solid var(--lbe-green);border-radius:10px;padding:2rem 2rem 1.75rem;text-align:center}
+.confirm-panel.visible{display:block}
+.confirm-icon{font-size:2.5rem;margin-bottom:.75rem}
+.confirm-title{font-size:1.1rem;font-weight:700;color:var(--text-bright);margin-bottom:.6rem}
+.confirm-body{font-size:.9rem;color:var(--text-dim);line-height:1.6;max-width:500px;margin:0 auto 1.25rem}
+.confirm-ref{display:inline-block;font-family:var(--font-mono);font-size:.78rem;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:.3rem .7rem;color:var(--accent)}
+
+/* ── Tools section ──────────────────────────────────────────────────── */
+.tools-section{padding:0 2rem 3rem;max-width:1100px;margin:0 auto;width:100%}
 .tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
 .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:.65rem;transition:border-color .15s,background .15s}
 .tool-card:hover{border-color:var(--accent);background:var(--panel)}
@@ -41,6 +108,8 @@ a{color:inherit;text-decoration:none}
 .tool-desc{font-size:.82rem;color:var(--text-dim);line-height:1.5;flex:1}
 .tool-link{display:flex;align-items:center;gap:.35rem;font-size:.78rem;font-family:var(--font-mono);color:var(--accent);margin-top:.25rem}
 .tool-link::after{content:'→'}
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
 .site-footer{margin-top:auto;border-top:1px solid var(--border);background:var(--surface);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .footer-copy{font-size:.75rem;color:var(--text-muted)}
 .footer-version{font-size:.7rem;font-family:var(--font-mono);color:var(--text-muted)}
@@ -48,156 +117,171 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 
+<!-- ── HEADER ──────────────────────────────────────────────────────── -->
 <header class="site-header">
   <div class="brand">
     <div class="brand-mark">LBE</div>
     <div>
       <div class="brand-name">Legacy Business Engineers</div>
-      <div class="brand-sub">DC Screen Tools</div>
+      <div class="brand-sub">screen.legacybe.ie</div>
     </div>
   </div>
-  <span class="header-badge">v2.0.0</span>
+  <span class="header-badge">DC Screen v2.1</span>
 </header>
 
 <main>
+
+<!-- ── HERO ────────────────────────────────────────────────────────── -->
 <section class="hero">
   <div class="hero-eyebrow">screen.legacybe.ie</div>
-  <h1 class="hero-title">Data Centre <span>Screen Tools</span></h1>
-  <p class="hero-desc">Rapid screening and assessment tools for data centre compliance, infrastructure adequacy, and operational readiness. Select a tool below to begin.</p>
+  <h1 class="hero-title">Data Centre <span>Asset Carbon Risk</span> Screening</h1>
+  <p class="hero-desc">Independent engineering intelligence for fund managers and colocation operators. LBE identifies and quantifies regulatory, carbon, and operational risk before capital commitment.</p>
+  <div class="hero-meta">
+    <span class="hero-meta-item">CEng MIEI signed report</span>
+    <span class="hero-meta-item">€3,500 + VAT per facility</span>
+    <span class="hero-meta-item">Delivered within 5 working days</span>
+    <span class="hero-meta-item">CRREM · EU Taxonomy · CRU 2026</span>
+  </div>
 </section>
 
+<!-- ── INTAKE FORM ──────────────────────────────────────────────────── -->
+<section class="intake-section">
+  <div class="section-label">Request a Screening Report</div>
+
+  <!-- Confirmation panel (hidden until submit) -->
+  <div class="confirm-panel" id="confirmPanel" role="alert">
+    <div class="confirm-icon">✓</div>
+    <div class="confirm-title">Thank you. Your facility data has been received.</div>
+    <div class="confirm-body">We will send an invoice for the Screening Report (€3,500 plus VAT) and deliver your report within 5 working days. Our team will be in touch at the email address you provided.</div>
+    <span class="confirm-ref" id="confirmRef"></span>
+  </div>
+
+  <div class="intake-card" id="intakeCard">
+    <div class="intake-header">
+      <h2>Facility Intake Form</h2>
+      <p>Complete the form below to request your Asset Carbon Risk Screening Report. Fields marked <span style="color:var(--error)">*</span> are required to generate the report. Optional fields improve accuracy.</p>
+      <div class="price-badge">DC Screening Report — €3,500 + VAT · Invoice-based · No payment required now</div>
+    </div>
+
+    <!-- FORM — Netlify form submission -->
+    <form
+      class="intake-form"
+      id="intakeForm"
+      name="screening-intake"
+      method="POST"
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      novalidate
+    >
+      <!-- Netlify hidden fields -->
+      <input type="hidden" name="form-name" value="screening-intake"/>
+      <p style="display:none"><input name="bot-field"/></p>
+
+      <div class="form-grid">
+        <!-- FORM FIELDS GO HERE (Step 2) -->
+        <div class="field-group full" id="fieldsPlaceholder">
+          <p style="color:var(--text-muted);font-size:.85rem">Loading fields…</p>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-row full" style="margin-top:.75rem">
+          <button type="submit" class="btn-submit" id="submitBtn">Submit Facility Data</button>
+          <p class="submit-note">By submitting you agree to LBE processing your data for the purpose of preparing an engineering screening report. Data is held securely and not shared with third parties.</p>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ── TOOLS SECTION ────────────────────────────────────────────────── -->
 <section class="tools-section">
   <div class="section-label">Available Tools — 12</div>
   <div class="tool-grid">
-
     <a class="tool-card" href="tools/DC-TOOL-001_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-001</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-001</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Power Chain Screener</div>
       <div class="tool-desc">Screen the end-to-end power delivery chain for capacity gaps, single points of failure, and design shortfalls.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-002_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-002</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-002</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Cooling Chain Screener</div>
       <div class="tool-desc">Evaluate cooling infrastructure adequacy including redundancy, capacity headroom, and thermal risk exposure.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-003_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-003</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-003</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Redundancy Gap Tool</div>
       <div class="tool-desc">Identify redundancy shortfalls across power, cooling, and network tiers against target Tier classification.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-004_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-004</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-004</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Compliance Checker</div>
       <div class="tool-desc">Check facility compliance posture against key data centre standards and flag open items requiring remediation.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-005_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-005</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-005</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">UPS Adequacy Tool</div>
       <div class="tool-desc">Assess UPS system sizing, runtime adequacy, and battery health against protected load requirements.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-006_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-006</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-006</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Grid Headroom Calculator</div>
       <div class="tool-desc">Calculate available grid headroom and model the impact of planned capacity additions on utility connection.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-007_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-007</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-007</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Regulatory Gap Screener</div>
       <div class="tool-desc">Screen for gaps against applicable regulatory requirements and flag areas needing attention before audit.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-008_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-008</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-008</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Fire Safety Screener</div>
       <div class="tool-desc">Evaluate fire detection, suppression, and compartmentation provisions against data centre fire safety standards.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-010_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-010</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
-      <div class="tool-name">DC-TOOL-010</div>
-      <div class="tool-desc">Structured assessment tool built on the DC Screen Factory Template framework.</div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-010</span><span class="tool-badge">v2.0.0</span></div>
+      <div class="tool-name">Facility Audit Checklist</div>
+      <div class="tool-desc">Structured multi-domain audit across power, cooling, efficiency, and operational readiness.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-011_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-011</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-011</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">Security Assessment Tool</div>
       <div class="tool-desc">Screen physical and logical security controls against data centre security standards and best practices.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-012_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-012</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
-      <div class="tool-name">DC-TOOL-012</div>
-      <div class="tool-desc">Structured assessment tool built on the DC Screen Factory Template framework.</div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-012</span><span class="tool-badge">v2.0.0</span></div>
+      <div class="tool-name">Commissioning Readiness</div>
+      <div class="tool-desc">Check commissioning milestones and defect clearance for safe operational handover.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
     <a class="tool-card" href="tools/DC-TOOL-014_v2_0_0.html">
-      <div class="tool-card-top">
-        <span class="tool-id">DC-TOOL-014</span>
-        <span class="tool-badge">v2.0.0</span>
-      </div>
+      <div class="tool-card-top"><span class="tool-id">DC-TOOL-014</span><span class="tool-badge">v2.0.0</span></div>
       <div class="tool-name">CRU Readiness Screener</div>
-      <div class="tool-desc">Assess critical resilience unit readiness and identify gaps in preparedness for critical infrastructure operation.</div>
+      <div class="tool-desc">Assess renewable and backup power infrastructure readiness for CRU obligation compliance.</div>
       <div class="tool-link">Launch tool</div>
     </a>
-
   </div>
 </section>
+
 </main>
 
 <footer class="site-footer">
-  <span class="footer-copy">&copy; 2025 Legacy Business Engineers. All rights reserved.</span>
-  <span class="footer-version">DC Screen Tools v2.0.0</span>
+  <span class="footer-copy">&copy; 2026 Legacy Business Engineers Ltd · CRO 720301 · lmurphy@legacybe.ie</span>
+  <span class="footer-version">screen.legacybe.ie · DC Screen v2.1</span>
 </footer>
+
+<script>
+// Placeholder — form JS added in Step 2
+</script>
 
 </body>
 </html>
