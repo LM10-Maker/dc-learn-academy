@@ -1,16 +1,41 @@
 {
-  "run_date": "2026-04-13T09:02:54.229566+00:00",
+  "run_date": "2026-04-20T09:08:41.893813+00:00",
   "sources_checked": 12,
-  "sources_changed": 1,
-  "fetch_errors": 0,
+  "sources_changed": 3,
+  "fetch_errors": 1,
   "changes": [
     {
-      "date": "2026-04-13",
+      "date": "2026-04-20",
+      "source_id": "epa",
+      "source_name": "EPA \u2014 Licensing",
+      "url": "https://www.epa.ie/",
+      "priority": "P3",
+      "summary": "5 new lines detected. Examples:\n  + Climate Risk and Adaptation in an Uncertain World - April 22 - Online Webinar\n  + Climate Change Lecture Series - Climate Risk and Adaptation in an Uncertain World\n  + The EPA, as part of the National Dialogue on Climate Action, will host a public lecture titled Climate Risk and Adaptati\n5 lines removed. Examples:\n  - The EPA Circular Economy Conference 2026 will take place on 19th November in the Aviva Stadium Dublin\n  - The EPA Research Call 2026 is now open",
+      "modules_affected": [
+        "007",
+        "012"
+      ]
+    },
+    {
+      "date": "2026-04-20",
+      "source_id": "semo",
+      "source_name": "SEMO \u2014 Capacity Market",
+      "url": "https://www.sem-o.com/",
+      "priority": "P3",
+      "summary": "3 new lines detected. Examples:\n  + Future Power Markets June Workshop\n2 lines removed. Examples:\n  - Balancing Market Modifications Committee Meeting 134",
+      "modules_affected": [
+        "012",
+        "015",
+        "006"
+      ]
+    },
+    {
+      "date": "2026-04-20",
       "source_id": "crrem",
       "source_name": "CRREM \u2014 Methodology",
       "url": "https://www.crrem.eu/",
       "priority": "P2",
-      "summary": "4 new lines detected. Examples:\n  + We're building a new home for CRREM \u00e2\u0080\u0094 science-based decarbonization pathways for real estate across 44 countries.\n66 lines removed. Examples:\n  - CRREM Pathways reflect the emissions and energy intensity levels buildings need to meet to stay within the global carbon\n  - CRREM accelerates global roll-out with launch of three Regional Advisory Committees.\n  - Welcoming members of CRREM\u2019s Technical Council\n  - Assess transition risks, model decarbonization cost",
+      "summary": "162 new lines detected. Examples:\n  + Active market consultations with participation details\n  + CRREM: Science-Based Decarbonization Pathways for Real Estate\n  + Data, ratings, or software company\n  + How pathways are developed, updated, and maintained\n  + How CRREM is funded and our commitment to independence\n5 lines removed. Examples:\n  - We're building a new home for CRREM \u00e2\u0080\u0094 science-based decarbonization pathways for real estate across 44 countries.",
       "modules_affected": [
         "010",
         "007",

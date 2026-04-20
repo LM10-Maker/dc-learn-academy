@@ -1,5 +1,186 @@
-CRREM â Coming Soon
-New website coming soon
-We're building a new home for CRREM â science-based decarbonization pathways for real estate across 44 countries.
-Questions? Reach us at
-[email protected]
+CRREM: Science-Based Decarbonization Pathways for Real Estate
+Skip to content
+Global Standard
+The global standard for
+transition risk
+in real estate
+More than 1,000 science-based pathways across 44 countries. CRREM translates climate science into property-level risk indicators — helping inform capital allocation, retrofit sequencing, and long-term portfolio resilience.
+Explore the Pathways
+arrow_forward
+Become a Partner
+0
+Pathways
+0
+Countries
+0
+License Partners
+Open
+for Public Use
+USED BY
+STARTING POINT
+Find your entry point
+Whether you’re assessing portfolio risk, integrating CRREM data, or advising clients — start here.
+monitoring
+I’m an investor
+Understand which assets face transition risk, set science-based targets, and make capital allocation decisions grounded in data.
+arrow_forward
+menu_book
+I want to use CRREM data
+Access pathway data, reference guides, and practical guidance on applying CRREM to your buildings or portfolio.
+arrow_forward
+handshake
+I want to integrate CRREM
+Become a License Partner, Accredited Service Provider, or explore integration options for your platform.
+arrow_forward
+Pathway Explorer
+See how your building compares against the CRREM Pathway
+Select a country, property type, and metric to find your CRREM Pathway. Add your building's data to calculate its CRREM Misalignment Year.
+Country / Region
+Loading…
+Property Type
+Loading…
+Metric
+Loading…
+Loading pathway data…
+CRREM Pathway (1.5°C)
+Your Building
+Misalignment Year
+apartment
+Compare your building
+Enter your building's current intensity and expected annual improvement to see when (or if) it crosses the CRREM Pathway.
+Current Intensity
+50
+Annual Reduction
+1%
+Data: CRREM Global Pathways V2.04 (August 2025) • 1.5°C Paris-aligned scenario •
+crrem.eu
+Disclaimer:
+The CRREM Pathways and tools are provided for informational and exploratory purposes only. They do not constitute investment advice, financial guidance, or a recommendation to buy, sell, or hold any asset. Users should conduct their own due diligence and consult qualified professionals before making investment or asset management decisions. The Pathway explorer does not include projections of your building's carbon or energy intensity based on emission factor changes, grid decarbonization, or HDD/CDD assumptions. This should be used for simulation and exploratory purposes only.
+Build your own assessment
+arrow_forward
+Global Coverage
+CRREM around the world
+Explore country-specific pathways, data sources, and local partners across 44 countries and 6 continents.
+Europe
+30
+Asia Pacific
+9
+Americas
+5
+Click to view details
+close
+View country page
+arrow_forward
+WHAT CRREM ENABLES
+Four ways CRREM drives action
+From risk assessment to stakeholder dialogue, CRREM provides the data infrastructure the real estate sector needs.
+01
+Assess risks
+Identify which buildings face transition risk and when, using science-based carbon pathways benchmarked to global climate targets.
+02
+Set targets
+Anchor decarbonization targets to climate science — not arbitrary baselines — with pathways that reflect real building performance data.
+03
+Define roadmaps
+Sequence retrofits, model costs, and plan capital expenditure against a clear, science-based trajectory for each asset and portfolio.
+04
+Facilitate dialogue
+Give investors, managers, tenants, and regulators a shared language for discussing climate performance and transition planning.
+Latest
+News & Updates
+View all news
+arrow_forward
+Press Release
+CRREM appoints Director of Data, Impact & Innovation to lead open-contribution research model
+Michael Hogenboom to architect the data ecosystem behind the world's leading transition pathways.
+14/04/2026
+Announcement
+Retiring the CRREM EU-Project Excel Tool
+CRREM retires the EU-Project Excel Tool, replacing it with an open-access Dataset and Calculation Library for increased transparency and accessibility.
+04/03/2026
+Press Release
+INREV identifies CRREM Misalignment Year as a material input for valuation
+INREV references CRREM as a material factor in property valuation, marking a shift from disclosure frameworks into discounted cash flow analysis.
+27/02/2026
+The window for orderly transition is narrowing
+Explore CRREM Pathways to understand where your portfolio stands — and what it takes to align.
+Explore Pathways
+arrow_forward
+Get in Touch
+Our Story
+Who we are, our evolution from EU research project to global foundation
+Team
+The people behind the CRREM Foundation
+Governance
+Foundation Board, Technical Council, Regional Advisory Committees
+Funding
+How CRREM is funded and our commitment to independence
+Explore Pathways
+Access CRREM Pathway data and download resources
+How to Use CRREM
+Practical guidance for portfolio assessment, target-setting, and retrofit planning
+Methodology
+How pathways are developed, updated, and maintained
+Change & Update Protocol
+Version history, update procedures, and transparency commitments
+Library
+Browse all CRREM resources — publications, guides, case studies, and best practices
+FAQ
+Frequently asked questions about CRREM and the Pathways
+Publications
+Research papers, reports, and collaboration documents
+Reference Guides
+Technical reference documents for in-depth understanding
+Overview
+CRREM's partner ecosystem and how organizations work with us
+License Partners
+Software platforms integrating CRREM Pathway data
+Become a Partner
+How to apply for a partnership with the CRREM Foundation
+News
+Press releases, announcements, and updates from the CRREM Foundation
+Open Consultations
+Active market consultations with participation details
+Events
+Upcoming and past events, townhall meetings, and conferences
+Newsletter
+Subscribe to the CRREM Foundation newsletter and browse the archive
+?
+?
+Ask CRREM
+AI assistant
+Answers are AI-generated from official CRREM sources
+close
+Stay Informed
+Join us on the pathway
+Whether you're an investor, asset manager, or real estate sustainability professional — let's stay close.
+First Name
+*
+Last Name
+*
+Email Address
+*
+Organization
+*
+Country
+*
+What best describes you?
+*
+Investor (pension fund, insurance, etc.)
+Fund manager or real estate company
+Service provider (consultant, advisor, audit)
+Banking
+Research and academia
+Data, ratings, or software company
+Industry body or association
+Other
+Subscribe
+arrow_forward
+close
+search
+Press
+/
+to search ·
+Esc
+to close
+keyboard_arrow_up

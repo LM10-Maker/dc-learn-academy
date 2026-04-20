@@ -8,16 +8,12 @@ Good
 CRM
 Good
 Funds Transfer
-Good
+Warning
 Settlement
 Good
 Invoicing
 The Integrated Single Electricity Market is a new wholesale market for Ireland and Northern Ireland. By integrating the all-island and European electricity markets, it enables the free flow of energy across borders.
 Upcoming Events
-April 16, 2026
-Balancing Market Modifications Committee Meeting 134
-Location:
-MS Teams
 April 22, 2026
 Future Power Markets April Workshop
 Location:
@@ -32,6 +28,10 @@ Location:
 MS Teams
 June 18, 2026
 Balancing Market Modifications Committee Meeting 135
+Location:
+MS Teams
+June 24, 2026
+Future Power Markets June Workshop
 Location:
 MS Teams
 Events calendar
