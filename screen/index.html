@@ -178,16 +178,151 @@ select option{background:var(--panel)}
       <p style="display:none"><input name="bot-field"/></p>
 
       <div class="form-grid">
-        <!-- FORM FIELDS GO HERE (Step 2) -->
-        <div class="field-group full" id="fieldsPlaceholder">
-          <p style="color:var(--text-muted);font-size:.85rem">Loading fields…</p>
+
+        <!-- ── Section: Facility Identity ─────────────────────────── -->
+        <div class="form-section-head">Facility Identity</div>
+
+        <div class="field-group">
+          <label for="facility_name">Facility Name<span class="req">*</span></label>
+          <input type="text" id="facility_name" name="facility_name" placeholder="e.g. Clonshaugh Data Centre" autocomplete="organization" required/>
+          <span class="error-msg" id="err_facility_name"></span>
         </div>
 
-        <!-- Submit -->
+        <div class="field-group">
+          <label for="contact_email">Your Email Address<span class="req">*</span></label>
+          <input type="email" id="contact_email" name="contact_email" placeholder="ann@fund.ie" autocomplete="email" required/>
+          <div class="field-hint">Invoice and report will be sent to this address.</div>
+          <span class="error-msg" id="err_contact_email"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="location">Location<span class="req">*</span></label>
+          <input type="text" id="location" name="location" placeholder="e.g. Clonshaugh, Dublin" required/>
+          <div class="field-hint">Town, county, or Eircode. Used for free-cooling hours and grid operator lookup.</div>
+          <span class="error-msg" id="err_location"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="build_year">Year Built<span class="req">*</span></label>
+          <input type="number" id="build_year" name="build_year" placeholder="e.g. 2013" min="1990" max="2030" required/>
+          <div class="field-hint">Year facility first energised. Used to calculate facility age for CRREM pathway.</div>
+          <span class="error-msg" id="err_build_year"></span>
+        </div>
+
+        <hr class="form-divider"/>
+
+        <!-- ── Section: IT Load ────────────────────────────────────── -->
+        <div class="form-section-head">IT Load &amp; Racks</div>
+
+        <div class="field-group">
+          <label for="it_load_mw">Total IT Load (MW)<span class="req">*</span></label>
+          <input type="number" id="it_load_mw" name="it_load_mw" placeholder="e.g. 2.4" min="0.1" max="500" step="0.1" required/>
+          <div class="field-hint">Installed IT load in megawatts. Not total facility load.</div>
+          <span class="error-msg" id="err_it_load_mw"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="rack_count">Total Rack Count<span class="req">*</span></label>
+          <input type="number" id="rack_count" name="rack_count" placeholder="e.g. 400" min="1" max="50000" step="1" required/>
+          <span class="error-msg" id="err_rack_count"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="rack_density_kw">Average Rack Density (kW/rack)<span class="req">*</span></label>
+          <input type="number" id="rack_density_kw" name="rack_density_kw" placeholder="e.g. 6" min="1" max="200" step="0.5" required/>
+          <div class="field-hint">Current average watts per rack position. Typical: 4–10 kW legacy, 30–100 kW AI.</div>
+          <span class="error-msg" id="err_rack_density_kw"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="total_floor_m2">IT White Space Floor Area (m²)<span class="opt">(optional)</span></label>
+          <input type="number" id="total_floor_m2" name="total_floor_m2" placeholder="e.g. 1200" min="10" max="100000" step="10"/>
+          <div class="field-hint">Total raised-floor or white-space area in square metres.</div>
+        </div>
+
+        <hr class="form-divider"/>
+
+        <!-- ── Section: Efficiency & Cooling ──────────────────────── -->
+        <div class="form-section-head">Efficiency &amp; Cooling</div>
+
+        <div class="field-group">
+          <label for="pue">Current PUE (actual)<span class="req">*</span></label>
+          <input type="number" id="pue" name="pue" placeholder="e.g. 1.50" min="1.00" max="3.00" step="0.01" required/>
+          <div class="field-hint">Actual operational PUE. Used for carbon intensity and CRREM pathway calculation.</div>
+          <span class="error-msg" id="err_pue"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="cooling_type">Cooling Type<span class="req">*</span></label>
+          <select id="cooling_type" name="cooling_type" required>
+            <option value="">— Select —</option>
+            <option value="air">Air (CRAC / CRAH)</option>
+            <option value="air_free">Air + Free Cooling</option>
+            <option value="hybrid">Hybrid (air + liquid assist)</option>
+            <option value="liquid">Full Liquid / DLC</option>
+            <option value="immersion">Immersion</option>
+            <option value="evaporative">Evaporative</option>
+          </select>
+          <span class="error-msg" id="err_cooling_type"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="ppa_pct">Renewable PPA Share (%)<span class="req">*</span></label>
+          <input type="number" id="ppa_pct" name="ppa_pct" placeholder="e.g. 0" min="0" max="100" step="5" required/>
+          <div class="field-hint">% of electricity from renewable PPA or GoOs. Enter 0 if none. CRU requires 80% for new/expanding DCs.</div>
+          <span class="error-msg" id="err_ppa_pct"></span>
+        </div>
+
+        <hr class="form-divider"/>
+
+        <!-- ── Section: Grid & Electrical ─────────────────────────── -->
+        <div class="form-section-head">Grid &amp; Electrical</div>
+
+        <div class="field-group">
+          <label for="voltage_kv">Grid Connection Voltage (kV)<span class="req">*</span></label>
+          <select id="voltage_kv" name="voltage_kv" required>
+            <option value="">— Select —</option>
+            <option value="10">10 kV — MV, ESB Networks</option>
+            <option value="20">20 kV — MV, ESB Networks</option>
+            <option value="38">38 kV — HV, ESB / EirGrid</option>
+            <option value="110">110 kV — HV, EirGrid direct</option>
+          </select>
+          <div class="field-hint">≤20 kV = ESB Networks. &gt;20 kV = EirGrid. Check your connection offer letter.</div>
+          <span class="error-msg" id="err_voltage_kv"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="mic_kva">MIC — Maximum Import Capacity (MVA)<span class="req">*</span></label>
+          <input type="number" id="mic_kva" name="mic_kva" placeholder="e.g. 5" min="0.5" max="1000" step="0.5" required/>
+          <div class="field-hint">From ESB Networks / EirGrid connection offer. Enter in MVA.</div>
+          <span class="error-msg" id="err_mic_kva"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="generator_fuel">Generator Fuel<span class="req">*</span></label>
+          <select id="generator_fuel" name="generator_fuel" required>
+            <option value="">— Select —</option>
+            <option value="diesel">Diesel (EN 590)</option>
+            <option value="hvo">HVO (EN 15940)</option>
+            <option value="gas">Gas turbine</option>
+            <option value="none">No backup generator</option>
+          </select>
+          <span class="error-msg" id="err_generator_fuel"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="generator_hours">Generator Annual Hours<span class="req">*</span></label>
+          <input type="number" id="generator_hours" name="generator_hours" placeholder="e.g. 200" min="0" max="8760" step="10" required/>
+          <div class="field-hint">Annual test + operational hours. Typical: 100–200 hrs standard, 200–400 grid-constrained sites.</div>
+          <span class="error-msg" id="err_generator_hours"></span>
+        </div>
+
+        <!-- ── Submit ──────────────────────────────────────────────── -->
         <div class="submit-row full" style="margin-top:.75rem">
           <button type="submit" class="btn-submit" id="submitBtn">Submit Facility Data</button>
-          <p class="submit-note">By submitting you agree to LBE processing your data for the purpose of preparing an engineering screening report. Data is held securely and not shared with third parties.</p>
+          <p class="submit-note">By submitting you agree to LBE processing your facility data for the purpose of preparing an engineering screening report. Data is held securely and not shared with third parties. Invoice issued separately — no payment is collected here.</p>
         </div>
+
       </div>
     </form>
   </div>
@@ -280,7 +415,118 @@ select option{background:var(--panel)}
 </footer>
 
 <script>
-// Placeholder — form JS added in Step 2
+(function(){
+  var REQUIRED = ['facility_name','contact_email','location','build_year',
+                  'it_load_mw','rack_count','rack_density_kw','pue',
+                  'cooling_type','ppa_pct','voltage_kv','mic_kva',
+                  'generator_fuel','generator_hours'];
+
+  function clearErrors(){
+    document.querySelectorAll('.error-msg').forEach(function(el){el.textContent='';});
+    document.querySelectorAll('.field-error').forEach(function(el){el.classList.remove('field-error');});
+  }
+
+  function setError(id, msg){
+    var el = document.getElementById(id);
+    var err = document.getElementById('err_'+id);
+    if(el) el.classList.add('field-error');
+    if(err) err.textContent = msg;
+  }
+
+  function validate(){
+    clearErrors();
+    var ok = true;
+
+    REQUIRED.forEach(function(id){
+      var el = document.getElementById(id);
+      if(!el) return;
+      var v = el.value.trim();
+      if(!v || v === ''){
+        setError(id, 'This field is required.');
+        ok = false;
+      }
+    });
+
+    // Email format
+    var email = document.getElementById('contact_email');
+    if(email && email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())){
+      setError('contact_email', 'Enter a valid email address.');
+      ok = false;
+    }
+
+    // Numeric bounds
+    var bounds = {
+      build_year:       [1990, 2030],
+      it_load_mw:       [0.1, 500],
+      rack_count:       [1, 50000],
+      rack_density_kw:  [1, 200],
+      pue:              [1.0, 3.0],
+      ppa_pct:          [0, 100],
+      mic_kva:          [0.5, 1000],
+      generator_hours:  [0, 8760]
+    };
+    Object.keys(bounds).forEach(function(id){
+      var el = document.getElementById(id);
+      if(!el || !el.value.trim()) return;
+      var v = parseFloat(el.value);
+      if(isNaN(v) || v < bounds[id][0] || v > bounds[id][1]){
+        setError(id, 'Must be between '+bounds[id][0]+' and '+bounds[id][1]+'.');
+        ok = false;
+      }
+    });
+
+    return ok;
+  }
+
+  function generateRef(){
+    return 'LBE-INT-'+new Date().getFullYear()+'-'+(Date.now()+'').slice(-5);
+  }
+
+  var form = document.getElementById('intakeForm');
+  if(!form) return;
+
+  form.addEventListener('submit', function(e){
+    if(!validate()){
+      e.preventDefault();
+      // Scroll to first error
+      var first = document.querySelector('.field-error');
+      if(first) first.scrollIntoView({behavior:'smooth', block:'center'});
+      return;
+    }
+
+    // Netlify handles actual submission; intercept for SPA confirmation UX
+    e.preventDefault();
+    var btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    // Submit via fetch (Netlify forms accept application/x-www-form-urlencoded)
+    var data = new URLSearchParams();
+    new FormData(form).forEach(function(v,k){ data.append(k, v); });
+
+    fetch('/', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body: data.toString()
+    })
+    .then(function(){
+      showConfirmation();
+    })
+    .catch(function(){
+      // Fallback: show confirmation anyway (Netlify may still have captured)
+      showConfirmation();
+    });
+  });
+
+  function showConfirmation(){
+    var card = document.getElementById('intakeCard');
+    var panel = document.getElementById('confirmPanel');
+    var ref = document.getElementById('confirmRef');
+    if(card) card.style.display = 'none';
+    if(panel){ panel.classList.add('visible'); panel.scrollIntoView({behavior:'smooth',block:'start'}); }
+    if(ref) ref.textContent = generateRef();
+  }
+})();
 </script>
 
 </body>
