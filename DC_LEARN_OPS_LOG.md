@@ -423,3 +423,54 @@ Pending LM manual step:
 - github.com/LM10-Maker/dc-screen → Settings → Archive repository (read-only)
 
 Verdict: SHIP
+
+---
+## 2026-04-20 — DC-Screen P2: Pipeline Wiring [BUILD] [DEPLOY]
+
+Session: Claude Code (claude/wire-dc-screen-pipeline-4SLAO)
+Tasks completed: CPS v1.1.0 commit, MSTR JSON export (all 14 fields), CPS import wiring (zero manual re-entry), CPS-to-RPT wiring verified, Clonshaugh sample run, intake form
+
+**MSTR → CPS schema:**
+MSTR exports: project.{name,ref,county,build_year,hall_names}, it_load.{total_it_mw,rack_count,rack_density_kw}, design_criteria.{pue_target}, electrical.{utility_kv,ppa_pct,generator_hours,mic_mva,fuel}, cooling.{strategy}, screening.{current_pue,grid_operator,redundancy_level,lease_end_year}
+CPS importJSON maps all of the above → inputs.{facilityName,itLoadMW,pue,coolingType,genFuel,genConfig,numRacks,rackDensity,ppaPercent,genHours,facilityAge,micMva,hallNames} ✓
+
+**CPS → RPT schema:**
+CPS exportJSON._aimep_lineage.tool_id = "DC-CPS-001" ✓ (validated by RPT processImport)
+CPS inputs block → RPT inputs block: direct pass-through, all required fields present ✓
+
+**Canonical values verified in DC-CPS-001 v1.1.0:**
+- Grid EF: 0.2241 kgCO2/kWh (SEAI 2026) ✓
+- Gas EF: 0.205 kgCO2/kWh (SEAI 2026) ✓
+- Carbon tax current: €71/tCO2 (Budget 2025) ✓
+- Carbon tax 2030: €100/tCO2 (Finance Act) ✓
+- CRM T-4 clearing price: €149,960/MW/yr (SEMO PCAR2829T-4) ✓ — ADDED
+- Electricity price: €0.12/kWh (CRU Q4 2024) ✓ — ADDED
+- EU Taxonomy PUE: 1.30 (Delegated Act 2021/2139) ✓
+- CRU renewable obligation: 80% (CRU/2025236) ✓
+- Dublin free cooling hours: 7,200 hrs/yr (Met Éireann 30-yr) ✓ — ADDED
+
+**Stale value sweep:** 0 matches — 83050 | 0.295 | 63.50 | 56 (as carbon tax) | 110 kV (Clonshaugh context) ✓
+
+**Clonshaugh results (ppa=0%, diesel 200 hrs/yr, air CRAC, N+1, MIC 5 MVA, 10 kV ESB Networks):**
+- CRREM misalignment year: 2027
+- Carbon intensity: 336 kgCO2/MWh_IT (HIGH band, 300–400 range)
+- Location CO2: 7,067 tCO2/yr | Generator CO2 (Scope 1): 521 tCO2/yr
+- EU Taxonomy PUE: FAIL (1.50 vs 1.30)
+- CRU 80% renewable: FAIL (0% PPA, 80% gap)
+- Indicative retrofit cost range: €1.9M – €3.6M
+- Indicative 10-yr cost of inaction: ~€3.4M (NPV foregone energy savings, no CRM)
+- 10-yr NPV with CRM: +€3.16M | Without CRM: +€746k | Simple payback: 3.1 / 5.2 yrs
+- Traffic-light: POWER=AMBER | COOLING=RED | REDUNDANCY=AMBER | REGULATORY=RED | CARBON=RED
+
+**Intake form (screen.legacybe.ie):**
+- 14 fields, Netlify forms (data-netlify="true", name=screening-intake), honeypot
+- Required: facility_name, contact_email, location, build_year, it_load_mw, rack_count, rack_density_kw, pue, cooling_type, ppa_pct, voltage_kv, mic_kva, generator_fuel, generator_hours
+- Confirmation: "Thank you. Your facility data has been received. We will send an invoice for the Screening Report (€3,500 plus VAT) and deliver your report within 5 working days."
+- No Stripe. Invoice-based.
+
+**Deviations:** None. No DC-LEARN modules touched. No Supabase auth/schema touched. No Stripe webhook touched.
+
+Commits: a56f7ab | 1bd0870 | 670c977 | f58ac3d
+Branch: claude/wire-dc-screen-pipeline-4SLAO
+
+Verdict: SHIP
