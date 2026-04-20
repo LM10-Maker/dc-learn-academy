@@ -1423,23 +1423,33 @@ window.onerror = function(msg, src, line, col, err) {
   // SAMPLE DATA — Clonshaugh Data Centre
   // ─────────────────────────────────────────────────────────
   var CLONSHAUGH_SAMPLE = {
-    _aimep_lineage: { tool_id: 'DC-CPS-001', version: '1.0.0' },
+    _aimep_lineage: { tool_id: 'DC-CPS-001', version: '1.1.0' },
     inputs: {
-      facility_name: 'Clonshaugh Data Centre',
-      project_ref: 'LBE-SCR-2026-001',
-      it_load_mw: 2.4,
-      pue: 1.50,
-      facility_age_yrs: 12,
-      cooling_type: 'chilled_water',
-      generator_config: 'n+1',
-      generator_fuel: 'diesel',
-      generator_hours: 200,
-      ppa_pct: 40,
-      rack_count: 400,
-      rack_density_kw: 6,
-      location: 'dublin',
-      mic_mva: 5,
-      hall_names: 'Hall A'
+      facility_name:    'Clonshaugh Data Centre',
+      project_ref:      'LBE-SCR-2026-001',
+      it_load_mw:       2.4,
+      pue:              1.50,
+      facility_age_yrs: 13,
+      cooling_type:     'air_crac',
+      generator_config: 'N+1',
+      generator_fuel:   'diesel',
+      generator_hours:  200,
+      ppa_pct:          0,
+      rack_count:       400,
+      rack_density_kw:  6,
+      location:         'dublin',
+      mic_mva:          5,
+      hall_names:       'Hall A'
+    },
+    screening: {
+      current_pue:       1.50,
+      target_pue:        1.20,
+      grid_operator:     'ESB Networks',
+      grid_voltage_kv:   10,
+      redundancy_level:  'N+1',
+      lease_end_year:    2033,
+      year_built:        2013,
+      screening_date:    '2026-04-20'
     }
   };
 
