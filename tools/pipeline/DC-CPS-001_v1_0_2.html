@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DC-CPS-001 v1.0.4 | Data Centre Carbon Position Statement | Legacy Business Engineers</title>
+<title>DC-CPS-001 v1.1.0 | Data Centre Carbon Position Statement | Legacy Business Engineers</title>
 <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
@@ -120,7 +120,7 @@ window.onerror = function(msg, src, line, col, err) {
   if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
     el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
       + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error — Not a Blank Screen</h2>'
-      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-CPS-001 v1.0.4</strong> failed to load.</p>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-CPS-001 v1.1.0</strong> failed to load.</p>'
       + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
       + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
       + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0,500) : '')
@@ -134,7 +134,7 @@ window.onerror = function(msg, src, line, col, err) {
 
 <script type="text/babel">
 // ═══════════════════════════════════════════════════════════════════
-// DC-CPS-001 v1.0.4 — Data Centre Carbon Position Statement
+// DC-CPS-001 v1.1.0 — Data Centre Carbon Position Statement
 // Legacy Business Engineers Ltd | March 2026
 // Core DNA: v1.2.0 | Production Tool Template: v1.0.0
 // ═══════════════════════════════════════════════════════════════════
@@ -144,7 +144,7 @@ const { useState, useMemo, useCallback, useRef } = React;
 // ─── CONSTANTS (every number has a source comment) ───────────────
 const TOOL_ID = "DC-CPS-001";
 const TOOL_NAME = "Data Centre Carbon Position Statement";
-const TOOL_VERSION = "1.0.2";
+const TOOL_VERSION = "1.1.0";
 const TOOL_SUBTITLE = "Carbon intensity, CRREM pathway, and regulatory exposure for your DC facility";
 const CORE_DNA = "1.2.0";
 
@@ -172,6 +172,9 @@ const CRU_RENEWABLE_TARGET = 80;  // % — CRU Decision Paper Dec 2025 (new + ex
 
 // EU Taxonomy thresholds — Delegated Act (EU) 2021/2139 Annex I, Section 8.1
 const TAXONOMY_PUE_THRESHOLD = 1.3; // PUE must be <= 1.3 for Taxonomy alignment
+const CRM_CLEARING_PRICE = 149960; // EUR/MW/yr — SEMO PCAR2829T-4 T-4 clearing price (T1 source)
+const ELEC_RATE = 0.12;            // EUR/kWh — CRU Q4 2024 indicative rate for large DC loads
+const DUBLIN_FREE_COOL_HOURS = 7200; // hrs/yr below 18°C — Met Éireann 30-year average, Dublin
 
 // CRREM DC pathway thresholds for traffic-light rating
 // Source: LBE-derived from CRREM v2.01 commercial real estate methodology. DC pathway bands are T3/T4 estimates, not CRREM-published.
@@ -261,7 +264,7 @@ class ErrorBoundary extends React.Component {
       return (
         <div style={{maxWidth:700,margin:'60px auto',padding:24,border:'2px solid #dc2626',borderRadius:12,background:'#fef2f2',fontFamily:'system-ui'}}>
           <h2 style={{color:'#dc2626',margin:'0 0 12px'}}>Tool Runtime Error</h2>
-          <p style={{color:'#374151'}}><strong>DC-CPS-001 v1.0.4</strong> crashed during rendering.</p>
+          <p style={{color:'#374151'}}><strong>DC-CPS-001 v1.1.0</strong> crashed during rendering.</p>
           <pre style={{background:'#1f2937',color:'#f87171',padding:12,borderRadius:8,fontSize:13,whiteSpace:'pre-wrap',margin:'12px 0',maxHeight:300,overflow:'auto'}}>
             {String(this.state.error)}{this.state.info ? '\nComponent Stack:' + this.state.info.componentStack : ''}
           </pre>
@@ -744,7 +747,7 @@ const App = () => {
           setShowResults(false);
           alert("Imported facility data from " + (fac.name || "JSON") + ". Click Generate to recalculate.");
         } else if (data.metadata && data.metadata.tool_id === "DC-MSTR-001") {
-          // Accept DC-MSTR-001 master facility profile — map available fields
+          // Accept DC-MSTR-001 master facility profile — map all available fields, zero manual re-entry
           const COOL_MAP = { air: "air_crac", liquid: "full_dlc", hybrid: "hybrid_dlc" };
           const KNOWN_LOCS = ["Dublin", "Cork", "Limerick", "Galway"];
           const county = (data.project && data.project.county) || "";
@@ -752,22 +755,37 @@ const App = () => {
           const rawStrat = (data.cooling && data.cooling.strategy) || "";
           const coolType = COOL_MAP[rawStrat] || "";
           const rawFuel = (data.electrical && data.electrical.fuel) || "";
-          const genFuelMapped = (rawFuel && rawFuel !== "auto") ? rawFuel : "";
+          const genFuelMapped = (rawFuel && rawFuel !== "auto") ? rawFuel.toLowerCase() : "";
+          // Facility age: derive from build_year if present
+          const buildYr = data.project && data.project.build_year ? parseInt(data.project.build_year) : null;
+          const derivedAge = buildYr ? String(new Date().getFullYear() - buildYr) : "";
+          // Current PUE: use screening.current_pue if provided, else fall back to design_criteria.pue_target
+          const scr = data.screening || {};
+          const importedPue = scr.current_pue
+            ? String(scr.current_pue)
+            : (data.design_criteria ? String(data.design_criteria.pue_target || "") : "");
+          // Generator config: use screening.redundancy_level if provided
+          const genConfigMapped = scr.redundancy_level || "";
           setInputs(prev => ({
             ...prev,
             facilityName: (data.project && data.project.name) || prev.facilityName,
             projectRef:   (data.project && data.project.ref)  || prev.projectRef,
             location:     loc || prev.location,
-            itLoadMW:     data.it_load ? String(data.it_load.total_it_mw || prev.itLoadMW) : prev.itLoadMW,
-            pue:          data.design_criteria ? String(data.design_criteria.pue_target || prev.pue) : prev.pue,
+            itLoadMW:     data.it_load ? String(data.it_load.total_it_mw || "") : prev.itLoadMW,
+            pue:          importedPue || prev.pue,
             coolingType:  coolType || prev.coolingType,
             genFuel:      genFuelMapped || prev.genFuel,
-            numRacks:     data.it_load ? String(data.it_load.rack_count || prev.numRacks) : prev.numRacks,
-            rackDensity:  data.it_load ? String(data.it_load.rack_density_kw || prev.rackDensity) : prev.rackDensity,
-            // PPA %, generator hours, and facility age are not captured in MSTR — require manual entry
+            genConfig:    genConfigMapped || prev.genConfig,
+            numRacks:     data.it_load ? String(data.it_load.rack_count || "") : prev.numRacks,
+            rackDensity:  data.it_load ? String(data.it_load.rack_density_kw || "") : prev.rackDensity,
+            ppaPercent:   data.electrical ? String(data.electrical.ppa_pct != null ? data.electrical.ppa_pct : prev.ppaPercent) : prev.ppaPercent,
+            genHours:     data.electrical ? String(data.electrical.generator_hours != null ? data.electrical.generator_hours : prev.genHours) : prev.genHours,
+            facilityAge:  derivedAge || prev.facilityAge,
+            micMva:       data.electrical ? String(data.electrical.mic_mva != null ? data.electrical.mic_mva : prev.micMva) : prev.micMva,
+            hallNames:    (data.project && data.project.hall_names) || prev.hallNames,
           }));
           setShowResults(false);
-          alert("Imported facility parameters from DC-MSTR-001 (" + (data.project && data.project.name || "unknown") + ").\n\nThree inputs require manual entry — not captured in the master profile:\n• PPA Share (%)\n• Generator Annual Hours\n• Facility Age (years)\n\nComplete these fields then click Generate.");
+          alert("Imported from DC-MSTR-001 (" + ((data.project && data.project.name) || "unknown") + "). All 14 facility parameters mapped automatically. Click Generate to run calculations.");
         } else if (data._aimep_lineage && data._aimep_lineage.tool_id === "DC-R-SUM-001") {
           // Future-proofed: accept screening summary JSON
           alert("DC-R-SUM-001 import detected. Mapping screening data to CPS inputs...");
