@@ -335,6 +335,8 @@ function App() {
   const [budget,setBudget]=useState(""); const [progMo,setProgMo]=useState(""); const [riba,setRiba]=useState("1");
   const [buildYear,setBuildYear]=useState(""); const [ppaPercent,setPpaPercent]=useState(""); const [genHoursAnnual,setGenHoursAnnual]=useState("200");
   const [micMva,setMicMva]=useState(""); const [hallNames,setHallNames]=useState("");
+  const [currentPue,setCurrentPue]=useState(""); const [redundancyLevel,setRedundancyLevel]=useState("N+1");
+  const [leaseEndYear,setLeaseEndYear]=useState("");
 
   // Derived
   const calc = useMemo(() => {
@@ -517,11 +519,18 @@ function App() {
         waste_heat_mw:calc.wasteHeatMW,homes_heat:calc.homesServed,heat_rev_eur:calc.heatRev,epa_trigger:calc.epaTrigger},
       compliance:{en_50600,uptime_cert:uptimeCert,epa_ie:epaIE,eirgrid_conn:eirgrid},
       commercial:{budget_per_mw:parseFloat(budget)||null,programme_mo:parseInt(progMo)||null,riba_stage:riba},
+      screening:{
+        current_pue:parseFloat(currentPue)||null,
+        target_pue:calc.pu,
+        grid_operator:parseInt(volt)<=20?"ESB Networks":"EirGrid",
+        redundancy_level:redundancyLevel||null,
+        lease_end_year:leaseEndYear?parseInt(leaseEndYear):null,
+      },
       tips:tips.map(t=>({severity:t.c,title:t.title,body:t.body,ref:t.ref}))};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
     const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
     a.download=`${TOOL_ID}_${pRef||'export'}_${date}.json`; a.click();
-  },[calc,tips,pName,pRef,county,eircode,area,by,date,tier,ashrae,pue,wue,cue,autoHrs,coolStrat,fcPri,waterR,heatR,volt,upsTech,genFuel,en50600,uptimeCert,epaIE,eirgrid,budget,progMo,riba,docStatus,growth,buildYear,ppaPercent,genHoursAnnual,micMva,hallNames]);
+  },[calc,tips,pName,pRef,county,eircode,area,by,date,tier,ashrae,pue,wue,cue,autoHrs,coolStrat,fcPri,waterR,heatR,volt,upsTech,genFuel,en50600,uptimeCert,epaIE,eirgrid,budget,progMo,riba,docStatus,growth,buildYear,ppaPercent,genHoursAnnual,micMva,hallNames,currentPue,redundancyLevel,leaseEndYear]);
 
   const importRef = useRef(null);
   const handleImport = useCallback((e) => {
@@ -762,6 +771,23 @@ function App() {
             </Field>
             <Field label="Hall / Zone Names" tip={{meaning:"Names of IT white space halls or zones (e.g. Hall A, Hall B)",typical:"Hall A / Hall B for colocation; Module 1 / Module 2 for hyperscale",source:"As-built drawings or estate plan"}}>
               <input type="text" value={hallNames} onChange={e=>setHallNames(e.target.value)} placeholder="e.g. Hall A, Hall B" />
+            </Field>
+          </div>
+          <h2 className="text-lg font-bold text-gray-800 mt-6 mb-4">Screening Parameters</h2>
+          <div className="grid-2">
+            <Field label="Current PUE (actual)" tip={{meaning:"Actual operational PUE of the existing facility — distinct from design target PUE above",typical:"1.40–1.80 for legacy 2010–2018 air-cooled facilities",source:"Metered energy data (IT meter vs facility meter)",warning:"Used by CPS-001 for carbon intensity and CRREM pathway calculations — must reflect actual, not target"}}>
+              <input type="number" step="0.01" min="1.00" max="3.00" value={currentPue} onChange={e=>setCurrentPue(e.target.value)} placeholder="e.g. 1.55" />
+            </Field>
+            <Field label="Redundancy Level" tip={{meaning:"Redundancy configuration — N (no redundancy), N+1, 2N, 2N+1",typical:"N+1 for colo Tier III, 2N for hyperscale/Tier IV",source:"Electrical and cooling single-line diagram",warning:"Flows to screening verdict — confirm from as-built drawings"}}>
+              <select value={redundancyLevel} onChange={e=>setRedundancyLevel(e.target.value)}>
+                <option value="N">N — No redundancy</option>
+                <option value="N+1">N+1 — Single redundant</option>
+                <option value="2N">2N — Fully redundant</option>
+                <option value="2N+1">2N+1 — Fully redundant + spare</option>
+              </select>
+            </Field>
+            <Field label="Lease / Ownership End Year" tip={{meaning:"Lease expiry or ownership horizon — screening deadline for regulatory alignment",typical:"5–15 years for institutional real estate holds",source:"Lease agreement or investment thesis",warning:"Facilities with lease end &lt; 2030 face acute stranding risk if PUE &gt; 1.3"}}>
+              <input type="number" step="1" min="2024" max="2060" value={leaseEndYear} onChange={e=>setLeaseEndYear(e.target.value)} placeholder="e.g. 2033" />
             </Field>
           </div>
         </div>
