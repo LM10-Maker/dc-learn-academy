@@ -286,7 +286,7 @@ const CANONICAL_DATA = {
    RULE: LLM never calculates. Numbers are JavaScript. Narrative is AI.
    ================================================================ */
 function runCalcEngine(inputs) {
-  const { it_load_mw, pue, racks, kw_per_rack, target_kw_rack, mic_mva,
+  const { it_load_mw, pue, rack_count, rack_density_kw, target_kw_rack, mic_kva,
           ppa_pct, cooling_type, cooling_capacity_mw, bms_points, grid_feed } = inputs;
 
   const calcs = {};
@@ -299,7 +299,7 @@ function runCalcEngine(inputs) {
   const RETROFIT_KW   = 1100;     // €/kW IT cooling retrofit — RICS NRM1 (T3)
 
   const total_mw = (it_load_mw || 0) * (pue || 1);
-  const mic_mw   = (mic_mva || 0) * 0.95;
+  const mic_mw   = ((mic_kva || 0) / 1000) * 0.95;
 
   // C01: Power Capacity vs MIC
   calcs.power_capacity = {
@@ -315,12 +315,12 @@ function runCalcEngine(inputs) {
   };
 
   // C02: Future Density Check
-  const future_it_mw  = ((target_kw_rack || 0) * (racks || 0)) / 1000;
+  const future_it_mw  = ((target_kw_rack || 0) * (rack_count || 0)) / 1000;
   const future_fac_mw = future_it_mw * TAX_PUE;
   calcs.density_capacity = {
     id: 'C02', label: 'Future Density Check',
     formula: 'Target kW/rack × racks / 1,000 × 1.3 PUE vs MIC',
-    inputs: { target_kw_rack, racks, target_pue: TAX_PUE, mic_mw: Math.round(mic_mw * 10) / 10 },
+    inputs: { target_kw_rack, rack_count, target_pue: TAX_PUE, mic_mw: Math.round(mic_mw * 10) / 10 },
     result: {
       future_it_mw:      Math.round(future_it_mw * 10) / 10,
       future_facility_mw: Math.round(future_fac_mw * 10) / 10,
@@ -522,10 +522,10 @@ const INPUT_SCHEMA = [
   { id:'build_year',          label:'Year Built',                 type:'number', required:true,  demo:2013,                  hint:'Original commissioning year', unit:null, min:1990, max:2026 },
   { id:'it_load_mw',          label:'IT Load',                    type:'number', required:true,  demo:2.4,                   hint:'Total IT load', unit:'MW', min:0.1, max:100, step:0.1 },
   { id:'pue',                 label:'Current PUE',                type:'number', required:true,  demo:1.50,                  hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
-  { id:'racks',               label:'Number of Racks',            type:'number', required:true,  demo:400,                   hint:'Total populated racks', unit:'racks', min:10, max:10000 },
-  { id:'kw_per_rack',         label:'Average kW per Rack',        type:'number', required:true,  demo:6,                     hint:'Current average kW per rack', unit:'kW/rack', min:1, max:100, step:0.5 },
+  { id:'rack_count',          label:'Number of Racks',            type:'number', required:true,  demo:400,                   hint:'Total populated racks', unit:'racks', min:10, max:10000 },
+  { id:'rack_density_kw',     label:'Average kW per Rack',        type:'number', required:true,  demo:6,                     hint:'Current average kW per rack', unit:'kW/rack', min:1, max:100, step:0.5 },
   { id:'target_kw_rack',      label:'Target kW per Rack',         type:'number', required:true,  demo:20,                    hint:'Planned upgrade density', unit:'kW/rack', min:1, max:100, step:0.5 },
-  { id:'mic_mva',             label:'MIC',                        type:'number', required:true,  demo:5,                     hint:'Maximum Import Capacity', unit:'MVA', min:0.1, max:200, step:0.1 },
+  { id:'mic_kva',             label:'MIC',                        type:'number', required:true,  demo:5000,                  hint:'Maximum Import Capacity', unit:'kVA', min:100, max:200000, step:100 },
   { id:'ppa_pct',             label:'Renewable Energy Coverage',  type:'number', required:true,  demo:0,                     hint:'% from PPA or GOs', unit:'%', min:0, max:100 },
   { id:'cooling_type',        label:'Primary Cooling',            type:'select', required:true,  demo:'chiller_only',        hint:'Main cooling technology', unit:null, options:[
     {value:'chiller_only', label:'Chiller only (no free cooling)'},
@@ -671,8 +671,8 @@ function InputTab({ inputs, setInputs, onRun, loading }){
 
   const SECTIONS = [
     { title: 'Facility Identity',     ids: ['facility_name','location','build_year'] },
-    { title: 'Power & MIC',           ids: ['it_load_mw','mic_mva','grid_feed'] },
-    { title: 'IT & Rack Density',     ids: ['racks','kw_per_rack','target_kw_rack'] },
+    { title: 'Power & MIC',           ids: ['it_load_mw','mic_kva','grid_feed'] },
+    { title: 'IT & Rack Density',     ids: ['rack_count','rack_density_kw','target_kw_rack'] },
     { title: 'Cooling & Efficiency',  ids: ['pue','cooling_type','cooling_capacity_mw'] },
     { title: 'ESG & Monitoring',      ids: ['ppa_pct','bms_points'] }
   ];
@@ -1069,7 +1069,7 @@ function App(){
         'FACILITY: ' + (inputs.facility_name||'Unknown') + ' | ' + (inputs.location||'') +
         ' | Built ' + (inputs.build_year||'?') +
         '\nIT Load: ' + inputs.it_load_mw + ' MW | PUE: ' + inputs.pue +
-        ' | MIC: ' + inputs.mic_mva + ' MVA' +
+        ' | MIC: ' + inputs.mic_kva + ' kVA' +
         '\n\nCALCULATED RESULTS (JavaScript — do not recalculate):\n' + calcSummary +
         '\n\nFINDINGS (Rule-based — do not modify):\n' + findingSummary +
         '\n\nOverall risk: ' + tl +
