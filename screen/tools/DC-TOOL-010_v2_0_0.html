@@ -138,33 +138,11 @@ select.input-field{appearance:auto}
 /* === PRINT === */
 @media print{
   .no-print{display:none!important}
-  body{background:#fff;color:#000;font-size:11pt}
-  header{background:#1a1a1a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:12px 20px}
-  .main{max-width:100%;padding:0 20px}
-  .tab-row{display:none!important}
-
-  /* Show report + audit on print */
-  .result-card,.card,.persona-lens,.finding-card,.audit-step{
-    border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid;margin-bottom:8px
-  }
-  .hero-metric{border:2px solid #333;break-inside:avoid}
-
-  /* Colour preservation */
-  .caveat-box{background:#fff3cd!important;border:1px solid #d29922!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .status-pass,.status-flag,.status-fail,.tier-badge,.tl-green,.tl-amber,.tl-red,
-  .cost-range-t1,.cost-range-t3,.finding-card.f-pass,.finding-card.f-flag,.finding-card.f-fail{
-    -webkit-print-color-adjust:exact;print-color-adjust:exact
-  }
-
-  /* Page breaks */
-  .signoff{page-break-before:always;margin-top:0}
-  .audit-section-heading{page-break-before:always;margin-top:0}
-
-  /* Footer on every page */
-  @page{margin:15mm 15mm 20mm 15mm;@bottom-center{content:'DC-TOOL v2.1.0 | Legacy Business Engineers Ltd | legacybe.ie'}}
-
-  /* LBE header bar */
-  header::after{content:'';display:block;height:3px;background:#4a7c59;margin-top:8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;color:#000}
+  header{background:#1a1a1a;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .result-card,.card,.persona-lens{border:1px solid #ccc;break-inside:avoid}
+  .caveat-box{background:#fff3cd;border:1px solid #d29922;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .status-pass,.status-flag,.status-fail,.tier-badge,.tl-green,.tl-amber,.tl-red{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 
 /* === RESPONSIVE === */
@@ -255,24 +233,6 @@ select.input-field{appearance:auto}
 .interp-label{font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
 .interp-text{font-size:14px;color:var(--text);line-height:1.7;font-style:italic}
 
-/* === HERO METRIC === */
-.hero-metric{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:32px;text-align:center;margin-bottom:24px}
-.hero-metric-value{font-size:36px;font-weight:700;color:var(--text-bright);line-height:1.2}
-.hero-metric-label{font-size:13px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1.2px;font-family:var(--font-mono);margin-top:8px}
-.hero-metric-sub{font-size:14px;color:var(--text-dim);margin-top:4px}
-.hero-metric.red{border-color:var(--red)}
-.hero-metric.amber{border-color:var(--amber)}
-.hero-metric.green{border-color:var(--green)}
-
-/* === TIER COST RANGES === */
-.cost-range-t3{background:var(--amber-dim);border:1px dashed var(--amber);border-radius:6px;padding:8px 12px;margin-top:8px;font-size:13px;color:var(--text);font-family:var(--font-mono)}
-.cost-range-t3::before{content:'T3 INDICATIVE ';font-weight:700;font-size:10px;color:var(--amber);letter-spacing:0.5px}
-.cost-range-t1{background:var(--green-dim);border:1px solid var(--green);border-radius:6px;padding:8px 12px;margin-top:8px;font-size:13px;color:var(--text);font-family:var(--font-mono)}
-.cost-range-t1::before{content:'T1 CONFIRMED ';font-weight:700;font-size:10px;color:var(--green);letter-spacing:0.5px}
-
-/* === AUDIT SECTION HEADINGS === */
-.audit-section-heading{font-size:16px;font-weight:700;color:var(--text-bright);margin:24px 0 12px;padding:12px 0;border-bottom:2px solid var(--lbe-green)}
-
 </style>
 </head>
 <body>
@@ -300,7 +260,7 @@ var LOGO_SRC="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHL
    ================================================================ */
 
 const TOOL_ID = 'DC-TOOL-010';
-const TOOL_VERSION = '2.1.0';
+const TOOL_VERSION = '2.0.0';
 const TOOL_NAME = 'Facility Audit Checklist';
 
 /* ================================================================
@@ -326,7 +286,7 @@ const CANONICAL_DATA = {
    RULE: LLM never calculates. Numbers are JavaScript. Narrative is AI.
    ================================================================ */
 function runCalcEngine(inputs) {
-  const { it_load_mw, pue, rack_count, rack_density_kw, target_kw_rack, mic_kva,
+  const { it_load_mw, pue, racks, kw_per_rack, target_kw_rack, mic_mva,
           ppa_pct, cooling_type, cooling_capacity_mw, bms_points, grid_feed } = inputs;
 
   const calcs = {};
@@ -339,7 +299,7 @@ function runCalcEngine(inputs) {
   const RETROFIT_KW   = 1100;     // €/kW IT cooling retrofit — RICS NRM1 (T3)
 
   const total_mw = (it_load_mw || 0) * (pue || 1);
-  const mic_mw   = ((mic_kva || 0) / 1000) * 0.95;
+  const mic_mw   = (mic_mva || 0) * 0.95;
 
   // C01: Power Capacity vs MIC
   calcs.power_capacity = {
@@ -355,12 +315,12 @@ function runCalcEngine(inputs) {
   };
 
   // C02: Future Density Check
-  const future_it_mw  = ((target_kw_rack || 0) * (rack_count || 0)) / 1000;
+  const future_it_mw  = ((target_kw_rack || 0) * (racks || 0)) / 1000;
   const future_fac_mw = future_it_mw * TAX_PUE;
   calcs.density_capacity = {
     id: 'C02', label: 'Future Density Check',
     formula: 'Target kW/rack × racks / 1,000 × 1.3 PUE vs MIC',
-    inputs: { target_kw_rack, rack_count, target_pue: TAX_PUE, mic_mw: Math.round(mic_mw * 10) / 10 },
+    inputs: { target_kw_rack, racks, target_pue: TAX_PUE, mic_mw: Math.round(mic_mw * 10) / 10 },
     result: {
       future_it_mw:      Math.round(future_it_mw * 10) / 10,
       future_facility_mw: Math.round(future_fac_mw * 10) / 10,
@@ -453,16 +413,6 @@ function runCalcEngine(inputs) {
     result: { total_10yr: Math.round(cost_10yr) },
     unit: '€', tier: 'Derived'
   };
-
-  calcs.power_capacity.headline = calcs.power_capacity.result.utilisation_pct + '% MIC';
-  calcs.density_capacity.headline = calcs.density_capacity.result.mic_adequate ? 'MIC adequate' : 'MIC exceeded';
-  calcs.cooling_check.headline = calcs.cooling_check.result.utilisation_pct + '% cooling';
-  calcs.free_cooling.headline = calcs.free_cooling.result.installed ? 'Installed' : '€' + Math.round(calcs.free_cooling.result.annual_saving / 1000).toLocaleString() + 'k/yr saving';
-  calcs.renewable_gap.headline = calcs.renewable_gap.result.compliant ? 'Compliant' : calcs.renewable_gap.result.gap_pct + '% gap';
-  calcs.pue_gap.headline = calcs.pue_gap.result.aligned ? 'Aligned' : '€' + Math.round(calcs.pue_gap.result.annual_cost / 1000).toLocaleString() + 'k/yr excess';
-  calcs.carbon.headline = '€' + Math.round(calcs.carbon.result.annual_cost / 1000).toLocaleString() + 'k/yr';
-  calcs.retrofit_payback.headline = calcs.retrofit_payback.result.payback_years < 999 ? calcs.retrofit_payback.result.payback_years + ' yrs' : 'N/A';
-  calcs.inaction_cost.headline = '€' + (calcs.inaction_cost.result.total_10yr / 1e6).toFixed(1) + 'M';
 
   return calcs;
 }
@@ -572,10 +522,10 @@ const INPUT_SCHEMA = [
   { id:'build_year',          label:'Year Built',                 type:'number', required:true,  demo:2013,                  hint:'Original commissioning year', unit:null, min:1990, max:2026 },
   { id:'it_load_mw',          label:'IT Load',                    type:'number', required:true,  demo:2.4,                   hint:'Total IT load', unit:'MW', min:0.1, max:100, step:0.1 },
   { id:'pue',                 label:'Current PUE',                type:'number', required:true,  demo:1.50,                  hint:'Annualised PUE from metering', unit:null, min:1.0, max:3.0, step:0.01 },
-  { id:'rack_count',          label:'Number of Racks',            type:'number', required:true,  demo:400,                   hint:'Total populated racks', unit:'racks', min:10, max:10000 },
-  { id:'rack_density_kw',     label:'Average kW per Rack',        type:'number', required:true,  demo:6,                     hint:'Current average kW per rack', unit:'kW/rack', min:1, max:100, step:0.5 },
+  { id:'racks',               label:'Number of Racks',            type:'number', required:true,  demo:400,                   hint:'Total populated racks', unit:'racks', min:10, max:10000 },
+  { id:'kw_per_rack',         label:'Average kW per Rack',        type:'number', required:true,  demo:6,                     hint:'Current average kW per rack', unit:'kW/rack', min:1, max:100, step:0.5 },
   { id:'target_kw_rack',      label:'Target kW per Rack',         type:'number', required:true,  demo:20,                    hint:'Planned upgrade density', unit:'kW/rack', min:1, max:100, step:0.5 },
-  { id:'mic_kva',             label:'MIC',                        type:'number', required:true,  demo:5000,                  hint:'Maximum Import Capacity', unit:'kVA', min:100, max:200000, step:100 },
+  { id:'mic_mva',             label:'MIC',                        type:'number', required:true,  demo:5,                     hint:'Maximum Import Capacity', unit:'MVA', min:0.1, max:200, step:0.1 },
   { id:'ppa_pct',             label:'Renewable Energy Coverage',  type:'number', required:true,  demo:0,                     hint:'% from PPA or GOs', unit:'%', min:0, max:100 },
   { id:'cooling_type',        label:'Primary Cooling',            type:'select', required:true,  demo:'chiller_only',        hint:'Main cooling technology', unit:null, options:[
     {value:'chiller_only', label:'Chiller only (no free cooling)'},
@@ -680,7 +630,6 @@ function buildAuditSteps(calcs) {
     formula:   c.formula,
     value:     c.result,
     formatted: formatCalcResult(c.result),
-    headline:  c.headline || null,
     unit:      c.unit || '',
     tier:      c.tier || 'Derived',
     source:    c.source || c.tier || 'Derived',
@@ -713,7 +662,7 @@ function InputTab({ inputs, setInputs, onRun, loading }){
   const [touched, setTouched] = useState({});
   const handleChange = (id, value) => { setInputs(prev => ({...prev, [id]: value})); setTouched(prev => ({...prev, [id]: true})); };
   const loadDemo = () => { setInputs({...DEMO_DATA}); setTouched({}); setShowConfirm(false); };
-  const handleExport = () => { const exportData={_metadata:{tool_id:TOOL_ID,tool_version:TOOL_VERSION,export_date:new Date().toISOString(),canonical_data_version:'SEAI 2026 / CRU Q4 2024 / Budget 2025',schema:'dc-tool-v2'},inputs:{...inputs}}; const b=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download=TOOL_ID+'_inputs.json'; a.click(); URL.revokeObjectURL(u); };
+  const handleExport = () => { const b=new Blob([JSON.stringify(inputs,null,2)],{type:'application/json'}); const u=URL.createObjectURL(b); const a=document.createElement('a'); a.href=u; a.download=TOOL_ID+'_inputs.json'; a.click(); URL.revokeObjectURL(u); };
   const handleImport = () => { const i=document.createElement('input'); i.type='file'; i.accept='.json'; i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{setInputs(prev=>({...prev,...JSON.parse(ev.target.result)}))}catch(err){alert('Invalid JSON')}};r.readAsText(f)}; i.click(); };
 
   const missingRequired = INPUT_SCHEMA.filter(f=>f.required).filter(f=>{const v=inputs[f.id];return v===undefined||v===null||v==='';});
@@ -722,8 +671,8 @@ function InputTab({ inputs, setInputs, onRun, loading }){
 
   const SECTIONS = [
     { title: 'Facility Identity',     ids: ['facility_name','location','build_year'] },
-    { title: 'Power & MIC',           ids: ['it_load_mw','mic_kva','grid_feed'] },
-    { title: 'IT & Rack Density',     ids: ['rack_count','rack_density_kw','target_kw_rack'] },
+    { title: 'Power & MIC',           ids: ['it_load_mw','mic_mva','grid_feed'] },
+    { title: 'IT & Rack Density',     ids: ['racks','kw_per_rack','target_kw_rack'] },
     { title: 'Cooling & Efficiency',  ids: ['pue','cooling_type','cooling_capacity_mw'] },
     { title: 'ESG & Monitoring',      ids: ['ppa_pct','bms_points'] }
   ];
@@ -804,18 +753,6 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
 
   return (
     <div>
-      {(()=>{
-        const heroStep = calcSteps.find(s=>s.id==='C09');
-        if (!heroStep||!heroStep.headline) return null;
-        const tl = (trafficLight||'AMBER').toLowerCase();
-        return (
-          <div className={'hero-metric '+tl}>
-            <div className="hero-metric-value">{heroStep.headline}</div>
-            <div className="hero-metric-label">10-Year Exposure</div>
-            <div className="hero-metric-sub">Carbon cost + PUE excess energy — deterministic calculation</div>
-          </div>
-        );
-      })()}
       <div className="card">
         <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
           <span style={{fontSize:11,fontWeight:700,color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'1px',fontFamily:'var(--font-mono)'}}>Deterministic Results</span>
@@ -830,7 +767,7 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
           {calcSteps.filter(s=>['C06','C07','C08'].includes(s.id)).map(s=>(
             <div className="calc-card" key={s.id}>
               <div className="calc-card-label">{s.name}</div>
-              <div className="calc-card-value">{s.headline || s.formatted}</div>
+              <div className="calc-card-value">{s.formatted}</div>
               <div className="calc-card-unit">{s.unit}</div>
             </div>
           ))}
@@ -897,20 +834,6 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
         </div>
       </div>
 
-      {/* Hero Metric */}
-      {(()=>{
-        const heroStep = calcSteps.find(s=>s.id==='C09');
-        if (!heroStep||!heroStep.headline) return null;
-        const tl = (trafficLight||'AMBER').toLowerCase();
-        return (
-          <div className={'hero-metric '+tl}>
-            <div className="hero-metric-value">{heroStep.headline}</div>
-            <div className="hero-metric-label">10-Year Exposure</div>
-            <div className="hero-metric-sub">Carbon cost + PUE excess energy — deterministic calculation</div>
-          </div>
-        );
-      })()}
-
       {/* Metrics */}
       <div className="metric-row">
         <div className="metric-card">
@@ -922,7 +845,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
           <div className="metric-card" key={s.id}>
             <div className="metric-label">Carbon Cost</div>
             <div className="metric-value" style={{color:'var(--warn)'}}>
-              {s.headline || '—'}
+              {'€'+(s.value&&s.value.annual_cost?s.value.annual_cost:0).toLocaleString()}
             </div>
             <div className="metric-sub">per year (T1 — deterministic)</div>
           </div>
@@ -931,7 +854,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
           <div className="metric-card" key={s.id}>
             <div className="metric-label">Retrofit Payback</div>
             <div className="metric-value" style={{color:'var(--accent)'}}>
-              {s.headline || '—'}
+              {s.value&&s.value.payback_years<999?s.value.payback_years+' yrs':'N/A'}
             </div>
             <div className="metric-sub">indicative (T3)</div>
           </div>
@@ -948,7 +871,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
         <div className="interp-label">AI Interpretation</div>
         {interpreting ? <p style={{color:'var(--text-dim)',fontStyle:'italic'}}>Generating interpretation...</p>
          : interpretation?.executive_summary ? <p className="interp-text">{interpretation.executive_summary}</p>
-         : <p style={{color:'var(--text-dim)'}}>Calculated results are complete — see Calculations and Audit Trail tabs. AI interpretation is temporarily unavailable but your deterministic screening results are unaffected.</p>}
+         : <p style={{color:'var(--text-dim)'}}>Interpretation not available. Calculated results shown below.</p>}
       </div>
 
       <div className="caveat-box">
@@ -1004,7 +927,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
         <div className="signoff-pi">PI Insurance: confirmed</div>
       </div>
       <div className="soft-cta">
-        <p>Screening Report — €3,500. Invoice issued on receipt of intake form.</p>
+        <p>Need a Desktop Assessment (€10,000–€15,000) or Disposal Analysis (€8,000–€12,000)?</p>
         <a href="mailto:info@legacybe.ie">info@legacybe.ie</a>
         <span style={{margin:'0 8px',color:'var(--text-muted)'}}>|</span>
         <a href="https://legacybe.ie" target="_blank" rel="noopener">legacybe.ie</a>
@@ -1146,7 +1069,7 @@ function App(){
         'FACILITY: ' + (inputs.facility_name||'Unknown') + ' | ' + (inputs.location||'') +
         ' | Built ' + (inputs.build_year||'?') +
         '\nIT Load: ' + inputs.it_load_mw + ' MW | PUE: ' + inputs.pue +
-        ' | MIC: ' + inputs.mic_kva + ' kVA' +
+        ' | MIC: ' + inputs.mic_mva + ' MVA' +
         '\n\nCALCULATED RESULTS (JavaScript — do not recalculate):\n' + calcSummary +
         '\n\nFINDINGS (Rule-based — do not modify):\n' + findingSummary +
         '\n\nOverall risk: ' + tl +
@@ -1172,11 +1095,11 @@ function App(){
       try { setInterpretation(JSON.parse(clean)); }
       catch(e) {
         const first = text.indexOf('{'); const last = text.lastIndexOf('}');
-        if(first!==-1&&last>first) { try { setInterpretation(JSON.parse(text.substring(first,last+1))); } catch(e2) { setError('Calculated results are complete — see Calculations and Audit Trail tabs. AI interpretation is temporarily unavailable but your deterministic screening results are unaffected. If this persists, contact info@legacybe.ie.'); } }
-        else setError('Calculated results are complete — see Calculations and Audit Trail tabs. AI interpretation is temporarily unavailable but your deterministic screening results are unaffected. If this persists, contact info@legacybe.ie.');
+        if(first!==-1&&last>first) { try { setInterpretation(JSON.parse(text.substring(first,last+1))); } catch(e2) { setError('Interpretation parse failed. Calculated results are still valid.'); } }
+        else setError('Interpretation unavailable. Calculated results are still valid.');
       }
     } catch(err) {
-      setError('Calculated results are complete — see Calculations and Audit Trail tabs. AI interpretation is temporarily unavailable but your deterministic screening results are unaffected. If this persists, contact info@legacybe.ie.');
+      setError('Interpretation unavailable: ' + err.message + '. Calculated results are still valid — see Calculations and Audit Trail tabs.');
     } finally {
       setInterpreting(false);
     }
@@ -1213,7 +1136,7 @@ function App(){
 
         <div className="nav-footer no-print">
           <div>{TOOL_ID} v{TOOL_VERSION} | Calculations: deterministic JavaScript | Interpretation: AI (Sonnet)</div>
-          <div style={{marginTop:4}}>© 2026 Legacy Business Engineers Ltd | <a href="https://legacybe.ie" style="color:#79a741;">legacybe.ie</a></div>
+          <div style={{marginTop:4}}>© 2026 Legacy Business Engineers Ltd | <a href="https://legacybe.ie">legacybe.ie</a></div>
         </div>
       </div>
     </div>
