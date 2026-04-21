@@ -454,6 +454,16 @@ function runCalcEngine(inputs) {
     unit: '€', tier: 'Derived'
   };
 
+  calcs.power_capacity.headline = calcs.power_capacity.result.utilisation_pct + '% MIC';
+  calcs.density_capacity.headline = calcs.density_capacity.result.mic_adequate ? 'MIC adequate' : 'MIC exceeded';
+  calcs.cooling_check.headline = calcs.cooling_check.result.utilisation_pct + '% cooling';
+  calcs.free_cooling.headline = calcs.free_cooling.result.installed ? 'Installed' : '€' + Math.round(calcs.free_cooling.result.annual_saving / 1000).toLocaleString() + 'k/yr saving';
+  calcs.renewable_gap.headline = calcs.renewable_gap.result.compliant ? 'Compliant' : calcs.renewable_gap.result.gap_pct + '% gap';
+  calcs.pue_gap.headline = calcs.pue_gap.result.aligned ? 'Aligned' : '€' + Math.round(calcs.pue_gap.result.annual_cost / 1000).toLocaleString() + 'k/yr excess';
+  calcs.carbon.headline = '€' + Math.round(calcs.carbon.result.annual_cost / 1000).toLocaleString() + 'k/yr';
+  calcs.retrofit_payback.headline = calcs.retrofit_payback.result.payback_years < 999 ? calcs.retrofit_payback.result.payback_years + ' yrs' : 'N/A';
+  calcs.inaction_cost.headline = '€' + (calcs.inaction_cost.result.total_10yr / 1e6).toFixed(1) + 'M';
+
   return calcs;
 }
 
@@ -670,6 +680,7 @@ function buildAuditSteps(calcs) {
     formula:   c.formula,
     value:     c.result,
     formatted: formatCalcResult(c.result),
+    headline:  c.headline || null,
     unit:      c.unit || '',
     tier:      c.tier || 'Derived',
     source:    c.source || c.tier || 'Derived',
@@ -794,17 +805,14 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
   return (
     <div>
       {(()=>{
-        const heroStep = calcSteps.find(s=>s.id==='carbon_10yr_incremental')||calcSteps.find(s=>s.id==='C09')||
-          [...calcSteps].filter(s=>s.unit==='€'&&typeof s.value==='number').sort((a,b)=>(b.value||0)-(a.value||0))[0];
-        if (!heroStep||!heroStep.value||typeof heroStep.value!=='number') return null;
-        const v = heroStep.value;
-        const display = v >= 1e6 ? '€'+(v/1e6).toFixed(1)+'M' : '€'+Math.round(v).toLocaleString();
+        const heroStep = calcSteps.find(s=>s.id==='C09');
+        if (!heroStep||!heroStep.headline) return null;
         const tl = (trafficLight||'AMBER').toLowerCase();
         return (
           <div className={'hero-metric '+tl}>
-            <div className="hero-metric-value">{display}</div>
+            <div className="hero-metric-value">{heroStep.headline}</div>
             <div className="hero-metric-label">10-Year Exposure</div>
-            <div className="hero-metric-sub">Largest deterministic exposure — JavaScript calculation</div>
+            <div className="hero-metric-sub">Carbon cost + PUE excess energy — deterministic calculation</div>
           </div>
         );
       })()}
@@ -822,7 +830,7 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
           {calcSteps.filter(s=>['C06','C07','C08'].includes(s.id)).map(s=>(
             <div className="calc-card" key={s.id}>
               <div className="calc-card-label">{s.name}</div>
-              <div className="calc-card-value">{s.formatted}</div>
+              <div className="calc-card-value">{s.headline || s.formatted}</div>
               <div className="calc-card-unit">{s.unit}</div>
             </div>
           ))}
@@ -891,17 +899,14 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
 
       {/* Hero Metric */}
       {(()=>{
-        const heroStep = calcSteps.find(s=>s.id==='carbon_10yr_incremental')||calcSteps.find(s=>s.id==='C09')||
-          [...calcSteps].filter(s=>s.unit==='€'&&typeof s.value==='number').sort((a,b)=>(b.value||0)-(a.value||0))[0];
-        if (!heroStep||!heroStep.value||typeof heroStep.value!=='number') return null;
-        const v = heroStep.value;
-        const display = v >= 1e6 ? '€'+(v/1e6).toFixed(1)+'M' : '€'+Math.round(v).toLocaleString();
+        const heroStep = calcSteps.find(s=>s.id==='C09');
+        if (!heroStep||!heroStep.headline) return null;
         const tl = (trafficLight||'AMBER').toLowerCase();
         return (
           <div className={'hero-metric '+tl}>
-            <div className="hero-metric-value">{display}</div>
+            <div className="hero-metric-value">{heroStep.headline}</div>
             <div className="hero-metric-label">10-Year Exposure</div>
-            <div className="hero-metric-sub">Largest deterministic exposure — JavaScript calculation</div>
+            <div className="hero-metric-sub">Carbon cost + PUE excess energy — deterministic calculation</div>
           </div>
         );
       })()}
@@ -917,7 +922,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
           <div className="metric-card" key={s.id}>
             <div className="metric-label">Carbon Cost</div>
             <div className="metric-value" style={{color:'var(--warn)'}}>
-              {'€'+(s.value&&s.value.annual_cost?s.value.annual_cost:0).toLocaleString()}
+              {s.headline || '—'}
             </div>
             <div className="metric-sub">per year (T1 — deterministic)</div>
           </div>
@@ -926,7 +931,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
           <div className="metric-card" key={s.id}>
             <div className="metric-label">Retrofit Payback</div>
             <div className="metric-value" style={{color:'var(--accent)'}}>
-              {s.value&&s.value.payback_years<999?s.value.payback_years+' yrs':'N/A'}
+              {s.headline || '—'}
             </div>
             <div className="metric-sub">indicative (T3)</div>
           </div>
