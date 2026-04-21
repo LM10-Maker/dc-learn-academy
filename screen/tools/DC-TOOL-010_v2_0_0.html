@@ -767,8 +767,16 @@ function CalculationsTab({ calcSteps, findings, trafficLight, inputs }){
           {calcSteps.filter(s=>['C06','C07','C08'].includes(s.id)).map(s=>(
             <div className="calc-card" key={s.id}>
               <div className="calc-card-label">{s.name}</div>
-              <div className="calc-card-value">{s.formatted}</div>
-              <div className="calc-card-unit">{s.unit}</div>
+              <div className="calc-card-value">
+                {s.id==='C08'
+                  ?(s.value&&s.value.payback_years<999?s.value.payback_years+' yrs':'N/A')
+                  :('€'+(s.value&&s.value.annual_cost?s.value.annual_cost:0).toLocaleString())}
+              </div>
+              <div className="calc-card-unit">
+                {s.id==='C06'&&(s.value&&s.value.aligned?'EU Taxonomy aligned':'annual excess cost')}
+                {s.id==='C07'&&((s.value&&s.value.scope2_tonnes||0).toLocaleString()+' tCO₂/yr')}
+                {s.id==='C08'&&('retrofit cost: €'+(s.value&&s.value.cost?s.value.cost:0).toLocaleString())}
+              </div>
             </div>
           ))}
         </div>
