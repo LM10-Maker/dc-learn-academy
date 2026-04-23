@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request a Hybrid Zoning Report | Legacy Business Engineers</title>
+<meta name="description" content="Submit your facility data to request a Hybrid Zoning Report. Zone classification, weighted PUE, EU Taxonomy verdict, AACE Class 5 cost summary. €4,500 + VAT.">
+<link rel="preconnect" href="https://rsms.me/">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ibm-plex/6.4.2/css/ibm-plex.min.css">
+<style>
+  :root {
+    --bg: #0a0e1a;--bg-deep: #060a14;--bg-elev: #111827;--card: #1a2332;
+    --border: #1f2937;--text: #cbd5e1;--text-bright: #f1f5f9;--muted: #94a3b8;
+    --accent-bright: #5a9a6d;
+    --font-sans: 'Inter','IBM Plex Sans',-apple-system,sans-serif;
+    --font-mono: 'IBM Plex Mono','SF Mono',Menlo,monospace;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+  a{color:var(--accent-bright);text-decoration:none}
+  .top-bar{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border)}
+  .top-bar .brand{font-weight:700;color:var(--text-bright);font-size:1rem}
+  .top-bar .brand small{display:block;font-weight:400;font-size:0.75rem;color:var(--muted);font-family:var(--font-mono)}
+  .back-link{font-size:0.85rem}
+  .form-wrapper{max-width:760px;margin:0 auto;padding:48px 24px 80px}
+  fieldset{border:1px solid var(--border);border-radius:12px;padding:36px 28px 28px;background:var(--card)}
+  legend{font-family:var(--font-mono);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-bright);padding:0 12px}
+  h1{font-size:1.3rem;margin:0 0 8px;color:var(--text-bright)}
+  .intro{color:var(--muted);margin:0 0 16px;font-size:0.95rem}
+  .price-badge{display:inline-block;border:1px solid var(--accent-bright);border-radius:6px;padding:8px 16px;font-size:0.85rem;color:var(--accent-bright);margin-bottom:24px}
+  .section-label{font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent-bright);margin:24px 0 12px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .row-end{margin-bottom:24px}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+  label{display:block;font-size:0.85rem;margin-bottom:4px;color:var(--text-bright)}
+  .req{color:#ef4444}
+  input,select{width:100%;padding:10px;background:var(--bg-deep);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;font-family:var(--font-sans)}
+  input:focus,select:focus{outline:none;border-color:var(--accent-bright)}
+  small{color:var(--muted);font-size:0.75rem;display:block;margin-top:4px}
+  .opt{color:var(--muted);font-style:normal}
+  .hall-block{border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px;background:var(--bg-elev)}
+  .hall-block h3{font-size:0.85rem;font-weight:600;color:var(--text-bright);margin-bottom:14px;font-family:var(--font-mono);letter-spacing:0.08em;text-transform:uppercase}
+  .submit-btn{background:var(--accent-bright);color:#000;border:none;padding:14px 32px;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;margin-top:8px;transition:opacity 0.2s}
+  .submit-btn:hover{opacity:0.9}
+  .legal{font-size:0.75rem;color:var(--muted);margin-top:12px}
+  @media(max-width:600px){.row,.row-3{grid-template-columns:1fr}.form-wrapper{padding:24px 16px 60px}fieldset{padding:24px 16px 16px}}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="brand">Legacy Business Engineers<small>Independent DC Intelligence</small></div>
+  <a href="/" class="back-link">&larr; Back to screen.legacybe.ie</a>
+</div>
+<div class="form-wrapper">
+  <fieldset>
+    <legend>Request a Hybrid Zoning Report</legend>
+    <h1>Facility Intake Form</h1>
+    <p class="intro">Complete the form below to request your Hybrid Zoning Report. We assess each hall independently across six criteria, calculate weighted PUE, check MIC adequacy, and provide an AACE Class 5 cost summary. Fields marked <span class="req">*</span> are required.</p>
+    <div class="price-badge">Hybrid Zoning Report &mdash; &euro;4,500 + VAT &middot; Invoice-based &middot; No payment required now &middot; 5 working days</div>
+
+    <form name="hz-intake" method="POST" data-netlify="true" action="/hz-thank-you.html">
+      <input type="hidden" name="form-name" value="hz-intake">
+
+      <p class="section-label">Contact and Facility Identity</p>
+      <div class="row">
+        <div>
+          <label>Facility Name <span class="req">*</span></label>
+          <input type="text" name="facility_name" required placeholder="e.g. Clonshaugh Data Centre">
+        </div>
+        <div>
+          <label>Your Email Address <span class="req">*</span></label>
+          <input type="email" name="email" required placeholder="ann@fund.ie">
+          <small>Invoice and report delivered to this address.</small>
+        </div>
+      </div>
+      <div class="row row-end">
+        <div>
+          <label>Location <span class="req">*</span></label>
+          <input type="text" name="location" required placeholder="e.g. Clonshaugh, Dublin">
+          <small>Town, county, or Eircode.</small>
+        </div>
+        <div>
+          <label>Year Built <span class="req">*</span></label>
+          <input type="number" name="year_built" required placeholder="e.g. 2013" min="1990" max="2026">
+        </div>
+      </div>
+
+      <p class="section-label">Grid Connection</p>
+      <div class="row row-end">
+        <div>
+          <label>Grid Connection Voltage (kV) <span class="req">*</span></label>
+          <select name="grid_voltage_kv" required>
+            <option value="">-- Select --</option>
+            <option value="10">10 kV (MV — ESB Networks)</option>
+            <option value="20">20 kV (MV — ESB Networks)</option>
+            <option value="38">38 kV (HV — ESB Networks)</option>
+            <option value="110">110 kV (EirGrid)</option>
+            <option value="220">220 kV (EirGrid)</option>
+          </select>
+          <small>Check your connection offer letter. Up to 20 kV = ESB Networks. Above = EirGrid.</small>
+        </div>
+        <div>
+          <label>MIC &mdash; Maximum Import Capacity (MVA) <span class="req">*</span></label>
+          <input type="number" name="mic_mva" required placeholder="e.g. 5" step="0.1">
+          <small>From your ESB Networks or EirGrid connection offer. Enter in MVA.</small>
+        </div>
+      </div>
+
+      <p class="section-label">Hall Data &mdash; Enter one block per hall</p>
+      <small style="margin-bottom:16px;display:block">If your facility has more than two halls, enter the primary two halls here and note additional halls in the comments field below.</small>
+
+      <div class="hall-block">
+        <h3>Hall A</h3>
+        <div class="row-3">
+          <div>
+            <label>Rack Count <span class="req">*</span></label>
+            <input type="number" name="hall_a_racks" required placeholder="e.g. 200">
+          </div>
+          <div>
+            <label>IT Load (MW) <span class="req">*</span></label>
+            <input type="number" name="hall_a_it_mw" required placeholder="e.g. 1.2" step="0.1">
+            <small>Hall IT load only.</small>
+          </div>
+          <div>
+            <label>Current PUE <span class="req">*</span></label>
+            <input type="number" name="hall_a_pue" required placeholder="e.g. 1.45" step="0.01" min="1.0" max="3.0">
+            <small>12-month rolling average.</small>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Cooling Type <span class="req">*</span></label>
+            <select name="hall_a_cooling_type" required>
+              <option value="">-- Select --</option>
+              <option value="air_crac">Air-cooled (CRAC)</option>
+              <option value="air_crah">Air-cooled (CRAH)</option>
+              <option value="hybrid">Hybrid (air + liquid)</option>
+              <option value="liquid">Direct liquid cooling</option>
+              <option value="immersion">Immersion cooling</option>
+            </select>
+          </div>
+          <div>
+            <label>Cooling Equipment Year Installed <span class="req">*</span></label>
+            <input type="number" name="hall_a_cooling_year" required placeholder="e.g. 2019" min="1990" max="2026">
+            <small>Year of most recent major cooling plant installation or replacement.</small>
+          </div>
+        </div>
+        <div class="row row-end">
+          <div>
+            <label>Busway Rating (kW/rack) <span class="req">*</span></label>
+            <input type="number" name="hall_a_busway_kw" required placeholder="e.g. 8" step="0.5">
+            <small>Per-rack busway or busbar rating. Typical legacy: 6&ndash;10 kW.</small>
+          </div>
+          <div>
+            <label>Last Discrimination Study <span class="req">*</span></label>
+            <input type="number" name="hall_a_discrim_year" required placeholder="e.g. 2024" min="2000" max="2026">
+            <small>Year of most recent electrical discrimination review.</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="hall-block">
+        <h3>Hall B</h3>
+        <div class="row-3">
+          <div>
+            <label>Rack Count <span class="req">*</span></label>
+            <input type="number" name="hall_b_racks" required placeholder="e.g. 200">
+          </div>
+          <div>
+            <label>IT Load (MW) <span class="req">*</span></label>
+            <input type="number" name="hall_b_it_mw" required placeholder="e.g. 1.2" step="0.1">
+          </div>
+          <div>
+            <label>Current PUE <span class="req">*</span></label>
+            <input type="number" name="hall_b_pue" required placeholder="e.g. 1.55" step="0.01" min="1.0" max="3.0">
+            <small>12-month rolling average.</small>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Cooling Type <span class="req">*</span></label>
+            <select name="hall_b_cooling_type" required>
+              <option value="">-- Select --</option>
+              <option value="air_crac">Air-cooled (CRAC)</option>
+              <option value="air_crah">Air-cooled (CRAH)</option>
+              <option value="hybrid">Hybrid (air + liquid)</option>
+              <option value="liquid">Direct liquid cooling</option>
+              <option value="immersion">Immersion cooling</option>
+            </select>
+          </div>
+          <div>
+            <label>Cooling Equipment Year Installed <span class="req">*</span></label>
+            <input type="number" name="hall_b_cooling_year" required placeholder="e.g. 2013" min="1990" max="2026">
+          </div>
+        </div>
+        <div class="row row-end">
+          <div>
+            <label>Busway Rating (kW/rack) <span class="req">*</span></label>
+            <input type="number" name="hall_b_busway_kw" required placeholder="e.g. 6" step="0.5">
+          </div>
+          <div>
+            <label>Last Discrimination Study <span class="req">*</span></label>
+            <input type="number" name="hall_b_discrim_year" required placeholder="e.g. 2020" min="2000" max="2026">
+          </div>
+        </div>
+      </div>
+
+      <p class="section-label">Additional Information <em class="opt">(optional)</em></p>
+      <div style="margin-bottom:24px">
+        <label>Additional halls, context, or questions</label>
+        <textarea name="comments" rows="3" style="width:100%;padding:10px;background:var(--bg-deep);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:0.9rem;font-family:var(--font-sans);resize:vertical" placeholder="e.g. Hall C details, target conversion timeline, specific concerns..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">Submit Facility Data</button>
+      <p class="legal">By submitting you agree to LBE processing your facility data for the purpose of preparing an engineering screening report. Data is held securely and not shared with third parties. Invoice issued separately &mdash; no payment is collected here. Professional indemnity insurance held.</p>
+    </form>
+  </fieldset>
+</div>
+</body>
+</html>

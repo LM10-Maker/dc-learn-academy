@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LBE DC Screening | Independent Irish DC Compliance &amp; Retrofit Risk Assessment</title>
-<meta name="description" content="Independent screening for Irish data centre compliance and retrofit risk. CEng-backed, screening-level, investment-grade methodology. From €3,500. Delivered in 10 working days.">
+<meta name="description" content="Independent DC engineering intelligence for Irish fund managers and operators. Screening Reports, Hybrid Zoning, AI Readiness Assessments. CEng-signed. From €3,500.">
 
 <link rel="preconnect" href="https://rsms.me/">
 <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
@@ -60,8 +60,8 @@
   .brand img {
     width: 40px; height: 40px;
     border-radius: 50%;
-    background: var(--bg-card);
-    padding: 4px;
+    background: #ffffff;
+    padding: 3px;
   }
   .brand-text {
     font-weight: 600;
@@ -147,9 +147,12 @@
 
   .cta-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
     margin-bottom: 32px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
   }
   .cta-card {
     background: var(--bg-card);
@@ -220,6 +223,33 @@
     border: 1px solid var(--accent);
   }
   .cta-card.secondary:hover .cta-button { background: var(--accent-dim); }
+  .cta-card { cursor: default; }
+  .cta-overview {
+    display: block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--accent-bright);
+    text-align: center;
+    text-decoration: none;
+    opacity: 0.75;
+    transition: opacity 0.15s;
+  }
+  .cta-overview:hover { opacity: 1; text-decoration: underline; }
+  .cta-overview.muted { color: #4b5563; cursor: default; pointer-events: none; }
+  .cta-btn-link {
+    display: inline-flex;align-items: center;justify-content: center;gap: 8px;
+    padding: 10px 16px;font-size: 14px;font-weight: 500;border-radius: 6px;
+    transition: background 0.15s;text-decoration: none;cursor: pointer;
+    background: var(--accent);color: white;border: none;width: 100%;
+  }
+  .cta-btn-link.outline {
+    background: transparent;color: var(--accent-bright);border: 1px solid var(--accent);
+  }
+  .cta-btn-link:hover { background: var(--accent-bright); color: white; }
+  .cta-btn-link.outline:hover { background: var(--accent-dim); color: var(--accent-bright); }
+  .cta-btn-link.disabled {
+    background: #374151;color: #9ca3af;cursor: default;pointer-events:none;border:none;
+  }
 
   .trust-bar {
     font-size: 13px;
@@ -498,6 +528,7 @@
     p, li { font-size: 0.95rem !important; font-family: sans-serif !important; line-height: 1.6 !important; }
     .hero-title { font-size: 2rem !important; }
     .card-grid, [style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+    .cta-row { grid-template-columns: 1fr !important; }
     img { max-width: 100% !important; height: auto !important; }
     [style*="display:flex"], [style*="display: flex"] { flex-direction: column !important; }
   }
@@ -524,10 +555,10 @@
 
 <div class="hero-wrapper">
 <header class="hero">
-  <div class="hero-eyebrow">DC COMPLIANCE &amp; RETROFIT RISK · IRELAND</div>
-  <h1>Independent screening for your Irish data centre&rsquo;s <em>compliance and retrofit risk</em>.</h1>
+  <div class="hero-eyebrow">DC FUND INTELLIGENCE · IRELAND</div>
+  <h1>Independent engineering intelligence for Irish data centre <em>investment decisions</em>.</h1>
   <p class="hero-sub">
-    A screening-level, CEng-backed assessment of where your facility stands against CRU renewable obligations, EU Taxonomy PUE thresholds, CRREM misalignment exposure, and retrofit economics. Delivered in ten working days. From &euro;3,500.
+    CEng-signed intelligence for fund managers and operators making capital decisions on Irish data centre assets. Compliance exposure, retrofit economics, zone conversion potential, and AI-density readiness &mdash; identified and quantified, never designed or delivered. From &euro;3,500.
   </p>
   <div class="hero-meta">
     <span>
@@ -536,7 +567,7 @@
     </span>
     <span>
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      10 working days
+      5&ndash;10 working days
     </span>
     <span>
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7h18M3 12h18M3 17h18"/></svg>
@@ -550,34 +581,70 @@
 
   <div class="cta-row" id="book">
 
-    <a href="tools/dc-tool-010_v2_0_0.html" class="cta-card secondary">
+    <!-- CARD 1: Headline Audit -->
+    <div class="cta-card secondary">
       <span class="cta-tag">Start free</span>
       <div class="cta-title">Headline Audit</div>
       <p class="cta-desc">A single-page snapshot of your facility&rsquo;s compliance and retrofit exposure. Free, no login. Good for triage.</p>
       <div class="cta-price">&euro;0</div>
-      <span class="cta-button">Run the free audit →</span>
-    </a>
+      <a href="tools/dc-tool-010_v2_0_0.html" class="cta-btn-link outline">Run the free audit &rarr;</a>
+      <span class="cta-overview muted">No service overview</span>
+    </div>
 
-    <a href="intake-form.html" class="cta-card primary">
+    <!-- CARD 2: Screening Report -->
+    <div class="cta-card primary">
       <span class="cta-tag">Most booked</span>
       <div class="cta-title">Screening Report</div>
       <p class="cta-desc">A 2&ndash;3 page CEng-signed interpretation letter on one facility. Compliance gap map, CAPEX/payback envelope, and decision gate. Delivered in ten working days.</p>
       <div class="cta-price"><strong>&euro;3,500</strong> &middot; one-off</div>
-      <span class="cta-button">Book a Screening Report →</span>
-    </a>
+      <a href="intake-form.html" class="cta-btn-link">Book a Screening Report &rarr;</a>
+      <a href="LBE-SCR-Service-OnePager.html" target="_blank" class="cta-overview">&#8659; Service overview</a>
+    </div>
 
-    <a href="https://calendly.com/lmurphy-legacybe/30min" target="_blank" rel="noopener" class="cta-card secondary">
+    <!-- CARD 3: AI Readiness -->
+    <div class="cta-card secondary">
+      <span class="cta-tag">AI Readiness</span>
+      <div class="cta-title">AI Readiness Assessment</div>
+      <p class="cta-desc">Can your facility support AI-density workloads? Power headroom, cooling capacity, structural constraints, grid adequacy, and EU Taxonomy alignment &mdash; assessed and quantified before you commit capital.</p>
+      <div class="cta-price"><strong>&euro;8,500</strong> &middot; one-off</div>
+      <a href="https://calendly.com/lmurphy-legacybe/30min" target="_blank" rel="noopener" class="cta-btn-link outline">Book a scoping call &rarr;</a>
+      <a href="LBE-AIR-Service-OnePager.html" target="_blank" class="cta-overview">&#8659; Service overview</a>
+    </div>
+
+    <!-- CARD 4: Hybrid Zoning -->
+    <div class="cta-card secondary">
+      <span class="cta-tag">DC Zoning</span>
+      <div class="cta-title">Hybrid Zoning Report</div>
+      <p class="cta-desc">Which halls can convert to AI-capable density. Weighted PUE model, EU Taxonomy verdict, MIC constraint check, AACE Class 5 cost summary per zone. CEng-signed. Engagement scoped on a 30-minute call.</p>
+      <div class="cta-price"><strong>&euro;25,000</strong> &middot; one-off</div>
+      <a href="https://calendly.com/lmurphy-legacybe/30min" target="_blank" rel="noopener" class="cta-btn-link outline">Talk to Les &rarr;</a>
+      <a href="LBE-HZ-Service-OnePager.html" target="_blank" class="cta-overview">&#8659; Service overview</a>
+    </div>
+
+    <!-- CARD 5: Sovereign Compute -->
+    <div class="cta-card secondary" style="opacity:0.65;">
+      <span class="cta-tag" style="color:#6b7280;">Coming Q1 2027</span>
+      <div class="cta-title" style="color:#9ca3af;">Sovereign Compute Compliance</div>
+      <p class="cta-desc" style="color:#6b7280;">Regulatory and technical compliance assessment for sovereign compute infrastructure &mdash; national security classification, data residency, air-gap requirements, and grid independence. Premium engagement opening Q1 2027.</p>
+      <div class="cta-price" style="color:#6b7280;">&euro;75,000 &ndash; &euro;100,000</div>
+      <span class="cta-btn-link disabled">Opening Q1 2027</span>
+      <span class="cta-overview muted">Service overview &mdash; 2027</span>
+    </div>
+
+    <!-- CARD 6: Talk to Les -->
+    <div class="cta-card secondary">
       <span class="cta-tag">Direct</span>
       <div class="cta-title">Talk to Les</div>
       <p class="cta-desc">Thirty minutes with Les Murphy CEng. Discuss a facility, a portfolio, or whether screening is the right step for you.</p>
       <div class="cta-price">No charge</div>
-      <span class="cta-button">Book 30 minutes →</span>
-    </a>
+      <a href="https://calendly.com/lmurphy-legacybe/30min" target="_blank" rel="noopener" class="cta-btn-link outline">Book 30 minutes &rarr;</a>
+      <span class="cta-overview muted">No service overview</span>
+    </div>
 
   </div>
 
   <div class="trust-bar">
-    <strong>Worked example:</strong> Read an anonymised Screening Report on a 2.4 MW Dublin facility. <a href="/sample-screening-report.pdf" style="color:var(--accent-bright);text-decoration:none">sample-screening-report.pdf</a>
+    <strong>Worked examples:</strong> <a href="/sample-screening-report.pdf" style="color:var(--accent-bright);text-decoration:none">Screening Report &mdash; 2.4 MW Dublin</a> &nbsp;&middot;&nbsp; <a href="/sample-hz-report.pdf" style="color:var(--accent-bright);text-decoration:none">Hybrid Zoning &mdash; Clonshaugh DC</a> &nbsp;&middot;&nbsp; <a href="/sample-air-report.pdf" style="color:var(--accent-bright);text-decoration:none">AI Readiness &mdash; Clonshaugh DC</a>
   </div>
 
 </header>
@@ -661,16 +728,28 @@
           <span class="price">&euro;3,500</span>
         </li>
         <li>
-          <span><strong>Desktop Assessment</strong> &middot; 15&ndash;25 page report, one facility, 4&ndash;6 weeks</span>
-          <span class="price">Talk to Les</span>
+          <span><strong>AI Readiness Assessment</strong> &middot; hall-by-hall AI-density conversion verdict, MIC check, EU Taxonomy at target, AACE Class 5 cost summary</span>
+          <span class="price">&euro;8,500</span>
         </li>
         <li>
-          <span><strong>Investment-Grade Due Diligence</strong> &middot; 50&ndash;80 page report for acquisition or portfolio review</span>
-          <span class="price">Talk to Les</span>
+          <span><strong>Desktop Assessment</strong> &middot; 15&ndash;25 page report, one facility, 4&ndash;6 weeks</span>
+          <span class="price">&euro;10,000 &ndash; &euro;15,000</span>
+        </li>
+        <li>
+          <span><strong>Hybrid Zoning Report</strong> &middot; zone classification, weighted PUE, MIC constraint, AACE Class 5 cost per zone. CEng-signed.</span>
+          <span class="price">&euro;25,000</span>
         </li>
         <li>
           <span><strong>Portfolio Subscription</strong> &middot; unlimited screening + benchmark index, up to 25 facilities</span>
           <span class="price">&euro;25,000/yr</span>
+        </li>
+        <li>
+          <span><strong>Investment-Grade Due Diligence</strong> &middot; 50&ndash;80 page report for acquisition or portfolio review</span>
+          <span class="price">&euro;75,000</span>
+        </li>
+        <li>
+          <span><strong>Sovereign Compute Compliance</strong> &middot; regulatory and technical assessment for sovereign infrastructure &mdash; opening Q1 2027</span>
+          <span class="price">&euro;75,000 &ndash; &euro;100,000</span>
         </li>
         <li>
           <span><strong>DC-LEARN Corporate licence</strong> &middot; structured learning hours for your team across 16 modules</span>
@@ -696,7 +775,7 @@
   <details class="more">
     <summary>About Les Murphy CEng</summary>
     <div class="more-body">
-      <p>Chartered Engineer (MEI). MBA, MSc, BSc(Hons), BA. Thirty years of MEP building services consultancy across life sciences, higher education, mission-critical, and advanced manufacturing in Ireland and the UK. Founder of Legacy Business Engineers Ltd, Dublin. CRO 720301. Registered at 15 Palmers Crescent, The Manor, Dublin 20, D20 DP71.</p>
+      <p>CEng MBA MSc MIEI. Thirty years of MEP building services consultancy across life sciences, higher education, mission-critical, and advanced manufacturing in Ireland and the UK. Founder of Legacy Business Engineers Ltd, Dublin. CRO 720301. Registered at 15 Palmers Crescent, The Manor, Dublin 20, D20 DP71.</p>
       <p>Professional indemnity insurance in place. Every Screening Report is personally signed by Les.</p>
     </div>
   </details>
