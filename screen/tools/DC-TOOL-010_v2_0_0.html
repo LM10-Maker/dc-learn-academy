@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>DC-TOOL-010 v2.0.0 | Factory Template | Legacy Business Engineers</title>
+<title>DC-TOOL-010 v2.0.1 | Factory Template | Legacy Business Engineers</title>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/ibm-plex/6.4.2/css/ibm-plex.min.css" rel="stylesheet"/>
 <style>
 
 /* === THEME VARIABLES (inherited from DC-LEARN Canonical Architecture v1.1) === */
@@ -240,7 +240,7 @@ select.input-field{appearance:auto}
 window.onerror=function(msg,src,line,col,err){
   var el=document.getElementById('root');
   if(el){el.innerHTML='<div style="padding:32px;font-family:monospace;background:#1a1a1a;color:#f85149;border-radius:8px;margin:24px">'
-    +'<h2 style="color:#f0f6fc">DC-TOOL-010 v2.0.0 — Blank Screen Guard</h2>'
+    +'<h2 style="color:#f0f6fc">DC-TOOL-010 v2.0.1 — Blank Screen Guard</h2>'
     +'<p style="margin:12px 0">Error: '+msg+'</p>'
     +'<p>Line: '+line+' Col: '+col+'</p>'
     +'<p style="font-size:12px;color:#8b949e;margin-top:12px">Copy this error and send to LM at info@legacybe.ie</p>'
@@ -254,13 +254,13 @@ var LOGO_SRC="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHL
 </script>
 <script type="text/babel">
 /* ================================================================
-   DC-TOOL-010 v2.0.0 | Factory Template — Deterministic Calc Engine
+   DC-TOOL-010 v2.0.1 | Factory Template — Deterministic Calc Engine
    DC_TOOL_FACTORY_SPEC v2.0 | Legacy Business Engineers Ltd
    RULE: The LLM never calculates. Numbers are JavaScript. Narrative is AI.
    ================================================================ */
 
 const TOOL_ID = 'DC-TOOL-010';
-const TOOL_VERSION = '2.0.0';
+const TOOL_VERSION = '2.0.1';
 const TOOL_NAME = 'Facility Audit Checklist';
 
 /* ================================================================
@@ -590,7 +590,7 @@ class ErrorBoundary extends React.Component {
   render(){
     if(this.state.hasError){
       return React.createElement('div',{style:{padding:32,fontFamily:'monospace',background:'#1a1a1a',color:'#f85149',borderRadius:8,margin:24}},
-        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-010 v2.0.0 — Error Boundary'),
+        React.createElement('h2',{style:{color:'#f0f6fc'}},'DC-TOOL-010 v2.0.1 — Error Boundary'),
         React.createElement('p',{style:{margin:'12px 0'}},'Error: '+(this.state.error?.message||'Unknown')),
         React.createElement('p',{style:{fontSize:12,color:'#8b949e',marginTop:12}},'Copy this error and send to LM at info@legacybe.ie')
       );
@@ -931,7 +931,7 @@ function ReportTab({ calcSteps, findings, trafficLight, interpretation, inputs, 
 
       {/* Sign-off */}
       <div className="signoff">
-        <div className="signoff-name">Les Murphy CEng MIEI</div>
+        <div className="signoff-name">Les Murphy CEng MIEI MBA</div>
         <div className="signoff-title">Independent Technical Advisor</div>
         <div className="signoff-title">Legacy Business Engineers Ltd</div>
         <div className="signoff-pi">PI Insurance: confirmed</div>
@@ -1083,7 +1083,7 @@ function App(){
         '\n\nCALCULATED RESULTS (JavaScript — do not recalculate):\n' + calcSummary +
         '\n\nFINDINGS (Rule-based — do not modify):\n' + findingSummary +
         '\n\nOverall risk: ' + tl +
-        '\n\nTool: DC-TOOL-010 v2.0.0 Facility Audit Checklist' +
+        '\n\nTool: DC-TOOL-010 v2.0.1 Facility Audit Checklist' +
         '\n\nInterpret these pre-calculated results. Do not invent or recalculate any numbers.';
 
       const response = await fetch('https://iphonednnnqhxvhypvwn.supabase.co/functions/v1/tool-interpret', {
