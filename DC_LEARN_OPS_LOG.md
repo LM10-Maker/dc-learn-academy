@@ -494,3 +494,15 @@ WHY: Branch had wrong hero version (no Calendly, old pricing). All 6
 deploy files now correct on main. Netlify publish dir: screen/
 Commit: 79b77e6
 SHIP
+
+## 2026-04-27 | Claude Sonnet 4.6 | screen/ | [FIX]
+- [FIX] screen/index.html: Removed Sovereign Compute Compliance tile (CARD 5) in full — opening div, Coming Q1 2027 badge, heading, body copy, price line, disabled CTA, and 2027 service overview link all stripped
+- [FIX] screen/index.html: Removed Sovereign Compute Compliance pricing list item from the "Also available" section (€75,000–€100,000 line)
+- [FIX] screen/tools/DC-TOOL-010_v2_0_0.html: Google Fonts CDN (fonts.googleapis.com) replaced with cdnjs.cloudflare.com IBM Plex CSS (ibm-plex 6.4.2)
+- [FIX] screen/tools/DC-TOOL-010_v2_0_0.html: Sign-off credential updated CEng MIEI → CEng MIEI MBA
+- [FIX] screen/tools/DC-TOOL-010_v2_0_0.html: Version bumped v2.0.0 → v2.0.1 across all 6 instances (title, blank-screen-guard string, factory comment, TOOL_VERSION constant, error-boundary string, audit-checklist string)
+- [FIX] screen/thank-you.html: Price copy "3,500 euros plus VAT" → "€3,500 + VAT"
+- [FIX] screen/thank-you.html: Delivery time "5 working days" → "10 working days" (aligns with index.html lines 598 and 658)
+
+Verification: grep "Sovereign" returns zero matches across repo. Tile grid: 5 tiles (Headline Audit, Screening Report, AI Readiness, Hybrid Zoning, Talk to Les). Diff contained to 3 HTML files + this log.
+Branch: claude/setup-dc-learn-academy-nVU7a
