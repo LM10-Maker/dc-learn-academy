@@ -1,28 +1,28 @@
 {
-  "run_date": "2026-04-20T09:08:41.893813+00:00",
+  "run_date": "2026-04-27T09:22:09.691518+00:00",
   "sources_checked": 12,
   "sources_changed": 3,
   "fetch_errors": 1,
   "changes": [
     {
-      "date": "2026-04-20",
+      "date": "2026-04-27",
       "source_id": "epa",
       "source_name": "EPA \u2014 Licensing",
       "url": "https://www.epa.ie/",
       "priority": "P3",
-      "summary": "5 new lines detected. Examples:\n  + Climate Risk and Adaptation in an Uncertain World - April 22 - Online Webinar\n  + Climate Change Lecture Series - Climate Risk and Adaptation in an Uncertain World\n  + The EPA, as part of the National Dialogue on Climate Action, will host a public lecture titled Climate Risk and Adaptati\n5 lines removed. Examples:\n  - The EPA Circular Economy Conference 2026 will take place on 19th November in the Aviva Stadium Dublin\n  - The EPA Research Call 2026 is now open",
+      "summary": "10 new lines detected. Examples:\n  + Ireland Meets EU Emissions Reduction Targets for All Five Major Air Pollutants\n  + High overall compliance at licensed sites in 2025.1,681 inspections, but the waste sector shows the most non\u2011compliance,\n  + EPA Annual Circular Economy Conference 2026\n  + Five main air pollutants, NOx, SO2, NH3, NMVOC and PM2.5.\n  + Ireland's Air Pollutant Emissions: Trends and Outlook\n11 lines removed. Examples:\n  - Climate Risk and Adaptation in an Uncertain World - April 2",
       "modules_affected": [
         "007",
         "012"
       ]
     },
     {
-      "date": "2026-04-20",
+      "date": "2026-04-27",
       "source_id": "semo",
       "source_name": "SEMO \u2014 Capacity Market",
       "url": "https://www.sem-o.com/",
-      "priority": "P3",
-      "summary": "3 new lines detected. Examples:\n  + Future Power Markets June Workshop\n2 lines removed. Examples:\n  - Balancing Market Modifications Committee Meeting 134",
+      "priority": "P2",
+      "summary": "2 new lines detected. Examples:\n  + Capacity Market Modifications Workshop 50\n3 lines removed. Examples:\n  - Future Power Markets April Workshop",
       "modules_affected": [
         "012",
         "015",
@@ -30,12 +30,12 @@
       ]
     },
     {
-      "date": "2026-04-20",
+      "date": "2026-04-27",
       "source_id": "crrem",
       "source_name": "CRREM \u2014 Methodology",
       "url": "https://www.crrem.eu/",
       "priority": "P2",
-      "summary": "162 new lines detected. Examples:\n  + Active market consultations with participation details\n  + CRREM: Science-Based Decarbonization Pathways for Real Estate\n  + Data, ratings, or software company\n  + How pathways are developed, updated, and maintained\n  + How CRREM is funded and our commitment to independence\n5 lines removed. Examples:\n  - We're building a new home for CRREM \u00e2\u0080\u0094 science-based decarbonization pathways for real estate across 44 countries.",
+      "summary": "16 new lines detected. Examples:\n  + Subscribe me to the CRREM newsletter \u2014 quarterly updates, methodology changes, event invites.\n  + CRREM Data is free to use for research, investment analysis, reporting, and internal decision-making, with attribution. \n  + CRREM Foundation \u2013 The Global Standard for Transition Risk in Real Estate\n1 lines removed. Examples:\n  - CRREM: Science-Based Decarbonization Pathways for Real Estate",
       "modules_affected": [
         "010",
         "007",
