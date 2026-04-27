@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-MSTR-001 v1.5.4 | DC Master Parameters | Legacy Business Engineers</title>
+<script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:wght@400;600&display=swap');
+  
+  :root {
+    --lbe-green: #4a7c59;
+    --lbe-green-dark: #3a6347;
+    --lbe-green-light: #e8f5e9;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-300: #d1d5db; --gray-400: #9ca3af; --gray-500: #6b7280;
+    --gray-600: #4b5563; --gray-700: #374151; --gray-800: #1f2937;
+    --gray-900: #111827;
+    --blue-50: #eff6ff; --blue-100: #dbeafe; --blue-500: #3b82f6;
+    --blue-600: #2563eb; --blue-700: #1d4ed8; --blue-800: #1e40af;
+    --blue-900: #1e3a5f;
+    --green-50: #f0fdf4; --green-100: #dcfce7; --green-500: #22c55e;
+    --green-700: #15803d; --green-800: #166534;
+    --amber-50: #fffbeb; --amber-100: #fef3c7; --amber-500: #f59e0b;
+    --amber-700: #b45309; --amber-800: #92400e;
+    --red-50: #fef2f2; --red-100: #fee2e2; --red-500: #ef4444;
+    --red-700: #b91c1c; --red-800: #991b1b;
+    --indigo-50: #eef2ff; --indigo-700: #4338ca; --indigo-800: #3730a3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Sans 3', -apple-system, sans-serif; background: var(--gray-50); color: var(--gray-900); line-height: 1.5; }
+  h1, h2, h3 { font-family: 'Source Serif 4', Georgia, serif; }
+  
+  .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+  
+  /* Logo */
+  .logo-img { height: 40px; width: auto; display: block; object-fit: contain; flex-shrink: 0; border-radius: 50%; }
+  .logo-fallback { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; 
+    border-radius: 50%; background: var(--lbe-green); color: #fff; font-weight: 700; font-size: 0.75rem; flex-shrink: 0; }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  
+  /* Cards */
+  .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 24px; margin-bottom: 16px; }
+  .card-header { border-top: 4px solid var(--lbe-green); }
+  .card-green-left { border-left: 4px solid var(--lbe-green); }
+  
+  /* Typography */
+  .text-xs { font-size: 0.75rem; } .text-sm { font-size: 0.875rem; } .text-lg { font-size: 1.125rem; }
+  .text-xl { font-size: 1.25rem; } .text-2xl { font-size: 1.5rem; }
+  .font-bold { font-weight: 700; } .font-semibold { font-weight: 600; } .font-mono { font-family: monospace; }
+  .text-gray-400 { color: var(--gray-400); } .text-gray-500 { color: var(--gray-500); }
+  .text-gray-600 { color: var(--gray-600); } .text-gray-700 { color: var(--gray-700); }
+  .text-gray-800 { color: var(--gray-800); } .text-green-700 { color: var(--lbe-green); }
+  .text-green-800 { color: var(--green-800); } .text-blue-800 { color: var(--blue-800); }
+  .text-indigo-800 { color: var(--indigo-800); } .text-red-500 { color: var(--red-500); }
+  
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 768px) { .grid-2, .grid-4, .grid-3 { grid-template-columns: 1fr; } }
+  
+  /* Inputs */
+  select, input[type="number"], input[type="text"], input[type="date"] {
+    border: 1px solid var(--gray-300); border-radius: 6px; padding: 8px 12px; width: 100%;
+    font-size: 0.9rem; font-family: inherit; transition: border-color 0.2s; background: #fff; }
+  select:focus, input:focus { outline: none; border-color: var(--lbe-green); box-shadow: 0 0 0 3px rgba(74,124,89,0.15); }
+  
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 2px solid var(--gray-200); margin-bottom: 16px; gap: 4px; }
+  .tab { padding: 10px 20px; cursor: pointer; font-size: 0.875rem; font-weight: 500; border: none;
+    background: none; border-bottom: 3px solid transparent; color: var(--gray-500); transition: all 0.2s; }
+  .tab:hover { color: var(--lbe-green); border-bottom-color: var(--gray-300); }
+  .tab.active { color: var(--lbe-green); border-bottom-color: var(--lbe-green); font-weight: 600; }
+  
+  /* Buttons */
+  .btn { padding: 10px 24px; border-radius: 10px; font-weight: 700; cursor: pointer; border: none;
+    font-size: 0.9rem; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--lbe-green); color: #fff; box-shadow: 0 2px 8px rgba(74,124,89,0.3); }
+  .btn-primary:hover { background: var(--lbe-green-dark); }
+  .btn-primary:disabled { background: var(--gray-300); color: var(--gray-500); cursor: not-allowed; box-shadow: none; }
+  .btn-secondary { background: var(--gray-100); color: var(--gray-700); }
+  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-demo { background: var(--indigo-50); color: var(--indigo-700); }
+  .btn-demo:hover { background: #e0e7ff; }
+  .btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: 12px; }
+  
+  /* Tooltip */
+  .tip-wrap { position: relative; display: inline-block; margin-left: 4px; cursor: help; }
+  .tip-icon { color: var(--gray-400); font-size: 0.75rem; }
+  .tip-box { display: none; position: absolute; z-index: 50; bottom: calc(100% + 8px); left: -8px;
+    width: 300px; background: var(--gray-800); color: #f9fafb; padding: 12px; border-radius: 8px;
+    font-size: 0.8rem; line-height: 1.4; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+  .tip-box::after { content:''; position: absolute; top: 100%; left: 20px;
+    border: 6px solid transparent; border-top-color: var(--gray-800); }
+  .tip-wrap:hover .tip-box { display: block; }
+  
+  /* Junior Explainer */
+  .je { border: 1px solid #bfdbfe; border-radius: 8px; margin-bottom: 8px; background: var(--blue-50); overflow: hidden; }
+  .je-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px;
+    cursor: pointer; user-select: none; }
+  .je-title { font-size: 0.875rem; font-weight: 600; color: var(--blue-800); }
+  .je-arrow { color: var(--blue-500); font-size: 0.8rem; }
+  .je-body { padding: 0 14px 14px; font-size: 0.85rem; color: var(--blue-900); line-height: 1.5; }
+  .je-body p { margin-bottom: 8px; }
+  .je-body ul { margin-left: 16px; font-size: 0.8rem; }
+  .je-ref { font-size: 0.75rem; color: var(--blue-600); margin-top: 4px; }
+  
+  /* Stat boxes */
+  .stat-box { background: var(--gray-50); border-radius: 8px; padding: 12px; text-align: center; }
+  .stat-val { font-size: 1.5rem; font-weight: 700; }
+  .stat-label { font-size: 0.75rem; color: var(--gray-500); }
+  
+  /* Tips */
+  .tip-card { padding: 14px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid; }
+  .tip-green { background: var(--green-50); border-color: var(--green-500); }
+  .tip-green .tip-title { color: var(--green-800); } .tip-green .tip-body { color: #15803d; }
+  .tip-amber { background: var(--amber-50); border-color: var(--amber-500); }
+  .tip-amber .tip-title { color: var(--amber-800); } .tip-amber .tip-body { color: var(--amber-700); }
+  .tip-red { background: var(--red-50); border-color: var(--red-500); }
+  .tip-red .tip-title { color: var(--red-800); } .tip-red .tip-body { color: var(--red-700); }
+  
+  /* Table */
+  .tbl { width: 100%; font-size: 0.875rem; border-collapse: collapse; }
+  .tbl td { padding: 8px 12px; border-bottom: 1px solid var(--gray-100); }
+  .tbl tr:nth-child(even) { background: var(--gray-50); }
+  .tbl .td-label { font-weight: 600; color: var(--gray-700); width: 35%; }
+  
+  /* Badge */
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+  .badge-green { background: var(--green-100); color: var(--green-800); }
+  .badge-amber { background: var(--amber-100); color: var(--amber-800); }
+  .badge-blue { background: var(--blue-100); color: var(--blue-800); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+  
+  /* Checkbox */
+  .chk-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.875rem; }
+  .chk-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--lbe-green); }
+  
+  /* Info bar */
+  .info-bar { background: var(--gray-50); border-radius: 8px; padding: 10px 14px; font-size: 0.8rem; color: var(--gray-600); margin-top: 12px; }
+  
+  /* Scale indicator */
+  .scale-bar { margin-top: 16px; padding: 12px 16px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); }
+  
+  /* Sign-off */
+  .signoff-box { border: 1px solid var(--gray-200); border-radius: 8px; padding: 12px; }
+  .signoff-line { border-top: 1px solid var(--gray-300); margin-top: 40px; padding-top: 4px; }
+  
+  /* Downstream tools grid */
+  .ds-tool { background: var(--gray-50); border-radius: 6px; padding: 8px; border: 1px solid var(--gray-200); font-size: 0.75rem; }
+  .ds-tool .ds-id { font-family: monospace; color: var(--gray-500); }
+  .ds-tool .ds-name { color: var(--gray-700); }
+  
+  /* Field */
+  .field { margin-bottom: 16px; }
+  .field-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+  
+  /* Print */
+  .print-only { display: none; }
+  @media print {
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    body { background: #fff; font-size: 10pt; }
+    @page { size: A4 portrait; margin: 14mm 12mm 20mm 12mm; }
+    .card { box-shadow: none !important; border: 1px solid var(--gray-200); }
+    .container { max-width: 100%; padding: 0; }
+    .print-header-bar { display: flex !important; background: var(--lbe-green); color: #fff; 
+      padding: 8px 16px; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; margin-bottom: 0; }
+    .print-header-bar img { filter: brightness(0) invert(1); height: 28px; }
+  }
+  
+  /* Nav footer */
+  .nav-footer { text-align: center; padding: 12px; background: var(--gray-50); border-top: 1px solid var(--gray-200); margin-top: 20px; border-radius: 0 0 12px 12px; }
+  .nav-footer a { color: var(--lbe-green); text-decoration: none; font-size: 0.875rem; }
+  .nav-footer a:hover { text-decoration: underline; }
+  .nav-footer .sep { color: var(--gray-300); margin: 0 8px; }
+  .nav-footer .copy { font-size: 0.7rem; color: var(--gray-400); margin-top: 4px; }
+  
+  /* Flex helpers */
+  .flex { display: flex; } .flex-between { display: flex; justify-content: space-between; align-items: center; }
+  .flex-center { display: flex; justify-content: center; align-items: center; }
+  .gap-2 { gap: 8px; } .gap-3 { gap: 12px; } .gap-4 { gap: 16px; }
+  .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; } .mt-6 { margin-top: 24px; }
+  .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; } .mb-4 { margin-bottom: 16px; }
+  .p-3 { padding: 12px; } .p-4 { padding: 16px; }
+  .text-center { text-align: center; } .text-right { text-align: right; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// ═══ BLANK SCREEN GUARD — Layer 1: Window Error Handler ═══
+// Catches Babel transpile failures. Ref: AIMEP_BLANK_SCREEN_GUARD_v1_0.md
+window.onerror = function(msg, src, line, col, err) {
+  var el = document.getElementById('root');
+  if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
+    el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error — Not a Blank Screen</h2>'
+      + '<p style="color:#374151;margin:0 0 8px"><strong>DC-MSTR-001 v1.5.4</strong> failed to load.</p>'
+      + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      + 'Error: ' + msg + '\\nLine: ' + line + ', Col: ' + col
+      + (err && err.stack ? '\\n\\nStack:\\n' + err.stack.substring(0,500) : '')
+      + '</div>'
+      + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+      + '</div>';
+  }
+  return false;
+};
+</script>
+<script type="text/babel">
+const { useState, useCallback, useMemo, useRef } = React;
+
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+const LBE_LOGO = "data:image/png;base64,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";
+const TOOL_ID = "DC-MSTR-001", TOOL_NAME = "DC Master Parameters", TOOL_VERSION = "1.5.3";
+const TOOL_SUBTITLE = "Project-level inputs that cascade to every S4 tool";
+const CORE_DNA = "1.3.0";
+
+const COUNTIES = ["Carlow","Cavan","Clare","Cork","Donegal","Dublin","Galway","Kerry",
+  "Kildare","Kilkenny","Laois","Leitrim","Limerick","Longford","Louth",
+  "Mayo","Meath","Monaghan","Offaly","Roscommon","Sligo","Tipperary",
+  "Waterford","Westmeath","Wexford","Wicklow"];
+
+// Scale bands — Source: Uptime Institute DC Market Size 2024, JLL DC Report Ireland 2024
+const SCALE_BANDS = [
+  { label:"Edge (0.5–5 MW)", min:0.5, max:5, voltage:"MV (10/20kV)", config:"Single building, N+1, packaged" },
+  { label:"Enterprise (5–20 MW)", min:5, max:20, voltage:"MV (10/20kV)", config:"Single building, 2N, bespoke" },
+  { label:"Colocation (20–50 MW)", min:20, max:50, voltage:"HV/MV (38/110kV)", config:"Multi-hall, 2N+1, shared infra" },
+  { label:"Hyperscale (50–200 MW)", min:50, max:200, voltage:"HV (110kV) + on-site", config:"Campus, phased, modular" }
+];
+
+// ASHRAE thermal classes — Source: ASHRAE TC 9.9:2021 Table 1
+const ASHRAE = {
+  A1:{min:18,max:27,label:"A1 — Enterprise/Mission-Critical"},
+  A2:{min:10,max:35,label:"A2 — Volume Servers (recommended hyperscale)"},
+  A3:{min:5,max:40,label:"A3 — Ruggedised IT"},
+  A4:{min:5,max:45,label:"A4 — Free Cooling Optimised"}
+};
+
+// Uptime Tier availability — Source: Uptime Institute Tier Standard (Topology), EN 50600-2-2 Clause 5
+const TIERS = {
+  I:{avail:"99.671%",down:"28.8 hr/yr",redun:"N (no redundancy)",ft:"No",maint:"No",paths:1},
+  II:{avail:"99.741%",down:"22.7 hr/yr",redun:"N+1",ft:"No",maint:"No",paths:1},
+  III:{avail:"99.982%",down:"1.6 hr/yr",redun:"N+1 (concurrently maintainable)",ft:"No",maint:"Yes",paths:2},
+  IV:{avail:"99.995%",down:"26.3 min/yr",redun:"2(N+1) — fault tolerant",ft:"Yes",maint:"Yes",paths:2}
+};
+
+// Free cooling hours by climate zone — Source: Met Éireann 30-yr TMY data, ASHRAE A2 threshold <23°C wet bulb
+const FC = { Dublin:{lt23:8100}, Cork:{lt23:8200}, Galway:{lt23:8300}, Athlone:{lt23:8000} };
+
+const DEMO = {
+  project:{name:"Clonshaugh Data Centre",ref:"LBE-MSTR-CLN-2026",county:"Dublin",eircode:"D17 X2Y4",area:"2.8",by:"Legacy Business Engineers",date:"2026-04-14",build_year:"2014",hall_names:"Hall A"},
+  it:{mw:"2.4",p1:"2.4",phases:"1",rd:"6",gpu:"0",growth:"2"},
+  design:{tier:"III",ashrae:"A2",pue:"1.50",wue:"0.8",cue:"0.30",auto_hrs:"48"},
+  cool:{strat:"chilled_water",fc:false,water:false,heat:false},
+  elec:{volt:"10",ups:"vrla",fuel:"diesel",ppa_pct:"40",gen_hrs_annual:"200",mic_mva:"5"},
+  comp:{en:true,uptime:false,epa:false,eirgrid:true},
+  comm:{budget:"",months:"",riba:"0"}
+};
+
+// ═══════════════════════════════════════════════════════════════
+// COMPONENTS
+// ═══════════════════════════════════════════════════════════════
+function Tip({meaning,typical,source,warning}) {
+  return (
+    <span className="tip-wrap">
+      <span className="tip-icon">ⓘ</span>
+      <span className="tip-box">
+        <div><strong>Meaning:</strong> {meaning}</div>
+        {typical && <div style={{marginTop:4}}><strong>Typical:</strong> {typical}</div>}
+        {source && <div style={{marginTop:4}}><strong>Source:</strong> {source}</div>}
+        {warning && <div style={{marginTop:4,color:'#fbbf24'}}><strong>⚠ {warning}</strong></div>}
+      </span>
+    </span>
+  );
+}
+
+function JE({title, children}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="je">
+      <div className="je-head" onClick={() => setOpen(!open)}>
+        <span className="je-title">📘 {title}</span>
+        <span className="je-arrow">{open ? '▼' : '▶'}</span>
+      </div>
+      {open && <div className="je-body">{children}</div>}
+    </div>
+  );
+}
+
+function Field({label, tip, required, children}) {
+  return (
+    <div className="field">
+      <label className="field-label">
+        {label} {required && <span className="text-red-500">*</span>}
+        {tip && <Tip {...tip} />}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN APP
+// ═══════════════════════════════════════════════════════════════
+function App() {
+  const [tab, setTab] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+  const [docStatus, setDocStatus] = useState("FOR_REVIEW");
+
+  // State
+  const [pName,setPName]=useState(""); const [pRef,setPRef]=useState("");
+  const [county,setCounty]=useState(""); const [eircode,setEircode]=useState("");
+  const [area,setArea]=useState(""); const [by,setBy]=useState(""); 
+  const [date,setDate]=useState(new Date().toISOString().split('T')[0]);
+  const [mw,setMw]=useState(""); const [p1,setP1]=useState("");
+  const [phases,setPhases]=useState("4"); const [rd,setRd]=useState("15");
+  const [gpu,setGpu]=useState("0"); const [growth,setGrowth]=useState("5");
+  const [tier,setTier]=useState("III"); const [ashrae,setAshrae]=useState("A2");
+  const [pue,setPue]=useState("1.20"); const [wue,setWue]=useState("0.5");
+  const [cue,setCue]=useState("0.30"); const [autoHrs,setAutoHrs]=useState("48");
+  const [coolStrat,setCoolStrat]=useState("auto"); const [fcPri,setFcPri]=useState(true);
+  const [waterR,setWaterR]=useState(false); const [heatR,setHeatR]=useState(false);
+  const [volt,setVolt]=useState("110"); const [upsTech,setUpsTech]=useState("auto");
+  const [genFuel,setGenFuel]=useState("auto");
+  const [en50600,setEn50600]=useState(true); const [uptimeCert,setUptimeCert]=useState(false);
+  const [epaIE,setEpaIE]=useState(false); const [eirgrid,setEirgrid]=useState(true);
+  const [budget,setBudget]=useState(""); const [progMo,setProgMo]=useState(""); const [riba,setRiba]=useState("1");
+  const [buildYear,setBuildYear]=useState(""); const [ppaPercent,setPpaPercent]=useState(""); const [genHoursAnnual,setGenHoursAnnual]=useState("200");
+  const [micMva,setMicMva]=useState(""); const [hallNames,setHallNames]=useState("");
+  const [currentPue,setCurrentPue]=useState(""); const [redundancyLevel,setRedundancyLevel]=useState("N+1");
+  const [leaseEndYear,setLeaseEndYear]=useState("");
+
+  // Derived
+  const calc = useMemo(() => {
+    const m=parseFloat(mw)||0, p=parseFloat(p1)||0, r=parseFloat(rd)||15;
+    const g=parseFloat(gpu)||0, pu=parseFloat(pue)||1.2, ah=parseFloat(autoHrs)||48;
+    const ph=parseInt(phases)||1;
+    const band = SCALE_BANDS.find(b=>m>=b.min&&m<=b.max)||(m>200?SCALE_BANDS[3]:SCALE_BANDS[0]);
+    const rackCount = r>0 ? Math.ceil((m*1000)/r) : 0;
+    const gpuRacks = Math.round(rackCount*(g/100)), stdRacks = rackCount-gpuRacks;
+    const facilityMW = m*pu, coolingMW = facilityMW-m;
+    const genCapMW = tier==="IV" ? facilityMW*2.2 : facilityMW*1.2; // 2.2× for 2(N+1) Tier IV, 1.2× for N+1 Tier III — Source: Uptime Institute Tier Standard
+    const fuelL = genCapMW*1000*0.25*ah, fuelM3 = fuelL/1000; // 0.25 L/kWh diesel SFC — Source: EN ISO 8528-1 typical genset at 75% load
+    const cz = county==="Cork"?"Cork":county==="Galway"?"Galway":(county==="Westmeath"||county==="Offaly"||county==="Laois")?"Athlone":"Dublin";
+    const fcHrs = (FC[cz]||FC.Dublin).lt23;
+    const fcPct = ((fcHrs/8760)*100).toFixed(1);
+    const dlcReq = g>30 && r>40, dlcRec = g>20 || r>30;
+    let coolRec = "Chilled water + CRAH (conventional)";
+    if (r>40||g>50) coolRec = "Direct liquid cooling + free cooling (mandatory for GPU density)";
+    else if (r>20) coolRec = "Free cooling + adiabatic pre-cooling (best practice)";
+    else coolRec = "Free cooling + dry coolers (waterless, optimal for Ireland)";
+    let upsRec = "VRLA lead-acid (conventional)";
+    if (m>20) upsRec = "Lithium-ion (higher efficiency, smaller footprint)";
+    if (tier==="IV") upsRec = "Lithium-ion — 97-98% efficiency critical for Tier IV PUE";
+    let fuelRec = "Diesel (proven, lowest risk)";
+    if (epaIE) fuelRec = "HVO-ready diesel (EPA IE increasingly requires HVO)";
+    let voltRec = "MV connection (10/20kV) via ESB Networks";
+    if (m>20) voltRec = "HV connection (110kV) direct from EirGrid";
+    if (m>50) voltRec = "HV 110kV with on-site substation and dual feed";
+    const wasteHeatMW = coolingMW, homesServed = Math.round(wasteHeatMW*1000/3.5); // 3.5 kW avg home heat demand — Source: SEAI Dwelling Energy Assessment Procedure (NEAP) typical semi-d
+    const heatRev = wasteHeatMW*1000*0.05*8000; // €0.05/kWh district heat revenue, 8000 hrs/yr — Source: CIBSE CP1:2020 Clause 4.6, Irish DH pilot rates
+    const epaTrigger = genCapMW*0.8>50; // 0.8 thermal efficiency factor — Source: EPA BAT Guidance Note LC-AD-5
+    return {m,p,r,g,pu,ah,ph,band,rackCount,gpuRacks,stdRacks,facilityMW,coolingMW,
+      genCapMW,fuelL,fuelM3,cz,fcHrs,fcPct,dlcReq,dlcRec,coolRec,upsRec,fuelRec,voltRec,
+      wasteHeatMW,homesServed,heatRev,epaTrigger};
+  }, [mw,p1,phases,rd,gpu,pue,autoHrs,tier,county,epaIE]);
+
+  // VE Tips — EPG GOLD standard
+  const tips = useMemo(() => {
+    const t=[], fmt=v=>'€'+Math.round(v).toLocaleString(), fmtM=v=>'€'+(v/1e6).toFixed(1)+'M';
+    const elecRate = 0.12; // €/kWh avg DC tariff Ireland — Source: CRU Electricity Monitor Q4 2024, large energy user rate · T2
+    const mechChillerHrs = 8760-calc.fcHrs;
+    const fcSavings = calc.coolingMW * mechChillerHrs * elecRate * 1000; // €/yr chiller avoided
+    const facilityElecCost = calc.facilityMW * 8760 * elecRate * 1000; // €/yr total facility
+
+    // 1. FREE COOLING — Ireland climate advantage
+    if (calc.fcHrs>7000 && fcPri) {
+      const savPerYr = fcSavings;
+      const sav20 = savPerYr * 20;
+      t.push({c:"green",icon:"💡",
+        title:`Free cooling: ${calc.fcHrs.toLocaleString()} hrs/yr saves ${fmtM(savPerYr)}/yr`,
+        body:`${calc.cz} climate provides ~${calc.fcHrs.toLocaleString()} hours/year (${calc.fcPct}%) free cooling at ASHRAE ${ashrae}. Mechanical chiller limited to ~${mechChillerHrs.toLocaleString()} hours — saving ~${fmtM(savPerYr)}/yr in chiller energy (${fmtM(sav20)} over 20-year asset life). This is 8-15% better than Frankfurt (6,100 hrs) and 5-8% better than Amsterdam (7,200 hrs). Action: Specify economiser-first control strategy in cooling design brief.`,
+        ref:"ASHRAE TC 9.9:2021 Table 1 (thermal classes), Met Éireann 30-yr TMY, EN 50600-4-2 Clause 5.3"});
+    }
+
+    // 2. DLC MANDATORY — air cooling physically impossible
+    if (calc.dlcReq) {
+      const dlcPremium = calc.coolingMW * 1000 * 250; // ~€250k/MW cooling capex premium
+      const pueGain = calc.pu * 0.03; // ~3% PUE improvement
+      const pueSaving = pueGain * calc.m * 8760 * elecRate * 1000;
+      t.push({c:"red",icon:"⚠️",
+        title:`Direct liquid cooling mandatory — ${calc.r} kW/rack + ${calc.g}% GPU`,
+        body:`At ${calc.r} kW/rack with ${calc.g}% GPU workload, air cooling cannot physically remove the heat (air has ¼ the heat capacity of water above ~40 kW/rack). DLC (rear-door heat exchangers, cold plates, or immersion) is mandatory. Estimated cooling capex premium: ~${fmt(dlcPremium)} (+15-25%), offset by PUE improvement of ~0.03-0.04 saving ~${fmtM(pueSaving)}/yr. Requires CDU infrastructure, facility water loops, and rack-level plumbing from Phase 1. Action: Commission S4-A Site Feasibility Study to validate DLC infrastructure requirements before planning application.`,
+        ref:"ASHRAE TC 9.9:2021 Table 3 (thermal density limits), OCP Thermal Design Guide v2.0, EN 50600-2-3 Clause 6.4"});
+    }
+    // 2b. DLC RECOMMENDED
+    else if (calc.dlcRec) {
+      const gpuRackCost = calc.gpuRacks * 3500; // ~€3.5k/rack for rear-door HX
+      t.push({c:"amber",icon:"💡",
+        title:`Liquid cooling recommended for ${calc.gpuRacks.toLocaleString()} GPU racks`,
+        body:`${calc.g}% GPU at ${calc.r} kW/rack is approaching the air cooling ceiling (~25-30 kW with hot-aisle containment). Rear-door heat exchangers on GPU racks (~${fmt(gpuRackCost)} for ${calc.gpuRacks} racks) reduce PUE cooling contribution by 0.02-0.04 and provide headroom for future density increases. If GPU % or rack density grows, DLC becomes mandatory — designing water infrastructure now avoids costly retrofit. Action: Include DLC-ready piping risers in Phase 1 base build specification.`,
+        ref:"ASHRAE TC 9.9:2021, OCP Thermal Design Guide v2.0, EN 50600-2-3 Clause 6.4"});
+    }
+
+    // 3. EPA IE LICENCE — regulatory timeline risk
+    if (calc.epaTrigger) {
+      const genThermalMW = calc.genCapMW * 0.8;
+      t.push({c:"red",icon:"📋",
+        title:`EPA IE licence required — ${genThermalMW.toFixed(0)} MW thermal exceeds 50MW threshold`,
+        body:`Generator farm at ~${calc.genCapMW.toFixed(0)} MW capacity produces ~${genThermalMW.toFixed(0)} MW thermal input, exceeding the 50MW Industrial Emissions Directive threshold. This triggers a full IE licence application: budget 12-18 months lead time, €80-150k in application/consultant fees, and annual compliance reporting. Consider HVO-ready (EN 15940) generators — EPA is increasingly requiring biofuel capability as a licence condition for new DCs. HVO reduces CO₂ by ~90% during generator operation (typically <100 hrs/yr). Action: Engage EPA pre-application consultation at RIBA Stage 1 to de-risk the planning timeline.`,
+        ref:"EPA IE Directive 2010/75/EU, S.I. No. 138/2013 Schedule 1 Class 1.1, EPA BAT Guidance Note LC-AD-5"});
+    }
+
+    // 4. WATER RESTRICTION — planning constraint
+    if (waterR && coolStrat!=="dry") {
+      const puePenalty = 0.015;
+      const penaltyCost = puePenalty * calc.m * 8760 * elecRate * 1000;
+      t.push({c:"red",icon:"🚰",
+        title:`Water restriction: dry cooling only — adds ~${fmt(penaltyCost)}/yr to energy costs`,
+        body:`Water-restricted planning condition eliminates evaporative and adiabatic cooling strategies. Only dry cooler + free cooling achieves WUE 0.0 L/kWh. PUE penalty: +0.01-0.02 vs adiabatic (~${fmt(penaltyCost)}/yr at ${calc.m} MW IT). South Dublin, Meath, Kildare, and Wicklow increasingly impose water conditions — verify planning authority position before committing to cooling strategy. Action: Request pre-planning meeting with local authority to confirm water use restrictions before RIBA Stage 2.`,
+        ref:"South Dublin CC DC Planning Policy 2023, Meath CC Variation No.3, EN 50600-4-5 (WUE), EN 50600-2-3 Clause 7.2"});
+    }
+
+    // 5. HEAT REUSE — EU EED obligation + revenue
+    if (heatR && calc.wasteHeatMW>1) {
+      const rev20 = calc.heatRev * 20;
+      t.push({c:"green",icon:"♻️",
+        title:`Heat reuse: ${calc.wasteHeatMW.toFixed(1)} MW → ${calc.homesServed.toLocaleString()} homes → ${fmtM(calc.heatRev)}/yr`,
+        body:`EU EED Article 26 (effective 15 May 2025) mandates waste heat recovery assessment for new DCs >1MW IT and annual PUE/WUE/CUE/REF reporting for all >500kW. This ${calc.m} MW facility produces ~${calc.wasteHeatMW.toFixed(1)} MW of 30-50°C waste heat, upgradable via heat pump to 70-80°C for district heating serving ~${calc.homesServed.toLocaleString()} homes. Revenue at €0.04-0.06/kWh: ~${fmtM(calc.heatRev)}/yr (${fmtM(rev20)} over 20 years). Irish DH market is immature but growing — early movers secure favourable supply agreements. Action: Commission waste heat feasibility study at RIBA Stage 2 to assess district heating connection viability.`,
+        ref:"EU EED 2023/1791 Article 26, EN 50600-4-8 (REF), CIBSE CP1:2020 (heat networks)"});
+    }
+
+    // 6. PUE + TIER IV — ambitious but achievable
+    if (tier==="IV" && parseFloat(pue)<1.15) {
+      const baselinePUE = 1.30;
+      const saving01 = 0.01 * calc.m * 8760 * elecRate * 1000;
+      const totalSav = (baselinePUE - calc.pu) * calc.m * 8760 * elecRate * 1000;
+      t.push({c:"green",icon:"🎯",
+        title:`PUE ${pue} at Tier IV: saves ${fmtM(totalSav)}/yr vs 1.30 baseline`,
+        body:`PUE ${pue} at Tier IV 2(N+1) is ambitious but achievable in Ireland's climate. Requirements: Li-ion UPS (97-98% efficiency vs 94-95% VRLA), economiser-first free cooling (${calc.fcHrs.toLocaleString()} hrs/yr here), low-loss cast-resin transformers, LED + occupancy lighting, and VSD on all pumps/fans. Each 0.01 PUE saves ~${fmt(saving01)}/yr on this ${calc.m} MW facility. The 2(N+1) redundancy adds ~0.01-0.02 PUE overhead vs Tier III — offset by specifying high-efficiency components. Action: Include PUE target as a contractual KPI in the cooling and electrical design briefs.`,
+        ref:"EN 50600-4-2 Clause 5 (PUE measurement), Uptime Institute Tier IV Standard, CIBSE TM65:2021"});
+    }
+
+    // 7. NEW: EirGrid connection timeline risk
+    if (eirgrid && calc.m >= 20) {
+      const connMW = calc.facilityMW;
+      t.push({c:"amber",icon:"⚡",
+        title:`EirGrid HV connection: ${connMW.toFixed(0)} MW — budget 24-36 month lead time`,
+        body:`At ${connMW.toFixed(0)} MW facility demand, this requires a direct 110kV EirGrid connection (above ESB Networks' 20MW MV threshold). Current EirGrid queue: 24-36 months from application to energisation for Group Processing. This is typically the critical path item for hyperscale DC programmes. Budget €2-5M for connection assets (110kV switchgear, on-site substation, dedicated line). Action: Submit EirGrid connection application at RIBA Stage 0/1 — do not wait for planning permission, as applications can proceed in parallel.`,
+        ref:"EirGrid Grid Code v9, CRU Decision CRU/2024/XX (connection policy), EirGrid Group Processing Approach"});
+    }
+
+    // 8. NEW: Fuel storage — fire safety + environmental
+    if (calc.fuelM3 > 50) {
+      t.push({c:"amber",icon:"🛢️",
+        title:`Fuel storage: ${calc.fuelM3.toFixed(0)} m³ — fire and environmental implications`,
+        body:`${calc.fuelM3.toFixed(0)} m³ (${(calc.fuelL/1000).toFixed(0)}k litres) diesel storage for ${autoHrs}hr autonomy requires: EPA-compliant bunded tank farm (≥110% capacity bund), fire separation distances per IS 3218:2024, automatic fire suppression to generator hall, and Environmental Impact Assessment screening. At >200m³, COMAH (Seveso III) lower-tier thresholds may apply — verify with HSA. HVO (EN 15940) is compatible with standard diesel tanks but check manufacturer warranty. Action: Budget €${Math.round(calc.fuelM3 * 800).toLocaleString()}-${Math.round(calc.fuelM3 * 1200).toLocaleString()} for tank farm civil/mechanical works.`,
+        ref:"S.I. No. 311/2019 (fuel storage), IS 3218:2024 Clause 8.4, COMAH Directive 2012/18/EU, TGD Part B Vol.2"});
+    }
+
+    // 9. NEW: Rack count vs floor space
+    if (calc.rackCount > 500) {
+      const hallArea = calc.rackCount * 5.5; // ~5.5 m² per rack inc aisles
+      const hallCount = Math.ceil(hallArea / 2000); // typical 2000m² hall
+      t.push({c:"green",icon:"📐",
+        title:`${calc.rackCount.toLocaleString()} racks → ~${(hallArea/1000).toFixed(1)}k m² white space across ${hallCount} halls`,
+        body:`At ~5.5 m²/rack (including hot/cold aisle containment, end-of-row cooling, and maintenance access), ${calc.rackCount.toLocaleString()} racks requires ~${Math.round(hallArea).toLocaleString()} m² of white space. At typical 2,000 m² per data hall, that's ${hallCount} halls — likely ${Math.ceil(hallCount/calc.ph)} per phase across ${calc.ph} phases. Total building footprint (including plant, offices, loading) is typically 2.2-2.8× white space: ~${Math.round(hallArea*2.5).toLocaleString()} m² gross. Site area of ${area||'—'} ha provides ${area ? (parseFloat(area)*10000/Math.round(hallArea*2.5)*100).toFixed(0) : '—'}% coverage — verify against planning 40-50% max site coverage. Action: Validate hall sizing in DC-SITE-001 Site Feasibility tool.`,
+        ref:"EN 50600-1 Clause 6.2 (space planning), Uptime Institute White Paper WP-23"});
+    }
+
+    // 10. NEW: ASHRAE class mismatch warning
+    if (ashrae==="A1" && calc.m > 20) {
+      t.push({c:"amber",icon:"🌡️",
+        title:`ASHRAE A1 limits free cooling to ~${Math.round(calc.fcHrs*0.82).toLocaleString()} hrs — consider A2`,
+        body:`A1 (18-27°C) provides ~65-75% free cooling hours in Ireland vs A2 (10-35°C) at 82-92%. On a ${calc.m} MW facility, moving A1→A2 adds ~${Math.round((calc.fcHrs - calc.fcHrs*0.82)*calc.coolingMW*elecRate).toLocaleString()} hrs of free cooling — saving ~${fmt((calc.fcHrs - calc.fcHrs*0.82)*calc.coolingMW*elecRate*1000)}/yr in chiller energy. Most hyperscale operators specify A2 for volume servers, reserving A1 for financial trading platforms where condensation risk is unacceptable. Action: Confirm IT vendor thermal specifications — most modern servers support A2.`,
+        ref:"ASHRAE TC 9.9:2021 Table 1, EN 50600-2-3 Clause 6.3"});
+    }
+
+    return t;
+  }, [calc,fcPri,waterR,coolStrat,heatR,ashrae,tier,pue,eirgrid,autoHrs,area]);
+
+  const loadDemo = useCallback(() => {
+    const d=DEMO;
+    setPName(d.project.name);setPRef(d.project.ref);setCounty(d.project.county);setEircode(d.project.eircode);
+    setArea(d.project.area);setBy(d.project.by);setDate(d.project.date);
+    setMw(d.it.mw);setP1(d.it.p1);setPhases(d.it.phases);setRd(d.it.rd);setGpu(d.it.gpu);setGrowth(d.it.growth);
+    setTier(d.design.tier);setAshrae(d.design.ashrae);setPue(d.design.pue);setWue(d.design.wue);setCue(d.design.cue);setAutoHrs(d.design.auto_hrs);
+    setCoolStrat(d.cool.strat);setFcPri(d.cool.fc);setWaterR(d.cool.water);setHeatR(d.cool.heat);
+    setVolt(d.elec.volt);setUpsTech(d.elec.ups);setGenFuel(d.elec.fuel);
+    setBuildYear(d.project.build_year||"");setPpaPercent(d.elec.ppa_pct||"0");setGenHoursAnnual(d.elec.gen_hrs_annual||"200");
+    setMicMva(d.elec.mic_mva||"");setHallNames(d.project.hall_names||"");
+    setEn50600(d.comp.en);setUptimeCert(d.comp.uptime);setEpaIE(d.comp.epa);setEirgrid(d.comp.eirgrid);
+    setBudget(d.comm.budget);setProgMo(d.comm.months);setRiba(d.comm.riba);
+    setShowResults(false);
+  },[]);
+
+  const exportJSON = useCallback(() => {
+    const payload={metadata:{tool_id:TOOL_ID,version:TOOL_VERSION,core_dna:CORE_DNA,generated:new Date().toISOString(),status:docStatus,cascade:"ALL_DC_TOOLS",
+      _aimep_lineage:`LBE-AIMEP-${TOOL_ID}-v${TOOL_VERSION}-${new Date().toISOString()}`,
+      disclaimer:"INDICATIVE DESIGN AID — Not a detailed data centre design. Provides master parameters for feasibility screening only. All outputs require review by a chartered engineer before inclusion in any design documentation. Does not check: detailed electrical design, cooling load calculation, structural assessment, planning, grid connection, fire safety, cost estimate, or IT specification.",
+      classification:"T2 — Screening tool, indicative only"},
+      project:{name:pName,ref:pRef,county,eircode,site_area_ha:parseFloat(area)||null,prepared_by:by,date,build_year:buildYear?parseInt(buildYear):null,hall_names:hallNames||null},
+      it_load:{total_it_mw:calc.m,phase_1_mw:calc.p,phase_count:calc.ph,rack_density_kw:calc.r,rack_count:calc.rackCount,
+        gpu_percentage:calc.g,gpu_racks:calc.gpuRacks,std_racks:calc.stdRacks,growth_rate_pct:parseFloat(growth),scale_band:calc.band.label},
+      design_criteria:{uptime_tier:tier,tier_req:TIERS[tier],ashrae_class:ashrae,ashrae_limits:ASHRAE[ashrae],
+        pue_target:calc.pu,wue_target:parseFloat(wue),cue_target:parseFloat(cue),autonomy_hours:calc.ah},
+      cooling:{strategy:coolStrat,auto_rec:calc.coolRec,free_cooling_priority:fcPri,water_restricted:waterR,heat_reuse_required:heatR,
+        free_cooling:{zone:calc.cz,hours:calc.fcHrs,pct:parseFloat(calc.fcPct)},dlc_required:calc.dlcReq,dlc_recommended:calc.dlcRec},
+      electrical:{utility_kv:parseInt(volt),auto_voltage:calc.voltRec,ups:upsTech,auto_ups:calc.upsRec,fuel:genFuel,auto_fuel:calc.fuelRec,ppa_pct:parseFloat(ppaPercent)||0,generator_hours:parseFloat(genHoursAnnual)||0,mic_mva:parseFloat(micMva)||null},
+      derived:{facility_mw:calc.facilityMW,cooling_mw:calc.coolingMW,gen_cap_mw:calc.genCapMW,fuel_litres:calc.fuelL,fuel_m3:calc.fuelM3,
+        waste_heat_mw:calc.wasteHeatMW,homes_heat:calc.homesServed,heat_rev_eur:calc.heatRev,epa_trigger:calc.epaTrigger},
+      compliance:{en_50600,uptime_cert:uptimeCert,epa_ie:epaIE,eirgrid_conn:eirgrid},
+      commercial:{budget_per_mw:parseFloat(budget)||null,programme_mo:parseInt(progMo)||null,riba_stage:riba},
+      screening:{
+        current_pue:parseFloat(currentPue)||null,
+        target_pue:calc.pu,
+        grid_operator:parseInt(volt)<=20?"ESB Networks":"EirGrid",
+        redundancy_level:redundancyLevel||null,
+        lease_end_year:leaseEndYear?parseInt(leaseEndYear):null,
+      },
+      tips:tips.map(t=>({severity:t.c,title:t.title,body:t.body,ref:t.ref}))};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download=`${TOOL_ID}_${pRef||'export'}_${date}.json`; a.click();
+  },[calc,tips,pName,pRef,county,eircode,area,by,date,tier,ashrae,pue,wue,cue,autoHrs,coolStrat,fcPri,waterR,heatR,volt,upsTech,genFuel,en50600,uptimeCert,epaIE,eirgrid,budget,progMo,riba,docStatus,growth,buildYear,ppaPercent,genHoursAnnual,micMva,hallNames,currentPue,redundancyLevel,leaseEndYear]);
+
+  const importRef = useRef(null);
+  const handleImport = useCallback((e) => {
+    const f=e.target.files[0]; if(!f)return;
+    const r=new FileReader();
+    r.onload=(ev)=>{try{const d=JSON.parse(ev.target.result);
+      const tid=(d.metadata&&d.metadata.tool_id)||(d._aimep_lineage&&d._aimep_lineage.tool_id)||'';
+      if(tid===TOOL_ID){
+        // DC-MSTR-001 round-trip import
+        if(d.project){setPName(d.project.name||"");setPRef(d.project.ref||"");setCounty(d.project.county||"");setEircode(d.project.eircode||"");setArea(String(d.project.site_area_ha||""));setBy(d.project.prepared_by||"");setDate(d.project.date||"");setBuildYear(d.project.build_year?String(d.project.build_year):"");}
+        if(d.it_load){setMw(String(d.it_load.total_it_mw||""));setP1(String(d.it_load.phase_1_mw||""));setPhases(String(d.it_load.phase_count||"4"));setRd(String(d.it_load.rack_density_kw||"15"));setGpu(String(d.it_load.gpu_percentage||"0"));setGrowth(String(d.it_load.growth_rate_pct||"5"));}
+        if(d.design_criteria){setTier(d.design_criteria.uptime_tier||"III");setAshrae(d.design_criteria.ashrae_class||"A2");setPue(String(d.design_criteria.pue_target||"1.20"));setWue(String(d.design_criteria.wue_target||"0.5"));setCue(String(d.design_criteria.cue_target||"0.30"));setAutoHrs(String(d.design_criteria.autonomy_hours||"48"));}
+        if(d.cooling){setCoolStrat(d.cooling.strategy||"auto");setFcPri(d.cooling.free_cooling_priority!==false);setWaterR(d.cooling.water_restricted===true);setHeatR(d.cooling.heat_reuse_required===true);}
+        if(d.electrical){setVolt(String(d.electrical.utility_kv||"110"));setUpsTech(d.electrical.ups||"auto");setGenFuel(d.electrical.fuel||"auto");setPpaPercent(d.electrical.ppa_pct!=null?String(d.electrical.ppa_pct):"");setGenHoursAnnual(d.electrical.generator_hours?String(d.electrical.generator_hours):"200");setMicMva(d.electrical.mic_mva!=null?String(d.electrical.mic_mva):"");}
+        if(d.project&&d.project.hall_names){setHallNames(d.project.hall_names);}
+        if(d.compliance){setEn50600(d.compliance.en_50600!==false);setUptimeCert(d.compliance.uptime_cert===true);setEpaIE(d.compliance.epa_ie===true);setEirgrid(d.compliance.eirgrid_conn!==false);}
+        if(d.commercial){setBudget(String(d.commercial.budget_per_mw||""));setProgMo(String(d.commercial.programme_mo||""));setRiba(d.commercial.riba_stage||"1");}
+        setShowResults(false);alert("Import OK — review and click Generate.");
+      } else if(tid==='DC-TOOL-010'||(!tid&&d.it_load_mw!=null)){
+        // DC-TOOL-010 shared field standard — direct import with zero manual editing
+        const fuelMap={diesel:'diesel',hvo:'hvo',gas:'gas_turbine','gas turbine':'gas_turbine'};
+        const locMap={dublin:'Dublin',cork:'Cork',limerick:'Limerick',galway:'Galway',regional:'Regional'};
+        if(d.facility_name||d.project_name) setPName(d.facility_name||d.project_name||"");
+        if(d.it_load_mw!=null) setMw(String(d.it_load_mw));
+        if(d.rack_density_kw!=null) setRd(String(d.rack_density_kw));
+        if(d.pue!=null) setPue(String(d.pue));
+        if(d.location) setCounty(locMap[(d.location||'').toLowerCase()]||'Dublin');
+        if(d.build_year!=null) setBuildYear(String(d.build_year));
+        if(d.ppa_pct!=null) setPpaPercent(String(d.ppa_pct));
+        if(d.generator_fuel) setGenFuel(fuelMap[(d.generator_fuel||'').toLowerCase()]||'auto');
+        if(d.generator_hours!=null) setGenHoursAnnual(String(d.generator_hours));
+        if(d.rack_count!=null&&d.rack_density_kw==null&&d.it_load_mw) setRd(String(Math.round((d.it_load_mw*1000)/d.rack_count)));
+        setShowResults(false);alert("Imported from DC-TOOL-010. Review all parameters and click Generate.");
+      } else {
+        alert(`Expected ${TOOL_ID} or DC-TOOL-010, got ${tid||'unknown format'}`);return;
+      }
+    }catch(err){alert("Invalid JSON: "+err.message);}};
+    r.readAsText(f); e.target.value='';
+  },[]);
+
+  const canCalc = parseFloat(mw) > 0;
+  const tabNames = ["Project & IT Load","Design Criteria","Compliance & Commercial"];
+
+  return (
+    <div className="container">
+      {/* HEADER */}
+      <div className="card card-header">
+        <div className="flex-between">
+          <div className="header-brand">
+            <img src={LBE_LOGO} alt="LBE" className="logo-img" 
+              onError={(e) => { e.target.style.display="none"; }} />
+            <div>
+              <div className="text-xs text-gray-400 font-mono">{TOOL_ID} v{TOOL_VERSION} · Core DNA {CORE_DNA}</div>
+              <h1 className="text-2xl" style={{marginTop:4}}>{TOOL_NAME}</h1>
+              <p className="text-sm text-gray-500" style={{marginTop:4}}>{TOOL_SUBTITLE}</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-400">Legacy Business Engineers</div>
+            <div className="text-xs text-green-700 font-semibold">S4 Data Centre Services</div>
+          </div>
+        </div>
+        <div className="info-bar">
+          <strong>How this tool works:</strong> Enter project parameters once → Export JSON → Every downstream S4 tool imports this file, eliminating duplicate data entry across 60+ design tools.
+        </div>
+      </div>
+
+      {/* DEMO + IMPORT */}
+      <div className="flex gap-2 mb-4 no-print">
+        <button className="btn btn-demo" onClick={loadDemo}>📋 Load Clonshaugh Demo</button>
+        <button className="btn btn-secondary" onClick={() => importRef.current?.click()}>📥 Import JSON</button>
+        <input ref={importRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
+      </div>
+
+      {/* TABS */}
+      <div className="tabs no-print">
+        {tabNames.map((t,i) => (
+          <button key={i} className={`tab ${i===tab?'active':''}`} onClick={() => setTab(i)}>{t}</button>
+        ))}
+      </div>
+
+      {/* ═══ TAB 0: PROJECT & IT LOAD ═══ */}
+      {tab===0 && (
+        <div className="card">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Project Information</h2>
+          <div className="grid-2">
+            <Field label="Project Name" required tip={{meaning:"Client project or site name",typical:"Tara Campus, Park West DC",source:"Client brief"}}>
+              <input type="text" value={pName} onChange={e=>setPName(e.target.value)} placeholder="e.g. Tara Campus" />
+            </Field>
+            <Field label="Project Reference" tip={{meaning:"Internal LBE or client reference",typical:"TC-2026-001",source:"Project register"}}>
+              <input type="text" value={pRef} onChange={e=>setPRef(e.target.value)} placeholder="e.g. TC-2026-001" />
+            </Field>
+            <Field label="County" required tip={{meaning:"Irish county for climate and regulatory mapping",typical:"Dublin, Meath, Kildare most common",source:"Site address",warning:"South Dublin, Meath, Kildare, Wicklow have DC planning restrictions"}}>
+              <select value={county} onChange={e=>setCounty(e.target.value)}>
+                <option value="">— Select county —</option>
+                {COUNTIES.map(c=><option key={c} value={c}>{c}</option>)}
+              </select>
+            </Field>
+            <Field label="Eircode" tip={{meaning:"Irish postcode",typical:"D22 X1Y2",source:"Site address"}}>
+              <input type="text" value={eircode} onChange={e=>setEircode(e.target.value)} placeholder="e.g. D22 X1Y2" />
+            </Field>
+            <Field label="Site Area (hectares)" tip={{meaning:"Total site area",typical:"5-15 ha for 20-100MW",source:"Site survey",warning:"Below 0.5 ha/MW may be insufficient for Tier IV"}}>
+              <input type="number" step="0.1" min="0" value={area} onChange={e=>setArea(e.target.value)} placeholder="e.g. 12.5" />
+            </Field>
+            <Field label="Prepared By"><input type="text" value={by} onChange={e=>setBy(e.target.value)} placeholder="e.g. Legacy Business Engineers" /></Field>
+            <Field label="Date"><input type="date" value={date} onChange={e=>setDate(e.target.value)} /></Field>
+            <Field label="Facility Build Year" tip={{meaning:"Year the existing facility was originally commissioned. Leave blank for new-build projects.",typical:"2000–2020 for existing stock",source:"Facilities records or planning permission"}}>
+              <input type="number" step="1" min="1980" max="2030" value={buildYear} onChange={e=>setBuildYear(e.target.value)} placeholder="e.g. 2014 (leave blank for new)" />
+            </Field>
+          </div>
+
+          <h2 className="text-lg font-bold text-gray-800 mt-6 mb-4">IT Load Parameters</h2>
+          <div className="grid-2">
+            <Field label="Total IT Load (MW)" required tip={{meaning:"Ultimate IT capacity at full build-out",typical:"5-20 MW enterprise, 20-50 MW colo, 50-200 MW hyperscale",source:"Client brief",warning:"IT load only — facility power = IT × PUE"}}>
+              <input type="number" step="0.5" min="0.5" max="500" value={mw} onChange={e=>setMw(e.target.value)} placeholder="e.g. 50" />
+            </Field>
+            <Field label="Phase 1 IT Load (MW)" tip={{meaning:"IT load in first deployment phase",typical:"20-30% of total for hyperscale",source:"Deployment plan"}}>
+              <input type="number" step="0.5" min="0" value={p1} onChange={e=>setP1(e.target.value)} placeholder="e.g. 12.5" />
+            </Field>
+            <Field label="Deployment Phases" tip={{meaning:"Phases from first to full capacity",typical:"1 enterprise, 3-6 hyperscale",source:"Client programme"}}>
+              <select value={phases} onChange={e=>setPhases(e.target.value)}>
+                {[1,2,3,4,5,6,8].map(n=><option key={n} value={n}>{n} phase{n>1?'s':''}</option>)}
+              </select>
+            </Field>
+            <Field label="Average Rack Density (kW)" required tip={{meaning:"Average power per rack",typical:"8-15 kW std, 15-30 high, 40-120 AI/GPU",source:"IT specification",warning:">25 kW needs containment. >40 kW needs liquid cooling."}}>
+              <input type="number" step="1" min="3" max="200" value={rd} onChange={e=>setRd(e.target.value)} />
+            </Field>
+            <Field label="GPU / AI Workload (%)" tip={{meaning:"% racks running GPU/AI workloads",typical:"0% traditional, 20-40% mixed, 80-100% AI-first",source:"IT roadmap",warning:">30% GPU with >40kW → DLC mandatory"}}>
+              <input type="number" step="5" min="0" max="100" value={gpu} onChange={e=>setGpu(e.target.value)} />
+            </Field>
+            <Field label="Annual IT Growth (%)" tip={{meaning:"Expected annual IT load growth",typical:"5-10% enterprise, 15-25% AI/GPU",source:"5-year plan"}}>
+              <input type="number" step="1" min="0" max="50" value={growth} onChange={e=>setGrowth(e.target.value)} />
+            </Field>
+          </div>
+
+          {calc.m>0 && (
+            <div className="scale-bar">
+              <div className="flex-between">
+                <div><span className="text-sm font-semibold text-gray-700">Scale Band: </span><span className="text-sm font-bold text-green-800">{calc.band.label}</span></div>
+                <div className="text-sm text-gray-500">{calc.rackCount.toLocaleString()} racks ({calc.gpuRacks.toLocaleString()} GPU + {calc.stdRacks.toLocaleString()} std)</div>
+              </div>
+              <div className="text-xs text-gray-500 mt-2">{calc.band.config} · {calc.band.voltage} · Facility: {calc.facilityMW.toFixed(1)} MW (at PUE {calc.pu})</div>
+            </div>
+          )}
+
+          <div className="mt-6 no-print">
+            <JE title="What is PUE and why does it matter?"><p><strong>PUE</strong> = Total Facility Energy ÷ IT Equipment Energy. PUE 1.0 = impossible (cooling/distribution always add overhead). Hyperscale best practice: 1.10-1.15. Global average: ~1.58.</p><p>Every 0.01 PUE improvement on 50MW saves ~€438,000/year at €0.12/kWh — €8.8M over 20 years per 0.01.</p><p className="je-ref">EN 50600-4-2, Uptime Institute Global DC Survey 2024</p></JE>
+            <JE title="Uptime Tier I–IV explained"><p>Tier I (99.671%): No redundancy, 28.8hr downtime/yr. Tier II (99.741%): N+1, 22.7hr. Tier III (99.982%): Concurrently maintainable, dual paths, 1.6hr. Tier IV (99.995%): Fault tolerant, 2(N+1), 26.3 min/yr.</p><p>Tier IV costs ~30-40% more than III but eliminates planned downtime. Financial DCs and hyperscalers require Tier III minimum.</p><p className="je-ref">Uptime Institute Tier Standard, EN 50600-2-2</p></JE>
+            <JE title="ASHRAE Thermal Classes: A1 vs A2"><p>A1 (18-27°C): Tightest, enterprise/financial. ~65-75% free cooling in Ireland. A2 (10-35°C): Default hyperscale. 82-92% free cooling in Ireland. A3/A4 (5-40/45°C): Aggressive, near 100% free cooling but needs ruggedised IT.</p><p>Moving A1→A2 in Dublin adds ~1,000 free cooling hours/year — eliminating ~12% chiller energy.</p><p className="je-ref">ASHRAE TC 9.9 2021</p></JE>
+            <JE title="Ireland's free cooling advantage"><p>Dublin avg 10.2°C. For ASHRAE A2: Dublin ~8,100 hrs (92%), Galway ~8,300 (95%), Cork ~8,200 (94%). Compare: Amsterdam ~7,200 (82%), Frankfurt ~6,100 (70%), London ~7,500 (86%). Ireland's 8-15% advantage = lower PUE + lower electricity bills.</p><p className="je-ref">Met Éireann 30-year TMY, ASHRAE TC 9.9</p></JE>
+            <JE title="GPU density and the 40kW barrier"><p>Traditional: 8-15 kW/rack (CRAH OK). 15-25 kW: in-row + containment. 25-40 kW: rear-door HX. &gt;40 kW: air physically cannot remove the heat — DLC mandatory.</p><p>Air has ¼ the heat capacity of water. Above 40kW you need liquid at the heat source: piping to every rack, CDUs, facility water infrastructure.</p><p className="je-ref">ASHRAE TC 9.9, OCP Thermal Guidelines</p></JE>
+            <JE title="EU EED Article 26: Heat reuse obligation"><p>From 15 May 2025: New DCs &gt;1MW must assess waste heat recovery. All DCs &gt;500kW must report PUE/WUE/CUE/REF annually. A 50MW DC at PUE 1.2 produces ~10MW waste heat — servicing ~3,000 homes via district heating at €0.04-0.06/kWh revenue.</p><p className="je-ref">EU EED 2023/1791 Article 26</p></JE>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ TAB 1: DESIGN CRITERIA ═══ */}
+      {tab===1 && (
+        <div className="card">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Reliability & Environmental</h2>
+          <div className="grid-2">
+            <Field label="Uptime Tier" required tip={{meaning:"Target reliability per Uptime Institute",typical:"Tier III colo, Tier IV hyperscale/financial",source:"Client brief",warning:"Tier IV costs ~30-40% more (2(N+1) redundancy)"}}>
+              <select value={tier} onChange={e=>setTier(e.target.value)}>
+                {Object.entries(TIERS).map(([k,v])=><option key={k} value={k}>Tier {k} — {v.avail} ({v.redun})</option>)}
+              </select>
+            </Field>
+            <Field label="ASHRAE Thermal Class" required tip={{meaning:"Allowable temp/humidity range",typical:"A2 for hyperscale, A1 for financial",source:"Client IT spec or ASHRAE TC 9.9"}}>
+              <select value={ashrae} onChange={e=>setAshrae(e.target.value)}>
+                {Object.entries(ASHRAE).map(([k,v])=><option key={k} value={k}>{v.label} ({v.min}–{v.max}°C)</option>)}
+              </select>
+            </Field>
+            <Field label="PUE Target" required tip={{meaning:"Design PUE target",typical:"1.20-1.30 conv, 1.10-1.15 best practice, <1.10 innovation",source:"Client brief or ESG",warning:"Below 1.10 needs DLC + Li-ion UPS + full free cooling"}}>
+              <input type="number" step="0.01" min="1.02" max="2.0" value={pue} onChange={e=>setPue(e.target.value)} />
+            </Field>
+            <Field label="WUE Target (L/kWh)" tip={{meaning:"Water Usage Effectiveness",typical:"0 dry, 0.4-1.0 adiabatic, 1.5-2.5 evaporative",source:"EN 50600-4-5"}}>
+              <input type="number" step="0.1" min="0" max="5" value={wue} onChange={e=>setWue(e.target.value)} />
+            </Field>
+            <Field label="CUE Target (kgCO₂/kWh)" tip={{meaning:"Carbon Usage Effectiveness",typical:"0.25-0.35 grid, <0.05 with 100% renewables",source:"EN 50600-4-4"}}>
+              <input type="number" step="0.05" min="0" max="1" value={cue} onChange={e=>setCue(e.target.value)} />
+            </Field>
+            <Field label="Generator Autonomy (hours)" tip={{meaning:"Runtime without refuelling",typical:"24-48 enterprise, 48-72 hyperscale, 96 financial",source:"Tier + client policy",warning:"48hrs @ 50MW → ~360,000L fuel storage"}}>
+              <input type="number" step="4" min="8" max="168" value={autoHrs} onChange={e=>setAutoHrs(e.target.value)} />
+            </Field>
+          </div>
+
+          <h2 className="text-lg font-bold text-gray-800 mt-6 mb-4">Cooling Preference</h2>
+          <div className="grid-2">
+            <Field label="Cooling Strategy" tip={{meaning:"Preferred approach — 'auto' lets tool recommend",typical:"Auto recommended",source:"Client preference"}}>
+              <select value={coolStrat} onChange={e=>setCoolStrat(e.target.value)}>
+                <option value="auto">Auto (tool recommends)</option>
+                <option value="air">Air-cooled only (CRAH/CRAC)</option>
+                <option value="liquid">Liquid cooling (DLC/immersion)</option>
+                <option value="hybrid">Hybrid (air + liquid for GPU)</option>
+              </select>
+            </Field>
+            <div style={{paddingTop:24}}>
+              <div className="chk-row"><input type="checkbox" checked={fcPri} onChange={e=>setFcPri(e.target.checked)} /> Free cooling priority</div>
+              <div className="chk-row"><input type="checkbox" checked={waterR} onChange={e=>setWaterR(e.target.checked)} /> Water-restricted site</div>
+              <div className="chk-row"><input type="checkbox" checked={heatR} onChange={e=>setHeatR(e.target.checked)} /> Heat reuse assessment (EU EED Art.26)</div>
+            </div>
+          </div>
+
+          <h2 className="text-lg font-bold text-gray-800 mt-6 mb-4">Electrical Preference</h2>
+          <div className="grid-2">
+            <Field label="Utility Voltage (kV)" tip={{meaning:"Grid connection voltage",typical:"10/20kV MV <20MW, 110kV HV >20MW",source:"ESB/EirGrid offer",warning:">20MW IT → HV 110kV from EirGrid mandatory"}}>
+              <select value={volt} onChange={e=>setVolt(e.target.value)}>
+                <option value="10">10 kV (MV — ESB Networks)</option>
+                <option value="20">20 kV (MV — ESB Networks)</option>
+                <option value="38">38 kV (HV — ESB/EirGrid)</option>
+                <option value="110">110 kV (HV — EirGrid direct)</option>
+              </select>
+            </Field>
+            <Field label="UPS Technology" tip={{meaning:"UPS battery technology",typical:"Li-ion for new (97-98% eff), VRLA for budget",source:"Client pref or auto"}}>
+              <select value={upsTech} onChange={e=>setUpsTech(e.target.value)}>
+                <option value="auto">Auto (tool recommends)</option>
+                <option value="li-ion">Lithium-ion</option>
+                <option value="vrla">VRLA lead-acid</option>
+                <option value="rotary">Rotary UPS</option>
+              </select>
+            </Field>
+            <Field label="Generator Fuel" tip={{meaning:"Backup generator fuel",typical:"Diesel std, HVO increasingly required by EPA",source:"EPA IE licence"}}>
+              <select value={genFuel} onChange={e=>setGenFuel(e.target.value)}>
+                <option value="auto">Auto (tool recommends)</option>
+                <option value="diesel">Diesel (EN 590)</option>
+                <option value="hvo">HVO (EN 15940)</option>
+                <option value="gas_turbine">Gas turbine</option>
+                <option value="battery_only">Battery only</option>
+              </select>
+            </Field>
+            <Field label="PPA Renewable Energy (%)" tip={{meaning:"% of electricity sourced via renewable Power Purchase Agreement",typical:"0% no PPA, 40–80% typical Irish DC (CSO 40.2% national RES-E mix 2024 — T1)",source:"PPA contract",warning:"Flows directly to DC-CPS-001 carbon pathway screener — set accurately"}}>
+              <input type="number" step="5" min="0" max="100" value={ppaPercent} onChange={e=>setPpaPercent(e.target.value)} placeholder="e.g. 40" />
+            </Field>
+            <Field label="Generator Hours / Year" tip={{meaning:"Annual generator test and operational hours — used in carbon calculations",typical:"100–200 hrs/yr standard compliance testing, 200–400 high-duty-cycle",source:"O&M schedule or EPA licence condition"}}>
+              <input type="number" step="10" min="0" max="8760" value={genHoursAnnual} onChange={e=>setGenHoursAnnual(e.target.value)} placeholder="e.g. 200" />
+            </Field>
+            <Field label="MIC — Maximum Import Capacity (MVA)" tip={{meaning:"Grid connection MIC as agreed with ESB Networks",typical:"2–10 MVA for colo <5 MW IT, 10–50 MVA for hyperscale",source:"ESB Networks connection offer",warning:"Flows to CPS-001 capacity checks — enter from connection offer letter"}}>
+              <input type="number" step="0.5" min="0" max="1000" value={micMva} onChange={e=>setMicMva(e.target.value)} placeholder="e.g. 5" />
+            </Field>
+            <Field label="Hall / Zone Names" tip={{meaning:"Names of IT white space halls or zones (e.g. Hall A, Hall B)",typical:"Hall A / Hall B for colocation; Module 1 / Module 2 for hyperscale",source:"As-built drawings or estate plan"}}>
+              <input type="text" value={hallNames} onChange={e=>setHallNames(e.target.value)} placeholder="e.g. Hall A, Hall B" />
+            </Field>
+          </div>
+          <h2 className="text-lg font-bold text-gray-800 mt-6 mb-4">Screening Parameters</h2>
+          <div className="grid-2">
+            <Field label="Current PUE (actual)" tip={{meaning:"Actual operational PUE of the existing facility — distinct from design target PUE above",typical:"1.40–1.80 for legacy 2010–2018 air-cooled facilities",source:"Metered energy data (IT meter vs facility meter)",warning:"Used by CPS-001 for carbon intensity and CRREM pathway calculations — must reflect actual, not target"}}>
+              <input type="number" step="0.01" min="1.00" max="3.00" value={currentPue} onChange={e=>setCurrentPue(e.target.value)} placeholder="e.g. 1.55" />
+            </Field>
+            <Field label="Redundancy Level" tip={{meaning:"Redundancy configuration — N (no redundancy), N+1, 2N, 2N+1",typical:"N+1 for colo Tier III, 2N for hyperscale/Tier IV",source:"Electrical and cooling single-line diagram",warning:"Flows to screening verdict — confirm from as-built drawings"}}>
+              <select value={redundancyLevel} onChange={e=>setRedundancyLevel(e.target.value)}>
+                <option value="N">N — No redundancy</option>
+                <option value="N+1">N+1 — Single redundant</option>
+                <option value="2N">2N — Fully redundant</option>
+                <option value="2N+1">2N+1 — Fully redundant + spare</option>
+              </select>
+            </Field>
+            <Field label="Lease / Ownership End Year" tip={{meaning:"Lease expiry or ownership horizon — screening deadline for regulatory alignment",typical:"5–15 years for institutional real estate holds",source:"Lease agreement or investment thesis",warning:"Facilities with lease end &lt; 2030 face acute stranding risk if PUE &gt; 1.3"}}>
+              <input type="number" step="1" min="2024" max="2060" value={leaseEndYear} onChange={e=>setLeaseEndYear(e.target.value)} placeholder="e.g. 2033" />
+            </Field>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ TAB 2: COMPLIANCE & COMMERCIAL ═══ */}
+      {tab===2 && (
+        <div className="card">
+          <h2 className="text-lg font-bold text-gray-800 mb-4">Compliance & Certification</h2>
+          <div className="chk-row"><input type="checkbox" checked={en50600} onChange={e=>setEn50600(e.target.checked)} /> EN 50600 series compliance</div>
+          <div className="chk-row"><input type="checkbox" checked={uptimeCert} onChange={e=>setUptimeCert(e.target.checked)} /> Pursuing Uptime Institute certification</div>
+          <div className="chk-row"><input type="checkbox" checked={epaIE} onChange={e=>setEpaIE(e.target.checked)} /> EPA Industrial Emissions licence required</div>
+          <div className="chk-row"><input type="checkbox" checked={eirgrid} onChange={e=>setEirgrid(e.target.checked)} /> EirGrid grid connection required</div>
+
+          <h2 className="text-lg font-bold text-gray-800 mt-6 mb-4">Commercial Parameters</h2>
+          <div className="grid-2">
+            <Field label="Budget Target (€/MW)" tip={{meaning:"All-in capital cost per MW IT",typical:"€8-12M/MW Tier III, €10-15M/MW Tier IV (Ireland 2025)",source:"CBRE, JLL, T&T reports",warning:"Cost vintage 2025. Apply SCSI TPI for later years."}}>
+              <input type="number" step="100000" min="0" value={budget} onChange={e=>setBudget(e.target.value)} placeholder="Leave blank if unknown" />
+            </Field>
+            <Field label="Programme (months)" tip={{meaning:"Planning approval → Phase 1 energisation",typical:"18-24 enterprise, 24-36 hyperscale",source:"Client programme"}}>
+              <input type="number" step="1" min="0" max="60" value={progMo} onChange={e=>setProgMo(e.target.value)} placeholder="Leave blank if unknown" />
+            </Field>
+            <Field label="Current RIBA Stage" tip={{meaning:"Design stage at time of assessment",typical:"0 site selection, 1 brief, 2 concept",source:"Project programme"}}>
+              <select value={riba} onChange={e=>setRiba(e.target.value)}>
+                <option value="0">Stage 0 — Strategic Definition</option>
+                <option value="1">Stage 1 — Preparation & Brief</option>
+                <option value="2">Stage 2 — Concept Design</option>
+                <option value="3">Stage 3 — Spatial Coordination</option>
+                <option value="4">Stage 4 — Technical Design</option>
+              </select>
+            </Field>
+            <Field label="Document Status">
+              <select value={docStatus} onChange={e=>setDocStatus(e.target.value)}>
+                <option value="DRAFT">DRAFT</option>
+                <option value="FOR_REVIEW">FOR REVIEW</option>
+                <option value="CHECKED">CHECKED</option>
+                <option value="ISSUED">ISSUED</option>
+              </select>
+            </Field>
+          </div>
+        </div>
+      )}
+
+      {/* GENERATE BUTTON */}
+      <div className="text-center" style={{margin:'16px 0'}}>
+        <button className={`btn btn-lg ${canCalc?'btn-primary':''}`} disabled={!canCalc}
+          onClick={()=>{setShowResults(true);setTab(99);}}>
+          Generate Master Parameters Summary
+        </button>
+        {!canCalc && <p className="text-xs text-gray-400 mt-2">Enter Total IT Load (MW) to enable</p>}
+      </div>
+
+      {/* ═══ RESULTS ═══ */}
+      {showResults && (
+        <div>
+          {/* Print-only green header bar */}
+          <div className="print-only" style={{display:'none'}}>
+            <div className="print-header-bar">
+              <div style={{display:'flex',alignItems:'center',gap:10}}>
+                <img src={LBE_LOGO} alt="LBE" />
+                <div>
+                  <div style={{fontWeight:700,fontSize:'0.9rem'}}>Legacy Business Engineers</div>
+                  <div style={{fontSize:'0.7rem',opacity:0.8}}>S4 Data Centre Services</div>
+                </div>
+              </div>
+              <div style={{textAlign:'right',fontSize:'0.75rem'}}>
+                <div>{TOOL_NAME}</div>
+                <div style={{opacity:0.8}}>{TOOL_ID} v{TOOL_VERSION} · {date}</div>
+              </div>
+            </div>
+          </div>
+          <div className="card card-green-left">
+            <div className="flex-between">
+              <div className="header-brand">
+                <img src={LBE_LOGO} alt="LBE" className="logo-img" style={{height:32}} 
+                  onError={(e) => { e.target.style.display='none'; }} />
+                <div>
+                  <h2 className="text-xl font-bold">{pName||"Untitled Project"}</h2>
+                  <div className="text-sm text-gray-500">{pRef} · {county} · {date}</div>
+                </div>
+              </div>
+              <span className={`badge ${docStatus==='ISSUED'?'badge-green':docStatus==='CHECKED'?'badge-blue':docStatus==='FOR_REVIEW'?'badge-amber':'badge-gray'}`}>{docStatus}</span>
+            </div>
+            <div className="grid-4 mt-4">
+              <div className="stat-box"><div className="stat-val text-green-800">{calc.m}</div><div className="stat-label">MW IT Load</div></div>
+              <div className="stat-box"><div className="stat-val text-green-800">{calc.facilityMW.toFixed(1)}</div><div className="stat-label">MW Total Facility</div></div>
+              <div className="stat-box"><div className="stat-val text-blue-800">Tier {tier}</div><div className="stat-label">{TIERS[tier].avail}</div></div>
+              <div className="stat-box"><div className="stat-val text-indigo-800">{calc.pu}</div><div className="stat-label">PUE Target</div></div>
+            </div>
+          </div>
+
+          <div className="card" style={{background:'var(--red-50)',border:'2px solid var(--red-500)'}}>
+            <h3 className="text-lg font-bold" style={{color:'var(--red-800)',marginBottom:8}}>⚠️ NOT CHECKED — Outside Scope of This Tool</h3>
+            <p className="text-sm" style={{color:'var(--red-700)',marginBottom:8}}>This screening tool provides indicative master parameters only. The following items require separate detailed analysis:</p>
+            <table className="tbl" style={{fontSize:'0.8rem'}}>
+              <tbody>
+                {[
+                  ["Detailed electrical design","Cable sizing, protection coordination, fault levels, discrimination — requires DC-E61-PWR-001"],
+                  ["Cooling load calculation","Psychrometric analysis, airflow modelling, coil sizing — requires DC-M55-STR-001"],
+                  ["Structural assessment","Floor loading for rack weight, seismic design, vibration isolation — requires structural engineer"],
+                  ["Planning permission","ABP/LA planning conditions, EIA screening, visual impact — requires planning consultant"],
+                  ["Grid connection agreement","EirGrid Group Processing, connection offer, commissioning programme — requires utility engagement"],
+                  ["Fire safety design","IS 3218:2024 compliance, gas suppression design, compartmentation — requires fire engineer"],
+                  ["Cost estimate","Detailed elemental cost plan, tender pricing, lifecycle costing — requires DC-COST-001"],
+                  ["IT hardware specification","Server type, network architecture, storage requirements — requires IT architect"]
+                ].map(([item,reason],i) => (
+                  <tr key={i}><td style={{fontWeight:600,color:'var(--red-800)',width:'30%'}}>{item}</td><td style={{color:'var(--red-700)'}}>{reason}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="card">
+            <h3 className="text-lg font-bold text-gray-800 mb-3">Key Parameters</h3>
+            <table className="tbl">
+              <tbody>
+                {[["Scale Band",calc.band.label],["Racks",`${calc.rackCount.toLocaleString()} (${calc.gpuRacks.toLocaleString()} GPU + ${calc.stdRacks.toLocaleString()} std)`],
+                  ["Rack Density",`${calc.r} kW`],["Phases",`${calc.ph} (Phase 1: ${calc.p||Math.round(calc.m/calc.ph)} MW)`],
+                  ["ASHRAE Class",ASHRAE[ashrae]?.label],["Cooling",calc.coolRec],
+                  ["Free Cooling",`~${calc.fcHrs.toLocaleString()} hrs/yr (${calc.fcPct}%) — ${calc.cz}`],
+                  ["Voltage",calc.voltRec],["UPS",calc.upsRec],["Generator Fuel",calc.fuelRec],
+                  ["Generator Capacity",`~${calc.genCapMW.toFixed(0)} MW (${tier==='IV'?'2(N+1)':'N+1'})`],
+                  ["Fuel Storage",`~${calc.fuelM3.toFixed(0)} m³ (${(calc.fuelL/1000).toFixed(0)}k L) for ${autoHrs}hr`],
+                  ["Waste Heat",`~${calc.wasteHeatMW.toFixed(1)} MW → ~${calc.homesServed.toLocaleString()} homes`],
+                  ["DLC",calc.dlcReq?"YES — mandatory":calc.dlcRec?"RECOMMENDED":"No"],
+                  ["EPA IE Licence",calc.epaTrigger?"LIKELY REQUIRED (>50MW thermal)":"Check — may not trigger"]
+                ].map(([l,v],i)=>(<tr key={i}><td className="td-label">{l}</td><td>{v}</td></tr>))}
+              </tbody>
+            </table>
+          </div>
+
+          {tips.length>0 && (
+            <div className="card">
+              <h3 className="text-lg font-bold text-gray-800 mb-3">Engineering Tips ({tips.length})</h3>
+              {tips.map((t,i)=>(
+                <div key={i} className={`tip-card tip-${t.c}`}>
+                  <div className="font-semibold tip-title">{t.icon} {t.title}</div>
+                  <div className="text-sm mt-2 tip-body">{t.body}</div>
+                  <div className="text-xs text-gray-500 mt-2">Ref: {t.ref}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="card">
+            <h3 className="text-lg font-bold text-gray-800 mb-3">Downstream Tool Chain</h3>
+            <p className="text-sm text-gray-600 mb-3">Export JSON and import into each downstream tool.</p>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+              {["DC-LOAD-001 IT Load Profile","DC-TIER-001 Redundancy Topology","DC-SITE-001 Site Feasibility",
+                "DC-E60-GRD-001 EirGrid Assessment","DC-M55-STR-001 Cooling Strategy","DC-E61-PWR-001 Power Architecture",
+                "DC-PUE-001 PUE/WUE Calculator","DC-COST-001 Cost Estimator","DC-RPT-001 Report Renderer"
+              ].map((t,i)=><div key={i} className="ds-tool"><span className="ds-id">{t.split(' ')[0]}</span><br/><span className="ds-name">{t.split(' ').slice(1).join(' ')}</span></div>)}
+            </div>
+          </div>
+
+          <div className="card" style={{borderTop:'2px solid var(--gray-300)'}}>
+            <h3 className="text-lg font-bold text-gray-800 mb-3">Sign-Off</h3>
+            <div className="grid-3">
+              <div className="signoff-box"><div className="text-xs text-gray-500 mb-2">Prepared By</div><div className="font-semibold">{by||"—"}</div><div className="text-xs text-gray-400">{date}</div><div className="signoff-line text-xs text-gray-400">Signature</div></div>
+              <div className="signoff-box"><div className="text-xs text-gray-500 mb-2">Checked By</div><div className="font-semibold">—</div><div className="text-xs text-gray-400">Date:</div><div className="signoff-line text-xs text-gray-400">Signature</div></div>
+              <div className="signoff-box"><div className="text-xs text-gray-500 mb-2">Approved By</div><div className="font-semibold">—</div><div className="text-xs text-gray-400">Date:</div><div className="signoff-line text-xs text-gray-400">Signature</div></div>
+            </div>
+            <div className="info-bar mt-4">
+              <strong>Disclaimer:</strong> Prepared by Legacy Business Engineers Ltd as an engineering screening tool. Provides indicative parameters — does not constitute detailed design, certification, or formal professional advice. Verify with a chartered engineer before design decisions. Based on published standards and benchmarks at date of preparation.
+              <div style={{marginTop:8,borderTop:'1px solid var(--gray-200)',paddingTop:6,fontSize:'0.7rem',color:'var(--gray-400)'}}>
+                <strong>Standards:</strong> EN 50600 series (DC design) · EN 50600-4-2/4/5 (PUE/CUE/WUE) · ASHRAE TC 9.9 (thermal guidelines) · Uptime Institute Tier Standard · EU EED 2023/1791 Art.26 (heat reuse) · IS 10101:2020+A1:2024 (electrical) · EPA IE Directive (SI 138/2013) · EirGrid Grid Code · SCSI TPI Q1 2025 (costs)
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-center gap-3 no-print" style={{margin:'16px 0'}}>
+            <button className="btn btn-primary btn-lg" onClick={exportJSON}>📤 Export JSON</button>
+            <button className="btn btn-secondary btn-lg" onClick={()=>window.print()}>🖨 Print / PDF</button>
+            <button className="btn btn-secondary" onClick={()=>{setShowResults(false);setTab(0);}}>✏️ Edit Inputs</button>
+          </div>
+        </div>
+      )}
+
+      {/* SCREENING DISCLAIMER */}
+      <div style={{fontSize:'0.75rem',color:'#6b7280',background:'#f9fafb',padding:'6px',borderRadius:'4px',marginTop:'8px'}}>INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+      <div style={{fontSize:'7.5pt',color:'#9ca3af',textAlign:'center',marginTop:'6px'}}>Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+      {/* NAV FOOTER */}
+      {/* ═══ RETROFIT TOOLS HUB ═══ */}
+      <div className="card no-print" style={{borderTop:'4px solid #6366f1',marginTop:24}}>
+        <h3 className="text-lg font-bold" style={{color:'#4338ca',marginBottom:12}}>🔄 Retrofit & Existing Facility Tools</h3>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))',gap:10}}>
+          {[
+            {id:"DC-R-PUE-001",icon:"📊",name:"PUE Gap Analyser",desc:"Current vs target PUE with savings"},
+            {id:"DC-R-CLG-001",icon:"❄️",name:"Cooling Retrofit Options",desc:"Cooling upgrade pathways + ROI"},
+            {id:"DC-R-PWR-001",icon:"⚡",name:"Power Densification Check",desc:"Can existing power support higher density?"},
+            {id:"DC-R-EED-001",icon:"📋",name:"EED Compliance Gap",desc:"EU EED Art.26 readiness assessment"},
+            {id:"DC-R-ROI-001",icon:"💰",name:"Retrofit vs Rebuild",desc:"NPV comparison: upgrade or replace"},
+            {id:"DC-R-HTR-001",icon:"♻️",name:"Waste Heat Recovery Check",desc:"District heating viability screening"},
+            {id:"DC-R-STR-001",icon:"⚠️",name:"Misalignment Risk Screener",desc:"Asset obsolescence risk assessment"}
+          ].map((t,i)=>(
+            <a key={i} href={`/${t.id}/`} style={{display:'block',padding:12,background:'#eef2ff',borderRadius:8,border:'1px solid #c7d2fe',textDecoration:'none',transition:'border-color 0.2s'}}
+              onMouseOver={e=>e.currentTarget.style.borderColor='#6366f1'} onMouseOut={e=>e.currentTarget.style.borderColor='#c7d2fe'}>
+              <div style={{fontSize:'1.2rem',marginBottom:4}}>{t.icon}</div>
+              <div style={{fontFamily:'monospace',fontSize:'0.7rem',color:'#6366f1'}}>{t.id}</div>
+              <div style={{fontWeight:600,fontSize:'0.85rem',color:'#1e1b4b',marginTop:2}}>{t.name}</div>
+              <div style={{fontSize:'0.75rem',color:'#4338ca',marginTop:4}}>{t.desc}</div>
+            </a>
+          ))}
+        </div>
+        <div style={{marginTop:12,padding:10,background:'#fffbeb',borderRadius:8,border:'1px solid #fbbf24',fontSize:'0.8rem',color:'#92400e'}}>
+          <strong>Existing facility?</strong> These screening tools help operators and investors assess retrofit viability before commissioning a full S4-R assessment. All tools are free — no access code required.
+          <a href="https://legacybe.ie/contact" style={{color:'#4338ca',marginLeft:6}}>Talk to an Engineer →</a>
+        </div>
+      </div>
+
+      <div className="nav-footer no-print">
+        <a href="https://legacybe.ie/contact/" target="_blank" rel="noopener">Discuss Your Project →</a>
+        <span className="sep">|</span>
+        <a href="https://legacybe.ie" target="_blank" rel="noopener" style={{color:'var(--gray-500)'}}>legacybe.ie</a>
+        <div className="copy">© 2026 Legacy Business Engineers Ltd · DC-MSTR-001 v1.5.4</div>
+        <div style={{fontSize:'0.65rem',color:'var(--gray-400)',marginTop:2}}>EN 50600 · ASHRAE TC 9.9 · Uptime Tier Standard · EU EED 2023/1791 · IS 10101:2020+A1:2024</div>
+        <div style={{fontSize:'0.65rem',color:'var(--gray-400)',marginTop:2}}>Ref: EN 50600 series · ASHRAE TC 9.9 · Uptime Institute Tier Standard · EU EED 2023/1791 · IS 10101:2020+A1:2024</div>
+      </div>
+    </div>
+  );
+}
+
+// ═══ BLANK SCREEN GUARD — Layer 2: React Error Boundary ═══
+// Catches runtime render crashes. Ref: AIMEP_BLANK_SCREEN_GUARD_v1_0.md
+class ErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = {hasError:false, error:null, info:null}; }
+  static getDerivedStateFromError(error) { return {hasError:true, error}; }
+  componentDidCatch(error, info) { this.setState({info}); console.error('AIMEP ErrorBoundary:', error, info); }
+  render() {
+    if (this.state.hasError) {
+      return React.createElement('div', {style:{maxWidth:700,margin:'60px auto',padding:24,border:'2px solid #dc2626',borderRadius:12,background:'#fef2f2',fontFamily:'system-ui'}},
+        React.createElement('h2', {style:{color:'#dc2626',margin:'0 0 12px'}}, '⚠️ Tool Runtime Error'),
+        React.createElement('p', {style:{color:'#374151'}}, React.createElement('strong', null, 'DC-MSTR-001 v1.5.4'), ' crashed during rendering.'),
+        React.createElement('pre', {style:{background:'#1f2937',color:'#f87171',padding:12,borderRadius:8,fontSize:13,whiteSpace:'pre-wrap',margin:'12px 0',maxHeight:300,overflow:'auto'}},
+          String(this.state.error) + (this.state.info ? '\n\nComponent Stack:' + this.state.info.componentStack : '')),
+        React.createElement('p', {style:{color:'#6b7280',fontSize:13}}, 'Copy this error and send to LM.')
+      );
+    }
+    return this.props.children;
+  }
+}
+
+ReactDOM.render(<ErrorBoundary><App /></ErrorBoundary>, document.getElementById('root'));
+</script>
+</body>
+</html>

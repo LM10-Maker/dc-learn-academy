@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC-R-FGS-001 v1.0.3 | F-Gas Phase-Down Checker | Legacy Business Engineers</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+<style>
+:root{--lbe-green:#4a7c59;--lbe-dark:#1a1a1a;--dc-black:#1a1a1a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f9fafb;color:#1f2937;line-height:1.6}
+.container{max-width:860px;margin:0 auto;padding:16px}
+.header{background:var(--dc-black);color:#fff;padding:16px 20px;border-radius:10px 10px 0 0;display:flex;align-items:center;gap:12px}
+.header-logo{font-weight:700;font-size:1.1rem;color:#4a7c59}
+.header-title{font-size:1.15rem;font-weight:600}
+.header-sub{font-size:0.8rem;color:#9ca3af;margin-top:2px}
+.aud-bar{background:#eef2ff;border-left:4px solid #6366f1;padding:10px 14px;font-size:0.82rem;color:#3730a3}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:18px;margin:12px 0}
+.card h2{font-size:1rem;font-weight:700;color:var(--dc-black);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #e5e7eb}
+label{display:block;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:4px}
+.help{font-size:0.72rem;color:#6b7280;margin-bottom:8px}
+input,select{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:0.88rem;margin-bottom:4px}
+input:focus,select:focus{outline:none;border-color:#6366f1;box-shadow:0 0 0 2px rgba(99,102,241,0.15)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.btn{background:var(--dc-black);color:#fff;padding:10px 20px;border:none;border-radius:6px;font-size:0.9rem;font-weight:600;cursor:pointer;width:100%;margin-top:8px}
+.btn:hover{background:#333}
+.btn-sample{background:#fff;color:var(--dc-black);border:1px solid #d1d5db;font-size:0.78rem;padding:6px 12px;border-radius:4px;cursor:pointer;margin-right:8px}
+.btn-sample:hover{background:#f3f4f6}
+.result-card{padding:14px;border-radius:8px;text-align:center;border:1px solid}
+.result-val{font-size:1.5rem;font-weight:700;line-height:1.2}
+.result-label{font-size:0.72rem;color:#6b7280;margin-top:2px}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:0.75rem;font-weight:600}
+.badge-green{background:#dcfce7;color:#166534;border:1px solid #86efac}
+.badge-amber{background:#fef3c7;color:#92400e;border:1px solid #fbbf24}
+.badge-red{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.tip{padding:10px 12px;border-radius:6px;margin:6px 0;border-left:4px solid;font-size:0.82rem}
+.tip-green{background:#f0fdf4;border-color:#22c55e;color:#166534}
+.tip-amber{background:#fffbeb;border-color:#f59e0b;color:#92400e}
+.tip-red{background:#fef2f2;border-color:#ef4444;color:#991b1b}
+.tip-title{font-weight:700;margin-bottom:2px}
+.not-checked{background:#fef2f2;border:2px solid #dc2626;border-radius:8px;padding:14px;margin:12px 0}
+.not-checked h3{color:#991b1b;font-size:0.9rem;margin-bottom:6px}
+.not-checked li{font-size:0.8rem;color:#991b1b;margin:3px 0}
+.wtm{background:#f0f9ff;border:1px solid #93c5fd;border-radius:8px;padding:14px;margin:12px 0}
+.wtm h3{font-size:0.88rem;color:#1e40af;margin-bottom:6px}
+.wtm p{font-size:0.82rem;color:#1e3a5f}
+.cta-bar{background:linear-gradient(135deg,#fbbf24,#f59e0b);padding:16px 20px;border-radius:8px;margin:12px 0;text-align:center}
+.cta-bar h3{color:#1a1a1a;font-size:0.95rem;margin-bottom:4px}
+.cta-bar p{color:#78350f;font-size:0.82rem;margin-bottom:8px}
+.cta-btn{display:inline-block;background:var(--dc-black);color:#fff;padding:8px 20px;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.85rem}
+.sample-bar{background:#f0fdf4;border:1px solid #86efac;padding:10px 16px;border-radius:6px;margin:8px 0;text-align:center;font-size:0.82rem}
+.sample-bar a{color:#166534;font-weight:600;text-decoration:none}
+.nav-footer{text-align:center;padding:12px;background:#f9fafb;border-top:1px solid #e5e7eb;margin-top:20px;font-size:0.8rem}
+.nav-footer a{color:#4a7c59;text-decoration:none}
+.disclaimer{font-size:0.7rem;color:#9ca3af;text-align:center;padding:8px;margin-top:4px}
+#results{display:none}
+.timeline-item{display:flex;align-items:flex-start;margin:8px 0;font-size:0.82rem}
+.timeline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px;margin-right:10px}
+.timeline-year{width:50px;font-weight:700;flex-shrink:0;margin-right:8px}
+@media print{
+  .no-print{display:none!important}
+  .cta-bar,.sample-bar,.nav-footer,.btn,.btn-sample,.aud-bar{display:none!important}
+  @page{size:A4 portrait;margin:14mm 12mm 20mm 12mm}
+  body{background:#fff}
+  .container{max-width:100%;padding:0}
+}
+</style>
+<script>
+window.onerror=function(msg,src,line,col,err){
+  var el=document.getElementById('app');
+  if(el&&(!el.innerHTML||el.innerHTML.trim()==='')){
+    el.innerHTML='<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+      +'<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error</h2>'
+      +'<p style="color:#374151;margin:0 0 8px"><strong>DC-R-FGS-001 v1.0.3</strong> failed to load.</p>'
+      +'<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+      +'Error: '+msg+'\\nLine: '+line+', Col: '+col
+      +(err&&err.stack?'\\n\\nStack:\\n'+err.stack.substring(0,500):'')
+      +'</div>'
+      +'<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM.</p>'
+      +'</div>';
+  }
+  return false;
+};
+</script>
+</head>
+<body>
+<div class="container" id="app">
+
+<div class="header">
+  <div><img src="data:image/png;base64,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" alt="LBE" style="height:36px;border-radius:50%" onerror="this.style.display='none'" /></div>
+  <div>
+    <div class="header-title">F-Gas Phase-Down Checker</div>
+    <div class="header-sub">DC-R-FGS-001 v1.0.3 · EU F-Gas phase-down exposure for your cooling systems</div>
+  </div>
+</div>
+
+<div class="aud-bar no-print">
+  <strong>For DC Operators & Facility Managers</strong> — Screen F-Gas Regulation (EU) 2024/573 impact on your refrigerant inventory
+</div>
+
+<div class="not-checked">
+  <h3>⚠️ NOT CHECKED by this tool</h3>
+  <ul>
+    <li>Equipment-specific manufacturer compatibility with alternative refrigerants</li>
+    <li>Refrigerant leak rates or containment certification status</li>
+    <li>Detailed refrigerant piping modifications for drop-in replacements</li>
+    <li>EPA Industrial Emissions licence conditions specific to your site</li>
+    <li>Insurance implications of refrigerant system modifications</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2>Cooling System Inventory</h2>
+  <div class="grid-2">
+    <div>
+      <label for="refrigerant">Primary Refrigerant</label>
+      <div class="help">Select the refrigerant used in your main cooling plant.</div>
+      <select id="refrigerant">
+        <option value="">-- Select --</option>
+        <option value="R410A">R-410A (GWP 2,088) — common in DX splits/VRF</option>
+        <option value="R407C">R-407C (GWP 1,774) — older chillers</option>
+        <option value="R134a">R-134a (GWP 1,430) — centrifugal chillers</option>
+        <option value="R32">R-32 (GWP 675) — newer splits/VRF</option>
+        <option value="R454B">R-454B (GWP 466) — R-410A replacement</option>
+        <option value="R513A">R-513A (GWP 631) — R-134a replacement</option>
+        <option value="R1234ze">R-1234ze(E) (GWP 7) — low-GWP centrifugal</option>
+        <option value="R290">R-290 Propane (GWP 3) — natural refrigerant</option>
+        <option value="R744">R-744 CO₂ (GWP 1) — transcritical systems</option>
+        <option value="R717">R-717 Ammonia (GWP 0) — industrial</option>
+      </select>
+    </div>
+    <div>
+      <label for="chargeKg">Total Refrigerant Charge (kg)</label>
+      <div class="help">Sum of all circuits using this refrigerant. Check F-Gas log.</div>
+      <input type="number" id="chargeKg" min="1" max="50000" step="1" placeholder="e.g. 500">
+    </div>
+    <div>
+      <label for="equipAge">Average Equipment Age (years)</label>
+      <div class="help">CIBSE Guide M: chiller design life 20 yrs. >15 yrs = end-of-life zone.</div>
+      <input type="number" id="equipAge" min="0" max="40" step="1" placeholder="e.g. 8">
+    </div>
+    <div>
+      <label for="equipCount">Number of Cooling Units</label>
+      <div class="help">Total units using this refrigerant (chillers, CRAHs, splits).</div>
+      <input type="number" id="equipCount" min="1" max="200" step="1" placeholder="e.g. 4">
+    </div>
+    <div>
+      <label for="coolingMW">Total Cooling Capacity (MW)</label>
+      <div class="help">Combined cooling output of units using this refrigerant.</div>
+      <input type="number" id="coolingMW" min="0.01" max="100" step="0.01" placeholder="e.g. 2.5">
+    </div>
+    <div>
+      <label for="leakRate">Annual Leak Rate (%)</label>
+      <div class="help">F-Gas Reg requires leak checks. Typical: 2–10%. >5% = poor containment.</div>
+      <input type="number" id="leakRate" min="0" max="30" step="0.5" value="5">
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px" class="no-print">
+    <button class="btn" onclick="calculate()">Check Compliance</button>
+    <button class="btn-sample" onclick="loadSample()">📋 Load Sample</button>
+  </div>
+</div>
+
+<div id="results">
+  <div class="card">
+    <h2>F-Gas Exposure Summary</h2>
+    <div class="grid-3" id="summaryCards"></div>
+    <div style="margin-top:12px;text-align:center" id="verdictBadge"></div>
+  </div>
+  <div class="card">
+    <h2>EU F-Gas Phase-Down Timeline</h2>
+    <div id="phasedownTimeline"></div>
+  </div>
+  <div class="card">
+    <h2>Replacement Options</h2>
+    <div id="replacementTable"></div>
+  </div>
+  <div class="card">
+    <h2>Cost Impact Assessment</h2>
+    <div id="costAssessment"></div>
+  </div>
+  <div class="wtm" id="wtmPanel"></div>
+  <div class="card">
+    <h2>💡 Value Engineering Tips</h2>
+    <div id="tipsPanel"></div>
+  </div>
+  <div class="card no-print">
+    <h2>Export</h2>
+    <div style="display:flex;gap:8px">
+      <button class="btn-sample" onclick="exportJSON()">📥 Export JSON</button>
+      <button class="btn-sample" onclick="window.print()">🖨️ Print / PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="cta-bar no-print">
+  <h3>Got the answers? Ready for the full picture?</h3>
+  <p>S4-B Cooling Optimisation Report — independent MEP assessment of your cooling strategy including F-Gas compliance. From <strong>€8,000 + VAT</strong></p>
+  <a href="https://legacybe.ie/contact/" target="_blank" class="cta-btn">Talk to an Engineer</a>
+</div>
+
+<div class="sample-bar no-print">
+  <a href="#">See Sample: Tara Campus — 50MW hyperscale feasibility assessment</a>
+</div>
+
+<div class="nav-footer no-print">
+  <a href="https://lbe-tools.netlify.app/">↩ Back to All Tools</a>
+  &nbsp;|&nbsp;
+  <a href="https://legacybe.ie" target="_blank" style="color:#6b7280">legacybe.ie</a>
+  <div style="font-size:0.7rem;color:#9ca3af;margin-top:4px">Powered by AIMEP · © 2026 Legacy Business Engineers Ltd</div>
+</div>
+
+<div class="disclaimer" style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;">INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+<div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;">Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+
+</div>
+
+<script>
+var TOOL_META = { id: 'DC-R-FGS-001', version: '1.0.3', name: 'F-Gas Phase-Down Checker' };
+
+// Refrigerant data — GWP values from EU (2024/573) Annex I
+// Source: EU F-Gas Regulation (EU) 2024/573, ASHRAE Standard 34
+var REFRIGERANTS = {
+  'R410A':  { gwp: 2088, type: 'HFC blend', alternative: 'R-454B or R-32', altGWP: 466, dropIn: false, notes: 'Most common DC split/VRF refrigerant. Phase-down target.' },
+  'R407C':  { gwp: 1774, type: 'HFC blend', alternative: 'R-454B or R-32', altGWP: 466, dropIn: false, notes: 'Legacy chiller refrigerant. Equipment likely near end-of-life.' },
+  'R134a':  { gwp: 1430, type: 'HFC', alternative: 'R-513A or R-1234ze(E)', altGWP: 631, dropIn: true, notes: 'Centrifugal chillers. R-513A is near drop-in; R-1234ze requires new equipment.' },
+  'R32':    { gwp: 675, type: 'HFC', alternative: 'R-290 (propane)', altGWP: 3, dropIn: false, notes: 'Already lower-GWP. Compliant through 2030+ in most applications.' },
+  'R454B':  { gwp: 466, type: 'HFO/HFC blend', alternative: 'Already low-GWP', altGWP: 466, dropIn: false, notes: 'R-410A replacement. Mildly flammable (A2L). Good for new installations.' },
+  'R513A':  { gwp: 631, type: 'HFO/HFC blend', alternative: 'R-1234ze(E)', altGWP: 7, dropIn: true, notes: 'R-134a drop-in replacement. Transitional — may need further change post-2030.' },
+  'R1234ze':{ gwp: 7, type: 'HFO', alternative: 'Already optimal', altGWP: 7, dropIn: false, notes: 'Ultra-low GWP. Future-proof for EU F-Gas compliance.' },
+  'R290':   { gwp: 3, type: 'Natural', alternative: 'Already optimal', altGWP: 3, dropIn: false, notes: 'Natural refrigerant. Flammable — requires safety measures (EN 378).' },
+  'R744':   { gwp: 1, type: 'Natural (CO₂)', alternative: 'Already optimal', altGWP: 1, dropIn: false, notes: 'Transcritical CO₂. Zero F-Gas exposure.' },
+  'R717':   { gwp: 0, type: 'Natural (Ammonia)', alternative: 'Already optimal', altGWP: 0, dropIn: false, notes: 'Industrial only. Toxic — requires EN 378 safety compliance.' }
+};
+
+// EU F-Gas phase-down schedule — (EU) 2024/573 Article 4, Annex V
+// Expressed as % of 2015 baseline quota (in CO₂-equivalent tonnes)
+var PHASEDOWN = [
+  { year: 2024, quota_pct: 31.3, note: 'Current allocation' },
+  { year: 2027, quota_pct: 22.6, note: 'Next major step-down' },
+  { year: 2030, quota_pct: 9.4, note: 'Severe restriction — high-GWP refrigerants scarce' },
+  { year: 2033, quota_pct: 5.6, note: 'Near elimination of high-GWP HFCs' },
+  { year: 2036, quota_pct: 2.4, note: 'Minimal allocation — service only' },
+  { year: 2050, quota_pct: 0, note: 'Zero HFC quota (net zero target)' }
+];
+
+// GWP bans — (EU) 2024/573 Article 13
+var GWP_BANS = [
+  { date: '2025-01-01', threshold: 750, scope: 'Single split AC ≤12kW', applies_to: 'R410A in small splits' },
+  { date: '2026-01-01', threshold: 750, scope: 'All single split AC', applies_to: 'R410A in all splits' },
+  { date: '2027-01-01', threshold: 150, scope: 'Stationary refrigeration (new)', applies_to: 'Most HFCs in new refrigeration' },
+  { date: '2030-01-01', threshold: 750, scope: 'Multi-split/VRF (new equipment)', applies_to: 'R410A in new VRF systems' },
+  { date: '2032-01-01', threshold: 150, scope: 'All new stationary AC/HP ≥12kW', applies_to: 'Major constraint for DC cooling' }
+];
+
+// Replacement cost estimates — industry data (Daikin, Carrier, Trane price lists + contractor rates)
+var REPLACE_COST_PER_MW = {
+  split_system: 150000,    // €/MW cooling — replace split systems — industry estimate
+  chiller_dropin: 50000,   // €/MW cooling — refrigerant swap (drop-in) — contractor estimate
+  chiller_new: 400000,     // €/MW cooling — new chiller plant — BSRIA/CIBSE benchmarks
+  vrf_new: 250000          // €/MW cooling — new VRF system — manufacturer pricing
+};
+
+function gv(id) { var v = document.getElementById(id).value; return v === '' ? null : parseFloat(v); }
+function gs(id) { return document.getElementById(id).value; }
+
+function validate() {
+  var e = [];
+  if (!gs('refrigerant')) e.push('Refrigerant type required');
+  if (gv('chargeKg') === null) e.push('Charge (kg) required');
+  if (gv('equipAge') === null) e.push('Equipment age required');
+  if (gv('equipCount') === null) e.push('Equipment count required');
+  if (gv('coolingMW') === null) e.push('Cooling capacity required');
+  return e;
+}
+
+function fmtK(v) {
+  if (v >= 1000000) return '€' + (v / 1000000).toFixed(1) + 'M';
+  if (v >= 1000) return '€' + Math.round(v / 1000) + 'k';
+  return '€' + Math.round(v);
+}
+
+function calculate() {
+  var err = validate();
+  if (err.length > 0) { alert('Fix:\n• ' + err.join('\n• ')); return; }
+
+  var ref = gs('refrigerant');
+  var charge = gv('chargeKg');
+  var age = gv('equipAge');
+  var count = gv('equipCount');
+  var coolMW = gv('coolingMW');
+  var leak = gv('leakRate') || 5;
+
+  var r = REFRIGERANTS[ref];
+  if (!r) { alert('Unknown refrigerant'); return; }
+
+  // CO₂-equivalent charge = charge_kg × GWP / 1000 (tonnes CO₂-eq)
+  var co2eq = charge * r.gwp / 1000;
+  // Annual leak in CO₂-eq
+  var annualLeakCO2 = co2eq * (leak / 100);
+  // Annual refrigerant cost (replacement due to leaks)
+  // Refrigerant price estimate: high-GWP = €20–€60/kg, low-GWP = €10–€30/kg
+  var refPricePerKg = r.gwp > 1000 ? 40 : r.gwp > 500 ? 25 : 15; // €/kg — indicative market price
+  var annualLeakCost = charge * (leak / 100) * refPricePerKg;
+
+  // Phase-down exposure: which bans affect this refrigerant?
+  var applicableBans = GWP_BANS.filter(function(b) { return r.gwp >= b.threshold; });
+  var firstBan = applicableBans.length > 0 ? applicableBans[0] : null;
+
+  // Replacement cost
+  var isDropIn = r.dropIn && r.altGWP < r.gwp;
+  var replaceCostPerMW = isDropIn ? REPLACE_COST_PER_MW.chiller_dropin : REPLACE_COST_PER_MW.chiller_new;
+  var totalReplaceCost = coolMW * replaceCostPerMW;
+
+  // Risk verdict
+  var verdict, urgency;
+  if (r.gwp <= 150) {
+    verdict = 'COMPLIANT'; urgency = 'No action required — refrigerant is within long-term GWP limits.';
+  } else if (r.gwp <= 750 && age < 15) {
+    verdict = 'MONITOR'; urgency = 'Current refrigerant faces restrictions by 2030–2032. Plan replacement with next equipment cycle.';
+  } else if (r.gwp > 750) {
+    verdict = 'ACTION REQUIRED'; urgency = 'High-GWP refrigerant faces near-term phase-down constraints. Replacement planning should begin now.';
+  } else {
+    verdict = 'PLAN TRANSITION'; urgency = 'Medium-GWP refrigerant. Compliant now but 2032 ban on >150 GWP in new AC >12kW will affect replacements.';
+  }
+
+  // Quota pressure year: when does quota scarcity affect servicing?
+  var quotaPressureYear = r.gwp > 1500 ? 2027 : r.gwp > 750 ? 2030 : r.gwp > 150 ? 2033 : null;
+
+  document.getElementById('results').style.display = 'block';
+  renderSummary(r, charge, co2eq, verdict);
+  renderPhasedown(r, applicableBans, quotaPressureYear);
+  renderReplacements(r, ref, coolMW, isDropIn, totalReplaceCost, age);
+  renderCost(annualLeakCost, totalReplaceCost, co2eq, annualLeakCO2, charge, leak, refPricePerKg);
+  renderWTM(verdict, r, co2eq, firstBan, totalReplaceCost, urgency);
+  renderTips(r, ref, age, charge, leak, co2eq, coolMW, count);
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderSummary(r, charge, co2eq, verdict) {
+  var vc = verdict === 'COMPLIANT' ? '#dcfce7;border-color:#86efac;color:#166534' :
+           verdict === 'MONITOR' ? '#fef3c7;border-color:#fbbf24;color:#92400e' :
+           '#fee2e2;border-color:#fca5a5;color:#991b1b';
+  var bc = verdict === 'COMPLIANT' ? 'badge-green' : verdict === 'MONITOR' || verdict === 'PLAN TRANSITION' ? 'badge-amber' : 'badge-red';
+  document.getElementById('summaryCards').innerHTML =
+    '<div class="result-card" style="background:#f0f9ff;border-color:#93c5fd">' +
+      '<div class="result-val" style="color:#1e40af">' + r.gwp.toLocaleString() + '</div>' +
+      '<div class="result-label">GWP (CO₂-equivalent)</div></div>' +
+    '<div class="result-card" style="background:#f0f9ff;border-color:#93c5fd">' +
+      '<div class="result-val" style="color:#1e40af">' + co2eq.toFixed(1) + ' t</div>' +
+      '<div class="result-label">CO₂-eq Charge (tonnes)</div></div>' +
+    '<div class="result-card" style="' + vc + '">' +
+      '<div style="margin-bottom:4px"><span class="badge ' + bc + '">' + verdict + '</span></div>' +
+      '<div class="result-label">' + r.type + '</div></div>';
+  document.getElementById('verdictBadge').innerHTML = '';
+}
+
+function renderPhasedown(r, bans, quotaYear) {
+  var html = '<div style="margin-bottom:12px;font-size:0.82rem">';
+  html += '<strong>Your refrigerant GWP: ' + r.gwp + '</strong> — affected by these EU milestones:';
+  html += '</div>';
+
+  PHASEDOWN.forEach(function(p) {
+    var isNow = p.year <= 2026;
+    var isPast = p.year < 2024;
+    var col = isNow ? '#3b82f6' : p.quota_pct < 10 ? '#ef4444' : '#f59e0b';
+    html += '<div class="timeline-item">' +
+      '<div class="timeline-year" style="color:' + col + '">' + p.year + '</div>' +
+      '<div class="timeline-dot" style="background:' + col + '"></div>' +
+      '<div><strong>' + p.quota_pct + '% of 2015 baseline</strong> — ' + p.note + '</div></div>';
+  });
+
+  if (bans.length > 0) {
+    html += '<div style="margin-top:12px;padding:10px;background:#fef2f2;border-radius:6px;font-size:0.82rem;border:1px solid #fca5a5">';
+    html += '<strong style="color:#991b1b">⚠️ GWP bans affecting your refrigerant:</strong><ul style="margin:6px 0 0 16px">';
+    bans.forEach(function(b) {
+      html += '<li style="margin:3px 0"><strong>' + b.date.substring(0,4) + ':</strong> GWP >' + b.threshold + ' banned for ' + b.scope + '</li>';
+    });
+    html += '</ul></div>';
+  }
+
+  if (quotaYear) {
+    html += '<div style="margin-top:8px;padding:8px;background:#fffbeb;border-radius:6px;font-size:0.78rem;color:#92400e;border:1px solid #fbbf24">' +
+      '<strong>Quota pressure:</strong> By ' + quotaYear + ', supply constraints will likely increase refrigerant prices and lead times for GWP ' + r.gwp + ' class.</div>';
+  }
+
+  document.getElementById('phasedownTimeline').innerHTML = html;
+}
+
+function renderReplacements(r, refName, coolMW, isDropIn, totalCost, age) {
+  var html = '<table style="width:100%;border-collapse:collapse;font-size:0.82rem">' +
+    '<tr style="background:#f9fafb"><th style="text-align:left;padding:8px;border-bottom:1px solid #e5e7eb">Option</th><th style="padding:8px;border-bottom:1px solid #e5e7eb">New GWP</th><th style="padding:8px;border-bottom:1px solid #e5e7eb">Approach</th><th style="padding:8px;border-bottom:1px solid #e5e7eb">Est. Cost</th></tr>';
+
+  if (r.gwp <= 7) {
+    html += '<tr><td colspan="4" style="padding:12px;text-align:center;color:#166534;background:#dcfce7">✅ Your refrigerant (GWP ' + r.gwp + ') is already within long-term limits. No replacement needed.</td></tr>';
+  } else {
+    if (r.dropIn) {
+      html += '<tr><td style="padding:8px;font-weight:600;border-bottom:1px solid #f3f4f6">Drop-in: ' + r.alternative.split(' or ')[0] + '</td>' +
+        '<td style="padding:8px;text-align:center;border-bottom:1px solid #f3f4f6">' + r.altGWP + '</td>' +
+        '<td style="padding:8px;border-bottom:1px solid #f3f4f6">Refrigerant swap — minimal equipment change</td>' +
+        '<td style="padding:8px;text-align:center;border-bottom:1px solid #f3f4f6">' + fmtK(coolMW * REPLACE_COST_PER_MW.chiller_dropin) + '</td></tr>';
+    }
+    html += '<tr><td style="padding:8px;font-weight:600;border-bottom:1px solid #f3f4f6">New equipment: ' + r.alternative + '</td>' +
+      '<td style="padding:8px;text-align:center;border-bottom:1px solid #f3f4f6">' + r.altGWP + '</td>' +
+      '<td style="padding:8px;border-bottom:1px solid #f3f4f6">Full plant replacement' + (age > 15 ? ' (recommended — equipment near end-of-life)' : '') + '</td>' +
+      '<td style="padding:8px;text-align:center;border-bottom:1px solid #f3f4f6">' + fmtK(coolMW * REPLACE_COST_PER_MW.chiller_new) + '</td></tr>';
+
+    if (r.gwp > 500) {
+      html += '<tr><td style="padding:8px;font-weight:600">Natural refrigerant (R-290/R-744)</td>' +
+        '<td style="padding:8px;text-align:center">1–3</td>' +
+        '<td style="padding:8px">Future-proof. Higher initial CAPEX, lowest long-term exposure.</td>' +
+        '<td style="padding:8px;text-align:center">' + fmtK(coolMW * REPLACE_COST_PER_MW.chiller_new * 1.3) + '</td></tr>';
+    }
+  }
+  html += '</table>';
+  document.getElementById('replacementTable').innerHTML = html;
+}
+
+function renderCost(annualLeak, replaceCost, co2eq, leakCO2, charge, leakPct, priceKg) {
+  document.getElementById('costAssessment').innerHTML =
+    '<div class="grid-2" style="gap:12px">' +
+    '<div style="padding:12px;background:#fef2f2;border-radius:8px;border:1px solid #fca5a5">' +
+      '<div style="font-weight:700;color:#991b1b;margin-bottom:6px">Annual Leak Cost</div>' +
+      '<div style="font-size:1.3rem;font-weight:700;color:#991b1b">' + fmtK(annualLeak) + '/yr</div>' +
+      '<div style="font-size:0.75rem;color:#6b7280;margin-top:4px">' + charge + 'kg × ' + leakPct + '% × €' + priceKg + '/kg</div>' +
+      '<div style="font-size:0.75rem;color:#6b7280">' + leakCO2.toFixed(1) + ' tCO₂-eq leaked annually</div>' +
+    '</div>' +
+    '<div style="padding:12px;background:#f0f9ff;border-radius:8px;border:1px solid #93c5fd">' +
+      '<div style="font-weight:700;color:#1e40af;margin-bottom:6px">Replacement CAPEX</div>' +
+      '<div style="font-size:1.3rem;font-weight:700;color:#1e40af">' + fmtK(replaceCost) + '</div>' +
+      '<div style="font-size:0.75rem;color:#6b7280;margin-top:4px">Full plant replacement estimate</div>' +
+      '<div style="font-size:0.75rem;color:#6b7280">CO₂-eq eliminated: ' + co2eq.toFixed(1) + ' tonnes</div>' +
+    '</div>' +
+    '</div>' +
+    '<div style="margin-top:8px;font-size:0.72rem;color:#9ca3af">Costs are indicative screening estimates (±30%). Refrigerant prices are volatile and subject to quota availability. Source: Industry pricing, BSRIA benchmarks.</div>';
+}
+
+function renderWTM(verdict, r, co2eq, firstBan, replaceCost, urgency) {
+  var bc = verdict === 'COMPLIANT' ? 'badge-green' : verdict === 'MONITOR' || verdict === 'PLAN TRANSITION' ? 'badge-amber' : 'badge-red';
+  var text = urgency + ' Your total F-Gas inventory is ' + co2eq.toFixed(1) + ' tCO₂-eq. ';
+  if (firstBan) {
+    text += 'The first applicable GWP ban is ' + firstBan.date.substring(0,4) + ' (>' + firstBan.threshold + ' GWP for ' + firstBan.scope + '). ';
+  }
+  if (verdict !== 'COMPLIANT') {
+    text += 'An S4-B Cooling Optimisation Report assesses your specific equipment, models replacement scenarios, and provides a phased transition programme with budgets.';
+  }
+  document.getElementById('wtmPanel').innerHTML =
+    '<h3>What This Means — <span class="badge ' + bc + '">' + verdict + '</span></h3><p>' + text + '</p>';
+}
+
+function renderTips(r, refName, age, charge, leak, co2eq, coolMW, count) {
+  var tips = [];
+
+  if (r.gwp > 1000) {
+    tips.push({ c: 'red', t: '⏰ High-GWP phase-down is accelerating', b: 'Refrigerants above GWP 750 face both quota restrictions (supply scarcity + price rises) and equipment bans. R-410A and R-407C prices have already doubled in some markets since 2022. Early replacement avoids emergency procurement at peak prices. Plan the transition for your next scheduled maintenance window.' });
+  }
+
+  if (age > 15) {
+    tips.push({ c: 'amber', t: '🔧 Equipment age aligns with refrigerant transition', b: 'At ' + age + ' years, your cooling plant is approaching end-of-life (CIBSE Guide M: 20-year design life for chillers). Combining natural equipment replacement with refrigerant transition avoids the sunk-cost problem of retrofitting old equipment with new refrigerant.' });
+  }
+
+  if (leak > 5) {
+    tips.push({ c: 'red', t: '💨 Leak rate above 5% — check containment', b: 'At ' + leak + '% annual leak rate, you\'re losing ' + Math.round(charge * leak / 100) + ' kg/year (' + fmtK(charge * leak / 100 * (r.gwp > 1000 ? 40 : 25)) + ' in refrigerant cost alone). EU F-Gas Regulation requires leak detection systems for equipment >5 tCO₂-eq. Improving containment reduces cost now and delays quota pressure.' });
+  }
+
+  if (r.dropIn) {
+    tips.push({ c: 'green', t: '✅ Drop-in alternative available', b: r.alternative.split(' or ')[0] + ' (GWP ' + r.altGWP + ') is a near drop-in replacement for ' + refName + '. This can be done during a scheduled service with minimal downtime and lower cost than full plant replacement. Verify manufacturer compatibility before proceeding.' });
+  }
+
+  if (co2eq > 10) {
+    tips.push({ c: 'amber', t: '📊 F-Gas reporting obligation', b: 'Your inventory of ' + co2eq.toFixed(1) + ' tCO₂-eq exceeds the 5 tCO₂-eq threshold for mandatory leak checks (EU 2024/573 Art.5). Ensure quarterly leak checks are documented and F-Gas records are maintained. This data is also required for EED Art.12 reporting.' });
+  }
+
+  tips.push({ c: 'green', t: '🌍 Natural refrigerants = zero F-Gas exposure', b: 'R-290 (propane), R-744 (CO₂), and R-717 (ammonia) have GWP of 0–3 and are completely outside the F-Gas phase-down. Higher initial CAPEX but zero future regulatory risk. For new DC cooling installations, natural refrigerants should be the default consideration.' });
+
+  document.getElementById('tipsPanel').innerHTML = tips.map(function(t) {
+    return '<div class="tip tip-' + t.c + '"><div class="tip-title">' + t.t + '</div>' + t.b + '</div>';
+  }).join('');
+}
+
+function loadSample() {
+  document.getElementById('refrigerant').value = 'R410A';
+  document.getElementById('chargeKg').value = 500;
+  document.getElementById('equipAge').value = 12;
+  document.getElementById('equipCount').value = 8;
+  document.getElementById('coolingMW').value = 2.5;
+  document.getElementById('leakRate').value = 5;
+  calculate();
+}
+
+function exportJSON() {
+  var data = {
+    _aimep_lineage: { tool_id: TOOL_META.id, version: TOOL_META.version, exported: new Date().toISOString(), classification: 'SCREENING' },
+    disclaimer: 'INDICATIVE SCREENING — Not a detailed refrigerant management plan. All outputs require review by a certified F-Gas engineer before informing any procurement or compliance decisions.',
+    not_checked: ['Manufacturer compatibility','Leak certification status','Piping modifications','EPA licence conditions','Insurance implications'],
+    inputs: {
+      refrigerant: gs('refrigerant'), charge_kg: gv('chargeKg'), equip_age_yrs: gv('equipAge'),
+      equip_count: gv('equipCount'), cooling_MW: gv('coolingMW'), leak_rate_pct: gv('leakRate')
+    }
+  };
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'DC-R-FGS-001_export.json';
+  a.click();
+}
+</script>
+</body>
+</html>

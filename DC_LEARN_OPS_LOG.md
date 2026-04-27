@@ -401,3 +401,108 @@
 - [BUILD] CalculationsTab and ReportTab calc ID references updated (carbon_cost_current→carbon_cost_now, co2_tonnes→co2_scope2)
 - [DECISION] WHY: v2.0 deterministic calc engine — LLM never calculates; numbers are JavaScript, narrative is AI
 - [COMMIT] Branch: claude/copy-dc-tool-template-jTJoJ | commit bb1d070 | tools/DC-TOOL-004_v2_0_0.html
+
+---
+## 2026-04-16 — [DEPLOY] Repo consolidation (dc-screen → dc-learn-academy)
+
+Session: Claude Code cloud (Sonnet)
+Prompt: SCREEN_SITE_CC_PROMPT_v8_CLOUD.md (simplified consolidation)
+
+Shipped:
+- archive/dc-screen/ : full dc-screen contents preserved as read-only reference
+- tools/pipeline/    : MSTR + CPS + RPT active here (Services-tier engine)
+
+dc-learn-academy is now the single source of truth.
+
+Deferred to later sessions:
+- DC-TOOL-009 v2.0.0 commit (requires upload)
+- screen/ v8 bundle staging (requires upload)
+- Netlify + Cloudflare setup
+
+Pending LM manual step:
+- github.com/LM10-Maker/dc-screen → Settings → Archive repository (read-only)
+
+Verdict: SHIP
+
+---
+## 2026-04-20 — DC-Screen P2: Pipeline Wiring [BUILD] [DEPLOY]
+
+Session: Claude Code (claude/wire-dc-screen-pipeline-4SLAO)
+Tasks completed: CPS v1.1.0 commit, MSTR JSON export (all 14 fields), CPS import wiring (zero manual re-entry), CPS-to-RPT wiring verified, Clonshaugh sample run, intake form
+
+**MSTR → CPS schema:**
+MSTR exports: project.{name,ref,county,build_year,hall_names}, it_load.{total_it_mw,rack_count,rack_density_kw}, design_criteria.{pue_target}, electrical.{utility_kv,ppa_pct,generator_hours,mic_mva,fuel}, cooling.{strategy}, screening.{current_pue,grid_operator,redundancy_level,lease_end_year}
+CPS importJSON maps all of the above → inputs.{facilityName,itLoadMW,pue,coolingType,genFuel,genConfig,numRacks,rackDensity,ppaPercent,genHours,facilityAge,micMva,hallNames} ✓
+
+**CPS → RPT schema:**
+CPS exportJSON._aimep_lineage.tool_id = "DC-CPS-001" ✓ (validated by RPT processImport)
+CPS inputs block → RPT inputs block: direct pass-through, all required fields present ✓
+
+**Canonical values verified in DC-CPS-001 v1.1.0:**
+- Grid EF: 0.2241 kgCO2/kWh (SEAI 2026) ✓
+- Gas EF: 0.205 kgCO2/kWh (SEAI 2026) ✓
+- Carbon tax current: €71/tCO2 (Budget 2025) ✓
+- Carbon tax 2030: €100/tCO2 (Finance Act) ✓
+- CRM T-4 clearing price: €149,960/MW/yr (SEMO PCAR2829T-4) ✓ — ADDED
+- Electricity price: €0.12/kWh (CRU Q4 2024) ✓ — ADDED
+- EU Taxonomy PUE: 1.30 (Delegated Act 2021/2139) ✓
+- CRU renewable obligation: 80% (CRU/2025236) ✓
+- Dublin free cooling hours: 7,200 hrs/yr (Met Éireann 30-yr) ✓ — ADDED
+
+**Stale value sweep:** 0 matches — 83050 | 0.295 | 63.50 | 56 (as carbon tax) | 110 kV (Clonshaugh context) ✓
+
+**Clonshaugh results (ppa=0%, diesel 200 hrs/yr, air CRAC, N+1, MIC 5 MVA, 10 kV ESB Networks):**
+- CRREM misalignment year: 2027
+- Carbon intensity: 336 kgCO2/MWh_IT (HIGH band, 300–400 range)
+- Location CO2: 7,067 tCO2/yr | Generator CO2 (Scope 1): 521 tCO2/yr
+- EU Taxonomy PUE: FAIL (1.50 vs 1.30)
+- CRU 80% renewable: FAIL (0% PPA, 80% gap)
+- Indicative retrofit cost range: €1.9M – €3.6M
+- Indicative 10-yr cost of inaction: ~€3.4M (NPV foregone energy savings, no CRM)
+- 10-yr NPV with CRM: +€3.16M | Without CRM: +€746k | Simple payback: 3.1 / 5.2 yrs
+- Traffic-light: POWER=AMBER | COOLING=RED | REDUNDANCY=AMBER | REGULATORY=RED | CARBON=RED
+
+**Intake form (screen.legacybe.ie):**
+- 14 fields, Netlify forms (data-netlify="true", name=screening-intake), honeypot
+- Required: facility_name, contact_email, location, build_year, it_load_mw, rack_count, rack_density_kw, pue, cooling_type, ppa_pct, voltage_kv, mic_kva, generator_fuel, generator_hours
+- Confirmation: "Thank you. Your facility data has been received. We will send an invoice for the Screening Report (€3,500 plus VAT) and deliver your report within 5 working days."
+- No Stripe. Invoice-based.
+
+**Deviations:** None. No DC-LEARN modules touched. No Supabase auth/schema touched. No Stripe webhook touched.
+
+Commits: a56f7ab | 1bd0870 | 670c977 | f58ac3d
+Branch: claude/wire-dc-screen-pipeline-4SLAO
+
+Verdict: SHIP
+
+## [2026-04-20] DC-Screen Hero + RPT A+ Fix
+[FIX] RPT: CEng MIEI → CEng MEI throughout
+[FIX] RPT: CRREM LBE-derivation disclosure moved to Executive Summary page
+[FIX] RPT: ROBUST badge → "Indicative: ROBUST" (PI-safe qualifier added)
+[FIX] RPT: Stressed case grid EF corrected to 0.2241 (SEAI 2026 canonical)
+[FIX] RPT: DC-S01 service code removed from client-facing CTA
+[FIX] screen/index.html: Calendly link wired to Talk to Les card
+[FIX] screen/index.html: Screening Report card routes to intake form
+[FIX] screen/index.html: Sample PDF link wired at page bottom
+SHIP
+
+## 2026-04-20 | DC-Screen | [DEPLOY]
+Corrected screen/ folder: replaced v4.12 hero with v4.13, added
+sample-screening-report.pdf and netlify.toml (missing from branch).
+Merged claude/add-screen-deploy-files-YxtjV to main, branch deleted.
+WHY: Branch had wrong hero version (no Calendly, old pricing). All 6
+deploy files now correct on main. Netlify publish dir: screen/
+Commit: 79b77e6
+SHIP
+
+## 2026-04-27 | Claude Sonnet 4.6 | screen/ | [FIX]
+- [FIX] screen/index.html: Removed Sovereign Compute Compliance tile (CARD 5) in full — opening div, Coming Q1 2027 badge, heading, body copy, price line, disabled CTA, and 2027 service overview link all stripped
+- [FIX] screen/index.html: Removed Sovereign Compute Compliance pricing list item from the "Also available" section (€75,000–€100,000 line)
+- [FIX] screen/tools/DC-TOOL-010_v2_0_0.html: Google Fonts CDN (fonts.googleapis.com) replaced with cdnjs.cloudflare.com IBM Plex CSS (ibm-plex 6.4.2)
+- [FIX] screen/tools/DC-TOOL-010_v2_0_0.html: Sign-off credential updated CEng MIEI → CEng MIEI MBA
+- [FIX] screen/tools/DC-TOOL-010_v2_0_0.html: Version bumped v2.0.0 → v2.0.1 across all 6 instances (title, blank-screen-guard string, factory comment, TOOL_VERSION constant, error-boundary string, audit-checklist string)
+- [FIX] screen/thank-you.html: Price copy "3,500 euros plus VAT" → "€3,500 + VAT"
+- [FIX] screen/thank-you.html: Delivery time "5 working days" → "10 working days" (aligns with index.html lines 598 and 658)
+
+Verification: grep "Sovereign" returns zero matches across repo. Tile grid: 5 tiles (Headline Audit, Screening Report, AI Readiness, Hybrid Zoning, Talk to Les). Diff contained to 3 HTML files + this log.
+Branch: claude/setup-dc-learn-academy-nVU7a

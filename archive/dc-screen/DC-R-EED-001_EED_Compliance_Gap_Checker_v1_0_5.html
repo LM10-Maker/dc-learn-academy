@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DC-R-EED-001 | EED Compliance Gap Checker | Legacy Business Engineers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════
+           DC-R-EED-001 — EED Compliance Gap Checker v1.0.6
+           Legacy Business Engineers Ltd | 28 February 2026
+           100% Vanilla HTML/CSS/JS — No frameworks, no external dependencies
+           ═══════════════════════════════════════════════════════════════════ */
+
+        :root {
+            --lbe-green: #4a7c59;
+            --lbe-green-dark: #3d6649;
+            --lbe-green-light: #e8f0eb;
+            --lbe-dark: #1a2332;
+            --lbe-dark-alt: #1a1a1a;
+            --seg06-bg: #eef2ff;
+            --seg06-border: #6366f1;
+            --seg06-text: #4338ca;
+            --pass-green: #16a34a;
+            --pass-bg: #f0fdf4;
+            --warn-amber: #d97706;
+            --warn-bg: #fffbeb;
+            --fail-red: #dc2626;
+            --fail-bg: #fef2f2;
+            --info-blue: #2563eb;
+            --info-bg: #eff6ff;
+            --border-light: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --bg-page: #f1f5f9;
+            --bg-card: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* ═══ HEADER ═══ */
+        .tool-header {
+            background: var(--lbe-dark);
+            color: #fff;
+            padding: 24px 28px;
+            border-radius: 12px 12px 0 0;
+            margin-top: 16px;
+        }
+        .tool-header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .tool-header-logo {
+            width: 36px; height: 36px;
+            background: var(--lbe-green);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 14px; color: #fff;
+        }
+        .tool-header-company {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 400;
+        }
+        .tool-header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+        .tool-header-subtitle {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .tool-header-version {
+            display: inline-block;
+            background: rgba(255,255,255,0.1);
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #cbd5e1;
+            margin-top: 8px;
+        }
+
+        /* ═══ AUDIENCE BAR (v15) ═══ */
+        .v15-audience-bar {
+            background: var(--seg06-bg);
+            color: var(--seg06-text);
+            text-align: center;
+            padding: 8px 16px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .v15-audience-line {
+            background: #f8fafc;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 6px 16px;
+            font-size: 11px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        /* ═══ SEG BANNER ═══ */
+        .seg-banner {
+            background: var(--seg06-bg);
+            border-left: 4px solid var(--seg06-border);
+            padding: 14px 20px;
+            margin: 0;
+            font-size: 13px;
+            color: var(--seg06-text);
+            line-height: 1.5;
+        }
+
+        /* ═══ SAMPLE BANNER ═══ */
+        .v15-sample {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 16px 20px;
+            font-size: 13px;
+            color: #92400e;
+            text-align: center;
+        }
+        .v15-sample a {
+            color: #92400e;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* ═══ CARD ═══ */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 0 0 12px 12px;
+            padding: 0;
+        }
+        .card-body {
+            padding: 20px 24px 28px;
+        }
+
+        /* ═══ FORM ELEMENTS ═══ */
+        .form-section {
+            margin-bottom: 20px;
+        }
+        .form-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--lbe-dark);
+            margin-bottom: 14px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid var(--lbe-green);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .form-group input,
+        .form-group select {
+            padding: 9px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-primary);
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--lbe-green);
+            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.15);
+        }
+        .form-group .unit-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ═══ CALCULATE BUTTON ═══ */
+        .calc-btn {
+            display: block;
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--lbe-green);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 20px;
+        }
+        .calc-btn:hover { background: var(--lbe-green-dark); }
+
+        /* ═══ RESULTS ═══ */
+        .results-section {
+            display: none;
+            margin-top: 24px;
+        }
+        .results-section.visible { display: block; }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .results-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--lbe-dark);
+        }
+
+        /* Overall Rating */
+        .overall-rating {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .overall-rating .rating-value {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .overall-rating .rating-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        .overall-rating .rating-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        .overall-rating .rating-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        /* Scope Notice */
+        .scope-notice {
+            background: var(--info-bg);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 14px 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #1e40af;
+        }
+
+        /* KPI Scorecard */
+        .scorecard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        .scorecard-table th {
+            background: var(--lbe-dark);
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .scorecard-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: middle;
+        }
+        .scorecard-table tr:nth-child(even) { background: #f8fafc; }
+        .scorecard-table .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .badge-pass { background: var(--pass-bg); color: var(--pass-green); }
+        .badge-at-risk { background: var(--warn-bg); color: var(--warn-amber); }
+        .badge-fail { background: var(--fail-bg); color: var(--fail-red); }
+        .badge-na { background: #f1f5f9; color: var(--text-muted); }
+        .gap-value { font-weight: 600; }
+
+        /* Priority Actions */
+        .action-card {
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .action-priority {
+            flex-shrink: 0;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; color: #fff;
+        }
+        .action-priority.p-high { background: var(--fail-red); }
+        .action-priority.p-med { background: var(--warn-amber); }
+        .action-priority.p-low { background: var(--pass-green); }
+        .action-content { flex: 1; }
+        .action-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+        .action-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .action-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+        /* Reporting Checklist */
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        .checklist-icon {
+            flex-shrink: 0;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .checklist-text { flex: 1; color: var(--text-primary); }
+        .checklist-deadline { font-size: 11px; color: var(--warn-amber); font-weight: 600; }
+
+        /* Timeline */
+        .timeline-bar {
+            position: relative;
+            padding: 16px 0;
+            margin-bottom: 20px;
+        }
+        .timeline-track {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            position: relative;
+        }
+        .timeline-marker {
+            position: absolute;
+            top: -6px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            transform: translateX(-50%);
+        }
+        .timeline-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Tips */
+        .tip-card {
+            border-left: 4px solid;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            border-radius: 0 8px 8px 0;
+            background: #fff;
+        }
+        .tip-card.tip-green { border-color: var(--pass-green); background: var(--pass-bg); }
+        .tip-card.tip-blue { border-color: var(--info-blue); background: var(--info-bg); }
+        .tip-card.tip-amber { border-color: var(--warn-amber); background: var(--warn-bg); }
+        .tip-card.tip-red { border-color: var(--fail-red); background: var(--fail-bg); }
+        .tip-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+        .tip-body { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+        .tip-ref { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+
+        /* NOT CHECKED panel */
+/* ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ */
+.confidence-panel {
+  background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px;
+  padding: 16px; margin-top: 16px; font-size: 12px; color: #14532d;
+}
+.confidence-panel h4 { color: #166534; font-size: 13px; margin-bottom: 10px; font-weight: 700; }
+.confidence-panel table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.confidence-panel th { text-align: left; padding: 4px 8px; font-weight: 700; border-bottom: 1px solid #86efac; font-size: 11px; }
+.confidence-panel td { padding: 4px 8px; border-bottom: 1px solid #dcfce7; font-size: 11px; }
+.confidence-panel .tier-badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-weight: 700; font-size: 10px; }
+.confidence-panel .t1 { background: #166534; color: white; }
+.confidence-panel .t2 { background: #15803d; color: white; }
+.confidence-panel .t3 { background: #ca8a04; color: white; }
+.confidence-panel .t4 { background: #dc2626; color: white; }
+
+        .not-checked {
+            border: 2px solid var(--fail-red);
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-top: 20px;
+            background: var(--fail-bg);
+        }
+        .not-checked h3 {
+            color: var(--fail-red);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .not-checked ul {
+            list-style: none;
+            padding: 0;
+        }
+        .not-checked li {
+            font-size: 12px;
+            color: #991b1b;
+            padding: 3px 0;
+            padding-left: 18px;
+            position: relative;
+        }
+        .not-checked li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: var(--fail-red);
+            font-weight: 700;
+        }
+
+        /* ═══ CTA BOX ═══ */
+        .cta-box {
+            text-align: center;
+            padding: 20px;
+            background: var(--lbe-green-light);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .cta-box p {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .cta-box a {
+            display: inline-block;
+            padding: 10px 28px;
+            background: var(--lbe-green);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .cta-box a:hover { background: var(--lbe-green-dark); }
+
+        /* ═══ STANDARDS FOOTER ═══ */
+        .standards-footer {
+            text-align: center;
+            padding: 16px 20px;
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ═══ NAV FOOTER (v15) ═══ */
+        .v15-nav-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--lbe-dark-alt);
+            border-top: 3px solid var(--lbe-green);
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            font-size: 12px;
+        }
+        .v15-nav-footer .footer-left { color: #94a3b8; }
+        .v15-nav-footer .footer-right a {
+            color: var(--lbe-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .v15-nav-footer .footer-right a:hover { text-decoration: underline; }
+
+        /* ═══ PRINT STYLES ═══ */
+        @media print {
+  .cta-bar, .sample-bar { display: none !important; }
+
+            .np { display: none !important; }
+            .calc-btn { display: none !important; }
+            body { background: #fff; padding-bottom: 0; }
+            .container { max-width: 100%; }
+            .tool-header { border-radius: 0; }
+            .card { border-radius: 0; border: none; }
+            .results-section.visible { page-break-before: auto; }
+            .scorecard-table { font-size: 11px; }
+            .scorecard-table th { background: #333 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 640px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .tool-header h1 { font-size: 18px; }
+            .overall-rating .rating-value { font-size: 36px; }
+        }
+    
+
+/* ═══ PRINT BUTTON ═══ */
+.print-btn {
+  width: 100%; margin-top: 12px; padding: 10px; background: #f1f5f9;
+  border: 1px solid #e2e8f0; border-radius: 8px; font-size: 13px;
+  font-weight: 600; color: #475569; cursor: pointer; font-family: inherit;
+}
+.print-btn:hover { background: #e2e8f0; }
+
+
+/* ═══ WHAT THIS MEANS ═══ */
+.wtm-panel {
+  background: linear-gradient(135deg, #f8fafc, #f0f9ff);
+  border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 16px 20px; margin-top: 16px;
+}
+.wtm-panel h4 { font-size: 14px; color: #1e40af; margin-bottom: 8px; }
+.wtm-panel p { font-size: 13px; color: #334155; line-height: 1.6; }
+
+
+/* ═══ LOAD SAMPLE BUTTON ═══ */
+.demo-btn {
+  padding: 8px 16px; background: #f1f5f9; border: 1px solid #cbd5e1;
+  border-radius: 6px; font-size: 12px; font-weight: 600; color: #475569;
+  cursor: pointer; margin-left: 8px; transition: background 0.2s;
+}
+.demo-btn:hover { background: #e2e8f0; }
+
+/* ═══ GOLD CTA BAR (A+ compliance) ═══ */
+.cta-bar {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #5cdb8f;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+  text-align: center;
+  color: #ffffff;
+}
+.cta-bar h3 { color: #5cdb8f; font-size: 18px; margin: 0 0 8px; font-weight: 700; }
+.cta-bar .cta-service { font-size: 15px; color: #e5e7eb; margin: 0 0 4px; }
+.cta-bar .cta-price { font-size: 14px; color: #9ca3af; margin: 0 0 16px; }
+.cta-bar .cta-btn {
+  display: inline-block; padding: 10px 28px; background: #5cdb8f; color: #1a1a1a;
+  border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px;
+  transition: background 0.2s;
+}
+.cta-bar .cta-btn:hover { background: #4bc97d; }
+.sample-bar {
+  background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+  padding: 12px 20px; margin: 12px 0; text-align: center; font-size: 13px; color: #374151;
+}
+.sample-bar a { color: #166534; font-weight: 600; text-decoration: none; }
+.sample-bar a:hover { text-decoration: underline; }
+
+</style>
+</head>
+<body>
+
+<!-- ═══ LAYER 1: BLANK SCREEN GUARD ═══ -->
+<script>
+window.onerror = function(msg, src, line, col, err) {
+    var el = document.getElementById('app-root');
+    if (el && (!el.innerHTML || el.innerHTML.trim() === '')) {
+        el.innerHTML = '<div style="max-width:700px;margin:60px auto;font-family:system-ui;padding:24px;border:2px solid #dc2626;border-radius:12px;background:#fef2f2">'
+            + '<h2 style="color:#dc2626;margin:0 0 12px">⚠️ Tool Error — Not a Blank Screen</h2>'
+            + '<p style="color:#374151;margin:0 0 8px"><strong>DC-R-EED-001 v1.0.6</strong> failed to load.</p>'
+            + '<div style="background:#1f2937;color:#f87171;padding:12px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;margin:12px 0">'
+            + 'Error: ' + msg + '\nLine: ' + line + ', Col: ' + col
+            + (err && err.stack ? '\n\nStack:\n' + err.stack.substring(0, 500) : '')
+            + '</div>'
+            + '<p style="color:#6b7280;font-size:13px;margin:8px 0 0">Copy this error and send to LM. The tool needs a fix before deployment.</p>'
+            + '</div>';
+    }
+    return false;
+};
+</script>
+
+<!-- ═══ LAYER 2: DOMAIN LOCK ═══ -->
+<script>
+(function() {
+    var allowed = ['legacybe.ie', 'www.legacybe.ie', 'lbe-tools.netlify.app', 'localhost', '127.0.0.1', ''];
+    var host = window.location.hostname;
+    if (allowed.indexOf(host) === -1) {
+        document.body.innerHTML = '<div style="max-width:600px;margin:80px auto;padding:32px;border:3px solid #dc2626;border-radius:12px;background:#fef2f2;text-align:center;font-family:system-ui">'
+            + '<h2 style="color:#dc2626;margin:0 0 12px">🔒 Unauthorised Copy</h2>'
+            + '<p style="color:#374151">This tool is the property of <strong>Legacy Business Engineers Ltd</strong>.</p>'
+            + '<p style="color:#6b7280;font-size:13px;margin-top:8px">Licensed use only. Contact: info@legacybe.ie</p></div>';
+        throw new Error('Domain not authorised: ' + host);
+    }
+
+})();
+</script>
+
+<!-- ═══ FINGERPRINT ═══ -->
+<script>
+var _aimep_lineage = {
+    origin: 'Legacy Business Engineers Ltd',
+    tool: 'DC-R-EED-001',
+    version: '1.0.6',
+    license: 'T1 DC Screening — Legacy Business Engineers Ltd',
+    build: '2026-02-28',
+    classification: 'T2-SCREENING',
+    notice: '© 2026 Legacy Business Engineers Ltd. All rights reserved.'
+};
+</script>
+
+<div id="app-root">
+<div class="container">
+
+    <!-- ═══ HEADER ═══ -->
+    <div class="tool-header">
+        <div class="tool-header-brand">
+            <img src="data:image/png;base64,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" alt="LBE" style="height:36px;border-radius:50%" onerror="this.style.display='none'" />
+            <span class="tool-header-company">Legacy Business Engineers Ltd</span>
+        </div>
+        <h1>EED Compliance Gap Checker</h1>
+        <div class="tool-header-subtitle">EU Energy Efficiency Directive Art.12 — Data Centre Reporting & Performance Assessment</div>
+        <span class="tool-header-version">DC-R-EED-001 v1.0.6 | T1 DC Screening</span>
+    </div>
+
+    <!-- ═══ AUDIENCE BAR ═══ -->
+    <div class="v15-audience-bar np">BUILT FOR: DATA CENTRE OPERATORS &amp; INVESTORS</div>
+    <div class="v15-audience-line np">🖥️ Segment: Data Centres — Retrofit | DC-R-EED-001 | legacybe.ie</div>
+
+    <!-- ═══ SEG BANNER ═══ -->
+    <div class="seg-banner">
+        <strong>EED Art.12 Compliance Screening:</strong> Map your facility's current performance against EU Energy Efficiency Directive reporting requirements and expected minimum performance standards. Identifies gaps, prioritises actions, and flags upcoming deadlines.
+    </div>
+
+    <!-- ═══ MAIN CARD ═══ -->
+    <div class="card">
+
+        <!-- SAMPLE BANNER -->
+        <div class="v15-sample np">
+            📊 This is an indicative screening tool. For a site-specific DC Retrofit Diagnostic,
+            <a href="https://legacybe.ie/contact">talk to an engineer →</a>
+        </div>
+
+        <div class="card-body">
+
+            <!-- ═══ INPUT FORM ═══ -->
+            <div class="form-section">
+                <div class="form-section-title">Facility Parameters</div>
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="itPower">IT Power Demand (kW)</label>
+                        <input type="number" id="itPower" value="5000" min="50" max="500000" step="100"
+                            title="Meaning: Total IT electrical load at the facility. Typical: 500–50,000 kW for reporting-scope DCs. Source: EN 50600-4-2. Warning: ≥500 kW triggers mandatory EED Art.12 reporting.">
+                        <span class="unit-hint">≥500 kW = EED reporting scope</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="annualPue">Annual PUE</label>
+                        <input type="number" id="annualPue" value="1.5" min="1.0" max="3.0" step="0.01"
+                            title="Meaning: Power Usage Effectiveness — ratio of total facility energy to IT energy. Typical: 1.2–1.8 for existing facilities. Source: EN 50600-4-2. Warning: >1.5 may fail expected 2026 threshold.">
+                        <span class="unit-hint">1.0 = perfect, typical 1.3–1.8</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="annualWue">Annual WUE (l/kWh)</label>
+                        <input type="number" id="annualWue" value="1.8" min="0" max="5.0" step="0.1"
+                            title="Meaning: Water Usage Effectiveness — litres of water per kWh IT energy. Typical: 0 (air-cooled) to 1.5–2.5 (evaporative). Source: EN 50600-4-9. Warning: >0.5 l/kWh may trigger future compliance action for water-cooled systems.">
+                        <span class="unit-hint">0 = air-cooled, 1.5–2.5 = evaporative</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="renewableShare">Renewable Energy Share (%)</label>
+                        <input type="number" id="renewableShare" value="30" min="0" max="100" step="1"
+                            title="Meaning: Percentage of annual electricity from verified renewable sources (PPAs, GoOs, on-site generation). Typical: 20–80% for Irish DCs. Source: EU EED 2023/1791, CRU Dec 2025. Warning: CRU requires 80% for new grid connections.">
+                        <span class="unit-hint">CRU: 80% for new connections</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wasteHeat">Waste Heat Utilised (%)</label>
+                        <input type="number" id="wasteHeat" value="0" min="0" max="100" step="1"
+                            title="Meaning: Percentage of waste heat captured and reused (district heating, process heat, etc.). Typical: 0–5% in Ireland, 10–30% in Nordics. Source: EED Art.12(3). Warning: Reporting is mandatory; utilisation targets expected from 2028.">
+                        <span class="unit-hint">EED: must report, targets expected 2028</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ems">Energy Management System</label>
+                        <select id="ems"
+                            title="Meaning: Level of energy management certification. Typical: ISO 50001 for >5MW facilities. Source: EED Art.12, EU Delegated Reg 2024/1364. Warning: ISO 50001 expected mandatory for >1MW by 2027.">
+                            <option value="iso50001">ISO 50001 Certified</option>
+                            <option value="ems_uncertified">EMS in place (not certified)</option>
+                            <option value="none" selected>No EMS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tempSetpoint">Cold Aisle Supply Temp (°C)</label>
+                        <input type="number" id="tempSetpoint" value="20" min="15" max="30" step="0.5"
+                            title="Meaning: Supply air temperature to IT equipment cold aisle. Typical: 18–27°C per ASHRAE A1. Source: ASHRAE TC 9.9, EN 50600-2-3. Warning: <18°C wastes energy; >27°C risks equipment reliability.">
+                        <span class="unit-hint">ASHRAE A1: 18–27°C recommended</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="backupFuel">Backup Generation Fuel</label>
+                        <select id="backupFuel"
+                            title="Meaning: Primary fuel for standby generation. Typical: Diesel (legacy), HVO/Battery (new). Source: EU Clean Air Directive, EED reporting. Warning: Diesel phase-out trajectory expected; HVO is a drop-in replacement.">
+                            <option value="diesel" selected>Diesel</option>
+                            <option value="hvo">HVO (Hydrotreated Vegetable Oil)</option>
+                            <option value="gas">Natural Gas</option>
+                            <option value="battery">Battery (BESS)</option>
+                            <option value="none">None / Grid Only</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="annualEnergy">Annual Energy Consumption (MWh)</label>
+                        <input type="number" id="annualEnergy" value="43800" min="100" max="5000000" step="100"
+                            title="Meaning: Total facility electrical energy per year. Typical: IT kW × 8,760 × PUE / 1000. Source: EN 50600-4-2. Warning: Cross-check against PUE × IT load for consistency.">
+                        <span class="unit-hint">Total facility incl. cooling/UPS</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dcType">Data Centre Type</label>
+                        <select id="dcType"
+                            title="Meaning: Operational model of the facility. Typical: Colocation most common in Ireland. Source: EU Delegated Reg 2024/1364. Warning: Colocation operators must report per-facility data, not per-tenant.">
+                            <option value="enterprise">Enterprise (single-tenant)</option>
+                            <option value="colocation" selected>Colocation</option>
+                            <option value="cohosting">Co-hosting / Managed</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="commYear">Commissioning Year</label>
+                        <input type="number" id="commYear" value="2014" min="2000" max="2026" step="1"
+                            title="Meaning: Year the facility became operational. Typical: Irish DC boom 2010–2022. Source: Facility records. Warning: Pre-2014 facilities often have highest upgrade requirements. Facilities commissioned after July 2025 may face stricter thresholds.">
+                        <span class="unit-hint">Newer facilities = tighter thresholds</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location"
+                            title="Meaning: Geographic location affects grid emissions, CRU rules, and district heating options. Typical: 90%+ of Irish DC capacity in Dublin/GDA. Source: CRU, EirGrid. Warning: Dublin DCs face specific CRU moratorium conditions (lifted Dec 2025 with conditions).">
+                            <option value="dublin" selected>Dublin / GDA</option>
+                            <option value="cork">Cork</option>
+                            <option value="regional">Regional Ireland</option>
+                            <option value="other_eu">Other EU</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CALCULATE BUTTON -->
+            <button class="calc-btn" onclick="runAssessment()">Run EED Compliance Assessment</button>
+            <button class="demo-btn np" onclick="loadSample()" style="margin-top:8px">📊 Load Sample</button>
+
+            <!-- ═══ RESULTS ═══ -->
+            <div id="resultsSection" class="results-section">
+
+                <!-- SCOPE CHECK -->
+                <div id="scopeNotice" class="scope-notice" style="display:none;"></div>
+
+                <!-- OVERALL RATING -->
+                <div id="overallRating" class="overall-rating">
+                    <div class="results-header">
+                        <h2>EED Compliance Assessment</h2>
+                    </div>
+                    <div id="ratingValue" class="rating-value">—</div>
+                    <div id="ratingLabel" class="rating-label">KPIs at or above threshold</div>
+                    <div class="rating-bar">
+                        <div id="ratingFill" class="rating-fill" style="width:0%;"></div>
+                    </div>
+                </div>
+
+                <!-- KPI SCORECARD TABLE -->
+                <div style="overflow-x:auto;">
+                    <table class="scorecard-table" id="scorecardTable">
+                        <thead>
+                            <tr>
+                                <th>KPI</th>
+                                <th>Your Value</th>
+                                <th>Threshold</th>
+                                <th>Gap</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scorecardBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- REGULATORY TIMELINE -->
+                <div style="margin-bottom:20px;">
+                    <div class="form-section-title">Regulatory Timeline</div>
+                    <div id="timelineContent"></div>
+                </div>
+
+                <!-- PRIORITY ACTIONS -->
+                <div style="margin-bottom:20px;">
+                    <div class="form-section-title">Priority Actions</div>
+                    <div id="actionsContent"></div>
+                </div>
+
+                <!-- REPORTING CHECKLIST -->
+                <div style="margin-bottom:20px;">
+                    <div class="form-section-title">EED Reporting Checklist</div>
+                    <div id="checklistContent"></div>
+                </div>
+
+                <!-- VALUE ENGINEERING TIPS -->
+                <div style="margin-bottom:20px;">
+                    <div class="form-section-title">Value Engineering Tips</div>
+                    <div id="tipsContent"></div>
+                </div>
+
+                <!-- CTA BOX -->
+                <!-- Old CTA removed — replaced by gold CTA bar -->
+
+                <!-- NOT CHECKED PANEL — always shown after results -->
+                <div class="not-checked">
+                    <h3>⚠️ NOT CHECKED BY THIS TOOL</h3>
+                    <ul>
+                        <li>Actual EED database submission status or past filings</li>
+                        <li>National transposition specifics beyond Ireland</li>
+                        <li>ICT equipment inventory (servers/storage installed post June 2024)</li>
+                        <li>Specific renewable PPA contract terms or additionality</li>
+                        <li>District heating network proximity or connection feasibility</li>
+                    </ul>
+                </div>
+
+                <!-- ═══ CONFIDENCE PANEL (Calc Integrity Law 7) ═══ -->
+                <div class="confidence-panel">
+                    <h4>📊 HOW RELIABLE IS THIS RESULT?</h4>
+                    <table>
+                        <tr><th>Data Point</th><th>Source</th><th>Tier</th></tr>
+                        <tr><td>IT Power, PUE, Facility Age</td><td>User-supplied — accuracy depends on measurement quality</td><td><span class="tier-badge t1">T1</span> if metered, <span class="tier-badge t4">T4</span> if estimated</td></tr>
+                        <tr><td>EED Thresholds (500 kW IT reporting)</td><td>EU EED 2023/1791 Article 12</td><td><span class="tier-badge t1">T1</span></td></tr>
+                        <tr><td>Delegated Regulation Requirements</td><td>EU Delegated Regulation 2024/1364</td><td><span class="tier-badge t1">T1</span></td></tr>
+                        <tr><td>EU Taxonomy PUE ≤1.3</td><td>EU Delegated Act 2021/2139</td><td><span class="tier-badge t1">T1</span></td></tr>
+                        <tr><td>CRU 80% Renewable Obligation</td><td>CRU Decision Paper CRU2025236, Dec 2025</td><td><span class="tier-badge t1">T1</span></td></tr>
+                        <tr><td>Grid Emission Factor (0.2241 kgCO₂/kWh)</td><td>SEAI 2026 published national grid factor</td><td><span class="tier-badge t1">T1</span></td></tr>
+                        <tr><td>Compliance Cost Estimates</td><td>LBE project experience + metering vendor quotations</td><td><span class="tier-badge t3">T3</span></td></tr>
+                    </table>
+                    <p style="margin-top:10px;font-style:italic;">T1 = published standard/regulation · T2 = peer-reviewed/industry data · T3 = engineering estimate · T4 = professional judgement. Regulatory thresholds are definitive; cost estimates carry ±30% uncertainty.</p>
+                </div>
+
+
+            </div><!-- /results-section -->
+
+        </div><!-- /card-body -->
+    </div><!-- /card -->
+
+    <!-- ═══ STANDARDS FOOTER ═══ -->
+    <div class="standards-footer">
+        References: EU EED 2023/1791 Art.12 | EU Delegated Regulation 2024/1364 | EN 50600-4-2 (PUE) |
+        EN 50600-4-9 (WUE) | ASHRAE TC 9.9 | CRU Dec 2025 (DC moratorium conditions) |
+        SEAI Emission Factors 2026 (0.2241 kgCO₂/kWh) | CIBSE Guide F (Energy Efficiency) |
+        RICS NRM1 (cost estimates ±30%)<br>
+        <em>Screening tool for indicative assessment only. Not a substitute for professional compliance advice.
+        Cost estimates are order-of-magnitude (±30% per RICS NRM1 Class 5).</em><br>
+        © 2026 Legacy Business Engineers Ltd · legacybe.ie
+    </div>
+
+</div><!-- /container -->
+</div><!-- /app-root -->
+
+<!-- ═══ NAV FOOTER ═══ -->
+
+<!-- ═══ GOLD CTA BAR (A+ compliance) ═══ -->
+<div class="cta-bar np">
+  <h3>Got the answers? Here's what to do next.</h3>
+  <p class="cta-service">DC Retrofit Diagnostic — site-specific assessment with chartered engineer sign-off</p>
+  <p class="cta-price">From €5,000 + VAT · Delivered in 5 working days</p>
+  <a href="https://legacybe.ie/contact?service=S4+DC+Retrofit+Diagnostic" class="cta-btn">Talk to an Engineer →</a>
+</div>
+
+<!-- ═══ SAMPLE BAR ═══ -->
+<div class="sample-bar np">
+  📊 See what an DC Retrofit Diagnostic delivers — <a href="https://legacybe.ie/dc-sample-report" target="_blank">View Sample Report →</a>
+</div>
+
+<div class="v15-nav-footer np">
+    <span class="footer-left">© 2026 Legacy Business Engineers Ltd</span>
+    <span class="footer-right"><a href="https://legacybe.ie/contact">Talk to an Engineer →</a></span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     CALCULATION ENGINE — DC-R-EED-001 v1.0.6
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+    'use strict';
+
+    // ═══ KPI THRESHOLD DEFINITIONS ═══
+    var KPI_DEFS = [
+        {
+            id: 'pue',
+            name: 'Power Usage Effectiveness (PUE)',
+            standard: 'EN 50600-4-2',
+            getThreshold: function(inputs) {
+                // Existing facilities: 1.5 by 2026, 1.3 by 2030 expected
+                return { value: 1.5, label: '≤ 1.5', note: 'Expected 2026 threshold (≤1.3 by 2030)', mandatory: 'expected' };
+            },
+            getValue: function(inputs) { return inputs.annualPue; },
+            getGap: function(val, thr) {
+                if (val <= thr.value) return { text: 'None', class: '' };
+                return { text: '+' + (val - thr.value).toFixed(2), class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val <= 1.3) return 'pass';
+                if (val <= thr.value) return 'pass';
+                if (val <= 1.7) return 'at-risk';
+                return 'fail';
+            }
+        },
+        {
+            id: 'wue',
+            name: 'Water Usage Effectiveness (WUE)',
+            standard: 'EN 50600-4-9',
+            getThreshold: function(inputs) {
+                return { value: 0.5, label: '≤ 0.5 l/kWh', note: 'Water-cooled; 0 for air-cooled. Expected threshold.', mandatory: 'expected' };
+            },
+            getValue: function(inputs) { return inputs.annualWue; },
+            getGap: function(val, thr) {
+                if (val <= thr.value) return { text: 'None', class: '' };
+                return { text: '+' + (val - thr.value).toFixed(1) + ' l/kWh', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val <= thr.value) return 'pass';
+                if (val <= 1.5) return 'at-risk';
+                return 'fail';
+            }
+        },
+        {
+            id: 'ref',
+            name: 'Renewable Energy Factor (REF)',
+            standard: 'EED Art.12, CRU Dec 2025',
+            getThreshold: function(inputs) {
+                var thr = inputs.location === 'dublin' ? 80 : 50;
+                var label = inputs.location === 'dublin' ? '≥ 80% (CRU)' : '≥ 50% (EU expected)';
+                return { value: thr, label: label, note: 'Dublin: CRU 80%; EU-wide 50% expected', mandatory: inputs.location === 'dublin' ? 'mandatory' : 'expected' };
+            },
+            getValue: function(inputs) { return inputs.renewableShare; },
+            getGap: function(val, thr) {
+                if (val >= thr.value) return { text: 'None', class: '' };
+                return { text: '-' + (thr.value - val) + '%', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val >= thr.value) return 'pass';
+                if (val >= thr.value * 0.7) return 'at-risk';
+                return 'fail';
+            }
+        },
+        {
+            id: 'erf',
+            name: 'Energy Reuse Factor (Waste Heat)',
+            standard: 'EED Art.12(3)',
+            getThreshold: function(inputs) {
+                return { value: 10, label: '≥ 10% (2026), ≥ 20% (2028)', note: 'German EEA s.11 benchmark. EU-wide targets under discussion.', mandatory: 'expected' };
+            },
+            getValue: function(inputs) { return inputs.wasteHeat; },
+            getGap: function(val, thr) {
+                if (val >= thr.value) return { text: 'None', class: '' };
+                return { text: '-' + (thr.value - val) + '%', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val >= 20) return 'pass';
+                if (val >= 10) return 'at-risk';
+                if (val > 0) return 'at-risk';
+                return 'fail';
+            }
+        },
+        {
+            id: 'temp',
+            name: 'Temperature Setpoints',
+            standard: 'ASHRAE TC 9.9, EN 50600-2-3',
+            getThreshold: function(inputs) {
+                return { value: 27, label: '18–27°C (ASHRAE A1)', note: 'Higher setpoints save energy. Below 18°C wastes cooling.', mandatory: 'reporting' };
+            },
+            getValue: function(inputs) { return inputs.tempSetpoint; },
+            getGap: function(val, thr) {
+                if (val >= 18 && val <= 27) return { text: 'In range', class: '' };
+                if (val < 18) return { text: (18 - val).toFixed(1) + '°C below optimum', class: 'gap-value' };
+                return { text: (val - 27).toFixed(1) + '°C above A1 limit', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val >= 22 && val <= 27) return 'pass';
+                if (val >= 18 && val < 22) return 'at-risk';
+                if (val < 18) return 'fail';
+                return 'at-risk'; // >27
+            }
+        },
+        {
+            id: 'ems',
+            name: 'Energy Management System',
+            standard: 'ISO 50001, EED Art.12',
+            getThreshold: function(inputs) {
+                var required = (inputs.itPower >= 1000) ? 'ISO 50001 expected for >1MW' : 'EMS recommended';
+                return { value: 'iso50001', label: required, note: 'ISO 50001 certification expected mandatory for >1MW by 2027.', mandatory: inputs.itPower >= 1000 ? 'expected' : 'recommended' };
+            },
+            getValue: function(inputs) { return inputs.ems; },
+            getGap: function(val, thr) {
+                if (val === 'iso50001') return { text: 'None', class: '' };
+                if (val === 'ems_uncertified') return { text: 'Certification needed', class: 'gap-value' };
+                return { text: 'No EMS in place', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val === 'iso50001') return 'pass';
+                if (val === 'ems_uncertified') return 'at-risk';
+                return 'fail';
+            }
+        },
+        {
+            id: 'backup',
+            name: 'Backup Generation Fuel',
+            standard: 'EU Clean Air Directive, EED Reporting',
+            getThreshold: function(inputs) {
+                return { value: 'hvo', label: 'HVO / Battery preferred', note: 'Diesel phase-out trajectory expected. HVO is drop-in replacement.', mandatory: 'expected' };
+            },
+            getValue: function(inputs) { return inputs.backupFuel; },
+            getGap: function(val, thr) {
+                if (val === 'battery' || val === 'none') return { text: 'None', class: '' };
+                if (val === 'hvo') return { text: 'None', class: '' };
+                if (val === 'gas') return { text: 'Transition to HVO/BESS', class: 'gap-value' };
+                return { text: 'Diesel phase-out required', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val === 'battery' || val === 'none' || val === 'hvo') return 'pass';
+                if (val === 'gas') return 'at-risk';
+                return 'fail'; // diesel
+            }
+        },
+        {
+            id: 'energy_report',
+            name: 'Annual Energy Reporting',
+            standard: 'EU Delegated Reg 2024/1364',
+            getThreshold: function(inputs) {
+                return { value: 'submitted', label: 'Must report to EU DB', note: 'First deadline Sept 2024 (reference data). Next: 15 May 2026.', mandatory: 'mandatory' };
+            },
+            getValue: function(inputs) {
+                // This is a reporting check — always flag as needing verification
+                return inputs.itPower >= 500 ? 'in_scope' : 'out_scope';
+            },
+            getGap: function(val, thr) {
+                if (val === 'out_scope') return { text: 'N/A (below 500kW)', class: '' };
+                return { text: 'Verify submission status', class: 'gap-value' };
+            },
+            getStatus: function(val, thr) {
+                if (val === 'out_scope') return 'na';
+                return 'at-risk'; // Cannot verify from this tool — always flag
+            }
+        }
+    ];
+
+    // ═══ GATHER INPUTS ═══
+    function getInputs() {
+        return {
+            itPower: parseFloat(document.getElementById('itPower').value) || 5000,
+            annualPue: parseFloat(document.getElementById('annualPue').value) || 1.5,
+            annualWue: parseFloat(document.getElementById('annualWue').value) || 1.8,
+            renewableShare: parseFloat(document.getElementById('renewableShare').value) || 30,
+            wasteHeat: parseFloat(document.getElementById('wasteHeat').value) || 0,
+            ems: document.getElementById('ems').value,
+            tempSetpoint: parseFloat(document.getElementById('tempSetpoint').value) || 20,
+            backupFuel: document.getElementById('backupFuel').value,
+            annualEnergy: parseFloat(document.getElementById('annualEnergy').value) || 43800,
+            dcType: document.getElementById('dcType').value,
+            commYear: parseInt(document.getElementById('commYear').value) || 2014,
+            location: document.getElementById('location').value
+        };
+    }
+
+    // ═══ FORMAT DISPLAY VALUES ═══
+    function displayValue(kpi, inputs) {
+        var val = kpi.getValue(inputs);
+        switch (kpi.id) {
+            case 'pue': return val.toFixed(2);
+            case 'wue': return val.toFixed(1) + ' l/kWh';
+            case 'ref': return val + '%';
+            case 'erf': return val + '%';
+            case 'temp': return val + '°C';
+            case 'ems':
+                if (val === 'iso50001') return 'ISO 50001';
+                if (val === 'ems_uncertified') return 'EMS (uncertified)';
+                return 'No EMS';
+            case 'backup':
+                var labels = { diesel: 'Diesel', hvo: 'HVO', gas: 'Natural Gas', battery: 'Battery', none: 'None' };
+                return labels[val] || val;
+            case 'energy_report':
+                return val === 'in_scope' ? 'In scope (≥500kW)' : 'Below threshold';
+            default: return String(val);
+        }
+    }
+
+    // ═══ STATUS BADGE HTML ═══
+    function statusBadge(status) {
+        var labels = { pass: 'PASS', 'at-risk': 'AT RISK', fail: 'FAIL', na: 'N/A' };
+        var classes = { pass: 'badge-pass', 'at-risk': 'badge-at-risk', fail: 'badge-fail', na: 'badge-na' };
+        return '<span class="status-badge ' + (classes[status] || 'badge-na') + '">' + (labels[status] || status) + '</span>';
+    }
+
+    // ═══ BUILD SCORECARD ═══
+    function buildScorecard(inputs) {
+        var tbody = document.getElementById('scorecardBody');
+        var results = [];
+        var passCount = 0;
+        var totalCount = 0;
+
+        tbody.innerHTML = '';
+
+        KPI_DEFS.forEach(function(kpi) {
+            var val = kpi.getValue(inputs);
+            var thr = kpi.getThreshold(inputs);
+            var gap = kpi.getGap(val, thr);
+            var status = kpi.getStatus(val, thr);
+
+            if (status !== 'na') totalCount++;
+            if (status === 'pass') passCount++;
+
+            var row = '<tr>'
+                + '<td><strong>' + kpi.name + '</strong><br><span style="font-size:10px;color:#94a3b8">' + kpi.standard + '</span></td>'
+                + '<td>' + displayValue(kpi, inputs) + '</td>'
+                + '<td>' + thr.label + '<br><span style="font-size:10px;color:#94a3b8">' + thr.mandatory + '</span></td>'
+                + '<td class="' + gap.class + '">' + gap.text + '</td>'
+                + '<td>' + statusBadge(status) + '</td>'
+                + '</tr>';
+            tbody.innerHTML += row;
+
+            results.push({ kpi: kpi, value: val, threshold: thr, gap: gap, status: status });
+        });
+
+        return { results: results, passCount: passCount, totalCount: totalCount };
+    }
+
+    // ═══ BUILD OVERALL RATING ═══
+    function buildOverallRating(passCount, totalCount) {
+        var pct = totalCount > 0 ? Math.round((passCount / totalCount) * 100) : 0;
+        var ratingEl = document.getElementById('ratingValue');
+        var labelEl = document.getElementById('ratingLabel');
+        var fillEl = document.getElementById('ratingFill');
+        var containerEl = document.getElementById('overallRating');
+
+        ratingEl.textContent = passCount + ' / ' + totalCount;
+        labelEl.textContent = 'KPIs at or above threshold (' + pct + '%)';
+        fillEl.style.width = pct + '%';
+
+        if (pct >= 80) {
+            ratingEl.style.color = 'var(--pass-green)';
+            fillEl.style.background = 'var(--pass-green)';
+            containerEl.style.borderColor = 'var(--pass-green)';
+        } else if (pct >= 50) {
+            ratingEl.style.color = 'var(--warn-amber)';
+            fillEl.style.background = 'var(--warn-amber)';
+            containerEl.style.borderColor = 'var(--warn-amber)';
+        } else {
+            ratingEl.style.color = 'var(--fail-red)';
+            fillEl.style.background = 'var(--fail-red)';
+            containerEl.style.borderColor = 'var(--fail-red)';
+        }
+    }
+
+    // ═══ BUILD PRIORITY ACTIONS ═══
+    function buildActions(results, inputs) {
+        var container = document.getElementById('actionsContent');
+        container.innerHTML = '';
+
+        var actions = [];
+
+        results.forEach(function(r) {
+            if (r.status === 'pass' || r.status === 'na') return;
+
+            var priority, pClass, action, timeline, cost;
+
+            switch (r.kpi.id) {
+                case 'pue':
+                    priority = r.status === 'fail' ? 1 : 2;
+                    pClass = r.status === 'fail' ? 'p-high' : 'p-med';
+                    action = 'Reduce PUE from ' + inputs.annualPue.toFixed(2) + ' to ≤1.5';
+                    timeline = '6–18 months (containment + VFDs + free cooling optimisation)';
+                    cost = 'Typical €200k–€800k per MW IT depending on current cooling type';
+                    break;
+                case 'wue':
+                    priority = r.status === 'fail' ? 2 : 3;
+                    pClass = r.status === 'fail' ? 'p-high' : 'p-med';
+                    action = 'Reduce WUE from ' + inputs.annualWue.toFixed(1) + ' to ≤0.5 l/kWh';
+                    timeline = '12–24 months (cooling system transition to closed-loop or air)';
+                    cost = 'Varies significantly by current cooling technology; assess options first';
+                    break;
+                case 'ref':
+                    priority = inputs.location === 'dublin' ? 1 : 2;
+                    pClass = inputs.location === 'dublin' ? 'p-high' : 'p-med';
+                    action = 'Increase renewable share from ' + inputs.renewableShare + '% to ≥' + r.threshold.value + '%';
+                    timeline = '3–12 months (PPA procurement or GoO purchasing)';
+                    cost = 'PPA pricing varies; typically within €5–€15/MWh premium over wholesale';
+                    break;
+                case 'erf':
+                    priority = 3;
+                    pClass = 'p-med';
+                    action = 'Assess and begin waste heat utilisation (currently ' + inputs.wasteHeat + '%)';
+                    timeline = '12–36 months (feasibility study → heat network connection)';
+                    cost = '€100k–€500k for connection; ongoing revenue €30–€60/MWh_th';
+                    break;
+                case 'temp':
+                    priority = inputs.tempSetpoint < 18 ? 1 : 3;
+                    pClass = inputs.tempSetpoint < 18 ? 'p-high' : 'p-low';
+                    action = 'Adjust cold aisle setpoint to 22–25°C (currently ' + inputs.tempSetpoint + '°C)';
+                    timeline = '1–3 months (operational change, possible firmware updates)';
+                    cost = 'Minimal — operational procedure change, free cooling hours increase';
+                    break;
+                case 'ems':
+                    priority = inputs.itPower >= 1000 ? 2 : 3;
+                    pClass = inputs.itPower >= 1000 ? 'p-med' : 'p-low';
+                    action = inputs.ems === 'ems_uncertified' ? 'Achieve ISO 50001 certification' : 'Implement and certify ISO 50001 EMS';
+                    timeline = inputs.ems === 'ems_uncertified' ? '3–6 months to certification' : '6–12 months implementation + certification';
+                    cost = '€30k–€80k for implementation; €10k–€20k annual maintenance';
+                    break;
+                case 'backup':
+                    priority = 3;
+                    pClass = 'p-low';
+                    action = inputs.backupFuel === 'diesel' ? 'Transition from diesel to HVO fuel (drop-in replacement)' : 'Plan transition to HVO or battery backup';
+                    timeline = inputs.backupFuel === 'diesel' ? '1–3 months (fuel switch); 12–24 months (BESS)' : '6–18 months';
+                    cost = 'HVO: 10–15% fuel cost premium. BESS: €200k–€500k/MW';
+                    break;
+                case 'energy_report':
+                    priority = 1;
+                    pClass = 'p-high';
+                    action = 'Verify EED database submission status — next deadline 15 May 2026';
+                    timeline = 'Immediate — gather data now, submit before deadline';
+                    cost = 'Internal effort; consider external consultant for first submission (€5k–€15k)';
+                    break;
+            }
+
+            actions.push({ priority: priority, pClass: pClass, kpi: r.kpi.name, action: action, timeline: timeline, cost: cost });
+        });
+
+        // Sort by priority (1=highest)
+        actions.sort(function(a, b) { return a.priority - b.priority; });
+
+        if (actions.length === 0) {
+            container.innerHTML = '<div class="action-card" style="border-color:var(--pass-green);background:var(--pass-bg);">'
+                + '<div class="action-content"><div class="action-title" style="color:var(--pass-green);">✓ All KPIs within threshold</div>'
+                + '<div class="action-desc">No urgent compliance actions required. Continue monitoring for 2030 targets.</div></div></div>';
+            return;
+        }
+
+        var num = 1;
+        actions.forEach(function(a) {
+            container.innerHTML += '<div class="action-card">'
+                + '<div class="action-priority ' + a.pClass + '">' + num + '</div>'
+                + '<div class="action-content">'
+                + '<div class="action-title">' + a.action + '</div>'
+                + '<div class="action-desc">' + a.kpi + '</div>'
+                + '<div class="action-meta">⏱ ' + a.timeline + ' &nbsp;|&nbsp; 💰 ' + a.cost + '</div>'
+                + '</div></div>';
+            num++;
+        });
+    }
+
+    // ═══ BUILD REPORTING CHECKLIST ═══
+    function buildChecklist(inputs) {
+        var container = document.getElementById('checklistContent');
+        container.innerHTML = '';
+
+        var inScope = inputs.itPower >= 500;
+
+        var items = [
+            { icon: inScope ? '📋' : '⬜', text: 'EED Art.12 scope: IT demand ' + inputs.itPower + ' kW ' + (inScope ? '≥ 500 kW — IN SCOPE' : '< 500 kW — currently not in scope'), deadline: inScope ? '' : 'Monitor — scope may expand' },
+            { icon: '📊', text: 'Report PUE (annualised, EN 50600-4-2 methodology)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '💧', text: 'Report WUE (EN 50600-4-9)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '⚡', text: 'Report total annual energy consumption (MWh)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '🌿', text: 'Report renewable energy share (%) with evidence (PPAs, GoOs)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '♨️', text: 'Report waste heat assessment and utilisation (mandatory assessment for >1MW)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '🌡️', text: 'Report temperature setpoints (cold aisle supply)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '🔋', text: 'Report backup generation type and fuel', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '🖥️', text: 'Report ICT capacity (servers + storage installed after June 2024)', deadline: inScope ? 'Due: 15 May 2026' : '' },
+            { icon: '🏢', text: 'Submit to European database (national authority or direct to EU DB)', deadline: inScope ? 'Deadline: 15 May 2026' : '' }
+        ];
+
+        items.forEach(function(item) {
+            container.innerHTML += '<div class="checklist-item">'
+                + '<span class="checklist-icon">' + item.icon + '</span>'
+                + '<span class="checklist-text">' + item.text
+                + (item.deadline ? ' <span class="checklist-deadline">' + item.deadline + '</span>' : '')
+                + '</span></div>';
+        });
+    }
+
+    // ═══ BUILD TIMELINE ═══
+    function buildTimeline() {
+        var container = document.getElementById('timelineContent');
+        var milestones = [
+            { year: 'Sept 2024', label: 'First EED\nreference data', color: '#94a3b8', pct: 0 },
+            { year: 'May 2026', label: 'Next EED\nreporting deadline', color: 'var(--warn-amber)', pct: 25 },
+            { year: 'H1 2026', label: 'EU DC Energy\nPackage (expected)', color: 'var(--seg06-border)', pct: 22 },
+            { year: 'Jul 2028', label: 'German EEA\n20% heat reuse', color: 'var(--fail-red)', pct: 55 },
+            { year: '2030', label: 'PUE ≤1.3\n(expected target)', color: 'var(--fail-red)', pct: 90 }
+        ];
+
+        var html = '<div class="timeline-bar">'
+            + '<div class="timeline-track">';
+        milestones.forEach(function(m) {
+            html += '<div class="timeline-marker" style="left:' + m.pct + '%;background:' + m.color + ';" title="' + m.year + ': ' + m.label.replace(/\n/g, ' ') + '"></div>';
+        });
+        html += '</div><div class="timeline-labels">';
+        milestones.forEach(function(m) {
+            html += '<span style="text-align:center;white-space:pre-line;flex:1;">' + m.year + '<br>' + m.label + '</span>';
+        });
+        html += '</div></div>';
+
+        container.innerHTML = html;
+    }
+
+    // ═══ BUILD VALUE ENGINEERING TIPS ═══
+    function buildTips(inputs, results) {
+        var container = document.getElementById('tipsContent');
+        container.innerHTML = '';
+
+        var tips = [
+            {
+                cls: 'tip-red',
+                title: 'EED reporting is already mandatory',
+                body: 'The first EED reference data collection was Sept 2024. The next full reporting deadline is 15 May 2026. Facilities ≥500 kW IT must submit PUE, WUE, energy consumption, renewable share, waste heat, and backup generation data to the European database. Non-compliance carries reputational and regulatory risk.',
+                ref: 'EU Delegated Regulation 2024/1364, EED 2023/1791 Art.12'
+            },
+            {
+                cls: 'tip-green',
+                title: 'PUE improvement = compliance + cost savings',
+                body: 'Every 0.1 PUE improvement on a ' + (inputs.itPower / 1000).toFixed(1) + ' MW facility saves approximately ' + Math.round(inputs.itPower * 0.1 * 8760 /* hrs/yr — calendar constant (T1) */ / 1000) + ' MWh/yr (€' + Math.round(inputs.itPower * 0.1 * 8760 * 0.20 / 1000).toLocaleString() + '/yr at €0.20/kWh — typical Irish DC HV rate incl. PSO + network, CRU Q4 2024). Compliance drives the business case — PUE ≤1.3 by 2030 means investment is inevitable.',
+                ref: 'EN 50600-4-2, SEAI benchmarks'
+            },
+            {
+                cls: 'tip-blue',
+                title: 'PPA route for renewable compliance',
+                body: 'Irish DC operators have led Europe in corporate PPA adoption. A long-term PPA (10–15 years) with an Irish wind or solar farm provides price stability, additionality evidence, and renewable share compliance. Shorter-term GoO purchasing is easier but may not satisfy future additionality requirements.',
+                ref: 'CRU Dec 2025, SEAI renewable energy guidance'
+            },
+            {
+                cls: 'tip-amber',
+                title: 'Waste heat: report first, monetise second',
+                body: 'Even if you are not currently utilising waste heat, EED Art.12 requires you to report on it. Start with an assessment of available heat (your facility produces approximately ' + ((inputs.itPower * (inputs.annualPue - 1) * 0.85) / 1000).toFixed(1) + ' MW_th of recoverable heat). Dublin District Heating is expanding — viable buyers may be closer than you think.',
+                ref: 'EED Art.12(3), German EEA s.11 benchmarks'
+            },
+            {
+                cls: 'tip-green',
+                title: 'ISO 50001 — start the clock now',
+                body: 'ISO 50001 certification typically takes 6–12 months from initiation. If your facility is >1 MW, this is expected to become mandatory by 2027. Starting now means you hit compliance ahead of the deadline, and the structured EMS process typically identifies 5–15% energy savings in the first year.',
+                ref: 'ISO 50001:2018, EED Art.12'
+            },
+            {
+                cls: 'tip-blue',
+                title: 'Diesel backup — HVO is the quick win',
+                body: 'HVO (Hydrotreated Vegetable Oil) is a drop-in replacement for diesel in most generator sets. No engine modifications required, 10–15% cost premium, and up to 90% lifecycle CO₂ reduction. This converts a red flag to green on the backup generation KPI with minimal disruption.',
+                ref: 'EN 15940, Generator OEM guidance'
+            }
+        ];
+
+        tips.forEach(function(tip) {
+            container.innerHTML += '<div class="tip-card ' + tip.cls + '">'
+                + '<div class="tip-title">' + tip.title + '</div>'
+                + '<div class="tip-body">' + tip.body + '</div>'
+                + '<div class="tip-ref">' + tip.ref + '</div>'
+                + '</div>';
+        });
+    }
+
+    // ═══ MAIN ASSESSMENT FUNCTION ═══
+    window.runAssessment = function() {
+        var inputs = getInputs();
+
+        // Show results
+        var resultsSection = document.getElementById('resultsSection');
+        resultsSection.classList.add('visible');
+
+        // Scope check
+        var scopeEl = document.getElementById('scopeNotice');
+        if (inputs.itPower < 500) {
+            scopeEl.style.display = 'block';
+            scopeEl.innerHTML = '💡 <strong>Below EED Reporting Threshold:</strong> Your IT demand (' + inputs.itPower + ' kW) is below the 500 kW threshold. EED Art.12 reporting is not currently mandatory for this facility. However, this may change — the assessment below shows where you would stand if the threshold were lowered or your capacity increased.';
+        } else {
+            scopeEl.style.display = 'none';
+        }
+
+        // Build scorecard
+        var scorecard = buildScorecard(inputs);
+
+        // Build overall rating
+        buildOverallRating(scorecard.passCount, scorecard.totalCount);
+
+        // Build timeline
+        buildTimeline();
+
+        // Build actions
+        buildActions(scorecard.results, inputs);
+
+        // Build checklist
+        buildChecklist(inputs);
+
+        // Build tips
+        buildTips(inputs, scorecard.results);
+
+        // Scroll to results
+        // ═══ WHAT THIS MEANS ═══
+    var existingWtm = document.querySelector('.wtm-panel');
+    if (existingWtm) existingWtm.remove();
+    var passRate = scorecard.passCount / scorecard.totalCount;
+    var wtmHTML = '';
+    if (passRate >= 0.8) {
+      wtmHTML = '<div class="wtm-panel"><h4>What This Means</h4><p>'
+        + 'Your facility is largely compliant with current EED Art.12 requirements. '
+        + 'Focus on the amber/red items above to close remaining gaps before the 15 May 2026 reporting deadline. '
+        + 'You are well positioned for expected minimum performance standards.'
+        + '</p></div>';
+    } else if (passRate >= 0.5) {
+      wtmHTML = '<div class="wtm-panel"><h4>What This Means</h4><p>'
+        + 'Your facility has significant compliance gaps. The priority actions above should be addressed '
+        + 'in the order shown — start with reporting preparation (data gathering) while planning operational improvements. '
+        + 'Budget 6–18 months for full compliance depending on the scope of physical interventions required.'
+        + '</p></div>';
+    } else {
+      wtmHTML = '<div class="wtm-panel"><h4>What This Means</h4><p>'
+        + 'This facility faces material EED compliance risk. Multiple KPIs are below threshold and the '
+        + '15 May 2026 reporting deadline is approaching. A structured compliance programme is needed — '
+        + 'starting with immediate data gathering for reporting, followed by a prioritised improvement roadmap. '
+        + 'Non-compliance carries reputational and regulatory risk for operators above 500 kW IT.'
+        + '</p></div>';
+    }
+    document.getElementById('resultsSection').insertAdjacentHTML('afterbegin', wtmHTML);
+
+    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+
+// ═══ LOAD SAMPLE — Clonshaugh reference facility ═══
+window.loadSample = function() {
+  document.getElementById('itPower').value = 2400;
+  document.getElementById('annualPue').value = 1.65;
+  document.getElementById('annualWue').value = 1.8;
+  document.getElementById('renewableShare').value = 35;
+  document.getElementById('wasteHeat').value = 0;
+  document.getElementById('ems').value = 'basic';
+  document.getElementById('tempSetpoint').value = 20;
+  document.getElementById('backupFuel').value = 'diesel';
+  document.getElementById('annualEnergy').value = 34700;
+  document.getElementById('dcType').value = 'colocation';
+  document.getElementById('commYear').value = 2010;
+  document.getElementById('location').value = 'dublin';
+  runAssessment();
+};
+})();
+</script>
+
+
+<div style="font-size:0.75rem;color:#6b7280;background:#f9fafb;padding:6px;border-radius:4px;margin:8px auto;max-width:720px;">INDICATIVE SCREENING ASSESSMENT — This output provides an indicative screening assessment based on user-supplied facility parameters. It is not a certified energy audit, Environmental Impact Assessment, Uptime Institute submission, or investment recommendation. All findings are subject to verification through a detailed assessment by a chartered engineer. Legacy Business Engineers Ltd accepts no liability for decisions made solely on the basis of this screening output.</div>
+<div style="font-size:7.5pt;color:#9ca3af;text-align:center;margin-top:6px;max-width:720px;margin-left:auto;margin-right:auto;">Legacy Business Engineers Ltd — Professional Indemnity Insurance held — Intelligence layer only: this report identifies and quantifies, it does not design or deliver solutions.</div>
+<button class="print-btn np" onclick="window.print()" style="max-width:720px;margin:12px auto;display:block">🖨️ Print / Save as PDF</button>
+</body>
+</html>
